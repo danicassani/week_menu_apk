@@ -28,6 +28,8 @@ Calculations use pure, independently testable functions where possible. Backend 
 
 ## 2. Proposed logical data model
 
+Breakfast planning is confirmed and must support recipes, suggestions, per-person portions/budgets, and shopping contributions. The choice between individual breakfast recipes and a shared breakfast recipe is pending; review the planned-meal/participant recipe relationship after that choice. Eating-out replacements and unknown-calorie handling are also being discussed and are not yet modeled as confirmed behavior.
+
 All household-owned records carry a household identifier. Personal records also carry their subject member identifier. Use stable IDs and revisions; do not link records by translated labels.
 
 | Entity | Important fields and behavior |
@@ -39,13 +41,13 @@ All household-owned records carry a household identifier. Personal records also 
 | Client timezone | Last reported IANA zone and observation time; confirmed source for server-side date locking |
 | Weight measurement | Member, date, kilograms; immutable after the person's day closes |
 | Goal and target version | Goal weight/date, calculation inputs/version, proposed/accepted status, effective date |
-| Default meal budgets | Member's lunch and dinner defaults, versioned by effective date |
+| Default meal budgets | Member's breakfast, lunch, and dinner defaults, versioned by effective date |
 | Meal-budget override | Member, planned meal, calorie budget |
 | Ingredient / ingredient version | Canonical identity, raw/cooked state, bilingual names, kcal per reference amount, source identifiers, revision, archive status |
 | Ingredient conversion | Ingredient, unit, grams or compatible reference quantity; no global density assumption |
 | Substitution rule | Source/alternative ingredient, culinary role, dietary eligibility, proposed starting conversion |
 | Recipe / recipe version | Names/instructions, reference servings, ingredient quantities grouped into main/sides and optional dessert, dietary metadata, source/provenance, revision |
-| Planned meal | Calendar date, lunch/dinner, recipe version, revision and lock information |
+| Planned meal | Calendar date, breakfast/lunch/dinner, recipe version, revision and lock information |
 | Meal participant | Members included when the meal was planned, budget snapshot, individual recipe variant, per-person dessert inclusion |
 | Portion ingredient | Actual quantity, unit/conversion reference, ingredient nutrition version, reviewed substitution status |
 | Outside-food entry | Member, date, description, kcal |
@@ -57,7 +59,7 @@ All household-owned records carry a household identifier. Personal records also 
 | Member preference | Recipe-update prompt, display preferences |
 | Pending local operation | Authenticated account, stable item ID, desired checked state, operation ID, local order |
 
-Constraints enforce one lunch and one dinner slot per date, unique meal participants, valid conversions, positive durations/quantities where required, and the agreed single shopping list. Zero or missing recipe energy cannot be used as a divisor when scaling portions.
+Constraints enforce one breakfast, one lunch, and one dinner slot per date, unique meal participants, valid conversions, positive durations/quantities where required, and the agreed single shopping list. Zero or missing recipe energy cannot be used as a divisor when scaling portions.
 
 ## 3. Authorization and owner lifecycle
 
@@ -80,7 +82,7 @@ Use the confirmed equations and constants in the product specification, with exp
 2. Compute resting energy and usual daily expenditure.
 3. For loss, compute the agreed approximate planning deficit; maintenance uses zero.
 4. Apply the confirmed rate and intake screening to unrounded results.
-5. Present a proposed daily target and lunch/dinner budget review.
+5. Present a proposed daily target and breakfast/lunch/dinner budget review.
 6. Persist acceptance as a new effective version from today, preserving historical versions.
 
 Recording weight does not silently accept a target. Reaching the goal offers maintenance review. A rejected or pending target leaves the last accepted target active.
@@ -89,7 +91,7 @@ Default meal budgets apply unless the individual meal has an override. A meal us
 
 ### Confirmed time-display convention
 
-Count the day's planned lunch and dinner toward its daily total as soon as planned, clearly labelled as assumed intake. Do not introduce unrequested meal-time schedules. Future dates show projected totals. Outside-food entries add to the applicable person's day. This is the confirmed full-day accounting convention.
+Count the day's planned breakfast, lunch, and dinner toward its daily total as soon as planned, clearly labelled as assumed intake. Do not introduce unrequested meal-time schedules. Future dates show projected totals. Outside-food entries add to the applicable person's day. This is the confirmed full-day accounting convention.
 
 ### Activity
 
@@ -203,7 +205,7 @@ flowchart TD
     N --> H
 ~~~
 
-On phones, the Menu destination uses seven vertically stacked day cards, each showing lunch and dinner, with vertical scrolling. The household can start the planning week on Monday or Sunday; Monday is the default. Changing the week start affects the view and generation range, not existing meal calendar dates. Each meal has one recipe, with any included sides and a per-person optional dessert.
+On phones, the Menu destination uses seven vertically stacked day cards, each showing breakfast, lunch, and dinner, with vertical scrolling. The household can start the planning week on Monday or Sunday; Monday is the default. Changing the week start affects the view and generation range, not existing meal calendar dates. Each meal has one recipe, with any included sides and a per-person optional dessert.
 
 Every main destination remains available through the approved navigation. Selecting another member changes the displayed summary without changing personal-write permissions.
 
