@@ -23,7 +23,7 @@ The household plans meals for a fixed household size, rather than choosing atten
 - Adult profiles only.
 - Permission checks must be enforced by the backend, not only hidden interface controls.
 
-Removing a member revokes their access and recalculates today's and future meal quantities for the remaining household. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. Owner bootstrap, ownership transfer, and handling personal information after removal remain open decisions.
+Removing a member revokes their access and recalculates today's and future meal quantities for the remaining household. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Owner bootstrap, ownership transfer, and treatment of any future-dated personal entries remain open.
 
 ## 3. Profiles, goals, and calorie targets
 
@@ -154,7 +154,7 @@ The app supports English and Spanish, selectable per person. Provide starter con
 - Let a member review and apply changes; do not silently regenerate the list.
 - When an applied update increases the required quantity of an item marked as bought, uncheck the item and highlight its increased quantity. Do not change its checked state before the reviewed update is applied.
 
-Quantity increases for checked items follow the uncheck-and-highlight rule above. The review must still define handling for quantity decreases, removed ingredients, and manual additions. Multiple shopping lists are outside the first-version scope.
+Quantity increases for checked items follow the uncheck-and-highlight rule above. When applying reviewed updates, reduce quantities or remove menu-generated entries that are no longer required. Preserve checked states on remaining entries unless their quantity increases. Always preserve manual additions as separate entries so menu regeneration cannot remove or change them. Multiple shopping lists are outside the first-version scope.
 
 ## 8. Offline behavior
 
@@ -266,9 +266,9 @@ These are acceptance-test candidates for review before implementation.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
-6. Owner lifecycle, new-member onboarding effects, and removed-member data retention.
+6. Owner lifecycle, new-member onboarding effects, and treatment of future-dated personal entries after member removal.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
-8. Remaining shopping-list update details for quantity decreases, removed ingredients, and manual additions.
+8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
 9. Screen/navigation approval and development phases.
 
 Confirmed requirements above remain valid while these details are resolved.
