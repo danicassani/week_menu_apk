@@ -51,7 +51,19 @@ Resting energy estimate in kcal/day, with weight in kg, height in cm, and age in
 
 This estimates resting expenditure, not total daily expenditure. Source: Mifflin et al., 1990, https://pubmed.ncbi.nlm.nih.gov/2305711/ . For maintenance, estimate maintenance intake without a weight-loss deficit. The target date is an approximate planning goal, not a prediction of reaching that weight on that date. A dynamic weight-change model is outside version-one scope.
 
-If the goal and deadline would require excessive restriction, explain the problem and ask the person to revise their goal or deadline. Activity factors, goal-to-deficit conversion, validation rules, and applicable exclusions require a separately reviewed calculation specification. New weight measurements can trigger the previously agreed target-recalculation review.
+Initial goal-screening rules for version one:
+
+- Reject a weight-loss goal implying more than 1 kg of loss per week.
+- Reject a calculated calorie-intake target of 1,200 kcal/day or less.
+- Explain the failed check and ask the person to revise the goal or deadline; do not silently clamp to a different target.
+- Passing these screening rules does not establish that a target is appropriate for every individual.
+
+These app rules draw on NHS gradual weight-loss guidance and NICE guidance restricting low-energy diets to supported specialist care:
+
+- https://www.nhs.uk/conditions/overweight-and-obesity/
+- https://www.nice.org.uk/guidance/ng246/chapter/Physical-activity-and-diet
+
+If another validation rule identifies an invalid or excessively restrictive goal, also explain it and ask for revision. Activity factors, goal-to-deficit conversion, additional validation rules, and applicable exclusions require a separately reviewed calculation specification. New weight measurements can trigger the previously agreed target-recalculation review.
 
 ### Recalculation
 
@@ -82,7 +94,9 @@ If the goal and deadline would require excessive restriction, explain the proble
 - Estimate daily deficit as estimated expenditure minus accounted food calories.
 - Do not count the same exercise in both the usual allowance and logged activities.
 
-If the last activity entry is removed from an editable day, restore the usual activity estimate because that date no longer has logged activities. The detailed calculation must define routine movement, net versus gross activity energy, and multiple activities. Activity-energy sources, intensity mappings, and estimation formulas remain open.
+If the last activity entry is removed from an editable day, restore the usual activity estimate because that date no longer has logged activities. The detailed calculation must define routine movement, net versus gross activity energy, and multiple activities. Use the Compendium of Physical Activities for source activity and pace/intensity energy estimates, with appropriate age-specific coverage. Preserve published MET values and source references, include attribution, and clearly label calculated expenditure as an estimate. Source and reuse guidance: https://pacompendium.com/ .
+
+Exact imported activity coverage, intensity mappings, and the formula integrating logged activity into daily expenditure still require a calculation specification.
 
 ## 5. Meal planning and suggestions
 
@@ -261,8 +275,8 @@ These are acceptance-test candidates for review before implementation.
 
 ## 12. Remaining decisions before implementation
 
-1. UK CoFID release/coverage and attribution implementation, starter recipes, and activity dataset/licensing.
-2. Activity factors, goal-to-deficit conversion, and goal-validation rules for the selected Mifflin–St Jeor approach.
+1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
+2. Activity factors, goal-to-deficit conversion, and additional validation details for Mifflin–St Jeor. The >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
