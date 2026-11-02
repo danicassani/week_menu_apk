@@ -28,7 +28,7 @@ Calculations use pure, independently testable functions where possible. Backend 
 
 ## 2. Proposed logical data model
 
-Breakfast planning is confirmed and must support recipes, suggestions, per-person portions/budgets, and shopping contributions. The choice between individual breakfast recipes and a shared breakfast recipe is pending; review the planned-meal/participant recipe relationship after that choice. Eating-out replacements and unknown-calorie handling are also being discussed and are not yet modeled as confirmed behavior.
+Breakfast planning uses individual member recipe choices, budgets, portions, suggestions, and shopping contributions. Lunch and dinner use a shared base recipe with personal variants. Any member can instead have an eating-out replacement for a meal, requiring a description and manual calorie estimate.
 
 All household-owned records carry a household identifier. Personal records also carry their subject member identifier. Use stable IDs and revisions; do not link records by translated labels.
 
@@ -47,8 +47,8 @@ All household-owned records carry a household identifier. Personal records also 
 | Ingredient conversion | Ingredient, unit, grams or compatible reference quantity; no global density assumption |
 | Substitution rule | Source/alternative ingredient, culinary role, dietary eligibility, proposed starting conversion |
 | Recipe / recipe version | Names/instructions, reference servings, ingredient quantities grouped into main/sides and optional dessert, dietary metadata, source/provenance, revision |
-| Planned meal | Calendar date, breakfast/lunch/dinner, recipe version, revision and lock information |
-| Meal participant | Members included when the meal was planned, budget snapshot, individual recipe variant, per-person dessert inclusion |
+| Planned meal | Calendar date, breakfast/lunch/dinner slot, optional shared base recipe for lunch/dinner, revision and lock information |
+| Meal participant | Included member, budget snapshot, home-cooked/eating-out mode; individual breakfast recipe or lunch/dinner variant; per-person dessert inclusion; required description and calorie estimate for eating out |
 | Portion ingredient | Actual quantity, unit/conversion reference, ingredient nutrition version, reviewed substitution status |
 | Outside-food entry | Member, date, description, kcal |
 | Activity entry | Member, date, source activity code, pace/intensity, source MET, duration, weight/calculation inputs |
@@ -59,7 +59,7 @@ All household-owned records carry a household identifier. Personal records also 
 | Member preference | Recipe-update prompt, display preferences |
 | Pending local operation | Authenticated account, stable item ID, desired checked state, operation ID, local order |
 
-Constraints enforce one breakfast, one lunch, and one dinner slot per date, unique meal participants, valid conversions, positive durations/quantities where required, and the agreed single shopping list. Zero or missing recipe energy cannot be used as a divisor when scaling portions.
+Constraints enforce one breakfast, one lunch, and one dinner slot per date, unique meal participants, valid conversions, positive durations/quantities where required, and the agreed single shopping list. Each participant has exactly one effective meal mode: a home-cooked recipe/variant or an eating-out entry with required description and finite nonnegative manually entered calories. Blank or unknown calories are rejected. Do not count both modes or generate ingredients for eating-out participants. Zero or missing recipe energy cannot be used as a divisor when scaling portions.
 
 ## 3. Authorization and owner lifecycle
 
@@ -87,11 +87,17 @@ Use the confirmed equations and constants in the product specification, with exp
 
 Recording weight does not silently accept a target. Reaching the goal offers maintenance review. A rejected or pending target leaves the last accepted target active.
 
-Default meal budgets apply unless the individual meal has an override. A meal uses one recipe, which can include sides and an optional dessert. Dessert inclusion is chosen per person. Suggested portions proportionally scale all components selected for that person toward the applicable meal budget. Skipped dessert ingredients contribute no energy or shopping quantities for that person. Later manual quantity edits stay manual; budget or target changes show mismatches without silently resizing saved portions.
+Default meal budgets apply unless the individual meal has an override. A person's home-cooked meal uses one recipe, which can include sides and an optional dessert. Breakfast recipes are selected individually; lunch and dinner have a shared base recipe with per-member variants. Dessert inclusion is chosen per person. Suggested portions proportionally scale all components selected for that person toward the applicable meal budget. Skipped dessert ingredients contribute no energy or shopping quantities for that person. Later manual quantity edits stay manual; budget or target changes show mismatches without silently resizing saved portions.
 
 ### Confirmed time-display convention
 
 Count the day's planned breakfast, lunch, and dinner toward its daily total as soon as planned, clearly labelled as assumed intake. Do not introduce unrequested meal-time schedules. Future dates show projected totals. Outside-food entries add to the applicable person's day. This is the confirmed full-day accounting convention.
+
+### Eating-out replacements
+
+An eating-out entry is part of the planned meal participant, not an extra outside-food log. Its manual estimate replaces the corresponding recipe energy in the day's total. Label it as estimated, apply the existing budget warnings, and exclude its recipe ingredients from shopping aggregation. Leave other members' recipe portions unchanged.
+
+Changing a participant to eating out updates the plan revision and makes shopping changes available for review. Generation preserves existing eating-out entries unless the user explicitly chooses replacement and reviews the preview. The same meal-date lock applies to individual breakfasts and eating-out replacements.
 
 ### Activity
 
@@ -153,7 +159,7 @@ Stored snapshots preserve quantities, calories, conversions, substitutions, calc
 
 ## 8. Shopping and concurrent changes
 
-Generate contributions from saved, reviewed portion quantities across the selected date range. Merge only identical compatible ingredient identities; raw/cooked entries stay separate unless a reviewed conversion explicitly permits aggregation.
+Generate contributions from saved, reviewed home-cooked portion quantities across the selected date range, including individual breakfast recipes. Skip eating-out participants entirely; their manual calorie estimates are not ingredient requirements. Merge only identical compatible ingredient identities; raw/cooked entries stay separate unless a reviewed conversion explicitly permits aggregation.
 
 The reviewed update is a diff against the last applied generated list:
 
@@ -205,7 +211,7 @@ flowchart TD
     N --> H
 ~~~
 
-On phones, the Menu destination uses seven vertically stacked day cards, each showing breakfast, lunch, and dinner, with vertical scrolling. The household can start the planning week on Monday or Sunday; Monday is the default. Changing the week start affects the view and generation range, not existing meal calendar dates. Each meal has one recipe, with any included sides and a per-person optional dessert.
+On phones, the Menu destination uses seven vertically stacked day cards, each showing breakfast, lunch, and dinner, with vertical scrolling. The household can start the planning week on Monday or Sunday; Monday is the default. Changing the week start affects the view and generation range, not existing meal calendar dates. Each person's home-cooked meal has one recipe, with any included sides and a per-person optional dessert. Breakfast recipes are individual; lunch and dinner have a shared base recipe. Show eating-out replacements per member with their manually entered calorie estimates.
 
 Every main destination remains available through the approved navigation. Selecting another member changes the displayed summary without changing personal-write permissions.
 
