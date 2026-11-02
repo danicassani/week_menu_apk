@@ -73,10 +73,32 @@ If another validation rule identifies an invalid or excessively restrictive goal
 - Apply accepted changes from today onward.
 - Preserve past records.
 - Do not silently change meal portions when recalculating targets.
+- When a new weight measurement reaches the goal weight, offer a maintenance target for review and acceptance rather than silently switching goals. Include lunch and dinner budget review in acceptance.
+
+### Proposed numerical defaults — awaiting review
+
+The following are proposed implementation conventions for the agreed simple model, not confirmed decisions or individualized medical advice:
+
+| Usual activity | Proposed resting-energy multiplier |
+| --- | --- |
+| Sedentary | 1.2 |
+| Lightly active | 1.375 |
+| Active | 1.55 |
+| Very active | 1.725 |
+
+Proposed usual daily expenditure = Mifflin–St Jeor resting estimate × selected multiplier. Activity categories are coarse estimates, not measured expenditure.
+
+Proposed weight-loss planning deficit = (current weight − target weight) × 7,700 / calendar days until target date, in kcal/day. Subtract this from usual estimated daily expenditure to propose an intake target. Maintenance uses no weight-loss deficit. Run screening on unrounded results before presenting a target.
+
+The 7,700 kcal/kg conversion is a deliberately simplified planning approximation. It does not model changing body composition, water weight, or metabolic adaptation and must not be presented as a reliable weight forecast. Research on its limitations: https://pmc.ncbi.nlm.nih.gov/articles/PMC3810417/ .
+
+Reject invalid or non-finite inputs, nonpositive height/weight, past or same-day weight-loss deadlines, and a weight-loss target not below current weight. A reached goal instead triggers the maintenance-review flow. Other applicability constraints still require review.
+
+This proposal does not yet settle the formula for replacing usual activity with logged activity on a particular date.
 
 ### Meal budgets and food outside planned meals
 
-- Each person sets lunch and dinner calorie budgets manually.
+- Each person sets personal lunch and dinner calorie-budget defaults manually. Apply those defaults every day, with optional overrides for individual planned meals.
 - People log food outside lunch and dinner, including breakfast, snacks, and drinks, by entering a description and total calories. Catalogue lookup for these entries is outside the first-version scope.
 - Warn if meal budgets or portions plus other logged food exceed the daily target.
 - Warnings allow manual adjustments and do not block finalizing the plan.
@@ -267,6 +289,8 @@ These are acceptance-test candidates for review before implementation.
 - Attempts to edit past days are rejected by backend validation as well as disabled in the interface.
 - Archiving an ingredient preserves existing recipes and meals.
 - Accepting a new target includes budget review and leaves past targets intact.
+- Personal meal-budget defaults apply across dates, with individual meal overrides.
+- Reaching goal weight offers a maintenance target for acceptance rather than automatically changing the goal.
 - Logging activity replaces only the selected day's usual activity allowance.
 - Menu edits produce a reviewable shopping-list change rather than overwriting the list.
 - Applying a quantity increase to an item marked as bought unchecks it and highlights the increased quantity; merely previewing the update does not change the live checklist.
