@@ -1,0 +1,4980 @@
+{
+  "schema_version": "1.0.0",
+  "ingredients": [
+    {
+      "id": "oats",
+      "name": {
+        "en": "Porridge oats",
+        "es": "Copos de avena"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "oats",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 381.0,
+        "protein_g": 10.9,
+        "fat_g": 8.1,
+        "carbohydrate_g": 70.7,
+        "fibre_aoac_g": 7.8
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-788",
+        "original_name": "Porridge oats, unfortified",
+        "proximates_row": 2178,
+        "factors_row": 2178,
+        "energy_cell": "M2178",
+        "raw_energy_value": "381"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "bread",
+      "name": {
+        "en": "Wholemeal bread",
+        "es": "Pan integral"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "bread",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 217.0,
+        "protein_g": 9.4,
+        "fat_g": 2.5,
+        "carbohydrate_g": 42.0,
+        "fibre_aoac_g": 7.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-981",
+        "original_name": "Bread, wholemeal, average",
+        "proximates_row": 415,
+        "factors_row": 415,
+        "energy_cell": "M415",
+        "raw_energy_value": "217"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "reference_piece_conversion": {
+        "unit": "reference_slice",
+        "grams_per_unit": 40,
+        "quantity_step": 0.25,
+        "status": "editorial_estimate_requires_household_confirmation",
+        "source": "not_a_cofid_piece_weight",
+        "note": {
+          "en": "Use weighed edible grams until your egg or slice size is confirmed; these reference weights are not universal.",
+          "es": "Usa gramos comestibles pesados hasta confirmar el tamaño de tus huevos o rebanadas; estos pesos de referencia no son universales."
+        }
+      },
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "pitta",
+      "name": {
+        "en": "White pitta bread",
+        "es": "Pan de pita blanco"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "bread",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 255.0,
+        "protein_g": 9.1,
+        "fat_g": 1.3,
+        "carbohydrate_g": 55.1,
+        "fibre_aoac_g": 2.3
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-974",
+        "original_name": "Bread, pitta, white",
+        "proximates_row": 400,
+        "factors_row": 400,
+        "energy_cell": "M400",
+        "raw_energy_value": "255"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "rice_white",
+      "name": {
+        "en": "Basmati rice, dry",
+        "es": "Arroz basmati seco"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "rice",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 351.0,
+        "protein_g": 8.1,
+        "fat_g": 0.5,
+        "carbohydrate_g": 83.7,
+        "fibre_aoac_g": 1.1
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-857",
+        "original_name": "Rice, white, basmati, raw",
+        "proximates_row": 2354,
+        "factors_row": 2354,
+        "energy_cell": "M2354",
+        "raw_energy_value": "351"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "rice_brown",
+      "name": {
+        "en": "Wholegrain brown rice, dry",
+        "es": "Arroz integral seco"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "rice",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 333.0,
+        "protein_g": 7.7,
+        "fat_g": 1.5,
+        "carbohydrate_g": 77.0,
+        "fibre_aoac_g": 3.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-868",
+        "original_name": "Rice, brown, wholegrain, raw",
+        "proximates_row": 2341,
+        "factors_row": 2341,
+        "energy_cell": "M2341",
+        "raw_energy_value": "333"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "rice_risotto",
+      "name": {
+        "en": "Arborio rice, dry",
+        "es": "Arroz arborio seco"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "rice",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 354.0,
+        "protein_g": 6.4,
+        "fat_g": 1.0,
+        "carbohydrate_g": 85.2,
+        "fibre_aoac_g": 1.4
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-878",
+        "original_name": "Rice, white, Italian Arborio risotto, raw",
+        "proximates_row": 2356,
+        "factors_row": 2356,
+        "energy_cell": "M2356",
+        "raw_energy_value": "354"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "pasta",
+      "name": {
+        "en": "White dried pasta",
+        "es": "Pasta blanca seca"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pasta",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 343.0,
+        "protein_g": 11.3,
+        "fat_g": 1.6,
+        "carbohydrate_g": 75.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-716",
+        "original_name": "Pasta, white, dried, raw",
+        "proximates_row": 1897,
+        "factors_row": 1897,
+        "energy_cell": "M1897",
+        "raw_energy_value": "343"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "pasta_wholewheat",
+      "name": {
+        "en": "Wholewheat dried spaghetti",
+        "es": "Espaguetis integrales secos"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pasta",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 329.0,
+        "protein_g": 12.6,
+        "fat_g": 2.5,
+        "carbohydrate_g": 68.3,
+        "fibre_aoac_g": 11.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-718",
+        "original_name": "Pasta, wholewheat, spaghetti, dried, raw",
+        "proximates_row": 1901,
+        "factors_row": 1901,
+        "energy_cell": "M1901",
+        "raw_energy_value": "329"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "couscous",
+      "name": {
+        "en": "Plain couscous, dry",
+        "es": "Cuscús seco"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "couscous",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 364.0,
+        "protein_g": 12.0,
+        "fat_g": 2.1,
+        "carbohydrate_g": 79.2,
+        "fibre_aoac_g": 3.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-901",
+        "original_name": "Couscous, plain, raw",
+        "proximates_row": 868,
+        "factors_row": 868,
+        "energy_cell": "M868",
+        "raw_energy_value": "364"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "bulgur",
+      "name": {
+        "en": "Bulgur wheat, dry",
+        "es": "Bulgur seco"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "bulgur",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 352.0,
+        "protein_g": 10.6,
+        "fat_g": 2.0,
+        "carbohydrate_g": 77.8,
+        "fibre_aoac_g": 6.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-904",
+        "original_name": "Wheat, bulgur, raw",
+        "proximates_row": 2832,
+        "factors_row": 2832,
+        "energy_cell": "M2832",
+        "raw_energy_value": "352"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "quinoa",
+      "name": {
+        "en": "Quinoa, dry",
+        "es": "Quinoa seca"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "quinoa",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 309.0,
+        "protein_g": 13.8,
+        "fat_g": 5.0,
+        "carbohydrate_g": 55.7,
+        "fibre_aoac_g": 7.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-843",
+        "original_name": "Quinoa, raw",
+        "proximates_row": 2292,
+        "factors_row": 2292,
+        "energy_cell": "M2292",
+        "raw_energy_value": "309"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "barley",
+      "name": {
+        "en": "Pearl barley, dry",
+        "es": "Cebada perlada seca"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "barley",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 360.0,
+        "protein_g": 7.9,
+        "fat_g": 1.7,
+        "carbohydrate_g": 83.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-002",
+        "original_name": "Barley, pearl, raw",
+        "proximates_row": 111,
+        "factors_row": 111,
+        "energy_cell": "M111",
+        "raw_energy_value": "360"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_grain",
+        "instructions": {
+          "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+          "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+        }
+      }
+    },
+    {
+      "id": "flour",
+      "name": {
+        "en": "Wholemeal wheat flour",
+        "es": "Harina de trigo integral"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "wheat_flour",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 327.0,
+        "protein_g": 11.6,
+        "fat_g": 2.0,
+        "carbohydrate_g": 69.9,
+        "fibre_aoac_g": 10.1
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "11-889",
+        "original_name": "Flour, wheat, wholemeal",
+        "proximates_row": 1176,
+        "factors_row": 1176,
+        "energy_cell": "M1176",
+        "raw_energy_value": "327"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "baking_powder",
+      "name": {
+        "en": "Baking powder",
+        "es": "Levadura química"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "baking_powder",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 163.0,
+        "protein_g": 5.2,
+        "fat_g": 0.0,
+        "carbohydrate_g": 37.8,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-355",
+        "original_name": "Baking powder",
+        "proximates_row": 97,
+        "factors_row": 97,
+        "energy_cell": "M97",
+        "raw_energy_value": "163"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "egg",
+      "name": {
+        "en": "Whole chicken egg, raw, without shell",
+        "es": "Huevo de gallina crudo, sin cáscara"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "egg",
+      "variety_key": "egg",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 131.0,
+        "protein_g": 12.6,
+        "fat_g": 9.0,
+        "carbohydrate_g": null,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "12-937",
+        "original_name": "Eggs, chicken, whole, raw",
+        "proximates_row": 1096,
+        "factors_row": 1096,
+        "energy_cell": "M1096",
+        "raw_energy_value": "131"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "reference_piece_conversion": {
+        "unit": "reference_egg",
+        "grams_per_unit": 50,
+        "quantity_step": 0.25,
+        "status": "editorial_estimate_requires_household_confirmation",
+        "source": "not_a_cofid_piece_weight",
+        "note": {
+          "en": "Use weighed edible grams until your egg or slice size is confirmed; these reference weights are not universal.",
+          "es": "Usa gramos comestibles pesados hasta confirmar el tamaño de tus huevos o rebanadas; estos pesos de referencia no son universales."
+        }
+      }
+    },
+    {
+      "id": "milk",
+      "name": {
+        "en": "Semi-skimmed milk",
+        "es": "Leche semidesnatada"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "dairy",
+      "variety_key": "milk",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 46.0,
+        "protein_g": 3.5,
+        "fat_g": 1.7,
+        "carbohydrate_g": 4.7,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "ml",
+          "grams_per_unit": 1.03,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "1.03"
+        },
+        {
+          "unit": "metric_tsp",
+          "grams_per_unit": 5.15,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "1.03"
+        },
+        {
+          "unit": "metric_tbsp",
+          "grams_per_unit": 15.450000000000001,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "1.03"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "12-313",
+        "original_name": "Milk, semi-skimmed, pasteurised, average",
+        "proximates_row": 1669,
+        "factors_row": 1669,
+        "energy_cell": "M1669",
+        "raw_energy_value": "46"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "soy_milk",
+      "name": {
+        "en": "Unsweetened fortified soya drink",
+        "es": "Bebida de soja sin azúcar, enriquecida"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "soya_drink",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 26.0,
+        "protein_g": 2.4,
+        "fat_g": 1.6,
+        "carbohydrate_g": 0.5,
+        "fibre_aoac_g": 0.5
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "ml",
+          "grams_per_unit": 0.99,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "0.99"
+        },
+        {
+          "unit": "metric_tsp",
+          "grams_per_unit": 4.95,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "0.99"
+        },
+        {
+          "unit": "metric_tbsp",
+          "grams_per_unit": 14.85,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "0.99"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "12-524",
+        "original_name": "Milk, soya, non-dairy alternative to milk, unsweetened, fortified",
+        "proximates_row": 1680,
+        "factors_row": 1680,
+        "energy_cell": "M1680",
+        "raw_energy_value": "26"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "yogurt",
+      "name": {
+        "en": "Plain low-fat yogurt",
+        "es": "Yogur natural bajo en grasa"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "dairy",
+      "variety_key": "yogurt",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 57.0,
+        "protein_g": 4.8,
+        "fat_g": 1.0,
+        "carbohydrate_g": 7.8,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "ml",
+          "grams_per_unit": 1.02,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "1.02"
+        },
+        {
+          "unit": "metric_tsp",
+          "grams_per_unit": 5.1,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "1.02"
+        },
+        {
+          "unit": "metric_tbsp",
+          "grams_per_unit": 15.3,
+          "basis": "cofid_specific_gravity_approximate_g_per_ml",
+          "source_column": "I",
+          "source_value": "1.02"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "12-379",
+        "original_name": "Yogurt, low fat, plain",
+        "proximates_row": 2878,
+        "factors_row": 2878,
+        "energy_cell": "M2878",
+        "raw_energy_value": "57"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegetarian"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "chicken",
+      "name": {
+        "en": "Chicken light meat, raw, boneless and skinless",
+        "es": "Carne blanca de pollo cruda, sin piel ni hueso"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "meat",
+      "variety_key": "chicken",
+      "dietary_patterns": [
+        "omnivore"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 106.0,
+        "protein_g": 24.0,
+        "fat_g": 1.1,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "18-290",
+        "original_name": "Chicken, light meat, raw",
+        "proximates_row": 702,
+        "factors_row": 702,
+        "energy_cell": "M702",
+        "raw_energy_value": "106"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "turkey",
+      "name": {
+        "en": "Turkey light meat, raw, boneless and skinless",
+        "es": "Carne blanca de pavo cruda, sin piel ni hueso"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "meat",
+      "variety_key": "turkey",
+      "dietary_patterns": [
+        "omnivore"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 105.0,
+        "protein_g": 24.4,
+        "fat_g": 0.8,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "18-349",
+        "original_name": "Turkey, light meat, raw",
+        "proximates_row": 2776,
+        "factors_row": 2776,
+        "energy_cell": "M2776",
+        "raw_energy_value": "105"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "beef",
+      "name": {
+        "en": "Extra-lean beef mince, raw",
+        "es": "Carne picada de ternera extramagra, cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "meat",
+      "variety_key": "beef",
+      "dietary_patterns": [
+        "omnivore"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 130.0,
+        "protein_g": 21.9,
+        "fat_g": 4.2,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "18-508",
+        "original_name": "Beef, mince, raw, extra lean",
+        "proximates_row": 218,
+        "factors_row": 218,
+        "energy_cell": "M218",
+        "raw_energy_value": "130"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "pork",
+      "name": {
+        "en": "Lean pork fillet medallions, raw",
+        "es": "Medallones magros de solomillo de cerdo, crudos"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "meat",
+      "variety_key": "pork",
+      "dietary_patterns": [
+        "omnivore"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 96.0,
+        "protein_g": 22.8,
+        "fat_g": 0.5,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "18-510",
+        "original_name": "Pork, fillet medallions, raw, lean",
+        "proximates_row": 2117,
+        "factors_row": 2117,
+        "energy_cell": "M2117",
+        "raw_energy_value": "96"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "salmon",
+      "name": {
+        "en": "Farmed salmon flesh, raw, boneless",
+        "es": "Salmón de acuicultura crudo, sin espinas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "fish",
+      "variety_key": "salmon",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 217.0,
+        "protein_g": 20.4,
+        "fat_g": 15.0,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.2
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "16-356",
+        "original_name": "Salmon, farmed, flesh only, raw",
+        "proximates_row": 2422,
+        "factors_row": 2422,
+        "energy_cell": "M2422",
+        "raw_energy_value": "217"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "cod",
+      "name": {
+        "en": "Cod flesh, raw, boneless",
+        "es": "Bacalao crudo sin espinas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "fish",
+      "variety_key": "cod",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 75.0,
+        "protein_g": 17.5,
+        "fat_g": 0.6,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "16-372",
+        "original_name": "Cod, flesh only, raw",
+        "proximates_row": 799,
+        "factors_row": 799,
+        "energy_cell": "M799",
+        "raw_energy_value": "75"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "prawns",
+      "name": {
+        "en": "Raw king prawns, edible portion",
+        "es": "Langostinos crudos, parte comestible"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "shellfish",
+      "variety_key": "prawn",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 77.0,
+        "protein_g": 17.6,
+        "fat_g": 0.7,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "16-387",
+        "original_name": "Prawns, king, raw",
+        "proximates_row": 2247,
+        "factors_row": 2247,
+        "energy_cell": "M2247",
+        "raw_energy_value": "77"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "tuna",
+      "name": {
+        "en": "Tuna canned in brine, drained",
+        "es": "Atún en salmuera, escurrido"
+      },
+      "state": "canned_drained",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "fish",
+      "variety_key": "tuna",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 109.0,
+        "protein_g": 24.9,
+        "fat_g": 1.0,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "16-416",
+        "original_name": "Tuna, canned in brine, drained",
+        "proximates_row": 2761,
+        "factors_row": 2761,
+        "energy_cell": "M2761",
+        "raw_energy_value": "109"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "sardines",
+      "name": {
+        "en": "Sardines canned in olive oil, drained",
+        "es": "Sardinas en aceite de oliva, escurridas"
+      },
+      "state": "canned_drained",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "fish",
+      "variety_key": "sardine",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 220.0,
+        "protein_g": 23.3,
+        "fat_g": 14.1,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "16-440",
+        "original_name": "Sardines, canned in olive oil, drained",
+        "proximates_row": 2450,
+        "factors_row": 2450,
+        "energy_cell": "M2450",
+        "raw_energy_value": "220"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "lentils_red",
+      "name": {
+        "en": "Red split lentils, dry",
+        "es": "Lentejas rojas partidas, secas"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "lentil",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 311.0,
+        "protein_g": 25.6,
+        "fat_g": 1.8,
+        "carbohydrate_g": 51.2,
+        "fibre_aoac_g": 17.4
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-657",
+        "original_name": "Lentils, red, split, dried, raw",
+        "proximates_row": 1555,
+        "factors_row": 1555,
+        "energy_cell": "M1555",
+        "raw_energy_value": "311"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_lentil",
+        "soak_minutes": 0,
+        "additional_cook_minutes_range": [
+          20,
+          40
+        ],
+        "instructions": {
+          "en": "Weigh dry and rinse. Cook in plenty of water until fully tender, following the packet; red split lentils usually soften sooner than whole lentils. No cooked-weight conversion is assumed.",
+          "es": "Pesa en seco y enjuaga. Cuece en abundante agua hasta que estén completamente tiernas, siguiendo el envase; las lentejas rojas partidas suelen ablandarse antes que las enteras. No se presupone ninguna conversión de peso cocido."
+        }
+      }
+    },
+    {
+      "id": "lentils_green",
+      "name": {
+        "en": "Green/brown lentils, dry",
+        "es": "Lentejas verdes o pardinas, secas"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "lentil",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 297.0,
+        "protein_g": 24.3,
+        "fat_g": 1.9,
+        "carbohydrate_g": 48.8,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-089",
+        "original_name": "Lentils, green and brown, whole, dried, raw",
+        "proximates_row": 1553,
+        "factors_row": 1553,
+        "energy_cell": "M1553",
+        "raw_energy_value": "297"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_lentil",
+        "soak_minutes": 0,
+        "additional_cook_minutes_range": [
+          20,
+          40
+        ],
+        "instructions": {
+          "en": "Weigh dry and rinse. Cook in plenty of water until fully tender, following the packet; red split lentils usually soften sooner than whole lentils. No cooked-weight conversion is assumed.",
+          "es": "Pesa en seco y enjuaga. Cuece en abundante agua hasta que estén completamente tiernas, siguiendo el envase; las lentejas rojas partidas suelen ablandarse antes que las enteras. No se presupone ninguna conversión de peso cocido."
+        }
+      }
+    },
+    {
+      "id": "chickpeas",
+      "name": {
+        "en": "Whole chickpeas, dry",
+        "es": "Garbanzos enteros secos"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "chickpea",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 320.0,
+        "protein_g": 21.3,
+        "fat_g": 5.4,
+        "carbohydrate_g": 49.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-074",
+        "original_name": "Beans, chick peas, Kabuli, whole, dried, raw",
+        "proximates_row": 140,
+        "factors_row": 140,
+        "energy_cell": "M140",
+        "raw_energy_value": "320"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_legume",
+        "soak_minutes": 720,
+        "additional_cook_minutes_range": [
+          60,
+          120
+        ],
+        "instructions": {
+          "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+          "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+        }
+      }
+    },
+    {
+      "id": "beans_white",
+      "name": {
+        "en": "Haricot beans, dry",
+        "es": "Alubias blancas secas"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "white_bean",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 286.0,
+        "protein_g": 21.4,
+        "fat_g": 1.6,
+        "carbohydrate_g": 49.7,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-086",
+        "original_name": "Beans, haricot, whole, dried, raw",
+        "proximates_row": 147,
+        "factors_row": 147,
+        "energy_cell": "M147",
+        "raw_energy_value": "286"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_legume",
+        "soak_minutes": 720,
+        "additional_cook_minutes_range": [
+          60,
+          120
+        ],
+        "instructions": {
+          "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+          "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+        }
+      }
+    },
+    {
+      "id": "beans_kidney",
+      "name": {
+        "en": "Red kidney beans, dry",
+        "es": "Alubias rojas secas"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "kidney_bean",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 266.0,
+        "protein_g": 22.1,
+        "fat_g": 1.4,
+        "carbohydrate_g": 44.1,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-109",
+        "original_name": "Beans, red kidney, dried, raw",
+        "proximates_row": 162,
+        "factors_row": 162,
+        "energy_cell": "M162",
+        "raw_energy_value": "266"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_legume",
+        "soak_minutes": 720,
+        "additional_cook_minutes_range": [
+          60,
+          120
+        ],
+        "instructions": {
+          "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+          "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+        }
+      }
+    },
+    {
+      "id": "beans_blackeye",
+      "name": {
+        "en": "Black-eyed beans, dry",
+        "es": "Alubias carillas secas"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "blackeye_bean",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 311.0,
+        "protein_g": 23.5,
+        "fat_g": 1.6,
+        "carbohydrate_g": 54.1,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-062",
+        "original_name": "Beans, blackeye, whole, dried, raw",
+        "proximates_row": 128,
+        "factors_row": 128,
+        "energy_cell": "M128",
+        "raw_energy_value": "311"
+      },
+      "shopping_policy": "include",
+      "preparation": {
+        "kind": "dry_legume",
+        "soak_minutes": 720,
+        "additional_cook_minutes_range": [
+          60,
+          120
+        ],
+        "instructions": {
+          "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+          "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+        }
+      }
+    },
+    {
+      "id": "tofu",
+      "name": {
+        "en": "Plain steamed tofu (source-specific)",
+        "es": "Tofu natural al vapor (referencia específica)"
+      },
+      "state": "steamed_ready_to_use",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "tofu",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 73.0,
+        "protein_g": 8.1,
+        "fat_g": 4.2,
+        "carbohydrate_g": 0.7,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-570",
+        "original_name": "Tofu, soya bean, steamed",
+        "proximates_row": 2719,
+        "factors_row": 2719,
+        "energy_cell": "M2719",
+        "raw_energy_value": "73"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "source_match_note": {
+        "en": "The source describes plain STEAMED tofu (73 kcal/100 g), not every firm tofu brand. Use a matching product or replace its nutrition values before planning.",
+        "es": "La referencia describe tofu natural AL VAPOR (73 kcal/100 g), no cualquier tofu firme comercial. Usa un producto equivalente o actualiza sus valores antes de planificar."
+      },
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "tomato",
+      "name": {
+        "en": "Raw tomato",
+        "es": "Tomate crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "tomato",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 14.0,
+        "protein_g": 0.5,
+        "fat_g": 0.1,
+        "carbohydrate_g": 3.0,
+        "fibre_aoac_g": 1.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-517",
+        "original_name": "Tomatoes, standard, raw",
+        "proximates_row": 2730,
+        "factors_row": 2730,
+        "energy_cell": "M2730",
+        "raw_energy_value": "14"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "tomato_canned",
+      "name": {
+        "en": "Canned tomatoes, whole contents",
+        "es": "Tomate en conserva con su líquido"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "tomato",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 19.0,
+        "protein_g": 1.1,
+        "fat_g": 0.1,
+        "carbohydrate_g": 3.8,
+        "fibre_aoac_g": 0.8
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-530",
+        "original_name": "Tomatoes, canned, whole contents",
+        "proximates_row": 2725,
+        "factors_row": 2725,
+        "energy_cell": "M2725",
+        "raw_energy_value": "19"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "tomato_puree",
+      "name": {
+        "en": "Tomato purée",
+        "es": "Tomate concentrado"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "tomato",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 67.0,
+        "protein_g": 4.4,
+        "fat_g": 0.2,
+        "carbohydrate_g": 12.9,
+        "fibre_aoac_g": 4.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-531",
+        "original_name": "Tomato puree",
+        "proximates_row": 2723,
+        "factors_row": 2723,
+        "energy_cell": "M2723",
+        "raw_energy_value": "67"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "pepper_red",
+      "name": {
+        "en": "Raw red pepper",
+        "es": "Pimiento rojo crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pepper",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 21.0,
+        "protein_g": 0.8,
+        "fat_g": 0.2,
+        "carbohydrate_g": 4.3,
+        "fibre_aoac_g": 2.2
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-524",
+        "original_name": "Pepper, capsicum, red, raw",
+        "proximates_row": 1977,
+        "factors_row": 1977,
+        "energy_cell": "M1977",
+        "raw_energy_value": "21"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "pepper_green",
+      "name": {
+        "en": "Raw green pepper",
+        "es": "Pimiento verde crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pepper",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 15.0,
+        "protein_g": 0.8,
+        "fat_g": 0.3,
+        "carbohydrate_g": 2.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-318",
+        "original_name": "Peppers, capsicum, green, raw",
+        "proximates_row": 1987,
+        "factors_row": 1987,
+        "energy_cell": "M1987",
+        "raw_energy_value": "15"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "onion",
+      "name": {
+        "en": "Raw onion",
+        "es": "Cebolla cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "onion",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 35.0,
+        "protein_g": 1.0,
+        "fat_g": 0.1,
+        "carbohydrate_g": 8.0,
+        "fibre_aoac_g": 2.2
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-499",
+        "original_name": "Onions, raw",
+        "proximates_row": 1820,
+        "factors_row": 1820,
+        "energy_cell": "M1820",
+        "raw_energy_value": "35"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "spring_onion",
+      "name": {
+        "en": "Raw spring onion, bulb and tops",
+        "es": "Cebolleta cruda, bulbo y hojas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "spring_onion",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 23.0,
+        "protein_g": 2.0,
+        "fat_g": 0.5,
+        "carbohydrate_g": 3.0,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-352",
+        "original_name": "Spring onions, bulbs and tops, raw",
+        "proximates_row": 2597,
+        "factors_row": 2597,
+        "energy_cell": "M2597",
+        "raw_energy_value": "23"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "garlic",
+      "name": {
+        "en": "Raw garlic",
+        "es": "Ajo crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "garlic",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 98.0,
+        "protein_g": 7.9,
+        "fat_g": 0.6,
+        "carbohydrate_g": 16.3,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-244",
+        "original_name": "Garlic, raw",
+        "proximates_row": 1208,
+        "factors_row": 1208,
+        "energy_cell": "M1208",
+        "raw_energy_value": "98"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "carrot",
+      "name": {
+        "en": "Raw carrot",
+        "es": "Zanahoria cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "carrot",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 34.0,
+        "protein_g": 0.5,
+        "fat_g": 0.4,
+        "carbohydrate_g": 7.7,
+        "fibre_aoac_g": 3.9
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-496",
+        "original_name": "Carrots, old, raw",
+        "proximates_row": 541,
+        "factors_row": 541,
+        "energy_cell": "M541",
+        "raw_energy_value": "34"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "courgette",
+      "name": {
+        "en": "Raw courgette",
+        "es": "Calabacín crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "courgette",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 16.0,
+        "protein_g": 1.3,
+        "fat_g": 0.2,
+        "carbohydrate_g": 2.3,
+        "fibre_aoac_g": 0.5
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-627",
+        "original_name": "Courgette, raw",
+        "proximates_row": 864,
+        "factors_row": 864,
+        "energy_cell": "M864",
+        "raw_energy_value": "16"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "aubergine",
+      "name": {
+        "en": "Raw aubergine",
+        "es": "Berenjena cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "aubergine",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 15.0,
+        "protein_g": 0.9,
+        "fat_g": 0.4,
+        "carbohydrate_g": 2.2,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-161",
+        "original_name": "Aubergine, raw",
+        "proximates_row": 59,
+        "factors_row": 59,
+        "energy_cell": "M59",
+        "raw_energy_value": "15"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "broccoli",
+      "name": {
+        "en": "Raw broccoli",
+        "es": "Brócoli crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "broccoli",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 34.0,
+        "protein_g": 4.3,
+        "fat_g": 0.6,
+        "carbohydrate_g": 3.2,
+        "fibre_aoac_g": 4.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-502",
+        "original_name": "Broccoli, green, raw",
+        "proximates_row": 454,
+        "factors_row": 454,
+        "energy_cell": "M454",
+        "raw_energy_value": "34"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "cauliflower",
+      "name": {
+        "en": "Raw cauliflower",
+        "es": "Coliflor cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "cauliflower",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 30.0,
+        "protein_g": 2.5,
+        "fat_g": 0.4,
+        "carbohydrate_g": 4.4,
+        "fibre_aoac_g": 1.8
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-512",
+        "original_name": "Cauliflower, raw",
+        "proximates_row": 574,
+        "factors_row": 574,
+        "energy_cell": "M574",
+        "raw_energy_value": "30"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "mushroom",
+      "name": {
+        "en": "Raw white mushrooms",
+        "es": "Champiñones crudos"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "mushroom",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 7.0,
+        "protein_g": 1.0,
+        "fat_g": 0.2,
+        "carbohydrate_g": 0.3,
+        "fibre_aoac_g": 0.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-505",
+        "original_name": "Mushrooms, white, raw",
+        "proximates_row": 1738,
+        "factors_row": 1738,
+        "energy_cell": "M1738",
+        "raw_energy_value": "7"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "spinach",
+      "name": {
+        "en": "Raw baby spinach",
+        "es": "Espinacas baby crudas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "spinach",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 16.0,
+        "protein_g": 2.6,
+        "fat_g": 0.6,
+        "carbohydrate_g": 0.2,
+        "fibre_aoac_g": 1.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-521",
+        "original_name": "Spinach, baby, raw",
+        "proximates_row": 2586,
+        "factors_row": 2586,
+        "energy_cell": "M2586",
+        "raw_energy_value": "16"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "potato",
+      "name": {
+        "en": "Raw peeled potato",
+        "es": "Patata cruda pelada"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "potato",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 82.0,
+        "protein_g": 1.9,
+        "fat_g": 0.1,
+        "carbohydrate_g": 19.6,
+        "fibre_aoac_g": 2.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-489",
+        "original_name": "Potatoes, old, raw, flesh only",
+        "proximates_row": 2235,
+        "factors_row": 2235,
+        "energy_cell": "M2235",
+        "raw_energy_value": "82"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "sweet_potato",
+      "name": {
+        "en": "Raw sweet potato flesh",
+        "es": "Boniato crudo pelado"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "sweet_potato",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 87.0,
+        "protein_g": 1.2,
+        "fat_g": 0.3,
+        "carbohydrate_g": 21.3,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-463",
+        "original_name": "Sweet potato, raw, flesh only",
+        "proximates_row": 2650,
+        "factors_row": 2650,
+        "energy_cell": "M2650",
+        "raw_energy_value": "87"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "squash",
+      "name": {
+        "en": "Raw butternut squash flesh",
+        "es": "Calabaza cacahuete cruda pelada"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "squash",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 36.0,
+        "protein_g": 1.1,
+        "fat_g": 0.1,
+        "carbohydrate_g": 8.3,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-355",
+        "original_name": "Squash, butternut, raw",
+        "proximates_row": 2604,
+        "factors_row": 2604,
+        "energy_cell": "M2604",
+        "raw_energy_value": "36"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "green_beans",
+      "name": {
+        "en": "Raw green beans",
+        "es": "Judías verdes crudas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "green_bean",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 24.0,
+        "protein_g": 2.1,
+        "fat_g": 0.4,
+        "carbohydrate_g": 3.1,
+        "fibre_aoac_g": 3.4
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-514",
+        "original_name": "Beans, green, raw",
+        "proximates_row": 144,
+        "factors_row": 144,
+        "energy_cell": "M144",
+        "raw_energy_value": "24"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "peas",
+      "name": {
+        "en": "Frozen peas, uncooked",
+        "es": "Guisantes congelados sin cocinar"
+      },
+      "state": "frozen_uncooked",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pea",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 68.0,
+        "protein_g": 5.3,
+        "fat_g": 0.7,
+        "carbohydrate_g": 10.7,
+        "fibre_aoac_g": 5.3
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-527",
+        "original_name": "Peas, frozen, raw",
+        "proximates_row": 1961,
+        "factors_row": 1961,
+        "energy_cell": "M1961",
+        "raw_energy_value": "68"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "cucumber",
+      "name": {
+        "en": "Raw cucumber with skin",
+        "es": "Pepino crudo con piel"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "cucumber",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 14.0,
+        "protein_g": 1.0,
+        "fat_g": 0.6,
+        "carbohydrate_g": 1.2,
+        "fibre_aoac_g": 0.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-523",
+        "original_name": "Cucumber, raw, flesh and skin",
+        "proximates_row": 907,
+        "factors_row": 907,
+        "energy_cell": "M907",
+        "raw_energy_value": "14"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "lettuce",
+      "name": {
+        "en": "Raw lettuce",
+        "es": "Lechuga cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "lettuce",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 11.0,
+        "protein_g": 1.2,
+        "fat_g": 0.1,
+        "carbohydrate_g": 1.4,
+        "fibre_aoac_g": 1.5
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-520",
+        "original_name": "Lettuce, average, raw",
+        "proximates_row": 1556,
+        "factors_row": 1556,
+        "energy_cell": "M1556",
+        "raw_energy_value": "11"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "rocket",
+      "name": {
+        "en": "Raw rocket",
+        "es": "Rúcula cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "rocket",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 18.0,
+        "protein_g": 3.6,
+        "fat_g": 0.4,
+        "carbohydrate_g": null,
+        "fibre_aoac_g": 1.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-522",
+        "original_name": "Rocket, raw",
+        "proximates_row": 2386,
+        "factors_row": 2386,
+        "energy_cell": "M2386",
+        "raw_energy_value": "18"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "leek",
+      "name": {
+        "en": "Raw leek",
+        "es": "Puerro crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "leek",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 23.0,
+        "protein_g": 1.5,
+        "fat_g": 0.2,
+        "carbohydrate_g": 4.1,
+        "fibre_aoac_g": 2.8
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-624",
+        "original_name": "Leeks, raw",
+        "proximates_row": 1525,
+        "factors_row": 1525,
+        "energy_cell": "M1525",
+        "raw_energy_value": "23"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "celery",
+      "name": {
+        "en": "Raw celery",
+        "es": "Apio crudo"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "celery",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 9.0,
+        "protein_g": 0.5,
+        "fat_g": 0.1,
+        "carbohydrate_g": 1.4,
+        "fibre_aoac_g": 1.5
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-636",
+        "original_name": "Celery, raw",
+        "proximates_row": 580,
+        "factors_row": 580,
+        "energy_cell": "M580",
+        "raw_energy_value": "9"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "avocado",
+      "name": {
+        "en": "Hass avocado flesh",
+        "es": "Pulpa de aguacate Hass"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "avocado",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 171.0,
+        "protein_g": 1.8,
+        "fat_g": 17.4,
+        "carbohydrate_g": 1.8,
+        "fibre_aoac_g": 3.1
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-386",
+        "original_name": "Avocado, Hass, flesh only",
+        "proximates_row": 65,
+        "factors_row": 65,
+        "energy_cell": "M65",
+        "raw_energy_value": "171"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-387",
+        "source_food_name": "Avocado, Hass, flesh only, weighed with skin and stone",
+        "edible_fraction": 0.69,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H66"
+      }
+    },
+    {
+      "id": "apple",
+      "name": {
+        "en": "Raw eating apple, skin on, core removed",
+        "es": "Manzana cruda con piel, sin corazón"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "apple",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 51.0,
+        "protein_g": 0.6,
+        "fat_g": 0.5,
+        "carbohydrate_g": 11.6,
+        "fibre_aoac_g": 1.2
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-319",
+        "original_name": "Apples, eating, raw, flesh and skin",
+        "proximates_row": 30,
+        "factors_row": 30,
+        "energy_cell": "M30",
+        "raw_energy_value": "51"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-346",
+        "source_food_name": "Apples, eating, raw, flesh and skin, weighed with core",
+        "edible_fraction": 0.87,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H31"
+      }
+    },
+    {
+      "id": "banana",
+      "name": {
+        "en": "Banana flesh",
+        "es": "Plátano pelado"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "banana",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 81.0,
+        "protein_g": 1.2,
+        "fat_g": 0.1,
+        "carbohydrate_g": 20.3,
+        "fibre_aoac_g": 1.4
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-318",
+        "original_name": "Bananas, flesh only",
+        "proximates_row": 100,
+        "factors_row": 100,
+        "energy_cell": "M100",
+        "raw_energy_value": "81"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-347",
+        "source_food_name": "Bananas, raw, flesh only, weighed with skin",
+        "edible_fraction": 0.63,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H101"
+      }
+    },
+    {
+      "id": "pear",
+      "name": {
+        "en": "Raw pear, skin on, core removed",
+        "es": "Pera cruda con piel, sin corazón"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pear",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 43.0,
+        "protein_g": 0.3,
+        "fat_g": 0.1,
+        "carbohydrate_g": 10.9,
+        "fibre_aoac_g": 2.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-321",
+        "original_name": "Pears, raw, flesh and skin",
+        "proximates_row": 1953,
+        "factors_row": 1953,
+        "energy_cell": "M1953",
+        "raw_energy_value": "43"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-361",
+        "source_food_name": "Pears, average, flesh and skin, raw, weighed with core and stalk",
+        "edible_fraction": 0.85,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H1945"
+      }
+    },
+    {
+      "id": "orange",
+      "name": {
+        "en": "Orange flesh",
+        "es": "Naranja pelada"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "orange",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 36.0,
+        "protein_g": 0.8,
+        "fat_g": 0.2,
+        "carbohydrate_g": 8.2,
+        "fibre_aoac_g": 1.2
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-327",
+        "original_name": "Oranges, flesh only",
+        "proximates_row": 1826,
+        "factors_row": 1826,
+        "energy_cell": "M1826",
+        "raw_energy_value": "36"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-360",
+        "source_food_name": "Oranges, flesh only, weighed with peel and pips",
+        "edible_fraction": 0.71,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H1827"
+      }
+    },
+    {
+      "id": "kiwi",
+      "name": {
+        "en": "Raw kiwi flesh",
+        "es": "Kiwi crudo pelado"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "kiwi",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 44.0,
+        "protein_g": 0.8,
+        "fat_g": 0.9,
+        "carbohydrate_g": 8.6,
+        "fibre_aoac_g": 2.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-371",
+        "original_name": "Kiwi fruit, flesh only, raw",
+        "proximates_row": 1388,
+        "factors_row": 1388,
+        "energy_cell": "M1388",
+        "raw_energy_value": "44"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-373",
+        "source_food_name": "Kiwi fruit, flesh only, raw, weighed with skin",
+        "edible_fraction": 0.73,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H1389"
+      }
+    },
+    {
+      "id": "strawberry",
+      "name": {
+        "en": "Raw strawberries",
+        "es": "Fresas crudas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "strawberry",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 30.0,
+        "protein_g": 0.6,
+        "fat_g": 0.5,
+        "carbohydrate_g": 6.1,
+        "fibre_aoac_g": 3.8
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-324",
+        "original_name": "Strawberries, raw",
+        "proximates_row": 2624,
+        "factors_row": 2624,
+        "energy_cell": "M2624",
+        "raw_energy_value": "30"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "blueberry",
+      "name": {
+        "en": "Blueberries",
+        "es": "Arándanos"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "blueberry",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 40.0,
+        "protein_g": 0.9,
+        "fat_g": 0.2,
+        "carbohydrate_g": 9.1,
+        "fibre_aoac_g": 1.5
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-325",
+        "original_name": "Blueberries",
+        "proximates_row": 368,
+        "factors_row": 368,
+        "energy_cell": "M368",
+        "raw_energy_value": "40"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "raspberry",
+      "name": {
+        "en": "Raw raspberries",
+        "es": "Frambuesas crudas"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "raspberry",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 25.0,
+        "protein_g": 0.8,
+        "fat_g": 0.3,
+        "carbohydrate_g": 5.1,
+        "fibre_aoac_g": 3.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-375",
+        "original_name": "Raspberries, raw",
+        "proximates_row": 2307,
+        "factors_row": 2307,
+        "energy_cell": "M2307",
+        "raw_energy_value": "25"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "grapes",
+      "name": {
+        "en": "Grapes, average",
+        "es": "Uvas, valor medio"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "grape",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 65.0,
+        "protein_g": 0.7,
+        "fat_g": 0.2,
+        "carbohydrate_g": 16.1,
+        "fibre_aoac_g": 1.3
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-350",
+        "original_name": "Grapes, average",
+        "proximates_row": 1242,
+        "factors_row": 1242,
+        "energy_cell": "M1242",
+        "raw_energy_value": "65"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "mango",
+      "name": {
+        "en": "Ripe mango flesh",
+        "es": "Mango maduro pelado"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "mango",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 48.0,
+        "protein_g": 0.7,
+        "fat_g": 0.6,
+        "carbohydrate_g": 10.7,
+        "fibre_aoac_g": 1.1
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-378",
+        "original_name": "Mangoes, ripe, flesh only, raw",
+        "proximates_row": 1609,
+        "factors_row": 1609,
+        "energy_cell": "M1609",
+        "raw_energy_value": "48"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-379",
+        "source_food_name": "Mangoes, ripe, flesh only, raw, weighed with skin and stone",
+        "edible_fraction": 0.63,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H1610"
+      }
+    },
+    {
+      "id": "melon",
+      "name": {
+        "en": "Melon flesh, average",
+        "es": "Melón pelado, valor medio"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "melon",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 24.0,
+        "protein_g": 0.5,
+        "fat_g": 0.1,
+        "carbohydrate_g": 5.5,
+        "fibre_aoac_g": 1.3
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-354",
+        "original_name": "Melon, flesh only, average",
+        "proximates_row": 1636,
+        "factors_row": 1636,
+        "energy_cell": "M1636",
+        "raw_energy_value": "24"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "purchase_yield_reference": {
+        "source_food_code": "14-355",
+        "source_food_name": "Melon, flesh only, average, weighed whole",
+        "edible_fraction": 0.62,
+        "basis": "cofid_factors_edible_proportion_typical_not_exact",
+        "source_cell": "H1637"
+      }
+    },
+    {
+      "id": "lemon_juice",
+      "name": {
+        "en": "Fresh lemon juice",
+        "es": "Zumo de limón fresco"
+      },
+      "state": "expressed_juice",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "lemon",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 7.0,
+        "protein_g": 0.3,
+        "fat_g": null,
+        "carbohydrate_g": 1.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-277",
+        "original_name": "Lemon juice, fresh",
+        "proximates_row": 1530,
+        "factors_row": 1530,
+        "energy_cell": "M1530",
+        "raw_energy_value": "7"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "lime_juice",
+      "name": {
+        "en": "Fresh lime juice",
+        "es": "Zumo de lima fresco"
+      },
+      "state": "expressed_juice",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "lime",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 9.0,
+        "protein_g": 0.4,
+        "fat_g": 0.1,
+        "carbohydrate_g": 1.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-279",
+        "original_name": "Lime juice, fresh",
+        "proximates_row": 1559,
+        "factors_row": 1559,
+        "energy_cell": "M1559",
+        "raw_energy_value": "9"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "olive_oil",
+      "name": {
+        "en": "Olive oil",
+        "es": "Aceite de oliva"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "olive_oil",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 899.0,
+        "protein_g": null,
+        "fat_g": 99.9,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-038",
+        "original_name": "Oil, olive",
+        "proximates_row": 1786,
+        "factors_row": 1786,
+        "energy_cell": "M1786",
+        "raw_energy_value": "899"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "vinegar",
+      "name": {
+        "en": "Vinegar",
+        "es": "Vinagre"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "vinegar",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 22.0,
+        "protein_g": 0.4,
+        "fat_g": 0.0,
+        "carbohydrate_g": 0.6,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-339",
+        "original_name": "Vinegar",
+        "proximates_row": 2820,
+        "factors_row": 2820,
+        "energy_cell": "M2820",
+        "raw_energy_value": "22"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "soy_sauce",
+      "name": {
+        "en": "Soy sauce",
+        "es": "Salsa de soja"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "soy_sauce",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 79.0,
+        "protein_g": 3.0,
+        "fat_g": null,
+        "carbohydrate_g": 17.9,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-721",
+        "original_name": "Soy sauce, light and dark varieties",
+        "proximates_row": 2581,
+        "factors_row": 2581,
+        "energy_cell": "M2581",
+        "raw_energy_value": "79"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "water",
+      "name": {
+        "en": "Water (distilled-water energy reference)",
+        "es": "Agua (referencia energética: agua destilada)"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "water",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 0.0,
+        "protein_g": 0.0,
+        "fat_g": 0.0,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-377",
+        "original_name": "Water, distilled",
+        "proximates_row": 2826,
+        "factors_row": 2826,
+        "energy_cell": "M2826",
+        "raw_energy_value": "0"
+      },
+      "shopping_policy": "exclude_cooking_water",
+      "preparation": null
+    },
+    {
+      "id": "salt",
+      "name": {
+        "en": "Salt",
+        "es": "Sal"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "salt",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 0.0,
+        "protein_g": 0.0,
+        "fat_g": 0.0,
+        "carbohydrate_g": 0.0,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-367",
+        "original_name": "Salt",
+        "proximates_row": 2436,
+        "factors_row": 2436,
+        "energy_cell": "M2436",
+        "raw_energy_value": "0"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "honey",
+      "name": {
+        "en": "Honey",
+        "es": "Miel"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "honey",
+      "variety_key": "honey",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 288.0,
+        "protein_g": 0.4,
+        "fat_g": 0.0,
+        "carbohydrate_g": 76.4,
+        "fibre_aoac_g": 0.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-050",
+        "original_name": "Honey",
+        "proximates_row": 1323,
+        "factors_row": 1323,
+        "energy_cell": "M1323",
+        "raw_energy_value": "288"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "peanut_butter",
+      "name": {
+        "en": "Smooth peanut butter",
+        "es": "Crema de cacahuete suave"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "peanut",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 607.0,
+        "protein_g": 22.8,
+        "fat_g": 51.8,
+        "carbohydrate_g": 13.1,
+        "fibre_aoac_g": 6.6
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-892",
+        "original_name": "Peanut butter, smooth",
+        "proximates_row": 1938,
+        "factors_row": 1938,
+        "energy_cell": "M1938",
+        "raw_energy_value": "607"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "almond",
+      "name": {
+        "en": "Whole almond kernels",
+        "es": "Almendras sin cáscara"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "almond",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 554.0,
+        "protein_g": 21.2,
+        "fat_g": 49.9,
+        "carbohydrate_g": 5.3,
+        "fibre_aoac_g": 12.5
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-896",
+        "original_name": "Almonds, whole kernels",
+        "proximates_row": 12,
+        "factors_row": 12,
+        "energy_cell": "M12",
+        "raw_energy_value": "554"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "walnut",
+      "name": {
+        "en": "Walnut kernels",
+        "es": "Nueces sin cáscara"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "walnut",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 688.0,
+        "protein_g": 14.7,
+        "fat_g": 68.5,
+        "carbohydrate_g": 3.3,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-879",
+        "original_name": "Walnuts, kernel only",
+        "proximates_row": 2823,
+        "factors_row": 2823,
+        "energy_cell": "M2823",
+        "raw_energy_value": "688"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "pumpkin_seed",
+      "name": {
+        "en": "Pumpkin seeds",
+        "es": "Pipas de calabaza"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "pumpkin_seed",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 565.0,
+        "protein_g": 24.4,
+        "fat_g": 45.6,
+        "carbohydrate_g": 15.2,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-842",
+        "original_name": "Pumpkin seeds",
+        "proximates_row": 2279,
+        "factors_row": 2279,
+        "energy_cell": "M2279",
+        "raw_energy_value": "565"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "sesame",
+      "name": {
+        "en": "Sesame seeds",
+        "es": "Semillas de sésamo"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "sesame",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 598.0,
+        "protein_g": 18.2,
+        "fat_g": 58.0,
+        "carbohydrate_g": 0.9,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-844",
+        "original_name": "Sesame seeds",
+        "proximates_row": 2523,
+        "factors_row": 2523,
+        "energy_cell": "M2523",
+        "raw_energy_value": "598"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "sunflower_seed",
+      "name": {
+        "en": "Sunflower seeds",
+        "es": "Pipas de girasol"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "sunflower_seed",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 576.0,
+        "protein_g": 19.8,
+        "fat_g": 47.5,
+        "carbohydrate_g": 18.6,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-845",
+        "original_name": "Sunflower seeds",
+        "proximates_row": 2637,
+        "factors_row": 2637,
+        "energy_cell": "M2637",
+        "raw_energy_value": "576"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "cocoa",
+      "name": {
+        "en": "Cocoa powder",
+        "es": "Cacao en polvo"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "cocoa",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 312.0,
+        "protein_g": 18.5,
+        "fat_g": 21.7,
+        "carbohydrate_g": 11.5,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "12-545",
+        "original_name": "Cocoa powder",
+        "proximates_row": 782,
+        "factors_row": 782,
+        "energy_cell": "M782",
+        "raw_energy_value": "312"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "raisins",
+      "name": {
+        "en": "Raisins",
+        "es": "Pasas"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "raisin",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 256.0,
+        "protein_g": 3.0,
+        "fat_g": 1.0,
+        "carbohydrate_g": 62.6,
+        "fibre_aoac_g": 2.7
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-393",
+        "original_name": "Raisins, dried",
+        "proximates_row": 2302,
+        "factors_row": 2302,
+        "energy_cell": "M2302",
+        "raw_energy_value": "256"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "basil",
+      "name": {
+        "en": "Fresh basil",
+        "es": "Albahaca fresca"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "basil",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 40.0,
+        "protein_g": 3.1,
+        "fat_g": 0.8,
+        "carbohydrate_g": 5.1,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-804",
+        "original_name": "Basil, fresh",
+        "proximates_row": 113,
+        "factors_row": 113,
+        "energy_cell": "M113",
+        "raw_energy_value": "40"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "basil_dried",
+      "name": {
+        "en": "Dried ground basil",
+        "es": "Albahaca seca molida"
+      },
+      "state": "dry",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "basil",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 251.0,
+        "protein_g": 14.4,
+        "fat_g": 4.0,
+        "carbohydrate_g": 43.2,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-805",
+        "original_name": "Basil, dried, ground",
+        "proximates_row": 112,
+        "factors_row": 112,
+        "energy_cell": "M112",
+        "raw_energy_value": "251"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "parsley",
+      "name": {
+        "en": "Fresh parsley",
+        "es": "Perejil fresco"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "parsley",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 34.0,
+        "protein_g": 3.0,
+        "fat_g": 1.3,
+        "carbohydrate_g": 2.7,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-844",
+        "original_name": "Parsley, fresh",
+        "proximates_row": 1871,
+        "factors_row": 1871,
+        "energy_cell": "M1871",
+        "raw_energy_value": "34"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "mint",
+      "name": {
+        "en": "Fresh mint",
+        "es": "Menta fresca"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "mint",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 43.0,
+        "protein_g": 3.8,
+        "fat_g": 0.7,
+        "carbohydrate_g": 5.3,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-836",
+        "original_name": "Mint, fresh",
+        "proximates_row": 1695,
+        "factors_row": 1695,
+        "energy_cell": "M1695",
+        "raw_energy_value": "43"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "dill",
+      "name": {
+        "en": "Fresh dill",
+        "es": "Eneldo fresco"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "dill",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 25.0,
+        "protein_g": 3.7,
+        "fat_g": 0.8,
+        "carbohydrate_g": 0.9,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-824",
+        "original_name": "Dill, fresh",
+        "proximates_row": 1041,
+        "factors_row": 1041,
+        "energy_cell": "M1041",
+        "raw_energy_value": "25"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "coriander",
+      "name": {
+        "en": "Fresh coriander leaves",
+        "es": "Cilantro fresco"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "coriander",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 18.0,
+        "protein_g": 2.1,
+        "fat_g": 0.5,
+        "carbohydrate_g": 1.2,
+        "fibre_aoac_g": 2.8
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-888",
+        "original_name": "Coriander leaves, fresh",
+        "proximates_row": 846,
+        "factors_row": 846,
+        "energy_cell": "M846",
+        "raw_energy_value": "18"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "ginger",
+      "name": {
+        "en": "Fresh ginger",
+        "es": "Jengibre fresco"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "ginger",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 44.0,
+        "protein_g": 1.8,
+        "fat_g": 0.8,
+        "carbohydrate_g": 8.1,
+        "fibre_aoac_g": 2.0
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-890",
+        "original_name": "Ginger, fresh",
+        "proximates_row": 1219,
+        "factors_row": 1219,
+        "energy_cell": "M1219",
+        "raw_energy_value": "44"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "chilli",
+      "name": {
+        "en": "Raw red chilli",
+        "es": "Guindilla roja cruda"
+      },
+      "state": "raw_edible",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "chilli",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 26.0,
+        "protein_g": 1.8,
+        "fat_g": 0.3,
+        "carbohydrate_g": 4.2,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "13-317",
+        "original_name": "Peppers, capsicum, chilli, red, raw",
+        "proximates_row": 1985,
+        "factors_row": 1985,
+        "energy_cell": "M1985",
+        "raw_energy_value": "26"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    },
+    {
+      "id": "coconut_milk",
+      "name": {
+        "en": "Coconut milk, retail",
+        "es": "Leche de coco comercial"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "coconut_milk",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 169.0,
+        "protein_g": 1.1,
+        "fat_g": 16.9,
+        "carbohydrate_g": 3.3,
+        "fibre_aoac_g": 0.4
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "14-889",
+        "original_name": "Coconut milk, retail",
+        "proximates_row": 789,
+        "factors_row": 789,
+        "energy_cell": "M789",
+        "raw_energy_value": "169"
+      },
+      "shopping_policy": "include",
+      "preparation": null,
+      "dietary_label_condition": {
+        "for_patterns": [
+          "vegan"
+        ],
+        "status": "requires_actual_product_label_confirmation",
+        "requirement": {
+          "en": "Choose a source-matching product whose label confirms the selected dietary pattern; generic nutrition data do not certify every brand.",
+          "es": "Elige un producto que corresponda a la referencia y cuya etiqueta confirme el patrón alimentario elegido; los datos genéricos no certifican todas las marcas."
+        }
+      }
+    },
+    {
+      "id": "mustard",
+      "name": {
+        "en": "Smooth mustard",
+        "es": "Mostaza suave"
+      },
+      "state": "as_sold",
+      "quantity_basis": "edible_reference_weight",
+      "food_class": "plant",
+      "variety_key": "mustard",
+      "dietary_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ],
+      "nutrition_per_100g": {
+        "energy_kcal": 139.0,
+        "protein_g": 7.1,
+        "fat_g": 8.2,
+        "carbohydrate_g": 9.7,
+        "fibre_aoac_g": null
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1,
+          "basis": "mass_definition"
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000,
+          "basis": "mass_definition"
+        }
+      ],
+      "default_unit": "g",
+      "source": {
+        "dataset": "cofid_2021",
+        "food_code": "17-364",
+        "original_name": "Mustard, smooth",
+        "proximates_row": 1749,
+        "factors_row": 1749,
+        "energy_cell": "M1749",
+        "raw_energy_value": "139"
+      },
+      "shopping_policy": "include",
+      "preparation": null
+    }
+  ]
+}

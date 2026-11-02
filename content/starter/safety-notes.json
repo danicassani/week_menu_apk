@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0.0",
+  "notes": [
+    {
+      "id": "weigh_and_prepare",
+      "en": "Wash produce and keep raw animal ingredients separate from ready-to-eat food. Weigh edible raw/dry portions or the stated product; all listed oils and dressings count. Complete shared preparations once, not again for each reference to them.",
+      "es": "Lava los vegetales y separa los ingredientes animales crudos de los alimentos listos para comer. Pesa las partes comestibles en crudo/seco o el producto indicado; todos los aceites y aliños indicados cuentan. Completa las preparaciones comunes una vez, sin repetirlas cada vez que se mencionen.",
+      "source_urls": ["https://www.food.gov.uk/safety-hygiene/cooking-your-food"]
+    },
+    {
+      "id": "cook_thoroughly",
+      "en": "Cook raw animal ingredients thoroughly. A safe core-temperature combination is 75°C for 30 seconds, or an equivalent such as 70°C for 2 minutes. Check the thickest part with a clean thermometer; times alone do not verify doneness. Follow longer product instructions where required.",
+      "es": "Cocina completamente los ingredientes animales crudos. Una combinación segura es 75 °C en el centro durante 30 segundos, o una equivalente como 70 °C durante 2 minutos. Comprueba la parte más gruesa con un termómetro limpio; el tiempo por sí solo no confirma la cocción. Sigue instrucciones más largas del producto cuando corresponda.",
+      "source_urls": ["https://www.food.gov.uk/sites/default/files/media/document/prove-it.pdf"]
+    },
+    {
+      "id": "rice_storage",
+      "en": "Serve cooked rice promptly. Cool leftovers quickly, ideally within one hour, then refrigerate and use within 24 hours. Reheat rice only once and until steaming hot throughout; follow current storage guidance and product instructions.",
+      "es": "Sirve el arroz cocido enseguida. Enfría las sobras rápidamente, idealmente en una hora, refrigera y consume en 24 horas. Recalienta el arroz una sola vez y hasta que esté muy caliente por completo; sigue las recomendaciones actuales de conservación y las del producto.",
+      "source_urls": ["https://www.gov.uk/government/publications/home-food-fact-checker/home-food-fact-checker"]
+    }
+  ]
+}

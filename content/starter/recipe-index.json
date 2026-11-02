@@ -1,0 +1,756 @@
+{
+  "recipes": [
+    {
+      "id": "b01",
+      "en": "Apple and ginger porridge",
+      "es": "Gachas de avena con manzana y jengibre",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 413.38,
+      "with_dessert_kcal": 413.38,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b02",
+      "en": "Banana and peanut oat bowl",
+      "es": "Bol de avena con plátano y cacahuete",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 384.2,
+      "with_dessert_kcal": 384.2,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "b03",
+      "en": "Berry yogurt overnight oats",
+      "es": "Avena reposada con yogur y frutos rojos",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 370.2,
+      "with_dessert_kcal": 370.2,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b04",
+      "en": "Pear, walnut and yogurt bowl",
+      "es": "Bol de pera, nueces y yogur",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 392.3,
+      "with_dessert_kcal": 392.3,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b05",
+      "en": "Avocado and egg toast",
+      "es": "Tostada de aguacate y huevo",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 364.15,
+      "with_dessert_kcal": 364.15,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b06",
+      "en": "Tomato and seed toast",
+      "es": "Tostada de tomate y semillas",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 335.05,
+      "with_dessert_kcal": 335.05,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "b07",
+      "en": "Spinach scramble with toast",
+      "es": "Revuelto de espinacas con tostada",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 330.15,
+      "with_dessert_kcal": 330.15,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b08",
+      "en": "Mushroom and parsley omelette",
+      "es": "Tortilla de champiñones y perejil",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 315.57,
+      "with_dessert_kcal": 315.57,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b09",
+      "en": "Banana oat pancakes",
+      "es": "Tortitas de avena y plátano",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 394.83,
+      "with_dessert_kcal": 394.83,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b10",
+      "en": "Mango and sunflower yogurt bowl",
+      "es": "Bol de yogur con mango y girasol",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 377.4,
+      "with_dessert_kcal": 377.4,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "b11",
+      "en": "Cocoa banana porridge",
+      "es": "Gachas de cacao y plátano",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 394.5,
+      "with_dessert_kcal": 394.5,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "b12",
+      "en": "Chickpea and tomato toast",
+      "es": "Tostada de garbanzos y tomate",
+      "meal_types": [
+        "breakfast"
+      ],
+      "base_kcal": 318.87,
+      "with_dessert_kcal": 318.87,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m01",
+      "en": "Chickpea and spinach tomato stew",
+      "es": "Guiso de garbanzos con tomate y espinacas",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 481.39,
+      "with_dessert_kcal": 588.19,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m02",
+      "en": "Ginger red-lentil dal",
+      "es": "Dal de lentejas rojas y jengibre",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 537.25,
+      "with_dessert_kcal": 646.65,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m03",
+      "en": "White bean and vegetable casserole",
+      "es": "Cazuela de alubias blancas y verduras",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 447.65,
+      "with_dessert_kcal": 512.59,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m04",
+      "en": "Red bean and pepper quinoa bowl",
+      "es": "Bol de quinoa con alubias rojas y pimiento",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 471.41,
+      "with_dessert_kcal": 567.01,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m05",
+      "en": "Ginger tofu and pasta ribbons",
+      "es": "Tofu al jengibre con pasta",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 499.85,
+      "with_dessert_kcal": 635.81,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m06",
+      "en": "Mushroom and leek barley",
+      "es": "Cebada con champiñones y puerro",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 394.41,
+      "with_dessert_kcal": 438.47,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m07",
+      "en": "Roasted squash couscous",
+      "es": "Cuscús con calabaza asada",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 518.54,
+      "with_dessert_kcal": 665.34,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m08",
+      "en": "Lentil and tomato spaghetti",
+      "es": "Espaguetis con lentejas y tomate",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 510.89,
+      "with_dessert_kcal": 590.89,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m09",
+      "en": "Chickpea and aubergine ginger curry",
+      "es": "Garbanzos con berenjena y jengibre",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 575.01,
+      "with_dessert_kcal": 681.81,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m10",
+      "en": "Eggs in tomato and pepper sauce",
+      "es": "Huevos con salsa de tomate y pimiento",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 419.81,
+      "with_dessert_kcal": 529.21,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "m11",
+      "en": "Lighter potato tortilla",
+      "es": "Tortilla de patata con poco aceite",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 437.62,
+      "with_dessert_kcal": 502.56,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "m12",
+      "en": "Spinach quinoa with almonds",
+      "es": "Quinoa con espinacas y almendras",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 415.29,
+      "with_dessert_kcal": 510.89,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m13",
+      "en": "Roasted pepper and white bean pitta",
+      "es": "Pita de pimiento asado y alubias blancas",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 435.59,
+      "with_dessert_kcal": 571.55,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m14",
+      "en": "Pea and mint barley bowl",
+      "es": "Bol de cebada, guisantes y menta",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 487.04,
+      "with_dessert_kcal": 531.1,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m15",
+      "en": "Beef and pepper bulgur skillet",
+      "es": "Sartén de ternera, pimiento y bulgur",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 523.11,
+      "with_dessert_kcal": 669.91,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m16",
+      "en": "Turkey oat meatballs with pasta",
+      "es": "Albóndigas de pavo y avena con pasta",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 525.19,
+      "with_dessert_kcal": 605.19,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m17",
+      "en": "Lemon chicken with potatoes and broccoli",
+      "es": "Pollo al limón con patata y brócoli",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 444.11,
+      "with_dessert_kcal": 550.91,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m18",
+      "en": "Chicken and pepper rice skillet",
+      "es": "Arroz con pollo y pimientos",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 472.99,
+      "with_dessert_kcal": 582.39,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m19",
+      "en": "Pork and apple with brown rice",
+      "es": "Cerdo con manzana y arroz integral",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 513.9,
+      "with_dessert_kcal": 578.84,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m20",
+      "en": "Dill salmon with potatoes and green beans",
+      "es": "Salmón al eneldo con patatas y judías verdes",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 534.97,
+      "with_dessert_kcal": 630.57,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m21",
+      "en": "Cod with chickpea tomato sauce",
+      "es": "Bacalao con salsa de tomate y garbanzos",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 400.41,
+      "with_dessert_kcal": 536.37,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m22",
+      "en": "Garlic prawn rice with peas",
+      "es": "Arroz con langostinos al ajo y guisantes",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 488.82,
+      "with_dessert_kcal": 532.88,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m23",
+      "en": "Tuna, tomato and lemon pasta",
+      "es": "Pasta con atún, tomate y limón",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 450.5,
+      "with_dessert_kcal": 597.3,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m24",
+      "en": "Sardine and tomato toast",
+      "es": "Tostadas de sardinas y tomate",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 470.99,
+      "with_dessert_kcal": 550.99,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m25",
+      "en": "Beef and mushroom yogurt skillet",
+      "es": "Ternera con champiñones y yogur",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 513.92,
+      "with_dessert_kcal": 620.72,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m26",
+      "en": "Turkey, spinach and quinoa bowl",
+      "es": "Bol de pavo, espinacas y quinoa",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 443.12,
+      "with_dessert_kcal": 552.52,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m27",
+      "en": "Mediterranean chicken couscous",
+      "es": "Cuscús mediterráneo con pollo",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 468.34,
+      "with_dessert_kcal": 533.28,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m28",
+      "en": "Pork and sweet pepper bulgur",
+      "es": "Bulgur con cerdo y pimiento dulce",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 485.71,
+      "with_dessert_kcal": 581.31,
+      "base_patterns": [
+        "omnivore"
+      ]
+    },
+    {
+      "id": "m29",
+      "en": "Salmon and tomato rice bowl",
+      "es": "Bol de arroz con salmón y tomate",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 567.37,
+      "with_dessert_kcal": 703.33,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m30",
+      "en": "Cod, potato and pea tray bake",
+      "es": "Bandeja de bacalao, patata y guisantes",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 453.06,
+      "with_dessert_kcal": 497.12,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian"
+      ]
+    },
+    {
+      "id": "m31",
+      "en": "Roasted cauliflower and lentil salad",
+      "es": "Ensalada de coliflor asada y lentejas",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 383.92,
+      "with_dessert_kcal": 530.72,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m32",
+      "en": "Broccoli and sesame tofu quinoa",
+      "es": "Quinoa con brócoli, tofu y sésamo",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 507.45,
+      "with_dessert_kcal": 587.45,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m33",
+      "en": "Black-eyed beans with sweet potato",
+      "es": "Alubias carillas con boniato",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 491.53,
+      "with_dessert_kcal": 598.33,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m34",
+      "en": "Creamy pea and spinach pasta",
+      "es": "Pasta cremosa con guisantes y espinacas",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 461.19,
+      "with_dessert_kcal": 570.59,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian"
+      ]
+    },
+    {
+      "id": "m35",
+      "en": "Mushroom and chickpea stuffed peppers",
+      "es": "Pimientos rellenos de champiñones y garbanzos",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 430.47,
+      "with_dessert_kcal": 495.41,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    },
+    {
+      "id": "m36",
+      "en": "Lentil and courgette potato pie",
+      "es": "Pastel de lentejas, calabacín y patata",
+      "meal_types": [
+        "lunch",
+        "dinner"
+      ],
+      "base_kcal": 526.85,
+      "with_dessert_kcal": 622.45,
+      "base_patterns": [
+        "omnivore",
+        "pescatarian",
+        "vegetarian",
+        "vegan"
+      ]
+    }
+  ]
+}

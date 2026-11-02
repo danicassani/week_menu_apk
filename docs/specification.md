@@ -384,13 +384,13 @@ No unresolved product decision blocks the implementation blueprint. Changing a s
 
 Remaining deliverables belong to the agreed milestones:
 
-1. Exact CoFID and Compendium release manifests, source attribution, applicable activity coverage, and missing-mapping handling.
-2. The actual ingredient subset, units/conversions, main/base variety keys, curated substitution links, and 40–50 bilingual recipes including breakfast.
+1. The [starter food source manifest](../content/starter/source-manifest.json) now pins CoFID 2021 and records attribution/coverage gaps. Compendium activity coverage and its import manifest remain a separate delivery.
+2. The [starter food pack](starter-content.md) now contains 97 ingredients, initial conversions/variety keys, 19 contextual substitution candidates, and 48 bilingual recipes including 12 breakfasts. Household product-label, reference-piece and kitchen review remain; the source/data validator has passed.
 3. Minimalistic screen composition, language/status text, and light/dark accessibility.
 4. Database migrations, application code, and the calculation/permission/history/offline integration checks specified in the technical design.
 5. The initial owner's Google email, OAuth callback configuration, hosting accounts, and deployment configuration when setup is authorized.
 
-These are content, design, setup, and implementation artifacts rather than a new feature questionnaire. Milestone review remains required. No application code, imports, hosting provisioning, or application tests have been completed as part of the document review.
+These are content, design, setup, and implementation artifacts rather than a new feature questionnaire. Milestone review remains required. Starter food preparation and source/data validation are complete as a separate authorized content task; no application code, database import, hosting provisioning or application tests have been completed.
 
 ## 13. Confirmed delivery sequence
 

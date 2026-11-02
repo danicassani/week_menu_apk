@@ -1,0 +1,98 @@
+id,name_en,name_es,source_food_code,source_food_name,state,variety_key,kcal_per_100g,protein_g,fat_g,carbohydrate_g,fibre_aoac_g,source_energy_cell
+oats,Porridge oats,Copos de avena,11-788,"Porridge oats, unfortified",dry,oats,381.0,10.9,8.1,70.7,7.8,M2178
+bread,Wholemeal bread,Pan integral,11-981,"Bread, wholemeal, average",as_sold,bread,217.0,9.4,2.5,42.0,7.0,M415
+pitta,White pitta bread,Pan de pita blanco,11-974,"Bread, pitta, white",as_sold,bread,255.0,9.1,1.3,55.1,2.3,M400
+rice_white,"Basmati rice, dry",Arroz basmati seco,11-857,"Rice, white, basmati, raw",dry,rice,351.0,8.1,0.5,83.7,1.1,M2354
+rice_brown,"Wholegrain brown rice, dry",Arroz integral seco,11-868,"Rice, brown, wholegrain, raw",dry,rice,333.0,7.7,1.5,77.0,3.0,M2341
+rice_risotto,"Arborio rice, dry",Arroz arborio seco,11-878,"Rice, white, Italian Arborio risotto, raw",dry,rice,354.0,6.4,1.0,85.2,1.4,M2356
+pasta,White dried pasta,Pasta blanca seca,11-716,"Pasta, white, dried, raw",dry,pasta,343.0,11.3,1.6,75.6,,M1897
+pasta_wholewheat,Wholewheat dried spaghetti,Espaguetis integrales secos,11-718,"Pasta, wholewheat, spaghetti, dried, raw",dry,pasta,329.0,12.6,2.5,68.3,11.7,M1901
+couscous,"Plain couscous, dry",Cuscús seco,11-901,"Couscous, plain, raw",dry,couscous,364.0,12.0,2.1,79.2,3.7,M868
+bulgur,"Bulgur wheat, dry",Bulgur seco,11-904,"Wheat, bulgur, raw",dry,bulgur,352.0,10.6,2.0,77.8,6.7,M2832
+quinoa,"Quinoa, dry",Quinoa seca,14-843,"Quinoa, raw",dry,quinoa,309.0,13.8,5.0,55.7,7.0,M2292
+barley,"Pearl barley, dry",Cebada perlada seca,11-002,"Barley, pearl, raw",dry,barley,360.0,7.9,1.7,83.6,,M111
+flour,Wholemeal wheat flour,Harina de trigo integral,11-889,"Flour, wheat, wholemeal",dry,wheat_flour,327.0,11.6,2.0,69.9,10.1,M1176
+baking_powder,Baking powder,Levadura química,17-355,Baking powder,as_sold,baking_powder,163.0,5.2,0.0,37.8,0.0,M97
+egg,"Whole chicken egg, raw, without shell","Huevo de gallina crudo, sin cáscara",12-937,"Eggs, chicken, whole, raw",raw_edible,egg,131.0,12.6,9.0,,0.0,M1096
+milk,Semi-skimmed milk,Leche semidesnatada,12-313,"Milk, semi-skimmed, pasteurised, average",as_sold,milk,46.0,3.5,1.7,4.7,0.0,M1669
+soy_milk,Unsweetened fortified soya drink,"Bebida de soja sin azúcar, enriquecida",12-524,"Milk, soya, non-dairy alternative to milk, unsweetened, fortified",as_sold,soya_drink,26.0,2.4,1.6,0.5,0.5,M1680
+yogurt,Plain low-fat yogurt,Yogur natural bajo en grasa,12-379,"Yogurt, low fat, plain",as_sold,yogurt,57.0,4.8,1.0,7.8,,M2878
+chicken,"Chicken light meat, raw, boneless and skinless","Carne blanca de pollo cruda, sin piel ni hueso",18-290,"Chicken, light meat, raw",raw_edible,chicken,106.0,24.0,1.1,0.0,0.0,M702
+turkey,"Turkey light meat, raw, boneless and skinless","Carne blanca de pavo cruda, sin piel ni hueso",18-349,"Turkey, light meat, raw",raw_edible,turkey,105.0,24.4,0.8,0.0,0.0,M2776
+beef,"Extra-lean beef mince, raw","Carne picada de ternera extramagra, cruda",18-508,"Beef, mince, raw, extra lean",raw_edible,beef,130.0,21.9,4.2,0.0,,M218
+pork,"Lean pork fillet medallions, raw","Medallones magros de solomillo de cerdo, crudos",18-510,"Pork, fillet medallions, raw, lean",raw_edible,pork,96.0,22.8,0.5,0.0,0.0,M2117
+salmon,"Farmed salmon flesh, raw, boneless","Salmón de acuicultura crudo, sin espinas",16-356,"Salmon, farmed, flesh only, raw",raw_edible,salmon,217.0,20.4,15.0,0.0,0.2,M2422
+cod,"Cod flesh, raw, boneless",Bacalao crudo sin espinas,16-372,"Cod, flesh only, raw",raw_edible,cod,75.0,17.5,0.6,0.0,0.0,M799
+prawns,"Raw king prawns, edible portion","Langostinos crudos, parte comestible",16-387,"Prawns, king, raw",raw_edible,prawn,77.0,17.6,0.7,0.0,0.0,M2247
+tuna,"Tuna canned in brine, drained","Atún en salmuera, escurrido",16-416,"Tuna, canned in brine, drained",canned_drained,tuna,109.0,24.9,1.0,0.0,0.0,M2761
+sardines,"Sardines canned in olive oil, drained","Sardinas en aceite de oliva, escurridas",16-440,"Sardines, canned in olive oil, drained",canned_drained,sardine,220.0,23.3,14.1,0.0,0.0,M2450
+lentils_red,"Red split lentils, dry","Lentejas rojas partidas, secas",13-657,"Lentils, red, split, dried, raw",dry,lentil,311.0,25.6,1.8,51.2,17.4,M1555
+lentils_green,"Green/brown lentils, dry","Lentejas verdes o pardinas, secas",13-089,"Lentils, green and brown, whole, dried, raw",dry,lentil,297.0,24.3,1.9,48.8,,M1553
+chickpeas,"Whole chickpeas, dry",Garbanzos enteros secos,13-074,"Beans, chick peas, Kabuli, whole, dried, raw",dry,chickpea,320.0,21.3,5.4,49.6,,M140
+beans_white,"Haricot beans, dry",Alubias blancas secas,13-086,"Beans, haricot, whole, dried, raw",dry,white_bean,286.0,21.4,1.6,49.7,,M147
+beans_kidney,"Red kidney beans, dry",Alubias rojas secas,13-109,"Beans, red kidney, dried, raw",dry,kidney_bean,266.0,22.1,1.4,44.1,,M162
+beans_blackeye,"Black-eyed beans, dry",Alubias carillas secas,13-062,"Beans, blackeye, whole, dried, raw",dry,blackeye_bean,311.0,23.5,1.6,54.1,,M128
+tofu,Plain steamed tofu (source-specific),Tofu natural al vapor (referencia específica),13-570,"Tofu, soya bean, steamed",steamed_ready_to_use,tofu,73.0,8.1,4.2,0.7,,M2719
+tomato,Raw tomato,Tomate crudo,13-517,"Tomatoes, standard, raw",raw_edible,tomato,14.0,0.5,0.1,3.0,1.0,M2730
+tomato_canned,"Canned tomatoes, whole contents",Tomate en conserva con su líquido,13-530,"Tomatoes, canned, whole contents",as_sold,tomato,19.0,1.1,0.1,3.8,0.8,M2725
+tomato_puree,Tomato purée,Tomate concentrado,13-531,Tomato puree,as_sold,tomato,67.0,4.4,0.2,12.9,4.7,M2723
+pepper_red,Raw red pepper,Pimiento rojo crudo,13-524,"Pepper, capsicum, red, raw",raw_edible,pepper,21.0,0.8,0.2,4.3,2.2,M1977
+pepper_green,Raw green pepper,Pimiento verde crudo,13-318,"Peppers, capsicum, green, raw",raw_edible,pepper,15.0,0.8,0.3,2.6,,M1987
+onion,Raw onion,Cebolla cruda,13-499,"Onions, raw",raw_edible,onion,35.0,1.0,0.1,8.0,2.2,M1820
+spring_onion,"Raw spring onion, bulb and tops","Cebolleta cruda, bulbo y hojas",13-352,"Spring onions, bulbs and tops, raw",raw_edible,spring_onion,23.0,2.0,0.5,3.0,,M2597
+garlic,Raw garlic,Ajo crudo,13-244,"Garlic, raw",raw_edible,garlic,98.0,7.9,0.6,16.3,,M1208
+carrot,Raw carrot,Zanahoria cruda,13-496,"Carrots, old, raw",raw_edible,carrot,34.0,0.5,0.4,7.7,3.9,M541
+courgette,Raw courgette,Calabacín crudo,13-627,"Courgette, raw",raw_edible,courgette,16.0,1.3,0.2,2.3,0.5,M864
+aubergine,Raw aubergine,Berenjena cruda,13-161,"Aubergine, raw",raw_edible,aubergine,15.0,0.9,0.4,2.2,,M59
+broccoli,Raw broccoli,Brócoli crudo,13-502,"Broccoli, green, raw",raw_edible,broccoli,34.0,4.3,0.6,3.2,4.0,M454
+cauliflower,Raw cauliflower,Coliflor cruda,13-512,"Cauliflower, raw",raw_edible,cauliflower,30.0,2.5,0.4,4.4,1.8,M574
+mushroom,Raw white mushrooms,Champiñones crudos,13-505,"Mushrooms, white, raw",raw_edible,mushroom,7.0,1.0,0.2,0.3,0.7,M1738
+spinach,Raw baby spinach,Espinacas baby crudas,13-521,"Spinach, baby, raw",raw_edible,spinach,16.0,2.6,0.6,0.2,1.0,M2586
+potato,Raw peeled potato,Patata cruda pelada,13-489,"Potatoes, old, raw, flesh only",raw_edible,potato,82.0,1.9,0.1,19.6,2.0,M2235
+sweet_potato,Raw sweet potato flesh,Boniato crudo pelado,13-463,"Sweet potato, raw, flesh only",raw_edible,sweet_potato,87.0,1.2,0.3,21.3,,M2650
+squash,Raw butternut squash flesh,Calabaza cacahuete cruda pelada,13-355,"Squash, butternut, raw",raw_edible,squash,36.0,1.1,0.1,8.3,,M2604
+green_beans,Raw green beans,Judías verdes crudas,13-514,"Beans, green, raw",raw_edible,green_bean,24.0,2.1,0.4,3.1,3.4,M144
+peas,"Frozen peas, uncooked",Guisantes congelados sin cocinar,13-527,"Peas, frozen, raw",frozen_uncooked,pea,68.0,5.3,0.7,10.7,5.3,M1961
+cucumber,Raw cucumber with skin,Pepino crudo con piel,13-523,"Cucumber, raw, flesh and skin",raw_edible,cucumber,14.0,1.0,0.6,1.2,0.7,M907
+lettuce,Raw lettuce,Lechuga cruda,13-520,"Lettuce, average, raw",raw_edible,lettuce,11.0,1.2,0.1,1.4,1.5,M1556
+rocket,Raw rocket,Rúcula cruda,13-522,"Rocket, raw",raw_edible,rocket,18.0,3.6,0.4,,1.7,M2386
+leek,Raw leek,Puerro crudo,13-624,"Leeks, raw",raw_edible,leek,23.0,1.5,0.2,4.1,2.8,M1525
+celery,Raw celery,Apio crudo,13-636,"Celery, raw",raw_edible,celery,9.0,0.5,0.1,1.4,1.5,M580
+avocado,Hass avocado flesh,Pulpa de aguacate Hass,14-386,"Avocado, Hass, flesh only",raw_edible,avocado,171.0,1.8,17.4,1.8,3.1,M65
+apple,"Raw eating apple, skin on, core removed","Manzana cruda con piel, sin corazón",14-319,"Apples, eating, raw, flesh and skin",raw_edible,apple,51.0,0.6,0.5,11.6,1.2,M30
+banana,Banana flesh,Plátano pelado,14-318,"Bananas, flesh only",raw_edible,banana,81.0,1.2,0.1,20.3,1.4,M100
+pear,"Raw pear, skin on, core removed","Pera cruda con piel, sin corazón",14-321,"Pears, raw, flesh and skin",raw_edible,pear,43.0,0.3,0.1,10.9,2.7,M1953
+orange,Orange flesh,Naranja pelada,14-327,"Oranges, flesh only",raw_edible,orange,36.0,0.8,0.2,8.2,1.2,M1826
+kiwi,Raw kiwi flesh,Kiwi crudo pelado,14-371,"Kiwi fruit, flesh only, raw",raw_edible,kiwi,44.0,0.8,0.9,8.6,2.7,M1388
+strawberry,Raw strawberries,Fresas crudas,14-324,"Strawberries, raw",raw_edible,strawberry,30.0,0.6,0.5,6.1,3.8,M2624
+blueberry,Blueberries,Arándanos,14-325,Blueberries,raw_edible,blueberry,40.0,0.9,0.2,9.1,1.5,M368
+raspberry,Raw raspberries,Frambuesas crudas,14-375,"Raspberries, raw",raw_edible,raspberry,25.0,0.8,0.3,5.1,3.7,M2307
+grapes,"Grapes, average","Uvas, valor medio",14-350,"Grapes, average",raw_edible,grape,65.0,0.7,0.2,16.1,1.3,M1242
+mango,Ripe mango flesh,Mango maduro pelado,14-378,"Mangoes, ripe, flesh only, raw",raw_edible,mango,48.0,0.7,0.6,10.7,1.1,M1609
+melon,"Melon flesh, average","Melón pelado, valor medio",14-354,"Melon, flesh only, average",raw_edible,melon,24.0,0.5,0.1,5.5,1.3,M1636
+lemon_juice,Fresh lemon juice,Zumo de limón fresco,14-277,"Lemon juice, fresh",expressed_juice,lemon,7.0,0.3,,1.6,,M1530
+lime_juice,Fresh lime juice,Zumo de lima fresco,14-279,"Lime juice, fresh",expressed_juice,lime,9.0,0.4,0.1,1.6,,M1559
+olive_oil,Olive oil,Aceite de oliva,17-038,"Oil, olive",as_sold,olive_oil,899.0,,99.9,0.0,0.0,M1786
+vinegar,Vinegar,Vinagre,17-339,Vinegar,as_sold,vinegar,22.0,0.4,0.0,0.6,0.0,M2820
+soy_sauce,Soy sauce,Salsa de soja,17-721,"Soy sauce, light and dark varieties",as_sold,soy_sauce,79.0,3.0,,17.9,,M2581
+water,Water (distilled-water energy reference),Agua (referencia energética: agua destilada),17-377,"Water, distilled",as_sold,water,0.0,0.0,0.0,0.0,0.0,M2826
+salt,Salt,Sal,17-367,Salt,as_sold,salt,0.0,0.0,0.0,0.0,0.0,M2436
+honey,Honey,Miel,17-050,Honey,as_sold,honey,288.0,0.4,0.0,76.4,0.0,M1323
+peanut_butter,Smooth peanut butter,Crema de cacahuete suave,14-892,"Peanut butter, smooth",as_sold,peanut,607.0,22.8,51.8,13.1,6.6,M1938
+almond,Whole almond kernels,Almendras sin cáscara,14-896,"Almonds, whole kernels",as_sold,almond,554.0,21.2,49.9,5.3,12.5,M12
+walnut,Walnut kernels,Nueces sin cáscara,14-879,"Walnuts, kernel only",as_sold,walnut,688.0,14.7,68.5,3.3,,M2823
+pumpkin_seed,Pumpkin seeds,Pipas de calabaza,14-842,Pumpkin seeds,as_sold,pumpkin_seed,565.0,24.4,45.6,15.2,,M2279
+sesame,Sesame seeds,Semillas de sésamo,14-844,Sesame seeds,as_sold,sesame,598.0,18.2,58.0,0.9,,M2523
+sunflower_seed,Sunflower seeds,Pipas de girasol,14-845,Sunflower seeds,as_sold,sunflower_seed,576.0,19.8,47.5,18.6,,M2637
+cocoa,Cocoa powder,Cacao en polvo,12-545,Cocoa powder,as_sold,cocoa,312.0,18.5,21.7,11.5,,M782
+raisins,Raisins,Pasas,14-393,"Raisins, dried",as_sold,raisin,256.0,3.0,1.0,62.6,2.7,M2302
+basil,Fresh basil,Albahaca fresca,13-804,"Basil, fresh",raw_edible,basil,40.0,3.1,0.8,5.1,,M113
+basil_dried,Dried ground basil,Albahaca seca molida,13-805,"Basil, dried, ground",dry,basil,251.0,14.4,4.0,43.2,,M112
+parsley,Fresh parsley,Perejil fresco,13-844,"Parsley, fresh",raw_edible,parsley,34.0,3.0,1.3,2.7,,M1871
+mint,Fresh mint,Menta fresca,13-836,"Mint, fresh",raw_edible,mint,43.0,3.8,0.7,5.3,,M1695
+dill,Fresh dill,Eneldo fresco,13-824,"Dill, fresh",raw_edible,dill,25.0,3.7,0.8,0.9,,M1041
+coriander,Fresh coriander leaves,Cilantro fresco,13-888,"Coriander leaves, fresh",raw_edible,coriander,18.0,2.1,0.5,1.2,2.8,M846
+ginger,Fresh ginger,Jengibre fresco,13-890,"Ginger, fresh",raw_edible,ginger,44.0,1.8,0.8,8.1,2.0,M1219
+chilli,Raw red chilli,Guindilla roja cruda,13-317,"Peppers, capsicum, chilli, red, raw",raw_edible,chilli,26.0,1.8,0.3,4.2,,M1985
+coconut_milk,"Coconut milk, retail",Leche de coco comercial,14-889,"Coconut milk, retail",as_sold,coconut_milk,169.0,1.1,16.9,3.3,0.4,M789
+mustard,Smooth mustard,Mostaza suave,17-364,"Mustard, smooth",as_sold,mustard,139.0,7.1,8.2,9.7,,M1749

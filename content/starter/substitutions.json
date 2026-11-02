@@ -1,0 +1,327 @@
+{
+  "schema_version": "1.0.0",
+  "rules": [
+    {
+      "id": "s01",
+      "from_ingredient_id": "chicken",
+      "to_ingredient_id": "turkey",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m17",
+        "m18",
+        "m27"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Use boneless skinless turkey light meat; cook to the listed safe poultry temperature.",
+        "es": "Usa carne blanca de pavo sin piel ni hueso y cocina hasta la temperatura segura indicada para aves."
+      }
+    },
+    {
+      "id": "s02",
+      "from_ingredient_id": "turkey",
+      "to_ingredient_id": "chicken",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m16",
+        "m26"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Use chicken light meat, finely minced for meatballs; cook to the safe poultry temperature.",
+        "es": "Usa carne blanca de pollo, picada finamente para las albóndigas; cocina hasta la temperatura segura para aves."
+      }
+    },
+    {
+      "id": "s03",
+      "from_ingredient_id": "chicken",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.3,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m18",
+        "m27"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Omit the raw-chicken frying step. Cook vegetables first, then gently fold in source-matching plain steamed tofu and heat through. Review texture and portion size.",
+        "es": "Omite el paso de freír pollo crudo. Cocina primero las verduras y añade con cuidado tofu natural al vapor que corresponda a la referencia; calienta bien y revisa textura y ración."
+      }
+    },
+    {
+      "id": "s04",
+      "from_ingredient_id": "turkey",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.3,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m26"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Cook the carrot first; gently warm source-matching steamed tofu with the spinach instead of frying raw turkey.",
+        "es": "Cocina primero la zanahoria; calienta con cuidado tofu al vapor que corresponda a la referencia con las espinacas, en lugar de freír pavo crudo."
+      }
+    },
+    {
+      "id": "s05",
+      "from_ingredient_id": "pork",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.3,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m19",
+        "m28"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Cook fruit/vegetables first. Add plain steamed tofu near the end, gently; do not apply the raw-pork searing step.",
+        "es": "Cocina primero la fruta y las verduras. Añade con cuidado tofu natural al vapor al final; no apliques el paso de dorar cerdo crudo."
+      }
+    },
+    {
+      "id": "s06",
+      "from_ingredient_id": "salmon",
+      "to_ingredient_id": "cod",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m20",
+        "m29"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Use boneless cod; adjust cooking time to thickness and check the safe core temperature. This is not an equal-calorie swap.",
+        "es": "Usa bacalao sin espinas; adapta el tiempo al grosor y comprueba la temperatura interior segura. El cambio no aporta las mismas calorías."
+      }
+    },
+    {
+      "id": "s07",
+      "from_ingredient_id": "cod",
+      "to_ingredient_id": "salmon",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m21",
+        "m30"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Use boneless salmon and cook through; recalculate the higher-fat ingredient's calories before portion review.",
+        "es": "Usa salmón sin espinas y cocina completamente; recalcula las calorías de este ingrediente más graso antes de revisar la ración."
+      }
+    },
+    {
+      "id": "s08",
+      "from_ingredient_id": "cod",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.2,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m21",
+        "m30"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Cook the sauce/vegetables first, then add plain steamed tofu gently and heat through; do not treat tofu as raw fish.",
+        "es": "Cocina primero la salsa o las verduras y añade con cuidado tofu natural al vapor; calienta bien y no trates el tofu como pescado crudo."
+      }
+    },
+    {
+      "id": "s09",
+      "from_ingredient_id": "salmon",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.2,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m20",
+        "m29"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Cook the accompaniments first and gently heat plain steamed tofu separately; replace the fish-baking step.",
+        "es": "Cocina primero las guarniciones y calienta con cuidado tofu natural al vapor aparte; sustituye el paso de hornear el pescado."
+      }
+    },
+    {
+      "id": "s10",
+      "from_ingredient_id": "prawns",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.2,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m22"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Warm plain steamed tofu gently with the cooked rice/peas instead of frying raw prawns.",
+        "es": "Calienta con cuidado tofu natural al vapor con el arroz y los guisantes cocidos en lugar de freír langostinos crudos."
+      }
+    },
+    {
+      "id": "s11",
+      "from_ingredient_id": "beef",
+      "to_ingredient_id": "lentils_green",
+      "initial_target_grams_per_source_gram": 0.45,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m15",
+        "m25"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "The replacement quantity is DRY lentils. Cook them separately until tender, then fold into the finished vegetable sauce; omit raw-mince browning.",
+        "es": "La cantidad de sustitución es de lentejas SECAS. Cuécelas aparte hasta que estén tiernas e incorpóralas a la salsa de verduras terminada; omite el dorado de carne cruda."
+      }
+    },
+    {
+      "id": "s12",
+      "from_ingredient_id": "tuna",
+      "to_ingredient_id": "chickpeas",
+      "initial_target_grams_per_source_gram": 0.5,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m23"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "The quantity is DRY chickpeas. Complete soaking and boiling first, then use the cooked chickpeas in place of drained tuna.",
+        "es": "La cantidad es de garbanzos SECOS. Completa primero el remojo y la cocción y usa los garbanzos cocidos en lugar del atún escurrido."
+      }
+    },
+    {
+      "id": "s13",
+      "from_ingredient_id": "sardines",
+      "to_ingredient_id": "chickpeas",
+      "initial_target_grams_per_source_gram": 0.5,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m24"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Prepare the dry chickpeas fully, mash with the listed lemon, then use as a toast topping instead of sardines. This does not preserve fish nutrients.",
+        "es": "Prepara completamente los garbanzos secos, machaca con el limón indicado y úsalos sobre la tostada en lugar de sardinas. No conserva los nutrientes del pescado."
+      }
+    },
+    {
+      "id": "s14",
+      "from_ingredient_id": "milk",
+      "to_ingredient_id": "soy_milk",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "b01",
+        "b03",
+        "b09"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Replace by weighed grams, not an assumed equal volume. The soy drink must match the unsweetened fortified source entry.",
+        "es": "Sustituye por gramos pesados, sin presuponer un volumen igual. La bebida de soja debe corresponder a la referencia enriquecida y sin azúcar."
+      }
+    },
+    {
+      "id": "s15",
+      "from_ingredient_id": "egg",
+      "to_ingredient_id": "tofu",
+      "initial_target_grams_per_source_gram": 1.5,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "b07",
+        "b08"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Make a tofu scramble, not a set omelette: cook vegetables first, fold in crumbled plain steamed tofu and heat through.",
+        "es": "Prepara un revuelto de tofu, no una tortilla cuajada: cocina primero las verduras, añade tofu natural al vapor desmenuzado y calienta bien."
+      }
+    },
+    {
+      "id": "s16",
+      "from_ingredient_id": "rice_white",
+      "to_ingredient_id": "rice_brown",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m02",
+        "m09",
+        "m18",
+        "m22"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Swap dry weights and follow the brown-rice packet's longer cooking time.",
+        "es": "Sustituye los pesos en seco y sigue el mayor tiempo de cocción indicado en el envase del arroz integral."
+      }
+    },
+    {
+      "id": "s17",
+      "from_ingredient_id": "pasta",
+      "to_ingredient_id": "pasta_wholewheat",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "m16",
+        "m23"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Swap dry weights and follow the replacement packet's cooking instructions.",
+        "es": "Sustituye los pesos en seco y sigue las instrucciones de cocción del envase de la pasta elegida."
+      }
+    },
+    {
+      "id": "s18",
+      "from_ingredient_id": "peanut_butter",
+      "to_ingredient_id": "almond",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "b02"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Use finely chopped almonds as a topping rather than a spread; this is not a nut-free alternative.",
+        "es": "Usa almendras picadas como cobertura en lugar de una crema; no es una alternativa sin frutos de cáscara."
+      }
+    },
+    {
+      "id": "s19",
+      "from_ingredient_id": "walnut",
+      "to_ingredient_id": "pumpkin_seed",
+      "initial_target_grams_per_source_gram": 1,
+      "ratio_basis": "editorial_starting_amount_not_nutritional_equivalence",
+      "allowed_recipe_ids": [
+        "b01",
+        "b04"
+      ],
+      "requires_review": true,
+      "recalculate_calories_and_portions": true,
+      "instruction_override": {
+        "en": "Replace the topping by weighed grams and review exclusions for the replacement ingredient.",
+        "es": "Sustituye la cobertura por gramos pesados y revisa las exclusiones del ingrediente alternativo."
+      }
+    }
+  ]
+}

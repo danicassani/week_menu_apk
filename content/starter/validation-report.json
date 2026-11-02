@@ -1,0 +1,156 @@
+{
+  "status": "passed",
+  "validation_scope": "source/data/translation-presence and calculation consistency; not kitchen or application tests",
+  "source_verified_against_full_workbook": true,
+  "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+  "counts": {
+    "ingredients": 97,
+    "recipes": 48,
+    "breakfasts": 12,
+    "lunch_dinner_options": 36,
+    "substitutions": 19
+  },
+  "main_recipes_by_intended_base_pattern": {
+    "omnivore": 36,
+    "pescatarian": 27,
+    "vegetarian": 20,
+    "vegan": 17
+  },
+  "seven_day_variety_feasibility": [
+    {
+      "dietary_pattern": "omnivore",
+      "recipe_ids": [
+        "m01",
+        "m27",
+        "m04",
+        "m23",
+        "m20",
+        "m24",
+        "m22",
+        "m15",
+        "m12",
+        "m33",
+        "m36",
+        "m34",
+        "m25",
+        "m21"
+      ],
+      "distinct_recipes": 14,
+      "assumption": "Listed ingredient forms and required product-label conditions are satisfied.",
+      "method": "content feasibility probe, not a production planner or nutritionally balanced prescription"
+    },
+    {
+      "dietary_pattern": "vegetarian",
+      "recipe_ids": [
+        "m11",
+        "m01",
+        "m32",
+        "m33",
+        "m14",
+        "m31",
+        "m03",
+        "m07",
+        "m12",
+        "m09",
+        "m08",
+        "m06",
+        "m10",
+        "m07"
+      ],
+      "distinct_recipes": 13,
+      "assumption": "Listed ingredient forms and required product-label conditions are satisfied.",
+      "method": "content feasibility probe, not a production planner or nutritionally balanced prescription"
+    },
+    {
+      "dietary_pattern": "vegan",
+      "recipe_ids": [
+        "m03",
+        "m05",
+        "m02",
+        "m14",
+        "m04",
+        "m33",
+        "m13",
+        "m07",
+        "m09",
+        "m06",
+        "m08",
+        "m12",
+        "m13",
+        "m07"
+      ],
+      "distinct_recipes": 12,
+      "assumption": "Listed ingredient forms and required product-label conditions are satisfied.",
+      "method": "content feasibility probe, not a production planner or nutritionally balanced prescription"
+    }
+  ],
+  "portion_rounding_probes": {
+    "budgets_kcal": [
+      400,
+      600
+    ],
+    "variants_per_recipe": 2,
+    "over_budget_cases_requiring_normal_warning": 88,
+    "rounded_zero_lines_requiring_explicit_review": 0
+  },
+  "catalogue_extras_not_used_in_reference_recipes": [
+    "basil_dried",
+    "flour",
+    "honey",
+    "lettuce",
+    "raisins",
+    "rice_risotto",
+    "tomato_puree",
+    "water"
+  ],
+  "artifact_sha256": {
+    "NOTICE.md": "8a8b46aaf16038d2e97bd60d4fd05df22a1e13092b0ec5dfe5205d3085cf84c9",
+    "README.md": "2f9814b1eb787d3e283c3b9815e530942dda8d3fbcd152e701f6b1aac2e2598b",
+    "cofid-source-rows.json": "84bc8b63f7c85e2f93b1d9dd02091893283cf73dafd0b07c0e1354b54bcdaf15",
+    "ingredients.csv": "28d32d594ee83db7f2cf269a92ae90ece90798d25e9b955057933fc856913110",
+    "ingredients.json": "fb982ec77b6465813dbcb7929556b2b5bd8f8b7ec3079feea83c4f540be47c8c",
+    "recipe-index.json": "9ea437f0a87e5150407144cfc0498086ee9686ee7786ec9423ae60bfbf4f3ea2",
+    "recipes.json": "492387259685f76a5cd2e393b7d8483e3f5fe1697a2665f877ec8e6f720b1684",
+    "recipes.md": "953f137e31d79243680b97836b06ac661d713e81446924eaaef16c2ce400cd08",
+    "safety-notes.json": "965b1ddcb7071f645faa94c7a5f11ce313e149e156f1f064eb273ca67aea5c90",
+    "source-manifest.json": "7e800c7c5c2c9d4a69f82ca50cd05b68d1408cf871b94a2e836dc1e91303d7a1",
+    "substitutions.json": "e90e0952f8634d2576c105b2db8281c9a92be9aae43d1e585cf9e1f82f6614fa"
+  },
+  "limitations": [
+    "Recipes have not been kitchen-tested.",
+    "Product labels and source-specific ingredient forms must match before household use.",
+    "Diet flags describe intended ingredients, not allergen certification.",
+    "Reference egg/slice weights require confirmation; raw edible grams remain authoritative.",
+    "No live app, database import, household targets, or production meal generator was tested."
+  ],
+  "negative_fault_injection_checks": [
+    {
+      "case": "changed_source_energy",
+      "result": "rejected_as_expected"
+    },
+    {
+      "case": "missing_translation",
+      "result": "rejected_as_expected"
+    },
+    {
+      "case": "unresolved_ingredient",
+      "result": "rejected_as_expected"
+    },
+    {
+      "case": "invented_density",
+      "result": "rejected_as_expected"
+    },
+    {
+      "case": "unreviewed_substitution",
+      "result": "rejected_as_expected"
+    },
+    {
+      "case": "globally_enabled_dessert",
+      "result": "rejected_as_expected"
+    },
+    {
+      "case": "wrong_source_fingerprint",
+      "result": "rejected_as_expected"
+    }
+  ]
+}
