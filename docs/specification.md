@@ -10,7 +10,7 @@ An installable web application for one household of adults, accessible from Andr
 
 Suggest lunches and dinners, support individual portions and dietary substitutions, estimate personal calorie budgets and daily deficits, and generate a shared shopping list from the final plan.
 
-The household plans meals for a fixed household size, rather than choosing attendance separately for every meal. How membership changes affect future plans remains to be specified.
+The household plans meals for a fixed household size, rather than choosing attendance separately for every meal. Removing a member recalculates today's and future meal quantities for the remaining members; past days remain unchanged.
 
 ## 2. Access, ownership, and visibility
 
@@ -23,7 +23,7 @@ The household plans meals for a fixed household size, rather than choosing atten
 - Adult profiles only.
 - Permission checks must be enforced by the backend, not only hidden interface controls.
 
-Owner bootstrap, ownership transfer, removal effects, and handling personal information after removal are open decisions.
+Removing a member revokes their access and recalculates today's and future meal quantities for the remaining household. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. Owner bootstrap, ownership transfer, and handling personal information after removal remain open decisions.
 
 ## 3. Profiles, goals, and calorie targets
 
@@ -124,7 +124,8 @@ The app supports English and Spanish, selectable per person. Provide starter con
 
 ## 7. Shared shopping list
 
-- Choose a date range and generate one shared list.
+- Maintain just one shared shopping list.
+- Choose a date range and generate its contents.
 - Include final ingredient amounts across every person's portions and substitutions.
 - Combine quantities only when ingredients and units are compatible.
 - Support shared checked/unchecked states and manual additions.
@@ -132,7 +133,7 @@ The app supports English and Spanish, selectable per person. Provide starter con
 - If meals or portions change, indicate that list updates are available.
 - Let a member review and apply changes; do not silently regenerate the list.
 
-The review must eventually define handling for checked items, removed ingredients, changed quantities, and manual additions. Whether multiple lists can coexist is open.
+The review must eventually define handling for checked items, removed ingredients, changed quantities, and manual additions. Multiple shopping lists are outside the first-version scope.
 
 ## 8. Offline behavior
 
@@ -227,9 +228,9 @@ These are acceptance-test candidates for review before implementation.
 3. Exact rules for activity overrides and personal portion suggestions.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
-6. Owner lifecycle, fixed household size after membership changes, and removed-member data.
+6. Owner lifecycle, new-member onboarding effects, and removed-member data retention.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
-8. Shopping-list update details and number of active lists.
+8. Shopping-list update details, including preservation of checked states and manual additions.
 9. Screen/navigation approval and development phases.
 
 Confirmed requirements above remain valid while these details are resolved.
