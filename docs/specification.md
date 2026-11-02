@@ -8,7 +8,7 @@ Repository: danicassani/week_menu_apk
 
 An installable web application for one household of adults, accessible from Android, iPhone, and desktop browsers over the Internet.
 
-Suggest lunches and dinners, support individual portions and dietary substitutions, estimate personal calorie budgets and daily deficits, and generate a shared shopping list from the final plan.
+Suggest breakfasts, lunches, and dinners, support individual portions and dietary substitutions, estimate personal calorie budgets and daily deficits, and generate a shared shopping list from the final plan.
 
 Use the current active, onboarded household roster when planning new meals, rather than choosing member attendance separately for every meal. A newly invited member joins only newly planned meals after completing their profile and calorie budgets; leave existing planned meals unchanged. Removing a member recalculates unlocked meal quantities for the remaining included members; past days and locked shared meals remain unchanged. Guests and guest portions are outside version-one scope.
 
@@ -71,11 +71,11 @@ If another validation rule identifies an invalid or excessively restrictive goal
 
 - People can record new weight measurements and change target dates.
 - When these changes affect the estimate, show a revised daily target for acceptance.
-- Acceptance includes reviewing that person's lunch and dinner budgets.
+- Acceptance includes reviewing that person's breakfast, lunch, and dinner budgets.
 - Apply accepted changes from today onward.
 - Preserve past records.
 - Do not silently change meal portions when recalculating targets.
-- When a new weight measurement reaches the goal weight, offer a maintenance target for review and acceptance rather than silently switching goals. Include lunch and dinner budget review in acceptance.
+- When a new weight measurement reaches the goal weight, offer a maintenance target for review and acceptance rather than silently switching goals. Include breakfast, lunch, and dinner budget review in acceptance.
 
 ### Confirmed numerical conventions
 
@@ -100,11 +100,11 @@ Logged-day expenditure uses the separately confirmed replacement formula in sect
 
 ### Meal budgets and food outside planned meals
 
-- Each person sets personal lunch and dinner calorie-budget defaults manually. Apply those defaults every day, with optional overrides for individual planned meals.
-- People log food outside lunch and dinner, including breakfast, snacks, and drinks, by entering a description and total calories. Catalogue lookup for these entries is outside the first-version scope.
+- Each person sets personal breakfast, lunch, and dinner calorie-budget defaults manually. Apply those defaults every day, with optional overrides for individual planned meals.
+- People log food outside planned breakfast, lunch, and dinner, including snacks and drinks, by entering a description and total calories. Catalogue lookup for these entries is outside the first-version scope. Do not log a planned breakfast again as outside food.
 - Warn if meal budgets or portions plus other logged food exceed the daily target.
 - Warnings allow manual adjustments and do not block finalizing the plan.
-- Planned lunch and dinner portions count automatically toward intake without a confirmation step.
+- Planned breakfast, lunch, and dinner portions count automatically toward intake without a confirmation step.
 - Display clearly that these totals assume planned portions were eaten.
 - Count the day's planned meals in the full-day total as soon as planned, labelled as assumed intake. Future dates show projected totals; no meal-time scheduling or confirmation is required.
 
@@ -140,7 +140,9 @@ This formula is confirmed for version one. Use the Compendium's standard MET-bas
 
 ## 5. Meal planning and suggestions
 
-- Plan lunch and dinner.
+Breakfast is fully included in version one. It has its own personal default calorie budget and individual meal overrides, and uses the same suggestion, portion, calorie-accounting, and reviewed shopping-list workflows. Whether breakfast recipe choices are individual or shared is still awaiting a decision.
+
+- Plan breakfast, lunch, and dinner.
 - Each meal uses one recipe in version one. A recipe can include its side dishes and an optional dessert; multiple independently selected recipes within a meal are out of scope.
 - Dessert selection is per person: some members can include the recipe's dessert while others skip it.
 - For each person, proportionally scale the selected recipe components (main, sides, and dessert if included) toward their meal calorie budget, then allow manual ingredient-quantity edits.
@@ -152,7 +154,7 @@ This formula is confirmed for version one. Use the Compendium's standard MET-bas
 - Provide the starter recipes in English and Spanish, with ingredient quantities and dietary metadata. Recipe content provenance and reuse rights must be recorded.
 - Prioritize variety across the week, while respecting individual exclusions and calorie budgets.
 - A shared meal can have different ingredient quantities for each person.
-- When suggesting a meal, scale recipe ingredient quantities proportionally toward each person's manually set lunch or dinner calorie budget. This provides the initial suggested portion; subsequent ingredient-amount edits remain manual.
+- When suggesting a meal, scale recipe ingredient quantities proportionally toward each person's manually set breakfast, lunch, or dinner calorie budget. This provides the initial suggested portion; subsequent ingredient-amount edits remain manual.
 - Recalculate calories for the actual quantities shown. Substitutions require review and their own calorie calculation; matching a calorie budget does not imply nutritional equivalence.
 - A shared meal can have substitutions, such as tofu for one person and chicken for another.
 - Suggest substitutions automatically from the ingredient catalogue.
@@ -280,7 +282,7 @@ References:
 
 After sign-in and any required initial setup, open a dashboard containing:
 
-- Today's lunch and dinner.
+- Today's breakfast, lunch, and dinner.
 - A preview of the shared weekly menu.
 - A calorie summary.
 - A shortcut to the shared shopping list.
@@ -292,12 +294,12 @@ Today follows the current device timezone. The calorie summary defaults to the s
 | Main destination | Contents |
 | --- | --- |
 | Dashboard | Today's meals, personal calorie summary with member selector, weekly preview, shopping shortcut, and quick food/activity logging |
-| Menu | Weekly lunch/dinner plan, generation previews, meal replacements, portions, and substitutions |
+| Menu | Weekly breakfast/lunch/dinner plan, generation previews, meal replacements, portions, and substitutions |
 | Shopping | The one shared list, date range, update review, and offline checkbox status |
 | Recipes | Starter and saved recipes, recipe editor, and ingredient catalogue management |
 | Profile | Personal measurements, goal and calorie-budget settings, weight/activity history, language, and household settings |
 
-On phones, the Menu tab displays a vertical list of seven day cards for the selected week. Each card shows lunch and dinner; scroll vertically through the week. Use the household's configurable Monday/Sunday week start, with Monday as the default. Meal editing, portions, and substitutions remain part of the meal-detail workflow.
+On phones, the Menu tab displays a vertical list of seven day cards for the selected week. Each card shows breakfast, lunch, and dinner; scroll vertically through the week. Use the household's configurable Monday/Sunday week start, with Monday as the default. Meal editing, portions, and substitutions remain part of the meal-detail workflow.
 
 Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. Exact visual design is still open.
 
@@ -344,7 +346,7 @@ These are acceptance-test candidates for review before implementation.
 
 ## 12. Remaining specification work
 
-Breakfast scope is under discussion: decide whether to add planned breakfast recipes or a dedicated breakfast budget/log, and whether any breakfast planning is personal or shared. Until resolved, the confirmed planner still covers lunch and dinner.
+Full breakfast planning is confirmed: recipes, suggestions, personal portions, calorie budgets, and shopping ingredients. Whether breakfast recipe choices are individual or shared remains open. Eating-out replacement behavior and unknown-calorie handling are under discussion.
 
 The [technical-design draft](technical-design.md) consolidates the proposed data model, history enforcement, recipe-generation behavior, offline synchronization, and verification approach. Its proposals require review and do not change the confirmed decisions.
 
