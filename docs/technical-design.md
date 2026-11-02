@@ -175,10 +175,12 @@ Queue explicit set-checked operations, not toggle operations:
 - Preserve each device's local order and use idempotent server handling for retries.
 - The last operation accepted by the server wins, including queued offline operations.
 - Revalidate active membership on reconnection.
-- Proposed stale-item rule: if an item was removed or replaced while offline, discard its checkbox operation with a visible notice; never resurrect deleted items or apply a label match to a different item.
+- Confirmed stale-item rule: if an item was removed while offline, discard its checkbox operation with a visible notice and continue synchronizing other valid operations. Never resurrect deleted items or apply a label match to a different item. A replacement with a new stable ID does not inherit the removed item's queued operation.
 - Always show pending/error state until an operation is acknowledged.
 
-Proposed cache lifecycle: isolate caches by account. Logout clears that account's cached household data; if checkbox edits are pending, show the consequence and let the person reconnect to sync or explicitly discard them before clearing. On detected membership revocation, stop syncing and clear local household caches. Previously downloaded data on a disconnected device cannot be remotely erased.
+Confirmed sign-out lifecycle: isolate caches by account. If checkbox edits are pending when sign-out is requested, warn and let the person reconnect to synchronize or explicitly discard the changes before signing out. Completed sign-out clears that account's cached household data and pending operations. Do not silently lose pending changes or keep them for a later sign-in.
+
+Proposed revocation lifecycle: on detected membership revocation, stop syncing and clear local household caches. Previously downloaded data on a disconnected device cannot be remotely erased.
 
 ## 10. Screen flows
 
@@ -223,4 +225,4 @@ Start these checks with the relevant milestone. Actual implementation test resul
 
 The product requirements, five tabs, stack, formulas, and milestone order are confirmed. This document's engineering defaults and explicitly proposed edge-case behavior are not yet approved as a whole.
 
-Before the final specification review, resolve or accept the proposed timing convention, device-timezone reporting policy, recipe-update preview, stale offline-item handling, and cache lifecycle. Exact dataset coverage and recipe content will be concrete import artifacts reviewed in the relevant milestone.
+Before the final specification review, resolve or accept the proposed timing convention, device-timezone reporting policy, recipe-update preview, and membership-revocation cache cleanup. Stale offline-item handling and the sign-out lifecycle are confirmed. Exact dataset coverage and recipe content will be concrete import artifacts reviewed in the relevant milestone.
