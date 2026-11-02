@@ -149,8 +149,9 @@ The app supports English and Spanish, selectable per person. Provide starter con
 - No pantry inventory or automatic stock subtraction in the first version.
 - If meals or portions change, indicate that list updates are available.
 - Let a member review and apply changes; do not silently regenerate the list.
+- When an applied update increases the required quantity of an item marked as bought, uncheck the item and highlight its increased quantity. Do not change its checked state before the reviewed update is applied.
 
-The review must eventually define handling for checked items, removed ingredients, changed quantities, and manual additions. Multiple shopping lists are outside the first-version scope.
+Quantity increases for checked items follow the uncheck-and-highlight rule above. The review must still define handling for quantity decreases, removed ingredients, and manual additions. Multiple shopping lists are outside the first-version scope.
 
 ## 8. Offline behavior
 
@@ -235,6 +236,7 @@ These are acceptance-test candidates for review before implementation.
 - Accepting a new target includes budget review and leaves past targets intact.
 - Logging activity replaces only the selected day's usual activity allowance.
 - Menu edits produce a reviewable shopping-list change rather than overwriting the list.
+- Applying a quantity increase to an item marked as bought unchecks it and highlights the increased quantity; merely previewing the update does not change the live checklist.
 - Offline checkbox changes persist through an app restart and synchronize after reconnection.
 - Both languages cover all first-version interface workflows.
 
@@ -247,7 +249,7 @@ These are acceptance-test candidates for review before implementation.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
 6. Owner lifecycle, new-member onboarding effects, and removed-member data retention.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
-8. Shopping-list update details, including preservation of checked states and manual additions.
+8. Remaining shopping-list update details for quantity decreases, removed ingredients, and manual additions.
 9. Screen/navigation approval and development phases.
 
 Confirmed requirements above remain valid while these details are resolved.
