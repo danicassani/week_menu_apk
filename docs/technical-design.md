@@ -36,7 +36,7 @@ All household-owned records carry a household identifier. Personal records also 
 | Approved email / invitation | Normalized email, status, issuer, accepted member |
 | Membership | Auth user, active/removed status, onboarding status, joined/removed timestamps |
 | Member profile | Age, sex, height, dietary patterns, excluded ingredient IDs, preferred language |
-| Client timezone | Last reported IANA zone and observation time; proposal described below |
+| Client timezone | Last reported IANA zone and observation time; confirmed source for server-side date locking |
 | Weight measurement | Member, date, kilograms; immutable after the person's day closes |
 | Goal and target version | Goal weight/date, calculation inputs/version, proposed/accepted status, effective date |
 | Default meal budgets | Member's lunch and dinner defaults, versioned by effective date |
@@ -87,9 +87,9 @@ Recording weight does not silently accept a target. Reaching the goal offers mai
 
 Default meal budgets apply unless the individual meal has an override. A meal uses one recipe, which can include sides and an optional dessert. Dessert inclusion is chosen per person. Suggested portions proportionally scale all components selected for that person toward the applicable meal budget. Skipped dessert ingredients contribute no energy or shopping quantities for that person. Later manual quantity edits stay manual; budget or target changes show mismatches without silently resizing saved portions.
 
-### Proposed time-display convention
+### Confirmed time-display convention
 
-Count the day's planned lunch and dinner toward its daily total as soon as planned, clearly labelled as assumed intake. Do not introduce unrequested meal-time schedules. Future dates show projected totals. Outside-food entries add to the applicable person's day. This resolves the draft's previously open “elapsed meal” timing detail as a proposal for review.
+Count the day's planned lunch and dinner toward its daily total as soon as planned, clearly labelled as assumed intake. Do not introduce unrequested meal-time schedules. Future dates show projected totals. Outside-food entries add to the applicable person's day. This is the confirmed full-day accounting convention.
 
 ### Activity
 
@@ -117,7 +117,7 @@ A proposed substitution remains pending until reviewed. Do not include unreviewe
 
 Store calculation precision separately from display formatting. Display practical quantities and calculate calories from the same quantities actually saved, showing any budget mismatch after rounding. Preserve fractions where useful; never silently round an egg to a whole unit without recalculating.
 
-When updating a saved recipe from a personal meal variant, propose selecting one person's edited variant and an explicit reference serving count, previewing the change, and applying it as a new recipe version. Do not merge different people's substitutions into a single ambiguous base recipe.
+When updating a saved recipe from a personal meal variant, select one person's edited variant and an explicit reference serving count, preview the change, and apply it as a new recipe version. This review flow is confirmed. Do not merge different people's substitutions into a single ambiguous base recipe.
 
 ## 6. Catalogue, conversions, and source imports
 
@@ -140,7 +140,7 @@ Confirmed rule: a shared meal date locks for everyone as soon as it has ended fo
 Proposed enforcement:
 
 - Use server time and member-reported IANA timezone identifiers; never trust a submitted date-is-editable boolean.
-- Use the last online device timezone reported by each member. A server cannot know an offline device's current timezone or travel location. This is an implementation proposal requiring review.
+- Confirmed timezone policy: use the last online device timezone reported by each member. A server cannot know an offline device's current timezone or travel location.
 - Shared date cutoffs use the earliest relevant member midnight. Once a date is locked, timezone changes or membership changes cannot reopen it.
 - Check locks during every backend mutation, including indirect changes through nutrition edits and membership changes.
 - Keep immutable recipe/ingredient versions and portion snapshots for locked dates. A later shared recipe edit cannot rewrite history.
@@ -180,7 +180,7 @@ Queue explicit set-checked operations, not toggle operations:
 
 Confirmed sign-out lifecycle: isolate caches by account. If checkbox edits are pending when sign-out is requested, warn and let the person reconnect to synchronize or explicitly discard the changes before signing out. Completed sign-out clears that account's cached household data and pending operations. Do not silently lose pending changes or keep them for a later sign-in.
 
-Proposed revocation lifecycle: on detected membership revocation, stop syncing and clear local household caches. Previously downloaded data on a disconnected device cannot be remotely erased.
+Confirmed revocation lifecycle: on detected membership revocation, stop syncing and clear local household caches. Previously downloaded data on a disconnected device cannot be remotely erased.
 
 ## 10. Screen flows
 
@@ -227,4 +227,4 @@ Start these checks with the relevant milestone. Actual implementation test resul
 
 The product requirements, five tabs, stack, formulas, and milestone order are confirmed. This document's engineering defaults and explicitly proposed edge-case behavior are not yet approved as a whole.
 
-Before the final specification review, resolve or accept the proposed timing convention, device-timezone reporting policy, recipe-update preview, and membership-revocation cache cleanup. Stale offline-item handling and the sign-out lifecycle are confirmed. Exact dataset coverage and recipe content will be concrete import artifacts reviewed in the relevant milestone.
+The timing convention, device-timezone reporting policy, recipe-update preview, and membership-revocation cache cleanup are confirmed. Stale offline-item handling and the sign-out lifecycle are confirmed. Exact dataset coverage and recipe content will be concrete import artifacts reviewed in the relevant milestone.
