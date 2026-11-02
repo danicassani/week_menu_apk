@@ -219,7 +219,7 @@ After sign-in and any required initial setup, open a dashboard containing:
 - A calorie summary.
 - A shortcut to the shared shopping list.
 
-Today follows the current device timezone. Whose calorie summary is shown by default and the detailed dashboard layout remain open decisions.
+Today follows the current device timezone. The calorie summary defaults to the signed-in person, with a member selector to view another household member. Selecting another member does not grant editing rights to that person's profile or personal logs. The detailed dashboard layout remains open.
 
 ### Other proposed screens
 
