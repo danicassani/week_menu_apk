@@ -37,7 +37,7 @@ Removing a member revokes their access and recalculates today's and future meal 
 - Goal: lose weight or maintain weight.
 - Target weight and target date for weight loss.
 - Usual activity level: sedentary, lightly active, active, or very active.
-- Individual dietary exclusions, including vegetarianism.
+- Individual dietary patterns (including vegetarianism), plus optional exclusions of specific catalogue ingredients. Apply both to recipe and substitution suggestions.
 - Preferred interface language: English or Spanish.
 
 Calorie targets are estimates, not guarantees of reaching a particular weight by a date.
@@ -88,6 +88,7 @@ If the last activity entry is removed from an editable day, restore the usual ac
 
 - Plan lunch and dinner.
 - Generate suggestions for a whole week or an individual meal.
+- When generating a week, preserve existing planned meals by default and fill available slots. Offer an explicit option to replace existing meals; show a preview before applying the generated plan.
 - Suggestions come from a starter collection of approximately 40–50 European and international everyday recipes, plus household-saved recipes.
 - Provide the starter recipes in English and Spanish, with ingredient quantities and dietary metadata. Recipe content provenance and reuse rights must be recorded.
 - Prioritize variety across the week, while respecting individual exclusions and calorie budgets.
@@ -97,6 +98,7 @@ If the last activity entry is removed from an editable day, restore the usual ac
 - A shared meal can have substitutions, such as tofu for one person and chicken for another.
 - Suggest substitutions automatically from the ingredient catalogue.
 - Require review before applying a suggested substitution.
+- For concurrent edits to the same shared recipe or planned meal, reject a stale save and tell the second editor that the record changed. Require review of the latest version before saving; do not silently overwrite another member's changes.
 - People can replace meals and manually edit ingredient quantities.
 - Show calorie warnings and recalculate totals as quantities change.
 
@@ -244,6 +246,9 @@ These are acceptance-test candidates for review before implementation.
 - An unapproved Google account cannot read household information.
 - A member can view another member's shared health data but cannot edit their personal logs or profile.
 - Different portions and reviewed substitutions produce correct per-person calories and shopping totals.
+- Dietary-pattern rules and individual ingredient exclusions apply to recipes and proposed substitutions.
+- Generating a week preserves existing meals by default, and replacement requires an explicit choice and preview.
+- A stale recipe or meal save is rejected with a review flow instead of overwriting another member's edits.
 - Ingredient edits update today's and future plans without changing past recorded totals.
 - Attempts to edit past days are rejected by backend validation as well as disabled in the interface.
 - Archiving an ingredient preserves existing recipes and meals.
@@ -260,7 +265,7 @@ These are acceptance-test candidates for review before implementation.
 2. Activity factors, goal-to-deficit conversion, and goal-validation rules for the selected Mifflin–St Jeor approach.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
-5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
+5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
 6. Owner lifecycle, new-member onboarding effects, and removed-member data retention.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Remaining shopping-list update details for quantity decreases, removed ingredients, and manual additions.
