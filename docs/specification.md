@@ -112,10 +112,11 @@ The imported dataset, permitted reuse, source attribution, raw/cooked food disti
 
 ### Edits, archiving, and history
 
-- Editing nutrition values updates recipes and future meals that use the ingredient.
+- Editing nutrition values updates recipes, today's meals, and future meals that use the ingredient.
 - Preserve the values recorded for past days.
 - Deleting an ingredient archives it: hide it from new selections while keeping existing references.
-- The treatment of remaining meals today, as distinct from future days and past days, needs an explicit cutoff rule.
+- Past days are read-only in the first version: portions, outside-food entries, weight measurements, activity logs, and other historical records cannot be corrected. This restriction may be revisited later.
+- The historical snapshot implementation must reconcile these rules with individual device timezones; its exact cutoff behavior remains open.
 
 ### Language
 
@@ -210,7 +211,8 @@ These are acceptance-test candidates for review before implementation.
 - An unapproved Google account cannot read household information.
 - A member can view another member's shared health data but cannot edit their personal logs or profile.
 - Different portions and reviewed substitutions produce correct per-person calories and shopping totals.
-- Ingredient edits update future plans without changing past recorded totals.
+- Ingredient edits update today's and future plans without changing past recorded totals.
+- Attempts to edit past days are rejected by backend validation as well as disabled in the interface.
 - Archiving an ingredient preserves existing recipes and meals.
 - Accepting a new target includes budget review and leaves past targets intact.
 - Logging activity replaces only the selected day's usual activity allowance.
@@ -223,7 +225,7 @@ These are acceptance-test candidates for review before implementation.
 1. Nutrition dataset, starter recipes, activity dataset, and licensing.
 2. Calorie-estimation methodology and goal-validation rules.
 3. Exact rules for activity overrides and personal portion suggestions.
-4. Today's time cutoffs, historical snapshots under individual device timezones, and correction of past records.
+4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
 6. Owner lifecycle, fixed household size after membership changes, and removed-member data.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
