@@ -184,11 +184,13 @@ Exact release selection, raw/cooked food distinctions, imported coverage, and th
 
 ### Edits, archiving, and history
 
-- Editing nutrition values updates recipes, today's meals, and future meals that use the ingredient.
+- Editing nutrition values updates recipes, today's meals, and future meals that use the ingredient, except for shared meal dates already locked under the timezone rule.
 - Preserve the values recorded for past days.
 - Deleting an ingredient archives it: hide it from new selections while keeping existing references.
 - Past days are read-only in the first version: portions, outside-food entries, weight measurements, activity logs, and other historical records cannot be corrected. This restriction may be revisited later.
-- The historical snapshot implementation must reconcile these rules with individual device timezones; its exact cutoff behavior remains open.
+- Lock a shared meal date for the whole household as soon as that calendar date has ended for any member. Snapshot its portion quantities, ingredients, substitutions, and nutritional values so later catalogue or recipe changes cannot alter the recorded meals.
+- The lock takes precedence over updates to today's meals: a member whose device is still on that date can view the locked meals but cannot edit them.
+- This shared-meal lock does not itself move another member's personal outside-food, weight, or activity records into the past; their own local day boundary governs those personal records.
 
 ### Language
 
@@ -220,7 +222,7 @@ For a shared shopping checkbox, the last change accepted by the server wins, inc
 
 ### Timezones
 
-Shared menu entries belong to a calendar date: Friday lunch stays on Friday for every member, regardless of timezone. Each person's current device timezone determines their Today view and local day boundaries. Meals are not shifted to different calendar dates by timezone conversion. Historical snapshot cutoffs under different local day boundaries still need an explicit rule.
+Shared menu entries belong to a calendar date: Friday lunch stays on Friday for every member, regardless of timezone. Each person's current device timezone determines their Today view and local day boundaries. Meals are not shifted to different calendar dates by timezone conversion. Shared meals for a calendar date lock for everyone when that date first ends for any household member, even if it is still Today for others. Once locked, later timezone changes must not reopen the meals. Personal logs follow the owner's local day boundary.
 
 ## 9. Confirmed technical stack
 
@@ -301,7 +303,8 @@ These are acceptance-test candidates for review before implementation.
 - Dietary-pattern rules and individual ingredient exclusions apply to recipes and proposed substitutions.
 - Generating a week preserves existing meals by default, and replacement requires an explicit choice and preview.
 - A stale recipe or meal save is rejected with a review flow instead of overwriting another member's edits.
-- Ingredient edits update today's and future plans without changing past recorded totals.
+- Ingredient edits update today's and future unlocked plans without changing past recorded totals or locked shared meals.
+- Shared meals lock for everyone as soon as their date ends for any member, including members whose device still shows that date as Today.
 - Attempts to edit past days are rejected by backend validation as well as disabled in the interface.
 - Archiving an ingredient preserves existing recipes and meals.
 - Accepting a new target includes budget review and leaves past targets intact.
@@ -318,7 +321,7 @@ These are acceptance-test candidates for review before implementation.
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
-4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
+4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
 6. Owner lifecycle, new-member onboarding effects, and treatment of future-dated personal entries after member removal.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
