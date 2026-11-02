@@ -55,7 +55,7 @@ The app estimates a daily calorie target from the questionnaire. If the goal and
 ### Meal budgets and food outside planned meals
 
 - Each person sets lunch and dinner calorie budgets manually.
-- People log calories consumed outside lunch and dinner, including breakfast, snacks, and drinks.
+- People log food outside lunch and dinner, including breakfast, snacks, and drinks, by entering a description and total calories. Catalogue lookup for these entries is outside the first-version scope.
 - Warn if meal budgets or portions plus other logged food exceed the daily target.
 - Warnings allow manual adjustments and do not block finalizing the plan.
 - Planned lunch and dinner portions count automatically toward intake without a confirmation step.
@@ -80,13 +80,15 @@ The detailed calculation must define resting expenditure, routine movement, net 
 - Suggestions come from a starter recipe collection and household-saved recipes.
 - Prioritize variety across the week, while respecting individual exclusions and calorie budgets.
 - A shared meal can have different ingredient quantities for each person.
+- When suggesting a meal, scale recipe ingredient quantities proportionally toward each person's manually set lunch or dinner calorie budget. This provides the initial suggested portion; subsequent ingredient-amount edits remain manual.
+- Recalculate calories for the actual quantities shown. Substitutions require review and their own calorie calculation; matching a calorie budget does not imply nutritional equivalence.
 - A shared meal can have substitutions, such as tofu for one person and chicken for another.
 - Suggest substitutions automatically from the ingredient catalogue.
 - Require review before applying a suggested substitution.
 - People can replace meals and manually edit ingredient quantities.
 - Show calorie warnings and recalculate totals as quantities change.
 
-The suggestion algorithm, definition of variety, substitution suitability rules, and behavior when no suitable recipe exists remain to be specified. AI-generated recipes are not part of the agreed first-version scope.
+Initial portion scaling is proportional to the individual's meal budget. Practical quantity rounding, the recipe-selection algorithm, definition of variety, substitution suitability rules, and behavior when no suitable recipe exists remain to be specified. AI-generated recipes are not part of the agreed first-version scope.
 
 ### Meal edits versus saved recipes
 
@@ -225,7 +227,7 @@ These are acceptance-test candidates for review before implementation.
 
 1. Nutrition dataset, starter recipes, activity dataset, and licensing.
 2. Calorie-estimation methodology and goal-validation rules.
-3. Exact rules for activity overrides and personal portion suggestions.
+3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
 6. Owner lifecycle, new-member onboarding effects, and removed-member data retention.
