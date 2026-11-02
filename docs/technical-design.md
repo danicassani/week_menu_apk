@@ -32,7 +32,7 @@ All household-owned records carry a household identifier. Personal records also 
 
 | Entity | Important fields and behavior |
 | --- | --- |
-| Household | Owner member; exactly one owner; provisioned for this one-household application |
+| Household | Owner member; exactly one owner; configurable Monday/Sunday week start, default Monday; provisioned for this one-household application |
 | Approved email / invitation | Normalized email, status, issuer, accepted member |
 | Membership | Auth user, active/removed status, onboarding status, joined/removed timestamps |
 | Member profile | Age, sex, height, dietary patterns, excluded ingredient IDs, preferred language |
@@ -44,9 +44,9 @@ All household-owned records carry a household identifier. Personal records also 
 | Ingredient / ingredient version | Canonical identity, raw/cooked state, bilingual names, kcal per reference amount, source identifiers, revision, archive status |
 | Ingredient conversion | Ingredient, unit, grams or compatible reference quantity; no global density assumption |
 | Substitution rule | Source/alternative ingredient, culinary role, dietary eligibility, proposed starting conversion |
-| Recipe / recipe version | Names/instructions, reference servings, ingredient quantities, dietary metadata, source/provenance, revision |
+| Recipe / recipe version | Names/instructions, reference servings, ingredient quantities grouped into main/sides and optional dessert, dietary metadata, source/provenance, revision |
 | Planned meal | Calendar date, lunch/dinner, recipe version, revision and lock information |
-| Meal participant | Members included when the meal was planned, budget snapshot, individual recipe variant |
+| Meal participant | Members included when the meal was planned, budget snapshot, individual recipe variant, per-person dessert inclusion |
 | Portion ingredient | Actual quantity, unit/conversion reference, ingredient nutrition version, reviewed substitution status |
 | Outside-food entry | Member, date, description, kcal |
 | Activity entry | Member, date, source activity code, pace/intensity, source MET, duration, weight/calculation inputs |
@@ -85,7 +85,7 @@ Use the confirmed equations and constants in the product specification, with exp
 
 Recording weight does not silently accept a target. Reaching the goal offers maintenance review. A rejected or pending target leaves the last accepted target active.
 
-Default meal budgets apply unless the individual meal has an override. Suggested portions scale toward the applicable meal budget. Later manual quantity edits stay manual; budget or target changes show mismatches without silently resizing saved portions.
+Default meal budgets apply unless the individual meal has an override. A meal uses one recipe, which can include sides and an optional dessert. Dessert inclusion is chosen per person. Suggested portions proportionally scale all components selected for that person toward the applicable meal budget. Skipped dessert ingredients contribute no energy or shopping quantities for that person. Later manual quantity edits stay manual; budget or target changes show mismatches without silently resizing saved portions.
 
 ### Proposed time-display convention
 
@@ -102,7 +102,7 @@ Use source-appropriate age coverage. Do not silently map an unsupported age or a
 Proposed deterministic, non-AI approach:
 
 - Start from active starter and saved recipes.
-- Check each included member's patterns and excluded ingredient IDs.
+- Check each included member's patterns and excluded ingredient IDs against the recipe components selected for that member, including dessert only when selected.
 - Where needed, find catalogue substitution candidates with compatible culinary roles and explicit dietary metadata.
 - Never treat equal calories as proof of equivalent cooking behavior or nutritional composition.
 - Present substitutions and their quantities for review before applying.
@@ -202,6 +202,8 @@ flowchart TD
     M --> N[Shopping changes available]
     N --> H
 ~~~
+
+On phones, the Menu destination uses seven vertically stacked day cards, each showing lunch and dinner, with vertical scrolling. The household can start the planning week on Monday or Sunday; Monday is the default. Changing the week start affects the view and generation range, not existing meal calendar dates. Each meal has one recipe, with any included sides and a per-person optional dessert.
 
 Every main destination remains available through the approved navigation. Selecting another member changes the displayed summary without changing personal-write permissions.
 
