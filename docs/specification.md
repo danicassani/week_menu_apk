@@ -25,7 +25,7 @@ Use the current active, onboarded household roster when planning new meals, rath
 - Adult profiles only.
 - Permission checks must be enforced by the backend, not only hidden interface controls.
 
-Removing a member revokes their access and recalculates unlocked current/future meal quantities for the remaining included household members. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Ownership transfer must be atomic so the household is never left without an owner or with two owners. Owner bootstrap and treatment of any future-dated personal entries after removal remain open.
+Removing a member revokes their access and recalculates unlocked current/future meal quantities for the remaining included household members. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Ownership transfer must be atomic so the household is never left without an owner or with two owners. Configure the initial owner's approved Google email during deployment. When a member leaves, delete their future-dated personal entries/settings while retaining past records and historical calculation references. Exclude the removed member from active planning and totals; deletion must not cascade into immutable history.
 
 ## 3. Profiles, goals, and calorie targets
 
@@ -153,7 +153,7 @@ Breakfast is fully included in version one. Each member chooses an individual br
 - Suggestions come from a starter collection of approximately 40–50 European and international everyday recipes, plus household-saved recipes.
 - Provide the starter recipes in English and Spanish, with ingredient quantities and dietary metadata. Recipe content provenance and reuse rights must be recorded.
 - Prioritize variety across the week, while respecting individual exclusions and calorie budgets.
-- Requested variety rule: avoid repeating a main/base ingredient across three consecutive days. The exact window semantics and breakfast coverage are awaiting clarification; a configurable household window with a three-day default is proposed.
+- For lunch and dinner suggestions, do not repeat a main/base ingredient within any rolling three-calendar-day window. Breakfast is exempt. The household can configure the window length; default to three days. Apply the rule across week boundaries and against retained neighboring plans, rather than resetting it on Monday/Sunday. Use explicit main/base ingredient roles; minor ingredients do not trigger this rule.
 - If no suitable recipe exists, tell the user and suggest adding more recipes. Do not silently relax exclusions or other enforced rules.
 - A shared meal can have different ingredient quantities for each person.
 - When suggesting a meal, scale recipe ingredient quantities proportionally toward each person's manually set breakfast, lunch, or dinner calorie budget. This provides the initial suggested portion; subsequent ingredient-amount edits remain manual.
@@ -165,7 +165,7 @@ Breakfast is fully included in version one. Each member chooses an individual br
 - People can replace meals and manually edit ingredient quantities.
 - Show calorie warnings and recalculate totals as quantities change.
 
-Initial portion scaling is proportional to the individual's meal budget. The requested practical-rounding policy is rounding to tens. The exact unit-specific treatment (grams/millilitres versus countable items and small ingredients) still requires clarification so rounding does not erase ingredients or produce impractical serving counts. The main/base-ingredient variety window and substitution suitability details remain to be finalized. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
+Initial portion scaling is proportional to the individual's meal budget. The requested practical-rounding policy is rounding to tens. The exact unit-specific treatment (grams/millilitres versus countable items and small ingredients) still requires clarification so rounding does not erase ingredients or produce impractical serving counts. The configurable main/base-ingredient variety rule is confirmed above; detailed substitution suitability remains part of technical design. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
 
 ### Eating out and food from bars/restaurants
 
@@ -197,13 +197,15 @@ When updating a saved recipe, select one person's edited meal variant, specify i
 - All household members can add, edit, and delete catalogue items.
 - Users select catalogue ingredients and enter quantities when saving recipes.
 - Calculate recipe and portion calories from ingredient nutrition values.
+- Default recipe, portion, and shopping quantities to raw/uncooked weights for ingredients that will be cooked, and as-purchased quantities for ready-to-eat ingredients.
+- Match nutrition data to that same ingredient state. Do not apply cooked-food calories per 100 g to a raw quantity or guess raw/cooked conversions. Cooking instructions describe preparation after ingredient quantities are measured.
 - Support grams, millilitres, and ingredient-specific units such as eggs and tablespoons.
 - Each supported unit needs a defined conversion for that ingredient.
 - Do not assume that millilitres equal grams for every ingredient.
 
 The selected source is UK CoFID. Its official publication includes the dataset and user guide: https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid . The cited 2021 user guide permits reuse under the Open Government Licence v3.0, excluding logos. Preserve the required attribution and check the terms of the actual release imported.
 
-Exact release selection, raw/cooked food distinctions, imported coverage, and the initial recipe collection remain open. Retain source identifiers and distinguish household edits from original imported values. CoFID describes the UK food supply; it is not a guarantee of matching every European ingredient or branded product.
+Raw/as-purchased quantities are the default. Retain explicit ingredient-state metadata and correct source matching. Exact release selection, imported coverage, and the initial recipe collection still require import/content review. Retain source identifiers and distinguish household edits from original imported values. CoFID describes the UK food supply; it is not a guarantee of matching every European ingredient or branded product.
 
 ### Edits, archiving, and history
 
@@ -368,10 +370,10 @@ The [technical-design draft](technical-design.md) consolidates the proposed data
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
-3. Unit-specific implementation of rounding to tens, and clarification of the three-day main/base-ingredient variety rule. The logged-day activity formula and no-match recipe message are confirmed.
+3. Unit-specific implementation of rounding to tens. The configurable rolling three-day main/base-ingredient rule applies to lunch/dinner and exempts breakfast; no-match messaging is confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
 5. Implementation of cache clearing on detected membership revocation, now confirmed as the required behavior. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
-6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guests are excluded from version one.
+6. Implementation of the confirmed initial-owner email setup and deletion of a removed member's future personal entries while preserving past records. Ownership transfer and new-member effects are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
 9. Detailed screen layouts under the confirmed minimalistic monochrome light/dark design, and technical-design review. Five-tab navigation and the four-milestone sequence, with a user review after each milestone, are confirmed.
