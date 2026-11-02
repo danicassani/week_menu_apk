@@ -140,10 +140,10 @@ This formula is confirmed for version one. Use the Compendium's standard MET-bas
 
 ## 5. Meal planning and suggestions
 
-Breakfast is fully included in version one. It has its own personal default calorie budget and individual meal overrides, and uses the same suggestion, portion, calorie-accounting, and reviewed shopping-list workflows. Whether breakfast recipe choices are individual or shared is still awaiting a decision.
+Breakfast is fully included in version one. Each member chooses an individual breakfast recipe, with a personal default calorie budget and individual meal overrides. It uses the same suggestion, portion, calorie-accounting, and reviewed shopping-list workflows. Lunch and dinner retain a shared recipe with personal portions and reviewed substitutions, except for members explicitly marked as eating out.
 
 - Plan breakfast, lunch, and dinner.
-- Each meal uses one recipe in version one. A recipe can include its side dishes and an optional dessert; multiple independently selected recipes within a meal are out of scope.
+- Each person's home-cooked meal uses one recipe in version one. Breakfast recipes are chosen individually; lunch and dinner share a recipe with personal variants. A recipe can include its side dishes and an optional dessert; multiple independently selected recipes for one person's meal are out of scope.
 - Dessert selection is per person: some members can include the recipe's dessert while others skip it.
 - For each person, proportionally scale the selected recipe components (main, sides, and dessert if included) toward their meal calorie budget, then allow manual ingredient-quantity edits.
 - Include selected dessert ingredients and calories in portion calculations and shopping totals. Skipped dessert contributes neither quantities nor calories for that person.
@@ -164,6 +164,18 @@ Breakfast is fully included in version one. It has its own personal default calo
 - Show calorie warnings and recalculate totals as quantities change.
 
 Initial portion scaling is proportional to the individual's meal budget. Practical quantity rounding, the recipe-selection algorithm, definition of variety, substitution suitability rules, and behavior when no suitable recipe exists remain to be specified. AI-generated recipes are not part of the agreed first-version scope.
+
+### Eating out and food from bars/restaurants
+
+- Any member's breakfast, lunch, or dinner can be marked as eating out instead of their home-cooked portion.
+- Other members can keep their home-cooked portions for the same meal.
+- Require a description and a manually entered calorie estimate; unknown or blank calories are not allowed.
+- Count the entered estimate toward that person's meal and daily total, labelled as an estimate. Keep their meal budget and show warnings if appropriate.
+- The eating-out entry replaces that person's planned home-cooked portion; never count both or also require a duplicate outside-food entry.
+- Exclude the replaced home-cooked portion from generated shopping requirements. Flag the resulting shopping-list diff for review rather than applying it silently.
+- Snacks and drinks outside these replacement meals continue to use the existing description-and-calories log.
+- Preserve eating-out entries when generating a week by default, just like other existing meal entries.
+- Individual breakfast choices and eating-out replacements follow the same planned-meal date-lock rule.
 
 ### Meal edits versus saved recipes
 
@@ -209,7 +221,7 @@ The app supports English and Spanish, selectable per person. Provide starter con
 
 - Maintain just one shared shopping list.
 - Choose a date range and generate its contents.
-- Include final ingredient amounts across every person's portions and substitutions.
+- Include final ingredient amounts across every person's home-cooked breakfast, lunch, and dinner portions and substitutions. Eating-out replacements contribute no ingredient requirements.
 - Combine quantities only when ingredients and units are compatible.
 - Support shared checked/unchecked states and manual additions.
 - No pantry inventory or automatic stock subtraction in the first version.
@@ -326,6 +338,8 @@ These are acceptance-test candidates for review before implementation.
 - A member can view another member's shared health data but cannot edit their personal logs or profile.
 - Different portions and reviewed substitutions produce correct per-person calories and shopping totals.
 - A meal can include dessert for one member and omit it for another; calories, scaled portions, and shopping totals reflect each person's selection.
+- Breakfast can use different recipes for different members, with each contributing the correct ingredients to the same shopping list.
+- An eating-out entry requires a manual calorie estimate, replaces only that member's home-cooked portion, avoids double counting, and produces a reviewable shopping diff.
 - Dietary-pattern rules and individual ingredient exclusions apply to recipes and proposed substitutions.
 - Generating a week preserves existing meals by default, and replacement requires an explicit choice and preview.
 - A stale recipe or meal save is rejected with a review flow instead of overwriting another member's edits.
@@ -346,7 +360,7 @@ These are acceptance-test candidates for review before implementation.
 
 ## 12. Remaining specification work
 
-Full breakfast planning is confirmed: recipes, suggestions, personal portions, calorie budgets, and shopping ingredients. Whether breakfast recipe choices are individual or shared remains open. Eating-out replacement behavior and unknown-calorie handling are under discussion.
+Full breakfast planning with individual recipes is confirmed. Eating out is a per-person meal replacement requiring a description and manual calorie estimate, with no shopping contribution. Unknown-calorie eating-out entries are not supported.
 
 The [technical-design draft](technical-design.md) consolidates the proposed data model, history enforcement, recipe-generation behavior, offline synchronization, and verification approach. Its proposals require review and do not change the confirmed decisions.
 
@@ -376,7 +390,7 @@ Run the relevant checks during each milestone; the final phase verifies the inte
 ## 14. Outside version one
 
 - Guest diners or guest accounts.
-- Multiple independently selected recipes per meal; one recipe may include sides and an optional dessert.
+- Multiple independently selected recipes for one person's meal; breakfast recipes may differ between members, and one recipe may include sides and an optional dessert.
 - Multiple households or public self-registration.
 - Native app-store applications.
 - Pantry inventory and automatic stock subtraction.
