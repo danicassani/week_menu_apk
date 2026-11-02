@@ -165,7 +165,15 @@ Breakfast is fully included in version one. Each member chooses an individual br
 - People can replace meals and manually edit ingredient quantities.
 - Show calorie warnings and recalculate totals as quantities change.
 
-Initial portion scaling is proportional to the individual's meal budget. The requested practical-rounding policy is rounding to tens. The exact unit-specific treatment (grams/millilitres versus countable items and small ingredients) still requires clarification so rounding does not erase ingredients or produce impractical serving counts. The configurable main/base-ingredient variety rule is confirmed above; detailed substitution suitability remains part of technical design. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
+Initial portion scaling is proportional to the individual's meal budget. Apply the confirmed unit-aware rounding rule:
+
+- Quantities of at least 10 g/ml round to the nearest 10 g/ml.
+- Smaller quantities use 1 g/ml precision.
+- Countable units such as eggs retain sensible whole or fractional units using ingredient-specific conversions.
+- Calculate calories from the final quantities actually saved and shown. If rounding changes the budget fit, show the existing warning and allow manual adjustment.
+- Generate shopping requirements from those same final quantities, rather than separately rounded hidden values.
+
+The configurable main/base-ingredient variety rule is confirmed above; detailed substitution suitability remains part of technical design. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
 
 ### Eating out and food from bars/restaurants
 
@@ -341,6 +349,7 @@ These are acceptance-test candidates for review before implementation.
 - An unapproved Google account cannot read household information.
 - A member can view another member's shared health data but cannot edit their personal logs or profile.
 - Different portions and reviewed substitutions produce correct per-person calories and shopping totals.
+- Quantities use the confirmed 10 g/ml, 1 g/ml, and countable-unit rounding policies; displayed quantities, stored calorie calculations, and shopping contributions agree.
 - A meal can include dessert for one member and omit it for another; calories, scaled portions, and shopping totals reflect each person's selection.
 - Breakfast can use different recipes for different members, with each contributing the correct ingredients to the same shopping list.
 - An eating-out entry requires a manual calorie estimate, replaces only that member's home-cooked portion, avoids double counting, and produces a reviewable shopping diff.
@@ -370,12 +379,12 @@ The [technical-design draft](technical-design.md) consolidates the proposed data
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
-3. Unit-specific implementation of rounding to tens. The configurable rolling three-day main/base-ingredient rule applies to lunch/dinner and exempts breakfast; no-match messaging is confirmed.
+3. Verify implementation of the confirmed unit-aware rounding rule and calories/shopping consistency. Variety and no-match rules are also confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
 5. Implementation of cache clearing on detected membership revocation, now confirmed as the required behavior. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
 6. Implementation of the confirmed initial-owner email setup and deletion of a removed member's future personal entries while preserving past records. Ownership transfer and new-member effects are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
-8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
+8. Verify display and compatible-quantity matching in shopping-list review, using final saved portion quantities under the confirmed rounding policy.
 9. Detailed screen layouts under the confirmed minimalistic monochrome light/dark design, and technical-design review. Five-tab navigation and the four-milestone sequence, with a user review after each milestone, are confirmed.
 
 Confirmed requirements above remain valid while these details are resolved. Source mapping, storage, consistency, and test design can be proposed as engineering details rather than requiring a separate product question for every implementation choice.
