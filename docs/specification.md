@@ -10,20 +10,22 @@ An installable web application for one household of adults, accessible from Andr
 
 Suggest lunches and dinners, support individual portions and dietary substitutions, estimate personal calorie budgets and daily deficits, and generate a shared shopping list from the final plan.
 
-The household plans meals for a fixed household size, rather than choosing attendance separately for every meal. Removing a member recalculates today's and future meal quantities for the remaining members; past days remain unchanged.
+Use the current active, onboarded household roster when planning new meals, rather than choosing member attendance separately for every meal. A newly invited member joins only newly planned meals after completing their profile and calorie budgets; leave existing planned meals unchanged. Removing a member recalculates unlocked meal quantities for the remaining included members; past days and locked shared meals remain unchanged. Guest attendance is being discussed and is not yet confirmed.
 
 ## 2. Access, ownership, and visibility
 
 - Google sign-in only.
 - Access is restricted to email addresses approved by the household owner.
 - One owner invites and removes members.
+- The owner can transfer ownership to another active member. The household must always have exactly one owner; transfer ownership before the current owner leaves.
+- New members are included only in newly planned meals after onboarding, without modifying existing planned meals.
 - All members can edit shared meals, saved recipes, the ingredient catalogue, and the shopping list.
 - Each person controls edits to their own profile, calorie budgets, weight measurements, and activity logs.
 - Meal portions, calorie budgets, daily totals, weight measurements, and activity logs are visible to all household members.
 - Adult profiles only.
 - Permission checks must be enforced by the backend, not only hidden interface controls.
 
-Removing a member revokes their access and recalculates today's and future meal quantities for the remaining household. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Owner bootstrap, ownership transfer, and treatment of any future-dated personal entries remain open.
+Removing a member revokes their access and recalculates today's and future meal quantities for the remaining household. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Ownership transfer must be atomic so the household is never left without an owner or with two owners. Owner bootstrap and treatment of any future-dated personal entries after removal remain open.
 
 ## 3. Profiles, goals, and calorie targets
 
@@ -323,7 +325,7 @@ These are acceptance-test candidates for review before implementation.
 3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
-6. Owner lifecycle, new-member onboarding effects, and treatment of future-dated personal entries after member removal.
+6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guest support is under discussion.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
 9. Screen/navigation approval and development phases.
