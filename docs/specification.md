@@ -10,7 +10,7 @@ An installable web application for one household of adults, accessible from Andr
 
 Suggest lunches and dinners, support individual portions and dietary substitutions, estimate personal calorie budgets and daily deficits, and generate a shared shopping list from the final plan.
 
-Use the current active, onboarded household roster when planning new meals, rather than choosing member attendance separately for every meal. A newly invited member joins only newly planned meals after completing their profile and calorie budgets; leave existing planned meals unchanged. Removing a member recalculates unlocked meal quantities for the remaining included members; past days and locked shared meals remain unchanged. Guest attendance is being discussed and is not yet confirmed.
+Use the current active, onboarded household roster when planning new meals, rather than choosing member attendance separately for every meal. A newly invited member joins only newly planned meals after completing their profile and calorie budgets; leave existing planned meals unchanged. Removing a member recalculates unlocked meal quantities for the remaining included members; past days and locked shared meals remain unchanged. Guests and guest portions are outside version-one scope.
 
 ## 2. Access, ownership, and visibility
 
@@ -25,7 +25,7 @@ Use the current active, onboarded household roster when planning new meals, rath
 - Adult profiles only.
 - Permission checks must be enforced by the backend, not only hidden interface controls.
 
-Removing a member revokes their access and recalculates today's and future meal quantities for the remaining household. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Ownership transfer must be atomic so the household is never left without an owner or with two owners. Owner bootstrap and treatment of any future-dated personal entries after removal remain open.
+Removing a member revokes their access and recalculates unlocked current/future meal quantities for the remaining included household members. This is not a redistribution of the departed member's food: portions remain based on each remaining person's budgets and meal settings. Flag resulting shopping-list changes for review rather than applying them silently. After removal, retain the member's historical calorie, weight, and activity records for household history. The remaining household can still view those records; removal does not authorize others to edit the former member's personal records. Ownership transfer must be atomic so the household is never left without an owner or with two owners. Owner bootstrap and treatment of any future-dated personal entries after removal remain open.
 
 ## 3. Profiles, goals, and calorie targets
 
@@ -280,6 +280,18 @@ After sign-in and any required initial setup, open a dashboard containing:
 
 Today follows the current device timezone. The calorie summary defaults to the signed-in person, with a member selector to view another household member. Selecting another member does not grant editing rights to that person's profile or personal logs. The detailed dashboard layout remains open.
 
+### Proposed mobile navigation — awaiting review
+
+| Main destination | Contents |
+| --- | --- |
+| Dashboard | Today's meals, personal calorie summary with member selector, weekly preview, shopping shortcut, and quick food/activity logging |
+| Menu | Weekly lunch/dinner plan, generation previews, meal replacements, portions, and substitutions |
+| Shopping | The one shared list, date range, update review, and offline checkbox status |
+| Recipes | Starter and saved recipes, recipe editor, and ingredient catalogue management |
+| Profile | Personal measurements, goal and calorie-budget settings, weight/activity history, language, and household settings |
+
+Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. Exact visual design is still open.
+
 ### Other proposed screens
 
 These screens organize the confirmed workflows; their layouts and navigation are not yet approved.
@@ -318,16 +330,42 @@ These are acceptance-test candidates for review before implementation.
 - Offline checkbox changes persist through an app restart and synchronize after reconnection.
 - Both languages cover all first-version interface workflows.
 
-## 12. Remaining decisions before implementation
+## 12. Remaining specification work
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
-6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guest support is under discussion.
+6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
 9. Screen/navigation approval and development phases.
 
-Confirmed requirements above remain valid while these details are resolved.
+Confirmed requirements above remain valid while these details are resolved. Source mapping, storage, consistency, and test design can be proposed as engineering details rather than requiring a separate product question for every implementation choice.
+
+## 13. Proposed delivery sequence — awaiting review
+
+All milestones contribute to the same agreed version-one scope. No implementation starts merely because these phases are documented.
+
+1. Foundation and personal calculations: authenticated invitation-only household, ownership permissions, adult profiles, both interface languages, Mifflin–St Jeor targets, screening, budget defaults/overrides, food/activity/weight records, and recalculation/maintenance review.
+2. Recipes and meal planning: attributed CoFID import, ingredient editing/conversions/archiving, 40–50 bilingual starter recipes, household recipes, shared weekly plans, suggestions, proportional portions, reviewed substitutions, stale-edit handling, and immutable history.
+3. Shopping and installable experience: generated shopping quantities, manual additions, reviewed updates, dashboard integration, PWA installation, offline cached views, and queued checkbox synchronization.
+4. Release verification: complete representative household workflows; verify authorization, calorie and unit arithmetic, historical locking, concurrent changes, offline reconnection, English/Spanish coverage, and Android/iPhone browser and home-screen behavior. Configure hosting and a controlled first release when authorized.
+
+Run the relevant checks during each milestone; the final phase verifies the integrated application. Do not defer permission or calculation correctness checks until release.
+
+## 14. Outside version one
+
+- Guest diners or guest accounts.
+- Multiple households or public self-registration.
+- Native app-store applications.
+- Pantry inventory and automatic stock subtraction.
+- AI-generated recipes.
+- Weight-gain targets.
+- Imperial profile units.
+- Editing past days.
+- Offline edits beyond shopping checkboxes.
+- Automatic translation of household-created content.
+
+Future reconsideration does not change the initial scope without an explicit decision.
