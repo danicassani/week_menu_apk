@@ -153,6 +153,8 @@ Breakfast is fully included in version one. Each member chooses an individual br
 - Suggestions come from a starter collection of approximately 40–50 European and international everyday recipes, plus household-saved recipes.
 - Provide the starter recipes in English and Spanish, with ingredient quantities and dietary metadata. Recipe content provenance and reuse rights must be recorded.
 - Prioritize variety across the week, while respecting individual exclusions and calorie budgets.
+- Requested variety rule: avoid repeating a main/base ingredient across three consecutive days. The exact window semantics and breakfast coverage are awaiting clarification; a configurable household window with a three-day default is proposed.
+- If no suitable recipe exists, tell the user and suggest adding more recipes. Do not silently relax exclusions or other enforced rules.
 - A shared meal can have different ingredient quantities for each person.
 - When suggesting a meal, scale recipe ingredient quantities proportionally toward each person's manually set breakfast, lunch, or dinner calorie budget. This provides the initial suggested portion; subsequent ingredient-amount edits remain manual.
 - Recalculate calories for the actual quantities shown. Substitutions require review and their own calorie calculation; matching a calorie budget does not imply nutritional equivalence.
@@ -163,7 +165,7 @@ Breakfast is fully included in version one. Each member chooses an individual br
 - People can replace meals and manually edit ingredient quantities.
 - Show calorie warnings and recalculate totals as quantities change.
 
-Initial portion scaling is proportional to the individual's meal budget. Practical quantity rounding, the recipe-selection algorithm, definition of variety, substitution suitability rules, and behavior when no suitable recipe exists remain to be specified. AI-generated recipes are not part of the agreed first-version scope.
+Initial portion scaling is proportional to the individual's meal budget. The requested practical-rounding policy is rounding to tens. The exact unit-specific treatment (grams/millilitres versus countable items and small ingredients) still requires clarification so rounding does not erase ingredients or produce impractical serving counts. The main/base-ingredient variety window and substitution suitability details remain to be finalized. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
 
 ### Eating out and food from bars/restaurants
 
@@ -299,7 +301,7 @@ After sign-in and any required initial setup, open a dashboard containing:
 - A calorie summary.
 - A shortcut to the shared shopping list.
 
-Today follows the current device timezone. The calorie summary defaults to the signed-in person, with a member selector to view another household member. Selecting another member does not grant editing rights to that person's profile or personal logs. The detailed dashboard layout remains open.
+Today follows the current device timezone. The calorie summary defaults to the signed-in person, with a member selector to view another household member. Selecting another member does not grant editing rights to that person's profile or personal logs. Use a minimalistic black-and-white design with both light and dark modes. Detailed dashboard composition remains open; visual refinement can follow later.
 
 ### Confirmed mobile navigation
 
@@ -313,7 +315,7 @@ Today follows the current device timezone. The calorie summary defaults to the s
 
 On phones, the Menu tab displays a vertical list of seven day cards for the selected week. Each card shows breakfast, lunch, and dinner; scroll vertically through the week. Use the household's configurable Monday/Sunday week start, with Monday as the default. Meal editing, portions, and substitutions remain part of the meal-detail workflow.
 
-Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. Exact visual design is still open.
+Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. The initial visual design is deliberately minimalistic and monochrome (black and white), with light and dark modes. More elaborate visual refinement is deferred.
 
 ### Other proposed screens
 
@@ -366,13 +368,13 @@ The [technical-design draft](technical-design.md) consolidates the proposed data
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
-3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
+3. Unit-specific implementation of rounding to tens, and clarification of the three-day main/base-ingredient variety rule. The logged-day activity formula and no-match recipe message are confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
 5. Implementation of cache clearing on detected membership revocation, now confirmed as the required behavior. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
 6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
-9. Detailed screen layouts and technical-design review. Five-tab navigation and the four-milestone sequence, with a user review after each milestone, are confirmed.
+9. Detailed screen layouts under the confirmed minimalistic monochrome light/dark design, and technical-design review. Five-tab navigation and the four-milestone sequence, with a user review after each milestone, are confirmed.
 
 Confirmed requirements above remain valid while these details are resolved. Source mapping, storage, consistency, and test design can be proposed as engineering details rather than requiring a separate product question for every implementation choice.
 
