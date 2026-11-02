@@ -7,6 +7,7 @@ This document proposes engineering details for the confirmed [product specificat
 - React and TypeScript client, built as a static application for Cloudflare Pages.
 - Five main destinations: Dashboard, Menu, Shopping, Recipes, Profile.
 - English and Spanish interface dictionaries, with per-member preference.
+- Minimalistic monochrome black-and-white interface with both light and dark modes; visual elaboration is deferred.
 - Supabase PostgreSQL as the authoritative store, Google authentication, backend authorization, and shared-change notifications.
 - Backend database functions for multi-record mutations that must succeed or fail together.
 - A service worker for the app shell and browser storage for explicitly cached content and pending checkbox operations.
@@ -46,7 +47,7 @@ All household-owned records carry a household identifier. Personal records also 
 | Ingredient / ingredient version | Canonical identity, raw/cooked state, bilingual names, kcal per reference amount, source identifiers, revision, archive status |
 | Ingredient conversion | Ingredient, unit, grams or compatible reference quantity; no global density assumption |
 | Substitution rule | Source/alternative ingredient, culinary role, dietary eligibility, proposed starting conversion |
-| Recipe / recipe version | Names/instructions, reference servings, ingredient quantities grouped into main/sides and optional dessert, dietary metadata, source/provenance, revision |
+| Recipe / recipe version | Names/instructions, reference servings, ingredient quantities grouped into main/sides and optional dessert, main/base ingredient-role metadata, dietary metadata, source/provenance, revision |
 | Planned meal | Calendar date, breakfast/lunch/dinner slot, optional shared base recipe for lunch/dinner, revision and lock information |
 | Meal participant | Included member, budget snapshot, home-cooked/eating-out mode; individual breakfast recipe or lunch/dinner variant; per-person dessert inclusion; required description and calorie estimate for eating out |
 | Portion ingredient | Actual quantity, unit/conversion reference, ingredient nutrition version, reviewed substitution status |
@@ -114,8 +115,8 @@ Proposed deterministic, non-AI approach:
 - Where needed, find catalogue substitution candidates with compatible culinary roles and explicit dietary metadata.
 - Never treat equal calories as proof of equivalent cooking behavior or nutritional composition.
 - Present substitutions and their quantities for review before applying.
-- Prefer recipes used least recently and avoid repeats within the proposed week when enough valid recipes exist. Variety is the only additional ranking preference.
-- If no suitable candidate exists, explain the gap and leave the slot unfilled; do not relax exclusions silently.
+- The user requests a main/base-ingredient non-repetition rule across three consecutive days. Exact window semantics and breakfast coverage are being clarified; do not implement the earlier least-recently-used proposal as the confirmed variety rule. A configurable household window defaulting to three days is proposed. Tag main/base roles per recipe ingredient rather than treating every use of an ingredient as a primary role.
+- Confirmed no-match behavior: if no suitable candidate exists, explain the gap, leave the slot unfilled, and suggest adding more recipes. Do not relax enforced rules silently.
 - Preserve existing meals by default; replacing them is an explicit generation option with a preview.
 - Preview application checks that source recipe, profile, and plan revisions have not changed.
 
@@ -123,7 +124,7 @@ A proposed substitution remains pending until reviewed. Do not include unreviewe
 
 ### Proposed quantity precision and recipe updates
 
-Store calculation precision separately from display formatting. Display practical quantities and calculate calories from the same quantities actually saved, showing any budget mismatch after rounding. Preserve fractions where useful; never silently round an egg to a whole unit without recalculating.
+The user requests practical rounding to tens. Unit-specific handling needs clarification: a proposed interpretation is nearest 10 g/ml for suitable quantities, retaining useful precision for small ingredients and countable units rather than rounding eggs to multiples of ten. Store calculation precision separately from display formatting, but calculate calories from the same practical quantities actually saved and shown. Show budget mismatches after rounding. Unit conversions remain required.
 
 When updating a saved recipe from a personal meal variant, select one person's edited variant and an explicit reference serving count, preview the change, and apply it as a new recipe version. This review flow is confirmed. Do not merge different people's substitutions into a single ambiguous base recipe.
 
