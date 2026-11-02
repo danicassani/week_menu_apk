@@ -75,26 +75,26 @@ If another validation rule identifies an invalid or excessively restrictive goal
 - Do not silently change meal portions when recalculating targets.
 - When a new weight measurement reaches the goal weight, offer a maintenance target for review and acceptance rather than silently switching goals. Include lunch and dinner budget review in acceptance.
 
-### Proposed numerical defaults — awaiting review
+### Confirmed numerical conventions
 
-The following are proposed implementation conventions for the agreed simple model, not confirmed decisions or individualized medical advice:
+The following conventions are confirmed for version one's simple estimation model. They are coarse planning estimates, not measured expenditure or individualized medical advice:
 
-| Usual activity | Proposed resting-energy multiplier |
+| Usual activity | Resting-energy multiplier |
 | --- | --- |
 | Sedentary | 1.2 |
 | Lightly active | 1.375 |
 | Active | 1.55 |
 | Very active | 1.725 |
 
-Proposed usual daily expenditure = Mifflin–St Jeor resting estimate × selected multiplier. Activity categories are coarse estimates, not measured expenditure.
+Usual daily expenditure = Mifflin–St Jeor resting estimate × selected multiplier. Activity categories are coarse estimates, not measured expenditure.
 
-Proposed weight-loss planning deficit = (current weight − target weight) × 7,700 / calendar days until target date, in kcal/day. Subtract this from usual estimated daily expenditure to propose an intake target. Maintenance uses no weight-loss deficit. Run screening on unrounded results before presenting a target.
+Weight-loss planning deficit = (current weight − target weight) × 7,700 / calendar days until target date, in kcal/day. Subtract this from usual estimated daily expenditure to propose an intake target. Maintenance uses no weight-loss deficit. Run screening on unrounded results before presenting a target.
 
 The 7,700 kcal/kg conversion is a deliberately simplified planning approximation. It does not model changing body composition, water weight, or metabolic adaptation and must not be presented as a reliable weight forecast. Research on its limitations: https://pmc.ncbi.nlm.nih.gov/articles/PMC3810417/ .
 
 Reject invalid or non-finite inputs, nonpositive height/weight, past or same-day weight-loss deadlines, and a weight-loss target not below current weight. A reached goal instead triggers the maintenance-review flow. Other applicability constraints still require review.
 
-This proposal does not yet settle the formula for replacing usual activity with logged activity on a particular date.
+The formula for replacing usual activity with logged activity on a particular date is still awaiting review.
 
 ### Meal budgets and food outside planned meals
 
@@ -118,7 +118,23 @@ This proposal does not yet settle the formula for replacing usual activity with 
 
 If the last activity entry is removed from an editable day, restore the usual activity estimate because that date no longer has logged activities. The detailed calculation must define routine movement, net versus gross activity energy, and multiple activities. Use the Compendium of Physical Activities for source activity and pace/intensity energy estimates, with appropriate age-specific coverage. Preserve published MET values and source references, include attribution, and clearly label calculated expenditure as an estimate. Source and reuse guidance: https://pacompendium.com/ .
 
-Exact imported activity coverage, intensity mappings, and the formula integrating logged activity into daily expenditure still require a calculation specification.
+Exact imported activity coverage and intensity mappings still require a calculation specification.
+
+### Proposed logged-day calculation — awaiting review
+
+For a date with at least one logged activity, propose using:
+
+- Baseline daily living expenditure = resting-energy estimate × 1.2.
+- Each activity's estimated additional energy = max(MET − 1, 0) × weight in kg × duration in hours.
+- Logged-day expenditure = baseline daily living expenditure + the sum of additional activity energy.
+
+This is a simple app convention: subtracting one MET removes the standard resting component of the activity estimate because the daily baseline already includes resting expenditure. Routine movement remains approximated by the sedentary baseline. Use additional exercise entries rather than a second full-day living/activity log; estimates can still differ from actual expenditure.
+
+Replace, rather than add to, expenditure calculated from the usual multiplier. Logging a small amount of exercise can therefore produce a lower total than the usual active/very-active estimate. The person must log all relevant additional activities for a useful daily override. This affects only the date's estimated deficit and does not increase the accepted intake target or automatically resize meals.
+
+Example: resting estimate 1,600 kcal/day, weight 70 kg, and 30 minutes at 4 MET gives baseline 1,920 + additional activity 105 = 2,025 kcal estimated expenditure. This illustrates arithmetic, not a personal prescription.
+
+Approval of this logged-day formula is still pending.
 
 ## 5. Meal planning and suggestions
 
@@ -300,7 +316,7 @@ These are acceptance-test candidates for review before implementation.
 ## 12. Remaining decisions before implementation
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
-2. Activity factors, goal-to-deficit conversion, and additional validation details for Mifflin–St Jeor. The >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
+2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
