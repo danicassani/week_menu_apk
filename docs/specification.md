@@ -75,13 +75,14 @@ If the goal and deadline would require excessive restriction, explain the proble
 ## 4. Daily activity and calorie deficit
 
 - Use the person's usual activity estimate until activities are logged for a date.
-- Log individual activities and durations.
+- There is no separate rest-day override in version one. Without logged activities, retain the usual activity estimate.
+- Log individual activities and durations, with activity-specific pace or intensity choices (for example, leisurely versus brisk walking).
 - Once a day has logged activities, replace that day's usual activity allowance with the logged-activity estimate.
 - The override affects only that day's expenditure and deficit, not the baseline calorie target or other days.
 - Estimate daily deficit as estimated expenditure minus accounted food calories.
 - Do not count the same exercise in both the usual allowance and logged activities.
 
-The detailed calculation must define resting expenditure, routine movement, net versus gross activity energy, multiple activities, and behavior after the last activity entry is removed. Activity-energy sources and estimation formulas are open.
+If the last activity entry is removed from an editable day, restore the usual activity estimate because that date no longer has logged activities. The detailed calculation must define routine movement, net versus gross activity energy, and multiple activities. Activity-energy sources, intensity mappings, and estimation formulas remain open.
 
 ## 5. Meal planning and suggestions
 
