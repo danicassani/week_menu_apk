@@ -142,7 +142,9 @@ This formula is confirmed for version one. Use the Compendium's standard MET-bas
 
 - Plan lunch and dinner.
 - Each meal uses one recipe in version one. A recipe can include its side dishes and an optional dessert; multiple independently selected recipes within a meal are out of scope.
-- Include a selected dessert's ingredient quantities and calories in portion calculations and shopping totals. Whether dessert selection applies per person or to the whole meal remains open.
+- Dessert selection is per person: some members can include the recipe's dessert while others skip it.
+- For each person, proportionally scale the selected recipe components (main, sides, and dessert if included) toward their meal calorie budget, then allow manual ingredient-quantity edits.
+- Include selected dessert ingredients and calories in portion calculations and shopping totals. Skipped dessert contributes neither quantities nor calories for that person.
 - The household's planning-week start is configurable as Monday or Sunday, defaulting to Monday. This affects the weekly view and generation range, not the calendar dates of existing meals.
 - Generate suggestions for a whole week or an individual meal.
 - When generating a week, preserve existing planned meals by default and fill available slots. Offer an explicit option to replace existing meals; show a preview before applying the generated plan.
@@ -321,6 +323,7 @@ These are acceptance-test candidates for review before implementation.
 - An unapproved Google account cannot read household information.
 - A member can view another member's shared health data but cannot edit their personal logs or profile.
 - Different portions and reviewed substitutions produce correct per-person calories and shopping totals.
+- A meal can include dessert for one member and omit it for another; calories, scaled portions, and shopping totals reflect each person's selection.
 - Dietary-pattern rules and individual ingredient exclusions apply to recipes and proposed substitutions.
 - Generating a week preserves existing meals by default, and replacement requires an explicit choice and preview.
 - A stale recipe or meal save is rejected with a review flow instead of overwriting another member's edits.
