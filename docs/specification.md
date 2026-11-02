@@ -102,7 +102,9 @@ How a recipe-update action handles person-specific substitutions and quantities 
 
 ### Nutrition
 
-- Import a starter ingredient set from an established nutrition dataset.
+- Import a curated starter ingredient set from the UK Composition of Foods Integrated Dataset (CoFID).
+- Use the official downloadable dataset and its applicable Open Government Licence attribution requirements. Retain source food identifiers and release information.
+- Provide English and Spanish names for the imported starter catalogue.
 - All household members can add, edit, and delete catalogue items.
 - Users select catalogue ingredients and enter quantities when saving recipes.
 - Calculate recipe and portion calories from ingredient nutrition values.
@@ -110,7 +112,9 @@ How a recipe-update action handles person-specific substitutions and quantities 
 - Each supported unit needs a defined conversion for that ingredient.
 - Do not assume that millilitres equal grams for every ingredient.
 
-The imported dataset, permitted reuse, source attribution, raw/cooked food distinctions, and initial recipe collection are open decisions. Retaining source identifiers and distinguishing imported data from household edits is a proposed design requirement.
+The selected source is UK CoFID. Its official publication includes the dataset and user guide: https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid . The cited 2021 user guide permits reuse under the Open Government Licence v3.0, excluding logos. Preserve the required attribution and check the terms of the actual release imported.
+
+Exact release selection, raw/cooked food distinctions, imported coverage, and the initial recipe collection remain open. Retain source identifiers and distinguish household edits from original imported values. CoFID describes the UK food supply; it is not a guarantee of matching every European ingredient or branded product.
 
 ### Edits, archiving, and history
 
@@ -225,7 +229,7 @@ These are acceptance-test candidates for review before implementation.
 
 ## 12. Remaining decisions before implementation
 
-1. Nutrition dataset, starter recipes, activity dataset, and licensing.
+1. UK CoFID release/coverage and attribution implementation, starter recipes, and activity dataset/licensing.
 2. Calorie-estimation methodology and goal-validation rules.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
