@@ -119,7 +119,7 @@ The imported dataset, permitted reuse, source attribution, raw/cooked food disti
 
 ### Language
 
-The app supports English and Spanish, selectable per person. Translation behavior for ingredient names, recipe names, instructions, and household-created content remains to be decided.
+The app supports English and Spanish, selectable per person. Provide starter content in both English and Spanish. Household-created content stays in its original language, with optional manual translations. Automatic translation through an external service is outside the agreed scope.
 
 ## 7. Shared shopping list
 
@@ -141,7 +141,11 @@ The review must eventually define handling for checked items, removed ingredient
 - Other edits require an Internet connection.
 - Show when displayed information is cached and when checkbox changes are pending.
 
-Checkbox conflict resolution, stale-list handling, and local-cache behavior on logout or member removal are open. Offline caches cannot be remotely erased from a disconnected device.
+For a shared shopping checkbox, the last change accepted by the server wins, including a queued offline change. Preserve the final local checked/unchecked intent rather than replaying an ambiguous toggle. Stale-list handling and local-cache behavior on logout or member removal remain open. Offline caches cannot be remotely erased from a disconnected device.
+
+### Timezones
+
+Use each person's current device timezone for their local day boundaries. There is no single shared household timezone. The date semantics of shared menu entries, travel across timezones, and historical snapshots need an explicit rule so one person's midnight does not rewrite another person's history.
 
 ## 9. Confirmed technical stack
 
@@ -219,10 +223,10 @@ These are acceptance-test candidates for review before implementation.
 1. Nutrition dataset, starter recipes, activity dataset, and licensing.
 2. Calorie-estimation methodology and goal-validation rules.
 3. Exact rules for activity overrides and personal portion suggestions.
-4. Today's time cutoffs, household timezone, and correction of past records.
-5. Shared-edit and offline-checkbox conflict behavior.
+4. Today's time cutoffs, shared menu date semantics under individual device timezones, and correction of past records.
+5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
 6. Owner lifecycle, fixed household size after membership changes, and removed-member data.
-7. Translation of catalogue/recipe content and household-created text.
+7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Shopping-list update details and number of active lists.
 9. Screen/navigation approval and development phases.
 
