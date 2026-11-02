@@ -280,7 +280,7 @@ After sign-in and any required initial setup, open a dashboard containing:
 
 Today follows the current device timezone. The calorie summary defaults to the signed-in person, with a member selector to view another household member. Selecting another member does not grant editing rights to that person's profile or personal logs. The detailed dashboard layout remains open.
 
-### Proposed mobile navigation — awaiting review
+### Confirmed mobile navigation
 
 | Main destination | Contents |
 | --- | --- |
@@ -294,7 +294,7 @@ Use a labelled bottom navigation on mobile, with an equivalent layout suitable f
 
 ### Other proposed screens
 
-These screens organize the confirmed workflows; their layouts and navigation are not yet approved.
+These screens organize the confirmed workflows under the approved five-tab navigation. Detailed screen layouts remain open for review.
 
 1. Google sign-in and invitation/access status.
 2. Profile questionnaire and initial target/budget review.
@@ -332,6 +332,8 @@ These are acceptance-test candidates for review before implementation.
 
 ## 12. Remaining specification work
 
+The [technical-design draft](technical-design.md) consolidates the proposed data model, history enforcement, recipe-generation behavior, offline synchronization, and verification approach. Its proposals require review and do not change the confirmed decisions.
+
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
@@ -340,13 +342,13 @@ These are acceptance-test candidates for review before implementation.
 6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
-9. Screen/navigation approval and development phases.
+9. Detailed screen layouts and technical-design review. Five-tab navigation and the four-milestone sequence, with a user review after each milestone, are confirmed.
 
 Confirmed requirements above remain valid while these details are resolved. Source mapping, storage, consistency, and test design can be proposed as engineering details rather than requiring a separate product question for every implementation choice.
 
-## 13. Proposed delivery sequence — awaiting review
+## 13. Confirmed delivery sequence
 
-All milestones contribute to the same agreed version-one scope. No implementation starts merely because these phases are documented.
+All milestones contribute to the same agreed version-one scope. Review the result with the user after each milestone before proceeding to the next. Documentation approval does not itself authorize implementation.
 
 1. Foundation and personal calculations: authenticated invitation-only household, ownership permissions, adult profiles, both interface languages, Mifflin–St Jeor targets, screening, budget defaults/overrides, food/activity/weight records, and recalculation/maintenance review.
 2. Recipes and meal planning: attributed CoFID import, ingredient editing/conversions/archiving, 40–50 bilingual starter recipes, household recipes, shared weekly plans, suggestions, proportional portions, reviewed substitutions, stale-edit handling, and immutable history.
