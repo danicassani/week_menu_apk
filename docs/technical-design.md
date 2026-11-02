@@ -1,252 +1,247 @@
-# Technical design — review draft
+# Technical design — reviewed implementation blueprint
 
-This document proposes engineering details for the confirmed [product specification](specification.md). It is not an instruction to start implementation. Product decisions take precedence; details labelled as proposals remain reviewable.
+Engineering consistency review completed; see the [review report](technical-review.md). This blueprint implements the confirmed [product specification](specification.md). It does not authorize starting a new milestone or provisioning services. Product decisions take precedence; milestone reviews remain required.
 
 ## 1. Application structure
 
-- React and TypeScript client, built as a static application for Cloudflare Pages.
-- Five main destinations: Dashboard, Menu, Shopping, Recipes, Profile.
-- English and Spanish interface dictionaries, with per-member preference.
-- Minimalistic monochrome black-and-white interface with both light and dark modes; visual elaboration is deferred.
-- Supabase PostgreSQL as the authoritative store, Google authentication, backend authorization, and shared-change notifications.
-- Backend database functions for multi-record mutations that must succeed or fail together.
-- A service worker for the app shell and browser storage for explicitly cached content and pending checkbox operations.
+- React and TypeScript static PWA on Cloudflare Pages.
+- Supabase PostgreSQL, Google authentication, authorized database mutations, and shared-change notifications.
+- Five destinations: Dashboard, Menu, Shopping, Recipes, Profile.
+- English/Spanish interface dictionaries and bilingual starter content.
+- Minimalistic monochrome light/dark interface.
+- Service worker for the public app shell; account-isolated browser storage for explicitly loaded offline views and checkbox operations.
 
-Proposed module boundaries:
+Separate identity/household, nutrition/conversions, targets, daily records, planning, shopping, history, and local synchronization modules. Pure calculation functions can be checked independently; the backend also validates inputs, permissions, revisions, and locks. PostgreSQL is authoritative.
 
-| Module | Responsibility |
+## 2. Logical data model
+
+All household records carry a household identifier. Personal records identify their subject member. Stable IDs, explicit versions, and decimal quantities prevent names, translations, or floating-point formatting from becoming identifiers.
+
+| Entity | Responsibility |
 | --- | --- |
-| Identity and household | Access, invitations, owner transfer, membership |
-| Nutrition | Ingredient versions, conversions, recipe calories |
-| Targets | Mifflin–St Jeor, activity factors, goal screening, accepted targets |
-| Daily records | Budget overrides, outside food, weight and activity logs |
-| Planning | Suggestions, meal participants, portions, substitutions, previews |
-| Shopping | Aggregation, update diffs, manual items, checked states |
-| Local persistence | Offline views, queued checkbox state, synchronization |
-| History | Date locking and immutable calculation snapshots |
+| Household | Singleton household, exactly one owner, Monday/Sunday week start and configurable variety window |
+| Approved email / membership | Verified identity, active/removed status, onboarding state, invitation/revocation information |
+| Profile / profile version | Age, sex, metric measurements, dietary patterns/exclusions, language; preserve calculation inputs |
+| Client timezone | Last reported IANA timezone and server observation time |
+| Weight measurement | Member/date, kg, observation ordering; personal-day immutability |
+| Goal / accepted target version | Calculation inputs, formula version, proposed/accepted state, effective date |
+| Meal budget / override | Personal breakfast/lunch/dinner defaults and individual meal overrides |
+| Ingredient / nutrition version | State, names, kcal/reference amount, original source, household changes, archive state, canonical variety key |
+| Ingredient conversion | Ingredient-specific units, density/yield if needed, allowed countable-unit step |
+| Substitution link | Source/alternative, culinary roles, dietary metadata, quantity conversion |
+| Recipe / recipe version | Reference servings, instructions, main/sides and optional dessert groups, main/base roles, source and revision |
+| Planned meal | Calendar date, breakfast/lunch/dinner slot, optional shared lunch/dinner recipe, revision |
+| Meal participant | Included member, home-cooked/eating-out mode, personal breakfast or shared-meal variant, dessert selection |
+| Portion ingredient | Final saved quantity/unit, conversion and nutrition references, reviewed substitution |
+| Outside-food / activity entry | Personal date, description/calories or source activity/intensity/duration and calculation inputs |
+| Meal-date lock | Household/date, tracked timezone inputs, UTC cutoff, irreversible lock and portion snapshots |
+| Personal-day context / snapshot | Local cutoff, target/input versions, intake components, completeness, expenditure/deficit |
+| Shopping list | Single list, date range, last applied contribution/content revision |
+| Generated / manual item | Separate records; generated contribution identity or manual label, quantities, checked state |
+| Pending local operation | Account, stable item ID, desired checked state, operation ID, local order |
+| Applied checkbox operation | Unique member/operation ID, original acknowledgement, accepted item revision |
+| Household change revision | Minimal authorized invalidation counter/category; no raw health payload |
+| Member preference | Recipe-update prompt and display choices |
 
-Calculations use pure, independently testable functions where possible. Backend validation independently enforces permissions, input validity, revisions, and date locks.
+Enforce one slot of each meal type per date and one participant per member/slot. Each participant has exactly one effective mode: a home-cooked recipe/variant or an eating-out description with finite nonnegative manually entered calories. Reject blank/unknown eating-out calories. Do not count or shop for both modes.
 
-## 2. Proposed logical data model
+Zero-energy nutrition is valid only when explicitly known. Missing recipe energy cannot be used as a scaling divisor. Protect historical references against cascading deletion.
 
-Breakfast planning uses individual member recipe choices, budgets, portions, suggestions, and shopping contributions. Lunch and dinner use a shared base recipe with personal variants. Any member can instead have an eating-out replacement for a meal, requiring a description and manual calorie estimate.
+## 3. Identity, authorization, and membership
 
-All household-owned records carry a household identifier. Personal records also carry their subject member identifier. Use stable IDs and revisions; do not link records by translated labels.
-
-| Entity | Important fields and behavior |
+| Action | Authorized actor |
 | --- | --- |
-| Household | Owner member; exactly one owner; configurable Monday/Sunday week start, default Monday; provisioned for this one-household application |
-| Approved email / invitation | Normalized email, status, issuer, accepted member |
-| Membership | Auth user, active/removed status, onboarding status, joined/removed timestamps |
-| Member profile | Age, sex, height, dietary patterns, excluded ingredient IDs, preferred language |
-| Client timezone | Last reported IANA zone and observation time; confirmed source for server-side date locking |
-| Weight measurement | Member, date, kilograms; immutable after the person's day closes |
-| Goal and target version | Goal weight/date, calculation inputs/version, proposed/accepted status, effective date |
-| Default meal budgets | Member's breakfast, lunch, and dinner defaults, versioned by effective date |
-| Meal-budget override | Member, planned meal, calorie budget |
-| Ingredient / ingredient version | Canonical identity, raw/cooked state, bilingual names, kcal per reference amount, source identifiers, revision, archive status |
-| Ingredient conversion | Ingredient, unit, grams or compatible reference quantity; no global density assumption |
-| Substitution rule | Source/alternative ingredient, culinary role, dietary eligibility, proposed starting conversion |
-| Recipe / recipe version | Names/instructions, reference servings, ingredient quantities grouped into main/sides and optional dessert, main/base ingredient-role metadata, dietary metadata, source/provenance, revision |
-| Planned meal | Calendar date, breakfast/lunch/dinner slot, optional shared base recipe for lunch/dinner, revision and lock information |
-| Meal participant | Included member, budget snapshot, home-cooked/eating-out mode; individual breakfast recipe or lunch/dinner variant; per-person dessert inclusion; required description and calorie estimate for eating out |
-| Portion ingredient | Actual quantity, unit/conversion reference, ingredient nutrition version, reviewed substitution status |
-| Outside-food entry | Member, date, description, kcal |
-| Activity entry | Member, date, source activity code, pace/intensity, source MET, duration, weight/calculation inputs |
-| Daily snapshot | Intake components, estimated expenditure/deficit, accepted target, assumptions and formula versions |
-| Shopping list | The single list, selected date range, applied source-plan revision |
-| Generated shopping item | Canonical ingredient/unit identity, quantity, source contribution references, checked state |
-| Manual shopping item | Member-entered label/quantity, stable separate ID, checked state |
-| Member preference | Recipe-update prompt, display preferences |
-| Pending local operation | Authenticated account, stable item ID, desired checked state, operation ID, local order |
+| Read household meals and shared health/history | Active approved member |
+| Edit unlocked shared meals, recipes, catalogue, shopping | Active member |
+| Edit a profile, target, meal budget, weight, activity, outside-food log | Subject member only |
+| Invite/remove members or transfer ownership | Household owner |
+| Change locked historical records | Nobody through application operations |
 
-Constraints enforce one breakfast, one lunch, and one dinner slot per date, unique meal participants, valid conversions, positive durations/quantities where required, and the agreed single shopping list. Each participant has exactly one effective meal mode: a home-cooked recipe/variant or an eating-out entry with required description and finite nonnegative manually entered calories. Blank or unknown calories are rejected. Do not count both modes or generate ingredients for eating-out participants. Zero or missing recipe energy cannot be used as a divisor when scaling portions.
+The household owner has no override for another person's personal-write permissions.
 
-## 3. Authorization and owner lifecycle
+Configure the initial owner's approved Google email during deployment. Bootstrap the singleton once with the verified identity under a transaction; later login, redeployment, or an old bootstrap email cannot undo ownership transfer. Normalize emails by trimming/case normalization without inventing Gmail dot/plus equivalence. Bind membership to the authenticated user ID.
 
-- Database policies require an active viewer membership for all household access.
-- Shared recipes, catalogue items, and unlocked plans are editable by active members.
-- Personal profiles and logs are household-readable but owner-editable only.
-- Removed members lose server access. Their retained historical records remain readable by active household members.
-- Only the owner changes approved emails and membership or transfers ownership.
-- Transfer ownership in one transaction, to another active member, before the owner leaves.
-- Confirmed bootstrap: configure the initial owner's approved Google email during deployment. Never give ownership to the first arbitrary visitor.
-- When removing a member, delete future-dated personal entries/settings while retaining historical records and calculation references. Remove their unlocked planned portions under the existing rule and flag shopping changes for review. Perform cleanup transactionally without cascading into immutable historical records.
-- Unapproved Google identities receive no household data access, even if the authentication provider creates an identity record.
-- Keep privileged credentials on trusted backend/setup paths. Browser configuration must not contain privileged database credentials.
-- Invitations are approved-email entries; sending invitation emails is not an agreed feature and is not required for access.
+Unapproved authenticated identities receive no household access. Approved members complete their profiles/budgets before inclusion in new meal plans; existing participant rosters are not backfilled. Replanning is an explicit preview.
 
-## 4. Targets, budgets, and daily accounting
+Owner transfer checks an active successor and is atomic. The sole owner cannot leave or be removed before transfer.
 
-Use the confirmed equations and constants in the product specification, with explicit formula-version identifiers.
+Member removal transaction:
 
-1. Validate metric profile and goal inputs.
-2. Compute resting energy and usual daily expenditure.
-3. For loss, compute the agreed approximate planning deficit; maintenance uses zero.
-4. Apply the confirmed rate and intake screening to unrounded results.
-5. Present a proposed daily target and breakfast/lunch/dinner budget review.
-6. Persist acceptance as a new effective version from today, preserving historical versions.
+1. Finalize expired meal/personal dates using pre-removal timezone inputs.
+2. Revoke membership and its automatic re-entry approval.
+3. Delete future-dated personal entries/settings, using that member's tracked local date at removal.
+4. Remove their unlocked meal participants and mark shopping differences for review.
+5. Retain past personal records, current historical references, and locked meal snapshots.
 
-Recording weight does not silently accept a target. Reaching the goal offers maintenance review. A rejected or pending target leaves the last accepted target active.
+Do not cascade-delete the auth identity or shared recipes. An explicit reinvitation does not restore deleted future entries.
 
-Default meal budgets apply unless the individual meal has an override. A person's home-cooked meal uses one recipe, which can include sides and an optional dessert. Breakfast recipes are selected individually; lunch and dinner have a shared base recipe with per-member variants. Dessert inclusion is chosen per person. Suggested portions proportionally scale all components selected for that person toward the applicable meal budget. Skipped dessert ingredients contribute no energy or shopping quantities for that person. Later manual quantity edits stay manual; budget or target changes show mismatches without silently resizing saved portions.
+Enable row-level security on exposed base tables. Exposed views must honor the caller's table policies (security-invoker semantics), rather than bypassing them through a privileged view owner. Functions validate identity, membership, subject permissions, and date locks internally. Check live membership rather than trusting stale JWT role metadata, and avoid recursive membership policies. Narrow execute grants; prefer invoker permissions. Any necessary definer function has an empty fixed search path, schema-qualified references, and explicit authorization. Privileged credentials never enter the browser.
 
-### Confirmed time-display convention
+References: [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security), [database-function security](https://supabase.com/docs/guides/database/functions).
 
-Count the day's planned breakfast, lunch, and dinner toward its daily total as soon as planned, clearly labelled as assumed intake. Do not introduce unrequested meal-time schedules. Future dates show projected totals. Outside-food entries add to the applicable person's day. This is the confirmed full-day accounting convention.
+## 4. Calorie targets and daily accounting
 
-### Eating-out replacements
+Use the exact confirmed Mifflin–St Jeor equations, activity multipliers, 7,700 kcal/kg approximation, logged-day formula, and screening boundaries from the specification. Version all inputs.
 
-An eating-out entry is part of the planned meal participant, not an extra outside-food log. Its manual estimate replaces the corresponding recipe energy in the day's total. Label it as estimated, apply the existing budget warnings, and exclude its recipe ingredients from shopping aggregation. Leave other members' recipe portions unchanged.
+Accepted intake targets stay unchanged until reviewed and accepted. New weight measurements can update the editable day's expenditure estimate without accepting a new intake target or resizing meals. Retain the applicable measurement/profile inputs at the personal-day cutoff.
 
-Changing a participant to eating out updates the plan revision and makes shopping changes available for review. Generation preserves existing eating-out entries unless the user explicitly chooses replacement and reviews the preview. The same meal-date lock applies to individual breakfasts and eating-out replacements.
+A recalculation uses valid metric inputs, an integer adult age, and calendar days remaining. Calculate calendar-day differences rather than milliseconds divided by 24 hours, so daylight saving does not alter the deficit. Reject non-finite/nonpositive measurements, invalid goal dates, and invalid target direction. Apply the agreed >1 kg/week and <=1,200 kcal/day checks before display rounding.
 
-### Activity
+Reaching or passing goal weight offers maintenance review. An expired loss deadline requires goal/deadline revision before a new target calculation; do not divide by zero. Pending/rejected proposals leave the previous accepted target active. Acceptance includes reviewing all three personal meal budgets.
 
-Use the confirmed logged-day formula and the Compendium activity codes without changing source MET values. Sum additional activity energy for that date; use the usual multiplier when no activity entries remain. Logged activity changes expenditure and deficit only, never the accepted intake target.
+Actual weight, outside-food, and activity logs record the person's current editable day; past-day insertion is a correction and remains excluded. Future meal plans, budgets, and goals are supported. Validate nonnegative food calories, positive durations, and no more than 24 hours of total activity for one date. Source coverage gaps produce a clear unavailable estimate, not an invented MET value.
 
-Use source-appropriate age coverage. Do not silently map an unsupported age or activity to an unrelated source entry. Exact release selection and any coverage gaps must be recorded during import review.
+The daily intake calculation is:
 
-## 5. Meal suggestions and substitutions
+- Final home-cooked portion calories OR the eating-out estimate for each participant/slot.
+- Plus outside-food calories.
+- Never add both meal budgets and portion calories as consumed food.
 
-Proposed deterministic, non-AI approach:
+Meal-budget allocation is a separate check against the daily target. Planned meals count in full-day totals immediately, labelled as assumed intake; future dates show projections. An empty meal slot is not evidence that the meal was skipped. Show a known-calorie subtotal and mark the day's projection/deficit incomplete when a required meal is unplanned.
 
-- Start from active starter and saved recipes.
-- Check each included member's patterns and excluded ingredient IDs against the recipe components selected for that member, including dessert only when selected.
-- Where needed, find catalogue substitution candidates with compatible culinary roles and explicit dietary metadata.
-- Never treat equal calories as proof of equivalent cooking behavior or nutritional composition.
-- Present substitutions and their quantities for review before applying.
-- Confirmed variety filter: for lunch and dinner, reject a suggestion that repeats a main/base ingredient within any rolling three-calendar-day window. Breakfast is exempt. Make window length configurable at household level, default three days.
-- Tag main/base roles per recipe ingredient rather than treating every use as a primary role. Check the selected per-person variant so the same shared recipe served to several members is not treated as several repeats.
-- Check both neighboring directions and retained plans outside the generated week. Changing week start does not reset the ingredient window. Do not silently rewrite existing meals to satisfy a new setting.
-- Confirmed no-match behavior: if no suitable candidate exists, explain the gap, leave the slot unfilled, and suggest adding more recipes. Do not relax enforced rules silently.
-- Preserve existing meals by default; replacing them is an explicit generation option with a preview.
-- Preview application checks that source recipe, profile, and plan revisions have not changed.
+Logged-day expenditure uses resting estimate × 1.2 plus summed net activity energy, exactly as agreed. With no activity entries, restore the usual multiplier. This changes only that date's estimated expenditure/deficit, not the accepted intake target.
 
-A proposed substitution remains pending until reviewed. Do not include unreviewed alternatives in an applied shopping-list update.
+## 5. Recipes, portions, suggestions, and substitutions
 
-### Confirmed quantity precision and recipe updates
+Breakfast recipes are individual; lunch/dinner share a base recipe with personal variants. Each person's home-cooked meal uses one recipe, including its sides and optional personal dessert. Eating-out mode replaces only that person's recipe portion and contributes no shopping ingredients.
 
-Confirmed unit-aware rounding:
+Suggestion pipeline:
 
-- If the quantity is at least 10 g/ml, round to the nearest 10 g/ml.
-- Smaller quantities use 1 g/ml precision.
-- Preserve sensible whole/fractional countable units, with ingredient-specific conversions.
-- Keep intermediate arithmetic separate from formatting, but persist the final practical quantities and calculate calories from those exact saved values.
-- If the rounded portion exceeds the meal budget, show the existing warning; do not silently alter another ingredient to compensate.
-- Shopping aggregation uses the same final portion quantities, excluding skipped dessert and eating-out participants.
+1. Resolve the included roster, dessert selections, budgets, and individual dietary rules.
+2. Select an active recipe and curated, compatible ingredient alternatives when needed.
+3. Obtain review of substitutions; do not infer cooking suitability from calorie similarity.
+4. Compute energy for the selected components and scale proportionally to each person's budget.
+5. Apply unit-aware rounding and recompute calories from the actual saved quantities.
+6. Check variety against retained neighboring meals and the entire preview.
+7. Revalidate source/profile/settings/plan revisions and date locks before an atomic commit.
 
-Unit conversions remain required. Boundary and integration checks must cover both quantity precision ranges and a conversion-based countable ingredient, verifying that calorie and shopping totals use saved quantities.
+Generate into empty slots by default; replacing existing meals, including eating-out entries, is explicit and previewed. If no recipe fits, leave the slot unfilled, explain the gap, and suggest adding recipes. Never silently relax dietary or variety rules.
 
-When updating a saved recipe from a personal meal variant, select one person's edited variant and an explicit reference serving count, preview the change, and apply it as a new recipe version. This review flow is confirmed. Do not merge different people's substitutions into a single ambiguous base recipe.
+### Variety
 
-## 6. Catalogue, conversions, and source imports
+Use explicit main/base roles and canonical ingredient keys; normalize reviewed aliases/cuts representing the same main ingredient during content preparation. Minor ingredients do not trigger the filter.
 
-- Seed a reviewed subset from UK CoFID; retain release, food codes, attribution, and original values.
-- Use raw/uncooked weights by default for ingredients that will be cooked, and as-purchased quantities for ready-to-eat foods, consistently across recipe inputs, portions, calorie calculation, and shopping.
-- Keep explicit ingredient-state metadata and raw/cooked variants as distinct identities where source values differ. Use nutrition values matching the selected state; do not substitute cooked values for raw weights. If a recipe explicitly requires a state conversion, require a defined yield rather than guessing.
-- Household edits create a new nutrition version rather than erasing the imported source.
-- Translate starter names and recipe content into English and Spanish; household text can have optional manual translations.
-- Import Compendium codes, intensity descriptions, MET values, source/release references, and attribution.
-- Record provenance and permitted reuse of every starter recipe; independently authored recipes are an option.
-- Explicitly define ingredient-specific unit conversions. Unsupported conversions require user input instead of guessing.
-- Archiving prevents new ingredient selections but preserves existing references.
-- A catalogue change updates unlocked meal nutrition and flags shopping differences where relevant, without changing locked records.
+Default window: three calendar days, configurable for the household. Apply to lunch and dinner only, per selected personal variant; breakfast is exempt. One shared dish served to several people is not multiple repetitions for one person. Compare different meal slots, with a set of ingredient keys inside each portion.
 
-Imports are reproducible setup artifacts, not live external API dependencies for every meal calculation. No source dataset has been imported yet.
+For three days, Monday/Wednesday reuse is excluded, Monday/Thursday reuse is allowed, and lunch/dinner reuse on one date is excluded. Check across week boundaries and in both neighboring directions. A settings change never silently rewrites existing plans.
 
-## 7. Date locking and historical integrity
+### Rounding and version propagation
 
-Confirmed rule: a shared meal date locks for everyone as soon as it has ended for any active household member. Personal records become read-only after the owner's local date ends.
+For gram/millilitre quantities >=10, round to the nearest 10; smaller amounts use 1-unit precision. Countable units use sensible whole/fractional steps defined for the ingredient. Positive half-step ties round upward. Round in the chosen unit once, then convert for calorie and shopping calculations; do not round an egg fraction again in grams.
 
-Proposed enforcement:
+A required positive quantity that would round to zero requires explicit quantity review rather than silent omission or inflation. Persist the final practical values using decimal arithmetic. Budget overshoot after rounding is a warning and manual adjustment; never change another ingredient silently.
 
-- Use server time and member-reported IANA timezone identifiers; never trust a submitted date-is-editable boolean.
-- Confirmed timezone policy: use the last online device timezone reported by each member. A server cannot know an offline device's current timezone or travel location.
-- Shared date cutoffs use the earliest relevant member midnight. Once a date is locked, timezone changes or membership changes cannot reopen it.
-- Check locks during every backend mutation, including indirect changes through nutrition edits and membership changes.
-- Keep immutable recipe/ingredient versions and portion snapshots for locked dates. A later shared recipe edit cannot rewrite history.
-- Changes to current/future meal rosters never add a new member retroactively. Removing a member affects only unlocked plans.
-- Transactions that lock or update a date must serialize appropriately, so a catalogue edit cannot race a history snapshot.
+Differentiate two updates:
 
-Stored snapshots preserve quantities, calories, conversions, substitutions, calculation inputs, and source/formula versions. Materializing a snapshot is a technical operation, not a user correction.
+- Catalogue nutrition/conversion edits version the source and recalculate unlocked meals using their saved quantities/units. Do not resize portions to restore budgets. Shopping changes, if any, require review.
+- Saved-recipe edits create a new version for future selections. Existing planned quantities/variants are meal snapshots; applying changed recipe quantities to them needs an explicit preview.
 
-## 8. Shopping and concurrent changes
+A new dietary exclusion flags incompatible unlocked meals for review without automatically applying substitutions. Locked history is preserved.
 
-Generate contributions from saved, reviewed home-cooked portion quantities across the selected date range, including individual breakfast recipes. Skip eating-out participants entirely; their manual calorie estimates are not ingredient requirements. Merge only identical compatible ingredient identities. Default to raw/as-purchased shopping quantities; explicit cooked-state entries stay separate unless a defined yield conversion permits aggregation into the corresponding purchased ingredient.
+Updating a saved recipe from a meal uses the confirmed single-person variant, explicit reference servings, and preview. Do not merge several people's alternatives. The recipe-update prompt preference remains per member and can be re-enabled.
 
-The reviewed update is a diff against the last applied generated list:
+## 6. Catalogue and starter content
 
-- Increase: update the quantity; if checked, uncheck and highlight the increase.
-- Decrease: update the quantity and retain checked state.
-- No longer required: remove the generated entry.
-- Unchanged: retain the item and its checked state.
-- Manual entry: always preserve independently of generated entries.
+Seed a reviewed subset from UK CoFID, retaining original release/food codes, attribution, and household-edited versions. Use raw/uncooked weights for ingredients to be cooked and as-purchased quantities for ready-to-eat foods, consistently across recipes, portions, calories, and shopping.
 
-Applying a preview checks the list/plan revisions; an outdated preview must be refreshed. Generated item IDs remain stable for surviving identities.
+Ingredient state must match the source nutrition reference. Defined density/yield conversions are required when crossing volume/mass or cooked/purchased states. Do not guess missing conversions or interpret unknown nutrition as zero. Incomplete data can remain drafts but cannot be automatically applied as fully calculated meals; show which fields are missing.
 
-For recipes and planned meals, reject stale writes and retain the editor's draft for comparison; do not overwrite the newer saved revision.
+Import Compendium activity codes, pace/intensity mappings, source METs, age coverage, and attribution. Do not change published MET values or invent support for unmapped ages/activities.
 
-## 9. Offline behavior and checkbox ordering
+Prepare 40–50 recipes spanning breakfast and European/international everyday meals, with ingredient groups, dietary/main-base metadata, substitution links, quantity steps, source/provenance, and English/Spanish content. Household-created text retains its entered language with optional manual translations.
 
-Cache the shell, last loaded menu/recipes, and current shopping list for the signed-in account. No offline profile, calorie, recipe, menu, or nutrition editing is promised.
+Archiving preserves existing/historical references while preventing new selections or suggestions that depend on unresolved archived ingredients. Archive referenced recipes instead of deleting history.
 
-Queue explicit set-checked operations, not toggle operations:
+Imports are reproducible setup artifacts, not mandatory live external lookups for each calculation. Source/content coverage is reviewed in its milestone; no dataset has yet been imported.
 
-- Include a unique operation ID, stable item ID, and desired checked state.
-- Preserve each device's local order and use idempotent server handling for retries.
-- The last operation accepted by the server wins, including queued offline operations.
-- Revalidate active membership on reconnection.
-- Confirmed stale-item rule: if an item was removed while offline, discard its checkbox operation with a visible notice and continue synchronizing other valid operations. Never resurrect deleted items or apply a label match to a different item. A replacement with a new stable ID does not inherit the removed item's queued operation.
-- Always show pending/error state until an operation is acknowledged.
+## 7. Historical integrity and timezone handling
 
-Confirmed sign-out lifecycle: isolate caches by account. If checkbox edits are pending when sign-out is requested, warn and let the person reconnect to synchronize or explicitly discard the changes before signing out. Completed sign-out clears that account's cached household data and pending operations. Do not silently lose pending changes or keep them for a later sign-in.
+Use two independent locks:
 
-Confirmed revocation lifecycle: on detected membership revocation, stop syncing and clear local household caches. Previously downloaded data on a disconnected device cannot be remotely erased.
+- Household meal-date lock: freezes all participant portions for the date, including individual breakfasts and eating-out replacements, as soon as the date ends for any tracked active member.
+- Personal-day lock: closes that person's food/activity/measurement records and daily context at their own local day end.
 
-## 10. Screen flows
+The shared lock does not prematurely close another person's still-current personal day. A locked planned meal cannot be edited even where it is still Today.
 
-~~~mermaid
-flowchart TD
-    A[Google sign-in] --> B{Approved member?}
-    B -->|No| C[Access unavailable]
-    B -->|Yes| D{Setup complete?}
-    D -->|No| E[Profile and target / budget review]
-    E --> F[Dashboard]
-    D -->|Yes| F
-    F --> G[Menu]
-    F --> H[Shopping]
-    F --> I[Recipes and ingredients]
-    F --> J[Profile and history]
-    G --> K[Suggestion / substitution preview]
-    K --> L[Manual portion edits]
-    L --> M[Save unlocked meal]
-    M --> N[Shopping changes available]
-    N --> H
-~~~
+Derive UTC cutoffs from IANA calendar midnights with daylight-saving support. Use the last online device timezone reported by each member, with server observation time; a disconnected device's new location cannot be known. The server clock determines expiry.
 
-On phones, the Menu destination uses seven vertically stacked day cards, each showing breakfast, lunch, and dinner, with vertical scrolling. The household can start the planning week on Monday or Sunday; Monday is the default. Changing the week start affects the view and generation range, not existing meal calendar dates. Each person's home-cooked meal has one recipe, with any included sides and a per-person optional dessert. Breakfast recipes are individual; lunch and dinner have a shared base recipe. Show eating-out replacements per member with their manually entered calorie estimates.
+Before timezone/membership changes, finalize dates whose old cutoffs have passed; update only still-open cutoffs. Once locked, a date cannot reopen because of travel, member removal, or another device reporting a different zone.
 
-Every main destination remains available through the approved navigation. Selecting another member changes the displayed summary without changing personal-write permissions.
+Every affected backend read/mutation enforces due closures. Serialize conflicting updates consistently by household/date and member/date. Immutable ingredient/recipe/profile/target versions and portion records permit lazy snapshot materialization at the cutoff without an always-running client or exactly timed background task. A catalogue edit cannot race into expired history.
+
+Store quantities, conversions, calories, source and formula versions, activity inputs, accepted targets, and completeness information. Backend constraints prevent indirect changes to locked history through catalogue edits, budget changes, or removal cleanup.
+
+## 8. Shopping updates and concurrent edits
+
+Aggregate final saved home-cooked quantities for the selected range, including individual breakfasts and selected desserts. Eating-out participants contribute no ingredients. Merge only compatible canonical identities; default to raw/as-purchased quantities, with explicit yields required for cooked-state conversion.
+
+Review a diff before application:
+
+| Change | Applied behavior |
+| --- | --- |
+| Quantity increases | Update; if checked, uncheck and highlight increase |
+| Quantity decreases | Update and retain checked state |
+| Ingredient no longer required | Remove generated item |
+| Unchanged item | Preserve item and checked state |
+| Manual addition | Preserve independently of generated contributions |
+
+Confirmed during review: changing the date range preserves surviving generated ingredients' checked states under these same rules; it does not start a new unchecked round. Manual additions and their states remain.
+
+Check source plan/catalogue and range/content revisions before applying a preview. At commit, read current checked states under a lock; checkbox revisions are separate from source-content revisions. A stale content preview must refresh. Stable item IDs survive compatible identity matches across ranges; deleted/recreated items get new IDs.
+
+Recipe and meal edits use revision checks. A stale save is rejected with the editor's draft retained for review; no last-write overwrite of recipe/meal edits.
+
+## 9. Offline synchronization, caches, and realtime
+
+Queue set-checked intent, not toggle commands. Keep local order and a unique member/operation ID. The backend records the acknowledgement atomically with the item change. Retries return the original acknowledgement without reapplying state; otherwise an old retry could overwrite a newer operation.
+
+The last change accepted by the server wins. A quantity increase unchecks an item, but a later accepted offline check can recheck it under that same agreed rule. No hidden conflict exception is added.
+
+Discard removed-item operations with a notice and continue valid operations. Never recreate deleted items or remap by label. Keep newer local intent pending when an older operation is acknowledged; refetch authoritative state after synchronization.
+
+Cache only the shell and explicitly loaded menu/recipes/shopping views, isolated by account. Do not generically cache authenticated API traffic or promise offline health-log editing. Browser storage is evictable; handle quota/availability errors visibly. Updates and storage migrations preserve pending operations.
+
+On sign-out with pending changes, offer reconnect/sync or explicit discard. Completed sign-out clears the account's cached household data, pending operations, and local session; offline sign-out cannot promise immediate remote session revocation. On detected removal, stop syncing and clear household caches; offline copies cannot be erased remotely.
+
+Sync on foreground reconnection, resume, and opening. Background browser execution is an optimization, not a guarantee. Initial installation/cache population requires an online load.
+
+### Authorized refresh notifications
+
+Publish only minimal household revision updates with active-membership access checks; fetch current records through authorized reads. Do not publish raw health-record deletion payloads. Relevant changes increment the revision in the same transaction. Realtime is a hint, not a durable change log: refetch on resume/reconnect and before applying previews.
+
+Supabase documents limitations for Postgres delete events, so deletion-event filtering must not be the access-control boundary. Check function permissions and long-lived sessions as well as table policies. Reference: [Supabase Postgres Changes](https://supabase.com/docs/guides/realtime/postgres-changes).
+
+## 10. Screen and browser contract
+
+Dashboard opens after setup, defaults to the signed-in person's calorie summary, and has a member selector. Switching the displayed member does not grant personal-write permissions.
+
+Mobile Menu uses seven vertically stacked day cards, each with breakfast/lunch/dinner, following the configured Monday/Sunday week start (Monday default). Shared calendar dates stay fixed across timezones. Show eating-out estimates and dessert choices per person.
+
+Recipes includes catalogue management; Profile includes personal targets, measurements, history, language, and relevant settings. Use textual statuses, icons, and visible focus states so warnings, pending synchronization, and missing data remain clear in black/white light/dark modes.
+
+Configure static SPA route fallback, approved OAuth callback destinations, and a redirect flow tested in both mobile browsers and installed PWAs. Do not allow arbitrary callback redirects. Version the app shell and handle updates without losing queued edits. Detailed composition is a milestone artifact; visual elaboration is deferred.
 
 ## 11. Delivery and verification
 
-Follow the approved four milestones in the product specification, with a review after each milestone before proceeding.
+Follow the four approved milestones with user review after each. Verify permissions/calculations as soon as implemented; do not postpone them to the final release phase.
 
-Meaningful checks include:
+Required integration coverage:
 
-- Formula arithmetic, screening boundaries, budgets, net activity, and ingredient conversions.
-- Database authorization using owner/member/removed/unapproved identities.
-- Atomic ownership transfer and lock enforcement for indirect mutations.
-- Two-member stale-edit and timezone-boundary scenarios.
-- Shopping diff and stable-ID behavior, including manual additions.
-- Offline app restart, retry, reversed arrival order, removed items, and revoked membership.
-- English/Spanish workflows, small-screen accessibility, Android Chrome and iPhone Safari installation/cached access.
+- Unauthorized/removed identities, direct database/function access, cross-person writes, owner transfer and one-time bootstrap.
+- Formula and screening boundaries, calendar days across daylight saving, unit conversions, rounding, and partial daily totals.
+- Individual breakfasts, shared personal variants, optional dessert, eating-out replacement, and no double counting.
+- Rolling ingredient windows across weeks, substitutions, and empty-slot fallback.
+- Independent meal/personal-day locks, indirect catalogue updates, travel, and member removal.
+- Shopping range changes, manual items, increase/decrease rules, stale previews, and stable identities.
+- Lost acknowledgements, duplicate retries, local-operation order, removed items, revocation, sign-out, and offline app restart.
+- English/Spanish, keyboard/screen-reader essentials, Android Chrome, iPhone Safari, and home-screen sign-in/cached use.
 
-Start these checks with the relevant milestone. Actual implementation test results will be recorded when code exists; documentation review is not a passing application test.
+The [review report](technical-review.md) records design scenarios and arithmetic checks. These are not passing application tests; application code, migrations, imports, provisioning, and browser tests have not started.
 
-## 12. Review boundaries
+## 12. Review outcome and delivery artifacts
 
-The product requirements, five tabs, stack, formulas, and milestone order are confirmed. This document's engineering defaults and explicitly proposed edge-case behavior are not yet approved as a whole.
+No unresolved product question blocks this blueprint. The shopping date-range behavior was confirmed during the review.
 
-The timing convention, device-timezone reporting policy, recipe-update preview, and membership-revocation cache cleanup are confirmed. Stale offline-item handling and the sign-out lifecycle are confirmed. Exact dataset coverage and recipe content will be concrete import artifacts reviewed in the relevant milestone.
+Still to produce in the relevant milestones: exact source release manifests and coverage, conversion/variety/substitution metadata, bilingual starter recipes, actual screen composition, database migrations, implementation tests, and deployment configuration. The initial owner's email and hosting/OAuth accounts are setup inputs needed later.
+
+No new feature scope, stack, calorie formula, or paid service was introduced. Application implementation remains a separate next step under the approved milestone process.
