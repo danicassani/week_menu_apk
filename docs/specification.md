@@ -94,7 +94,7 @@ The 7,700 kcal/kg conversion is a deliberately simplified planning approximation
 
 Reject invalid or non-finite inputs, nonpositive height/weight, past or same-day weight-loss deadlines, and a weight-loss target not below current weight. A reached goal instead triggers the maintenance-review flow. Other applicability constraints still require review.
 
-The formula for replacing usual activity with logged activity on a particular date is still awaiting review.
+Logged-day expenditure uses the separately confirmed replacement formula in section 4.
 
 ### Meal budgets and food outside planned meals
 
@@ -120,9 +120,9 @@ If the last activity entry is removed from an editable day, restore the usual ac
 
 Exact imported activity coverage and intensity mappings still require a calculation specification.
 
-### Proposed logged-day calculation — awaiting review
+### Confirmed logged-day calculation
 
-For a date with at least one logged activity, propose using:
+For a date with at least one logged activity, use:
 
 - Baseline daily living expenditure = resting-energy estimate × 1.2.
 - Each activity's estimated additional energy = max(MET − 1, 0) × weight in kg × duration in hours.
@@ -134,7 +134,7 @@ Replace, rather than add to, expenditure calculated from the usual multiplier. L
 
 Example: resting estimate 1,600 kcal/day, weight 70 kg, and 30 minutes at 4 MET gives baseline 1,920 + additional activity 105 = 2,025 kcal estimated expenditure. This illustrates arithmetic, not a personal prescription.
 
-Approval of this logged-day formula is still pending.
+This formula is confirmed for version one. Use the Compendium's standard MET-based energy convention; the values remain estimates.
 
 ## 5. Meal planning and suggestions
 
@@ -317,7 +317,7 @@ These are acceptance-test candidates for review before implementation.
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
-3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
+3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
 6. Owner lifecycle, new-member onboarding effects, and treatment of future-dated personal entries after member removal.
