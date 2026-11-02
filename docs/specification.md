@@ -77,7 +77,8 @@ The detailed calculation must define resting expenditure, routine movement, net 
 
 - Plan lunch and dinner.
 - Generate suggestions for a whole week or an individual meal.
-- Suggestions come from a starter recipe collection and household-saved recipes.
+- Suggestions come from a starter collection of approximately 40–50 European and international everyday recipes, plus household-saved recipes.
+- Provide the starter recipes in English and Spanish, with ingredient quantities and dietary metadata. Recipe content provenance and reuse rights must be recorded.
 - Prioritize variety across the week, while respecting individual exclusions and calorie budgets.
 - A shared meal can have different ingredient quantities for each person.
 - When suggesting a meal, scale recipe ingredient quantities proportionally toward each person's manually set lunch or dinner calorie budget. This provides the initial suggested portion; subsequent ingredient-amount edits remain manual.
