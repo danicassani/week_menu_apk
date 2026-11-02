@@ -65,7 +65,7 @@ These app rules draw on NHS gradual weight-loss guidance and NICE guidance restr
 - https://www.nhs.uk/conditions/overweight-and-obesity/
 - https://www.nice.org.uk/guidance/ng246/chapter/Physical-activity-and-diet
 
-If another validation rule identifies an invalid or excessively restrictive goal, also explain it and ask for revision. Activity factors, goal-to-deficit conversion, additional validation rules, and applicable exclusions require a separately reviewed calculation specification. New weight measurements can trigger the previously agreed target-recalculation review.
+If another validation rule identifies an invalid or excessively restrictive goal, also explain it and ask for revision. The numerical activity factors and goal-to-deficit conversion are confirmed below. Additional applicability constraints and validation details still require review. New weight measurements can trigger the previously agreed target-recalculation review.
 
 ### Recalculation
 
@@ -106,7 +106,7 @@ Logged-day expenditure uses the separately confirmed replacement formula in sect
 - Warnings allow manual adjustments and do not block finalizing the plan.
 - Planned lunch and dinner portions count automatically toward intake without a confirmation step.
 - Display clearly that these totals assume planned portions were eaten.
-- Distinguish scheduled future intake from intake attributed to elapsed meals; the exact timing rule is still open.
+- Count the day's planned meals in the full-day total as soon as planned, labelled as assumed intake. Future dates show projected totals; no meal-time scheduling or confirmation is required.
 
 ## 4. Daily activity and calorie deficit
 
@@ -169,7 +169,7 @@ Ingredient-quantity edits affect only that planned meal by default.
 
 After an edit, suggest updating the saved recipe through a separate action. Include a “Don't show again” preference, with a setting to enable the prompt again.
 
-How a recipe-update action handles person-specific substitutions and quantities remains open.
+When updating a saved recipe, select one person's edited meal variant, specify its reference serving count, and preview the changes before applying a new recipe version. Do not merge different people's substitutions into a single base recipe.
 
 ## 6. Recipes and the shared ingredient catalogue
 
@@ -227,11 +227,11 @@ Quantity increases for checked items follow the uncheck-and-highlight rule above
 
 For a shared shopping checkbox, the last change accepted by the server wins, including a queued offline change. Preserve the final local checked/unchecked intent rather than replaying an ambiguous toggle. If a queued checkbox change refers to an item removed before reconnection, discard that outdated change, show a notice, and continue synchronizing the remaining valid changes. Do not recreate the removed item.
 
-If sign-out is requested with unsynchronized shopping changes, warn and let the person reconnect to synchronize or explicitly discard the changes before signing out. After sign-out, clear cached household data for that account. Handling detected membership revocation is described as a proposal in the technical design. Offline caches cannot be remotely erased from a disconnected device.
+If sign-out is requested with unsynchronized shopping changes, warn and let the person reconnect to synchronize or explicitly discard the changes before signing out. After sign-out, clear cached household data for that account. On detected membership revocation, stop synchronization and clear cached household data. A disconnected device cannot be cleared remotely. Offline caches cannot be remotely erased from a disconnected device.
 
 ### Timezones
 
-Shared menu entries belong to a calendar date: Friday lunch stays on Friday for every member, regardless of timezone. Each person's current device timezone determines their Today view and local day boundaries. Meals are not shifted to different calendar dates by timezone conversion. Shared meals for a calendar date lock for everyone when that date first ends for any household member, even if it is still Today for others. Once locked, later timezone changes must not reopen the meals. Personal logs follow the owner's local day boundary.
+Shared menu entries belong to a calendar date: Friday lunch stays on Friday for every member, regardless of timezone. Each person's current device timezone determines their Today view and local day boundaries. For server-side locking, use the last reported device IANA timezone, since a disconnected device's current zone cannot be known. Never reopen a locked meal date after a timezone change. Meals are not shifted to different calendar dates by timezone conversion. Shared meals for a calendar date lock for everyone when that date first ends for any household member, even if it is still Today for others. Once locked, later timezone changes must not reopen the meals. Personal logs follow the owner's local day boundary.
 
 ## 9. Confirmed technical stack
 
@@ -344,13 +344,15 @@ These are acceptance-test candidates for review before implementation.
 
 ## 12. Remaining specification work
 
+Breakfast scope is under discussion: decide whether to add planned breakfast recipes or a dedicated breakfast budget/log, and whether any breakfast planning is personal or shared. Until resolved, the confirmed planner still covers lunch and dinner.
+
 The [technical-design draft](technical-design.md) consolidates the proposed data model, history enforcement, recipe-generation behavior, offline synchronization, and verification approach. Its proposals require review and do not change the confirmed decisions.
 
 1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
-5. Local-cache handling on detected membership revocation. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
+5. Implementation of cache clearing on detected membership revocation, now confirmed as the required behavior. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
 6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
