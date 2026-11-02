@@ -29,8 +29,9 @@ Removing a member revokes their access and recalculates today's and future meal 
 
 ### Confirmed questionnaire inputs
 
-- Current weight.
-- Height.
+- Current weight in kilograms (kg).
+- Height in centimetres (cm).
+- Personal profiles use metric units only in version one; imperial input/display is out of scope.
 - Age.
 - Sex as the physiological input to the calculation.
 - Goal: lose weight or maintain weight.
@@ -41,9 +42,16 @@ Removing a member revokes their access and recalculates today's and future meal 
 
 Calorie targets are estimates, not guarantees of reaching a particular weight by a date.
 
-Version one uses a simple calculation: estimate resting energy expenditure, account for usual activity, and apply an approximate weight-loss budget derived from the goal and time available. For maintenance, estimate maintenance intake without a weight-loss deficit. The target date is an approximate planning goal, not a prediction of reaching that weight on that date. A dynamic weight-change model is outside version-one scope.
+Version one uses the simplified Mifflin–St Jeor equation to estimate resting energy expenditure, accounts for usual activity, and applies an approximate weight-loss budget derived from the goal and time available.
 
-If the goal and deadline would require excessive restriction, explain the problem and ask the person to revise their goal or deadline. Exact equations, activity factors, goal-to-deficit conversion, validation rules, and applicable exclusions require a separately reviewed calculation specification. New weight measurements can trigger the previously agreed target-recalculation review.
+Resting energy estimate in kcal/day, with weight in kg, height in cm, and age in years:
+
+- Male: 10 × weight + 6.25 × height − 5 × age + 5.
+- Female: 10 × weight + 6.25 × height − 5 × age − 161.
+
+This estimates resting expenditure, not total daily expenditure. Source: Mifflin et al., 1990, https://pubmed.ncbi.nlm.nih.gov/2305711/ . For maintenance, estimate maintenance intake without a weight-loss deficit. The target date is an approximate planning goal, not a prediction of reaching that weight on that date. A dynamic weight-change model is outside version-one scope.
+
+If the goal and deadline would require excessive restriction, explain the problem and ask the person to revise their goal or deadline. Activity factors, goal-to-deficit conversion, validation rules, and applicable exclusions require a separately reviewed calculation specification. New weight measurements can trigger the previously agreed target-recalculation review.
 
 ### Recalculation
 
@@ -233,7 +241,7 @@ These are acceptance-test candidates for review before implementation.
 ## 12. Remaining decisions before implementation
 
 1. UK CoFID release/coverage and attribution implementation, starter recipes, and activity dataset/licensing.
-2. Exact equation and coefficients for the selected simple calorie-estimation approach, plus goal-validation rules.
+2. Activity factors, goal-to-deficit conversion, and goal-validation rules for the selected Mifflin–St Jeor approach.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
