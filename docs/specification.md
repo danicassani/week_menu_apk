@@ -1,6 +1,6 @@
 # Week Menu App — specification
 
-Status: working draft. Confirmed decisions are recorded below. Proposed design details and unresolved questions are explicitly marked; this document is not approval to begin implementation.
+Status: functional requirements documented and technical consistency review completed. See the [reviewed technical design](technical-design.md) and [review findings](technical-review.md). Source/content and visual deliverables are tracked below; implementation has not started.
 
 Repository: danicassani/week_menu_apk
 
@@ -65,7 +65,7 @@ These app rules draw on NHS gradual weight-loss guidance and NICE guidance restr
 - https://www.nhs.uk/conditions/overweight-and-obesity/
 - https://www.nice.org.uk/guidance/ng246/chapter/Physical-activity-and-diet
 
-If another validation rule identifies an invalid or excessively restrictive goal, also explain it and ask for revision. The numerical activity factors and goal-to-deficit conversion are confirmed below. Additional applicability constraints and validation details still require review. New weight measurements can trigger the previously agreed target-recalculation review.
+If another validation rule identifies an invalid or excessively restrictive goal, also explain it and ask for revision. The numerical activity factors and goal-to-deficit conversion are confirmed below. Input validation, versioning, and source-coverage handling are specified in the reviewed technical design; actual source coverage is verified during the relevant milestone. New weight measurements can trigger the previously agreed target-recalculation review.
 
 ### Recalculation
 
@@ -94,7 +94,7 @@ Weight-loss planning deficit = (current weight − target weight) × 7,700 / cal
 
 The 7,700 kcal/kg conversion is a deliberately simplified planning approximation. It does not model changing body composition, water weight, or metabolic adaptation and must not be presented as a reliable weight forecast. Research on its limitations: https://pmc.ncbi.nlm.nih.gov/articles/PMC3810417/ .
 
-Reject invalid or non-finite inputs, nonpositive height/weight, past or same-day weight-loss deadlines, and a weight-loss target not below current weight. A reached goal instead triggers the maintenance-review flow. Other applicability constraints still require review.
+Reject invalid or non-finite inputs, nonpositive height/weight, past or same-day weight-loss deadlines, and a weight-loss target not below current weight. A reached goal instead triggers the maintenance-review flow. Document and verify source applicability during import; do not fabricate unavailable mappings.
 
 Logged-day expenditure uses the separately confirmed replacement formula in section 4.
 
@@ -107,6 +107,7 @@ Logged-day expenditure uses the separately confirmed replacement formula in sect
 - Planned breakfast, lunch, and dinner portions count automatically toward intake without a confirmation step.
 - Display clearly that these totals assume planned portions were eaten.
 - Count the day's planned meals in the full-day total as soon as planned, labelled as assumed intake. Future dates show projected totals; no meal-time scheduling or confirmation is required.
+- An unfilled meal is not implicitly skipped: show a known-calorie subtotal and label the day's projection/deficit incomplete until its meal entries are provided. Meal budgets are an allocation check, not additional consumed calories.
 
 ## 4. Daily activity and calorie deficit
 
@@ -118,9 +119,9 @@ Logged-day expenditure uses the separately confirmed replacement formula in sect
 - Estimate daily deficit as estimated expenditure minus accounted food calories.
 - Do not count the same exercise in both the usual allowance and logged activities.
 
-If the last activity entry is removed from an editable day, restore the usual activity estimate because that date no longer has logged activities. The detailed calculation must define routine movement, net versus gross activity energy, and multiple activities. Use the Compendium of Physical Activities for source activity and pace/intensity energy estimates, with appropriate age-specific coverage. Preserve published MET values and source references, include attribution, and clearly label calculated expenditure as an estimate. Source and reuse guidance: https://pacompendium.com/ .
+If the last activity entry is removed from an editable day, restore the usual activity estimate because that date no longer has logged activities. The confirmed calculation below defines the routine baseline and summed net activity energy. Use the Compendium of Physical Activities for source activity and pace/intensity energy estimates, with appropriate age-specific coverage. Preserve published MET values and source references, include attribution, and clearly label calculated expenditure as an estimate. Source and reuse guidance: https://pacompendium.com/ .
 
-Exact imported activity coverage and intensity mappings still require a calculation specification.
+Exact imported activity coverage and intensity mappings are content/import deliverables, with source gaps reported explicitly under the technical design.
 
 ### Confirmed logged-day calculation
 
@@ -173,7 +174,7 @@ Initial portion scaling is proportional to the individual's meal budget. Apply t
 - Calculate calories from the final quantities actually saved and shown. If rounding changes the budget fit, show the existing warning and allow manual adjustment.
 - Generate shopping requirements from those same final quantities, rather than separately rounded hidden values.
 
-The configurable main/base-ingredient variety rule is confirmed above; detailed substitution suitability remains part of technical design. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
+The configurable main/base-ingredient variety rule and curated substitution-matching contract are specified above and in the reviewed technical design; actual substitution metadata is prepared with starter content. No-match behavior is confirmed above. AI-generated recipes are not part of the agreed first-version scope.
 
 ### Eating out and food from bars/restaurants
 
@@ -193,7 +194,7 @@ Ingredient-quantity edits affect only that planned meal by default.
 
 After an edit, suggest updating the saved recipe through a separate action. Include a “Don't show again” preference, with a setting to enable the prompt again.
 
-When updating a saved recipe, select one person's edited meal variant, specify its reference serving count, and preview the changes before applying a new recipe version. Do not merge different people's substitutions into a single base recipe.
+When updating a saved recipe, select one person's edited meal variant, specify its reference serving count, and preview the changes before applying a new recipe version. Do not merge different people's substitutions into a single base recipe. Existing planned quantities remain explicit meal variants; applying recipe-quantity changes to them requires a preview. Catalogue nutrition updates still recalculate unlocked meals using their saved quantities without automatically resizing portions.
 
 ## 6. Recipes and the shared ingredient catalogue
 
@@ -239,6 +240,7 @@ The app supports English and Spanish, selectable per person. Provide starter con
 - No pantry inventory or automatic stock subtraction in the first version.
 - If meals or portions change, indicate that list updates are available.
 - Let a member review and apply changes; do not silently regenerate the list.
+- Changing the shopping date range preserves checked states for surviving generated ingredients under the normal increase/decrease rules. Keep manual additions and their states; do not automatically start an unchecked shopping round.
 - When an applied update increases the required quantity of an item marked as bought, uncheck the item and highlight its increased quantity. Do not change its checked state before the reviewed update is applied.
 
 Quantity increases for checked items follow the uncheck-and-highlight rule above. When applying reviewed updates, reduce quantities or remove menu-generated entries that are no longer required. Preserve checked states on remaining entries unless their quantity increases. Always preserve manual additions as separate entries so menu regeneration cannot remove or change them. Multiple shopping lists are outside the first-version scope.
@@ -274,7 +276,7 @@ Shared menu entries belong to a calendar date: Friday lunch stays on Friday for 
 
 The browser loads the application from Cloudflare Pages and uses Supabase for authenticated data access. Backend policies enforce membership and edit permissions.
 
-Proposed implementation approach, not yet approved in detail:
+Reviewed implementation approach:
 
 - Cache the app shell and explicitly loaded menu, recipe, and shopping data.
 - Persist pending checkbox state changes locally and synchronize on reconnection.
@@ -327,9 +329,9 @@ On phones, the Menu tab displays a vertical list of seven day cards for the sele
 
 Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. The initial visual design is deliberately minimalistic and monochrome (black and white), with light and dark modes. More elaborate visual refinement is deferred.
 
-### Other proposed screens
+### Supporting screens
 
-These screens organize the confirmed workflows under the approved five-tab navigation. Detailed screen layouts remain open for review.
+These screens organize the confirmed workflows under the approved five-tab navigation. Detailed composition is produced and reviewed in the relevant milestone within the agreed minimalistic monochrome design.
 
 1. Google sign-in and invitation/access status.
 2. Profile questionnaire and initial target/budget review.
@@ -342,9 +344,9 @@ These screens organize the confirmed workflows under the approved five-tab navig
 9. Shopping list, pending menu changes, and offline sync status.
 10. Settings: language, recipe-update prompt, and owner membership controls.
 
-## 11. Proposed verification scenarios
+## 11. Required verification scenarios
 
-These are acceptance-test candidates for review before implementation.
+These scenarios guide implementation checks during the relevant milestones. No application test execution is claimed by this document.
 
 - An unapproved Google account cannot read household information.
 - A member can view another member's shared health data but cannot edit their personal logs or profile.
@@ -367,27 +369,28 @@ These are acceptance-test candidates for review before implementation.
 - Menu edits produce a reviewable shopping-list change rather than overwriting the list.
 - Applying a quantity increase to an item marked as bought unchecks it and highlights the increased quantity; merely previewing the update does not change the live checklist.
 - Offline checkbox changes persist through an app restart and synchronize after reconnection.
+- Retrying an already acknowledged operation does not overwrite a newer checkbox state.
+- Shopping date-range changes retain surviving checked states under the same quantity-change rules.
+- Missing meal slots produce explicitly incomplete daily projections rather than a misleading zero-calorie complete day.
 - A queued checkbox change for a removed item is discarded with a notice without preventing other valid changes from synchronizing.
 - Sign-out with pending shopping changes requires synchronization or explicit discard; completed sign-out clears cached household data.
 - Both languages cover all first-version interface workflows.
 
-## 12. Remaining specification work
+## 12. Review outcome and delivery artifacts
 
-Full breakfast planning with individual recipes is confirmed. Eating out is a per-person meal replacement requiring a description and manual calorie estimate, with no shopping contribution. Unknown-calorie eating-out entries are not supported.
+The technical consistency review is complete; see [technical-review.md](technical-review.md). The [technical design](technical-design.md) defines the data model, permissions, source/version propagation, two levels of date locking, stale-edit handling, decimal quantity calculation, and idempotent offline operations.
 
-The [technical-design draft](technical-design.md) consolidates the proposed data model, history enforcement, recipe-generation behavior, offline synchronization, and verification approach. Its proposals require review and do not change the confirmed decisions.
+No unresolved product decision blocks the implementation blueprint. Changing a shopping date range preserves surviving checked states, as confirmed during review. The existing stack, formulas, scope, and milestone sequence are retained.
 
-1. UK CoFID release/coverage and attribution implementation, starter recipe provenance, and Compendium release/age-specific activity coverage.
-2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
-3. Verify implementation of the confirmed unit-aware rounding rule and calories/shopping consistency. Variety and no-match rules are also confirmed.
-4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
-5. Implementation of cache clearing on detected membership revocation, now confirmed as the required behavior. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
-6. Implementation of the confirmed initial-owner email setup and deletion of a removed member's future personal entries while preserving past records. Ownership transfer and new-member effects are confirmed. Guests are excluded from version one.
-7. Bilingual starter-content coverage and the optional manual-translation workflow.
-8. Verify display and compatible-quantity matching in shopping-list review, using final saved portion quantities under the confirmed rounding policy.
-9. Detailed screen layouts under the confirmed minimalistic monochrome light/dark design, and technical-design review. Five-tab navigation and the four-milestone sequence, with a user review after each milestone, are confirmed.
+Remaining deliverables belong to the agreed milestones:
 
-Confirmed requirements above remain valid while these details are resolved. Source mapping, storage, consistency, and test design can be proposed as engineering details rather than requiring a separate product question for every implementation choice.
+1. Exact CoFID and Compendium release manifests, source attribution, applicable activity coverage, and missing-mapping handling.
+2. The actual ingredient subset, units/conversions, main/base variety keys, curated substitution links, and 40–50 bilingual recipes including breakfast.
+3. Minimalistic screen composition, language/status text, and light/dark accessibility.
+4. Database migrations, application code, and the calculation/permission/history/offline integration checks specified in the technical design.
+5. The initial owner's Google email, OAuth callback configuration, hosting accounts, and deployment configuration when setup is authorized.
+
+These are content, design, setup, and implementation artifacts rather than a new feature questionnaire. Milestone review remains required. No application code, imports, hosting provisioning, or application tests have been completed as part of the document review.
 
 ## 13. Confirmed delivery sequence
 
