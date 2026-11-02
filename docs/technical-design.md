@@ -70,7 +70,8 @@ Constraints enforce one breakfast, one lunch, and one dinner slot per date, uniq
 - Removed members lose server access. Their retained historical records remain readable by active household members.
 - Only the owner changes approved emails and membership or transfers ownership.
 - Transfer ownership in one transaction, to another active member, before the owner leaves.
-- Proposed bootstrap: configure the initial owner's approved Google email explicitly during setup. Never give ownership to the first arbitrary visitor.
+- Confirmed bootstrap: configure the initial owner's approved Google email during deployment. Never give ownership to the first arbitrary visitor.
+- When removing a member, delete future-dated personal entries/settings while retaining historical records and calculation references. Remove their unlocked planned portions under the existing rule and flag shopping changes for review. Perform cleanup transactionally without cascading into immutable historical records.
 - Unapproved Google identities receive no household data access, even if the authentication provider creates an identity record.
 - Keep privileged credentials on trusted backend/setup paths. Browser configuration must not contain privileged database credentials.
 - Invitations are approved-email entries; sending invitation emails is not an agreed feature and is not required for access.
@@ -115,7 +116,9 @@ Proposed deterministic, non-AI approach:
 - Where needed, find catalogue substitution candidates with compatible culinary roles and explicit dietary metadata.
 - Never treat equal calories as proof of equivalent cooking behavior or nutritional composition.
 - Present substitutions and their quantities for review before applying.
-- The user requests a main/base-ingredient non-repetition rule across three consecutive days. Exact window semantics and breakfast coverage are being clarified; do not implement the earlier least-recently-used proposal as the confirmed variety rule. A configurable household window defaulting to three days is proposed. Tag main/base roles per recipe ingredient rather than treating every use of an ingredient as a primary role.
+- Confirmed variety filter: for lunch and dinner, reject a suggestion that repeats a main/base ingredient within any rolling three-calendar-day window. Breakfast is exempt. Make window length configurable at household level, default three days.
+- Tag main/base roles per recipe ingredient rather than treating every use as a primary role. Check the selected per-person variant so the same shared recipe served to several members is not treated as several repeats.
+- Check both neighboring directions and retained plans outside the generated week. Changing week start does not reset the ingredient window. Do not silently rewrite existing meals to satisfy a new setting.
 - Confirmed no-match behavior: if no suitable candidate exists, explain the gap, leave the slot unfilled, and suggest adding more recipes. Do not relax enforced rules silently.
 - Preserve existing meals by default; replacing them is an explicit generation option with a preview.
 - Preview application checks that source recipe, profile, and plan revisions have not changed.
@@ -131,7 +134,8 @@ When updating a saved recipe from a personal meal variant, select one person's e
 ## 6. Catalogue, conversions, and source imports
 
 - Seed a reviewed subset from UK CoFID; retain release, food codes, attribution, and original values.
-- Keep raw/cooked variants as distinct identities where source values differ.
+- Use raw/uncooked weights by default for ingredients that will be cooked, and as-purchased quantities for ready-to-eat foods, consistently across recipe inputs, portions, calorie calculation, and shopping.
+- Keep explicit ingredient-state metadata and raw/cooked variants as distinct identities where source values differ. Use nutrition values matching the selected state; do not substitute cooked values for raw weights. If a recipe explicitly requires a state conversion, require a defined yield rather than guessing.
 - Household edits create a new nutrition version rather than erasing the imported source.
 - Translate starter names and recipe content into English and Spanish; household text can have optional manual translations.
 - Import Compendium codes, intensity descriptions, MET values, source/release references, and attribution.
@@ -160,7 +164,7 @@ Stored snapshots preserve quantities, calories, conversions, substitutions, calc
 
 ## 8. Shopping and concurrent changes
 
-Generate contributions from saved, reviewed home-cooked portion quantities across the selected date range, including individual breakfast recipes. Skip eating-out participants entirely; their manual calorie estimates are not ingredient requirements. Merge only identical compatible ingredient identities; raw/cooked entries stay separate unless a reviewed conversion explicitly permits aggregation.
+Generate contributions from saved, reviewed home-cooked portion quantities across the selected date range, including individual breakfast recipes. Skip eating-out participants entirely; their manual calorie estimates are not ingredient requirements. Merge only identical compatible ingredient identities. Default to raw/as-purchased shopping quantities; explicit cooked-state entries stay separate unless a defined yield conversion permits aggregation into the corresponding purchased ingredient.
 
 The reviewed update is a diff against the last applied generated list:
 
