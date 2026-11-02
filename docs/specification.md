@@ -208,9 +208,22 @@ References:
 - https://supabase.com/docs/guides/database/overview
 - https://developers.cloudflare.com/pages/platform/limits/
 
-## 10. Proposed primary screens
+## 10. Screens and navigation
 
-These screens organize the confirmed workflows; layouts and navigation are not yet approved.
+### Confirmed opening screen
+
+After sign-in and any required initial setup, open a dashboard containing:
+
+- Today's lunch and dinner.
+- A preview of the shared weekly menu.
+- A calorie summary.
+- A shortcut to the shared shopping list.
+
+Today follows the current device timezone. Whose calorie summary is shown by default and the detailed dashboard layout remain open decisions.
+
+### Other proposed screens
+
+These screens organize the confirmed workflows; their layouts and navigation are not yet approved.
 
 1. Google sign-in and invitation/access status.
 2. Profile questionnaire and initial target/budget review.
