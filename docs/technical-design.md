@@ -125,9 +125,18 @@ Proposed deterministic, non-AI approach:
 
 A proposed substitution remains pending until reviewed. Do not include unreviewed alternatives in an applied shopping-list update.
 
-### Proposed quantity precision and recipe updates
+### Confirmed quantity precision and recipe updates
 
-The user requests practical rounding to tens. Unit-specific handling needs clarification: a proposed interpretation is nearest 10 g/ml for suitable quantities, retaining useful precision for small ingredients and countable units rather than rounding eggs to multiples of ten. Store calculation precision separately from display formatting, but calculate calories from the same practical quantities actually saved and shown. Show budget mismatches after rounding. Unit conversions remain required.
+Confirmed unit-aware rounding:
+
+- If the quantity is at least 10 g/ml, round to the nearest 10 g/ml.
+- Smaller quantities use 1 g/ml precision.
+- Preserve sensible whole/fractional countable units, with ingredient-specific conversions.
+- Keep intermediate arithmetic separate from formatting, but persist the final practical quantities and calculate calories from those exact saved values.
+- If the rounded portion exceeds the meal budget, show the existing warning; do not silently alter another ingredient to compensate.
+- Shopping aggregation uses the same final portion quantities, excluding skipped dessert and eating-out participants.
+
+Unit conversions remain required. Boundary and integration checks must cover both quantity precision ranges and a conversion-based countable ingredient, verifying that calorie and shopping totals use saved quantities.
 
 When updating a saved recipe from a personal meal variant, select one person's edited variant and an explicit reference serving count, preview the change, and apply it as a new recipe version. This review flow is confirmed. Do not merge different people's substitutions into a single ambiguous base recipe.
 
