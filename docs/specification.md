@@ -220,7 +220,9 @@ Quantity increases for checked items follow the uncheck-and-highlight rule above
 - Other edits require an Internet connection.
 - Show when displayed information is cached and when checkbox changes are pending.
 
-For a shared shopping checkbox, the last change accepted by the server wins, including a queued offline change. Preserve the final local checked/unchecked intent rather than replaying an ambiguous toggle. Stale-list handling and local-cache behavior on logout or member removal remain open. Offline caches cannot be remotely erased from a disconnected device.
+For a shared shopping checkbox, the last change accepted by the server wins, including a queued offline change. Preserve the final local checked/unchecked intent rather than replaying an ambiguous toggle. If a queued checkbox change refers to an item removed before reconnection, discard that outdated change, show a notice, and continue synchronizing the remaining valid changes. Do not recreate the removed item.
+
+If sign-out is requested with unsynchronized shopping changes, warn and let the person reconnect to synchronize or explicitly discard the changes before signing out. After sign-out, clear cached household data for that account. Handling detected membership revocation is described as a proposal in the technical design. Offline caches cannot be remotely erased from a disconnected device.
 
 ### Timezones
 
@@ -328,6 +330,8 @@ These are acceptance-test candidates for review before implementation.
 - Menu edits produce a reviewable shopping-list change rather than overwriting the list.
 - Applying a quantity increase to an item marked as bought unchecks it and highlights the increased quantity; merely previewing the update does not change the live checklist.
 - Offline checkbox changes persist through an app restart and synchronize after reconnection.
+- A queued checkbox change for a removed item is discarded with a notice without preventing other valid changes from synchronizing.
+- Sign-out with pending shopping changes requires synchronization or explicit discard; completed sign-out clears cached household data.
 - Both languages cover all first-version interface workflows.
 
 ## 12. Remaining specification work
@@ -338,7 +342,7 @@ The [technical-design draft](technical-design.md) consolidates the proposed data
 2. Additional applicability and validation details for Mifflin–St Jeor. Activity factors, the 7,700 kcal/kg planning approximation, and the >1 kg/week and <=1,200 kcal/day rejection rules are confirmed.
 3. Practical rounding of proportionally scaled portion quantities. The sedentary-baseline-plus-net-activity override formula is confirmed.
 4. Technical enforcement of the confirmed earliest-member-midnight lock for shared meals and local-day locking for personal records. Past-day corrections are excluded from version one.
-5. Stale shopping-list handling and local-cache lifecycle. Recipe/meal conflicts require review; shopping checkbox conflicts use server acceptance order.
+5. Local-cache handling on detected membership revocation. Removed-item offline changes are discarded with a notice while valid changes sync; sign-out requires syncing or explicit discard before cache clearing. Recipe/meal conflicts require review; checkbox conflicts use server acceptance order.
 6. Owner bootstrap and treatment of future-dated personal entries after member removal. Ownership transfer and new-member effects on existing meals are confirmed. Guests are excluded from version one.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
 8. Practical rounding, display, and matching of compatible ingredient quantities in shopping-list review.
