@@ -41,7 +41,9 @@ Removing a member revokes their access and recalculates today's and future meal 
 
 Calorie targets are estimates, not guarantees of reaching a particular weight by a date.
 
-The app estimates a daily calorie target from the questionnaire. If the goal and deadline would require excessive restriction, explain the problem and ask the person to revise their goal or deadline. Exact equations, activity factors, validation rules, and applicable exclusions require a separately reviewed calculation specification.
+Version one uses a simple calculation: estimate resting energy expenditure, account for usual activity, and apply an approximate weight-loss budget derived from the goal and time available. For maintenance, estimate maintenance intake without a weight-loss deficit. The target date is an approximate planning goal, not a prediction of reaching that weight on that date. A dynamic weight-change model is outside version-one scope.
+
+If the goal and deadline would require excessive restriction, explain the problem and ask the person to revise their goal or deadline. Exact equations, activity factors, goal-to-deficit conversion, validation rules, and applicable exclusions require a separately reviewed calculation specification. New weight measurements can trigger the previously agreed target-recalculation review.
 
 ### Recalculation
 
@@ -231,7 +233,7 @@ These are acceptance-test candidates for review before implementation.
 ## 12. Remaining decisions before implementation
 
 1. UK CoFID release/coverage and attribution implementation, starter recipes, and activity dataset/licensing.
-2. Calorie-estimation methodology and goal-validation rules.
+2. Exact equation and coefficients for the selected simple calorie-estimation approach, plus goal-validation rules.
 3. Exact rules for activity overrides and practical rounding of proportionally scaled portion quantities.
 4. Historical snapshot cutoffs under individual device timezones. Past-day corrections are explicitly excluded from version one.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
