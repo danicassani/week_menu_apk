@@ -141,6 +141,9 @@ This formula is confirmed for version one. Use the Compendium's standard MET-bas
 ## 5. Meal planning and suggestions
 
 - Plan lunch and dinner.
+- Each meal uses one recipe in version one. A recipe can include its side dishes and an optional dessert; multiple independently selected recipes within a meal are out of scope.
+- Include a selected dessert's ingredient quantities and calories in portion calculations and shopping totals. Whether dessert selection applies per person or to the whole meal remains open.
+- The household's planning-week start is configurable as Monday or Sunday, defaulting to Monday. This affects the weekly view and generation range, not the calendar dates of existing meals.
 - Generate suggestions for a whole week or an individual meal.
 - When generating a week, preserve existing planned meals by default and fill available slots. Offer an explicit option to replace existing meals; show a preview before applying the generated plan.
 - Suggestions come from a starter collection of approximately 40–50 European and international everyday recipes, plus household-saved recipes.
@@ -292,7 +295,7 @@ Today follows the current device timezone. The calorie summary defaults to the s
 | Recipes | Starter and saved recipes, recipe editor, and ingredient catalogue management |
 | Profile | Personal measurements, goal and calorie-budget settings, weight/activity history, language, and household settings |
 
-On phones, the Menu tab displays a vertical list of seven day cards for the selected week. Each card shows lunch and dinner; scroll vertically through the week. The week's start day remains to be decided. Meal editing, portions, and substitutions remain part of the meal-detail workflow.
+On phones, the Menu tab displays a vertical list of seven day cards for the selected week. Each card shows lunch and dinner; scroll vertically through the week. Use the household's configurable Monday/Sunday week start, with Monday as the default. Meal editing, portions, and substitutions remain part of the meal-detail workflow.
 
 Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. Exact visual design is still open.
 
@@ -366,6 +369,7 @@ Run the relevant checks during each milestone; the final phase verifies the inte
 ## 14. Outside version one
 
 - Guest diners or guest accounts.
+- Multiple independently selected recipes per meal; one recipe may include sides and an optional dessert.
 - Multiple households or public self-registration.
 - Native app-store applications.
 - Pantry inventory and automatic stock subtraction.
