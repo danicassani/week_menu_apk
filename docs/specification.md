@@ -292,6 +292,8 @@ Today follows the current device timezone. The calorie summary defaults to the s
 | Recipes | Starter and saved recipes, recipe editor, and ingredient catalogue management |
 | Profile | Personal measurements, goal and calorie-budget settings, weight/activity history, language, and household settings |
 
+On phones, the Menu tab displays a vertical list of seven day cards for the selected week. Each card shows lunch and dinner; scroll vertically through the week. The week's start day remains to be decided. Meal editing, portions, and substitutions remain part of the meal-detail workflow.
+
 Use a labelled bottom navigation on mobile, with an equivalent layout suitable for larger screens. All destinations follow the previously agreed household visibility and editing permissions; viewing a member's health history does not grant editing rights. Exact visual design is still open.
 
 ### Other proposed screens
