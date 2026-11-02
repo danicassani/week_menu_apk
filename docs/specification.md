@@ -145,7 +145,7 @@ For a shared shopping checkbox, the last change accepted by the server wins, inc
 
 ### Timezones
 
-Use each person's current device timezone for their local day boundaries. There is no single shared household timezone. The date semantics of shared menu entries, travel across timezones, and historical snapshots need an explicit rule so one person's midnight does not rewrite another person's history.
+Shared menu entries belong to a calendar date: Friday lunch stays on Friday for every member, regardless of timezone. Each person's current device timezone determines their Today view and local day boundaries. Meals are not shifted to different calendar dates by timezone conversion. Historical snapshot cutoffs under different local day boundaries still need an explicit rule.
 
 ## 9. Confirmed technical stack
 
@@ -223,7 +223,7 @@ These are acceptance-test candidates for review before implementation.
 1. Nutrition dataset, starter recipes, activity dataset, and licensing.
 2. Calorie-estimation methodology and goal-validation rules.
 3. Exact rules for activity overrides and personal portion suggestions.
-4. Today's time cutoffs, shared menu date semantics under individual device timezones, and correction of past records.
+4. Today's time cutoffs, historical snapshots under individual device timezones, and correction of past records.
 5. Shared-edit conflicts beyond shopping checkboxes, stale-list handling, and local-cache lifecycle.
 6. Owner lifecycle, fixed household size after membership changes, and removed-member data.
 7. Bilingual starter-content coverage and the optional manual-translation workflow.
