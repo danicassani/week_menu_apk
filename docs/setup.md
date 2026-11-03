@@ -1,6 +1,6 @@
 # Run and connect the foundation
 
-Milestone 1 is implemented; services have not been provisioned. Meal planning, shopping generation, installability and offline storage remain later milestones. Read [the review notes](milestone-1.md) before connecting real household data.
+Milestones 1–2 are implemented. For an existing deployment, follow the incremental [planning rollout](milestone-2.md#database-rollout). Shopping generation, installability and offline storage remain later milestones. Read [the review notes](milestone-1.md) before connecting real household data.
 
 ## Local development
 
@@ -28,6 +28,8 @@ Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Ch
 2. Apply these migrations, in order, using the Supabase SQL editor as the project administrator (or a linked Supabase CLI migration workflow):
    - `supabase/migrations/202611030001_foundation.sql`
    - `supabase/migrations/202611030002_activities.sql`
+   - `supabase/migrations/202611030003_planning.sql`
+   - `supabase/migrations/202611030004_starter_food.sql`
 3. Configure the owner's approved Google email in the SQL editor, replacing the example. This function is deliberately inaccessible to application users:
 
    ```sql
@@ -37,7 +39,7 @@ Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Ch
    The first verified Google account with that exact normalized address initializes the household. Subsequent ownership transfers do not reset when the original owner signs in again. No client environment variable can claim ownership. After initialization, the owner configuration cannot be changed through this function.
 
 4. Enable **Google** in Supabase Authentication → Providers. Create a Google OAuth web client and use the callback URL shown by Supabase (normally `https://<project-ref>.supabase.co/auth/v1/callback`) as its authorized redirect URI. Save the Google client ID and secret **only in Supabase**, never in this repository or `VITE_*` settings. Keep other sign-in providers disabled. Database authorization also verifies the account's confirmed Google identity.
-5. Set Supabase's Site URL to the intended app origin. Add exact redirect URLs for that origin's `/` and, for development, `http://localhost:5173/` and/or `http://127.0.0.1:5173/`. Avoid unrestricted production redirect wildcards. The application uses PKCE and returns to its own origin.
+5. **After the first Cloudflare Pages deployment supplies the app URL**, set Supabase's Site URL to the intended app origin. Add exact redirect URLs for that origin's `/` and, for development, `http://localhost:5173/` and/or `http://127.0.0.1:5173/`. Avoid unrestricted production redirect wildcards. The application uses PKCE and returns to its own origin.
 6. Copy `.env.example` to `.env.local`, then fill in the project URL and **publishable** key:
 
    ```dotenv

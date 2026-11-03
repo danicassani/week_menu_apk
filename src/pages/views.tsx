@@ -1,3 +1,5 @@
+import { MealSnapshotView } from "./planner";
+import type { MealPlan } from "../domain/planning";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -35,6 +37,8 @@ import { mealLabel, translator } from "../lib/i18n";
 import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
 
 export type ViewProps = {
+  repository: import("../domain/types").Repository;
+  operate: (task: () => Promise<void>, success?: string) => Promise<boolean>;
   s: HouseholdState;
   member: Member;
   language: Language;
@@ -63,6 +67,7 @@ export function MealCards({
   compact?: boolean;
 }) {
   const t = translator(v.language);
+  const [inspection, setInspection] = useState<MealPlan | null>(null);
   return (
     <div className={compact ? "meal-cards compact" : "meal-cards"}>
       {mealTypes.map((type) => {
@@ -79,6 +84,9 @@ export function MealCards({
               b.meal_type === type,
           )?.kcal ?? targetOn(v.s, v.member.id, day)?.budgets[type];
         const recipe = recipes.find((r) => r.id === meal?.recipe_id);
+        const plan = v.s.planning?.plans.find(
+          (m) => m.day === day && m.type === type,
+        );
         return (
           <article
             className={`meal-card ${meal ? "" : "unplanned"}`}
@@ -114,11 +122,13 @@ export function MealCards({
                   t("No budget yet", "Sin presupuesto")
                 )}
               </span>
-              {recipe ? (
+              {plan || recipe ? (
                 <button
                   className="icon-button"
                   aria-label={t("View recipe", "Ver receta")}
-                  onClick={() => v.openRecipe(recipe)}
+                  onClick={() =>
+                    plan ? setInspection(plan) : v.openRecipe(recipe!)
+                  }
                 >
                   <ArrowRight size={18} />
                 </button>
@@ -129,6 +139,13 @@ export function MealCards({
           </article>
         );
       })}
+      {inspection && (
+        <MealSnapshotView
+          v={v}
+          plan={inspection}
+          onClose={() => setInspection(null)}
+        />
+      )}
     </div>
   );
 }
@@ -413,12 +430,12 @@ export function Dashboard(v: ViewProps) {
             <span>
               {v.preview
                 ? t(
-                    "Sample meals illustrate the layout. Planning and personal ingredient portions are coming soon.",
-                    "Las comidas de ejemplo muestran el diseño. La planificación y las porciones personales estarán disponibles pronto.",
+                    "Sample meals illustrate the layout. Review and save your own menu in the Menu tab.",
+                    "Las comidas de ejemplo muestran el diseño. Revisa y guarda tu propio menú en la pestaña Menú.",
                   )
                 : t(
-                    "Meals will appear here when meal planning is available. Budgets are not counted as food consumed.",
-                    "Las comidas aparecerán aquí cuando esté disponible la planificación. Los presupuestos no cuentan como comida consumida.",
+                    "Planned meals count as assumed intake. Empty slots make the day incomplete; budgets are not consumed calories.",
+                    "Las comidas planificadas cuentan como ingesta asumida. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
                   )}
             </span>
           </div>

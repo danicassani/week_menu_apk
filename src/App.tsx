@@ -1,3 +1,4 @@
+import { Planner, ContentManager } from "./pages/planner";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
@@ -415,7 +416,10 @@ function Workspace({
       return true;
     } catch (e) {
       setMessage({ text: errorMessage(e, language), error: true });
-      if (e instanceof Error && e.message.includes("stale_profile"))
+      if (
+        e instanceof Error &&
+        /stale_profile|stale_content|stale_plan/.test(e.message)
+      )
         await refresh().catch(() => {});
       return false;
     } finally {
@@ -475,6 +479,8 @@ function Workspace({
     window.scrollTo({ top: 0 });
   };
   const v: ViewProps = {
+    repository: repo,
+    operate,
     s,
     member,
     language,
@@ -736,11 +742,11 @@ function Workspace({
           {tab === "dashboard" ? (
             <Dashboard {...v} />
           ) : tab === "menu" ? (
-            <Menu {...v} />
+            <Planner {...v} />
           ) : tab === "shopping" ? (
             <Shopping {...v} />
           ) : tab === "recipes" ? (
-            <Recipes {...v} />
+            <ContentManager {...v} />
           ) : (
             <ProfileView
               {...v}
@@ -880,6 +886,7 @@ function Workspace({
             <ProfileForm
               key={me.revision}
               member={me}
+              catalogue={s.planning?.ingredients}
               today={dayAt(s.server_now, me.time_zone)}
               language={language}
               busy={busy}

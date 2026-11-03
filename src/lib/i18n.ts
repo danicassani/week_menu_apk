@@ -2,6 +2,55 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  stale_content: [
+    "This content changed. Your draft is retained; reload and review before saving.",
+    "El contenido cambió. Conservamos tu borrador; carga la versión actual y revísala antes de guardar.",
+  ],
+  stale_plan: [
+    "The plan or its inputs changed. Generate a fresh preview before applying.",
+    "El plan o sus datos cambiaron. Genera una nueva vista previa antes de aplicar.",
+  ],
+  variety_conflict: [
+    "A main/base ingredient repeats inside the configured window.",
+    "Se repite un ingrediente principal o base dentro del intervalo configurado.",
+  ],
+  existing_meal: [
+    "Existing meals are preserved. Choose replacement explicitly to change them.",
+    "Se conservan las comidas existentes. Activa la sustitución explícita para cambiarlas.",
+  ],
+  invalid_recipe: [
+    "Review the recipe, ingredients and positive quantities.",
+    "Revisa la receta, los ingredientes y las cantidades positivas.",
+  ],
+  invalid_ingredient: [
+    "Enter names, nutrition, dietary patterns and valid conversions.",
+    "Introduce nombre, nutrición, patrones alimentarios y conversiones válidas.",
+  ],
+  missing_conversion: [
+    "This ingredient has no defined conversion for that unit.",
+    "Este ingrediente no tiene una conversión definida para esa unidad.",
+  ],
+  missing_nutrition: [
+    "Nutrition is missing or cannot be used to scale this recipe.",
+    "Faltan datos nutricionales o no permiten escalar esta receta.",
+  ],
+  archived_ingredient: [
+    "An archived ingredient or recipe cannot be selected for a new meal.",
+    "No se puede seleccionar un ingrediente o receta archivado para una comida nueva.",
+  ],
+  diet_conflict: [
+    "The ingredients conflict with a member’s dietary preferences. Review substitutions.",
+    "Los ingredientes no cumplen las preferencias de un miembro. Revisa las sustituciones.",
+  ],
+  quantity_needs_review: [
+    "An amount rounds to zero. Choose another recipe or enter a practical amount manually.",
+    "Una cantidad se redondea a cero. Elige otra receta o introduce una cantidad práctica manualmente.",
+  ],
+  no_suitable_recipe: [
+    "No suitable recipe exists. Add more recipes or review the catalogue.",
+    "No hay una receta adecuada. Añade más recetas o revisa el catálogo.",
+  ],
+
   invalid_profile: [
     "Enter a name, adult age, sex, and positive metric measurements.",
     "Introduce nombre, edad adulta, sexo y medidas métricas positivas.",

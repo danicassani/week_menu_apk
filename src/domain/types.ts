@@ -1,3 +1,9 @@
+import type {
+  PlanningState,
+  Ingredient,
+  PlannedRecipe,
+  MealPlan,
+} from "./planning";
 export type Language = "en" | "es";
 export type MealType = "breakfast" | "lunch" | "dinner";
 export type ActivityLevel = "sedentary" | "light" | "active" | "very_active";
@@ -90,6 +96,7 @@ export interface PersonalDay {
   } | null;
 }
 export interface HouseholdState {
+  planning?: PlanningState;
   server_now: string;
   viewer_id: string;
   household: {
@@ -122,6 +129,20 @@ export interface EntryInput {
 }
 export interface Repository {
   mode: "preview" | "supabase";
+  saveContent(
+    kind: "ingredient" | "recipe",
+    data: Ingredient | PlannedRecipe,
+    revision: number,
+    archive: boolean,
+  ): Promise<void>;
+  applyPlans(
+    batch: MealPlan[],
+    revision: number,
+    replace: boolean,
+  ): Promise<void>;
+  deleteMeal(day: string, type: MealType, revision: number): Promise<void>;
+  savePromptPreference(after: string | null): Promise<void>;
+  savePlannerSettings(week: 0 | 1, variety: number): Promise<void>;
   load(timezone: string): Promise<HouseholdState>;
   saveProfile(profile: Profile, revision: number): Promise<void>;
   proposal(): Promise<Proposal>;

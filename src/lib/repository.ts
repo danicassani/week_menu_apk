@@ -1,3 +1,15 @@
+import ingredientSeed from "../../content/starter/ingredients.json";
+import substitutionSeed from "../../content/starter/substitutions.json";
+import {
+  gramsFor,
+  allowed,
+  varietyConflict,
+  recalculateLines,
+  type Ingredient,
+  type PlannedRecipe,
+  type MealPlan,
+  type PlanningState,
+} from "../domain/planning";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import activities from "../data/activities.json";
 import recipes from "../../content/starter/recipes.json";
@@ -41,7 +53,44 @@ export class SupabaseRepository implements Repository {
   }
   async load(zone: string) {
     await this.rpc("bootstrap_member", { p_timezone: zone });
-    return this.rpc<HouseholdState>("get_household_snapshot");
+    const s = await this.rpc<HouseholdState>("get_household_snapshot");
+    return s;
+  }
+  deleteMeal(day: string, type: MealType, revision: number) {
+    return this.rpc("delete_planned_meal", {
+      p_day: day,
+      p_type: type,
+      p_revision: revision,
+    });
+  }
+  savePromptPreference(after: string | null) {
+    return this.rpc("save_recipe_prompt_preference", { p_after: after });
+  }
+  saveContent(
+    kind: "ingredient" | "recipe",
+    data: Ingredient | PlannedRecipe,
+    revision: number,
+    archive: boolean,
+  ) {
+    return this.rpc("save_household_content", {
+      p_kind: kind,
+      p_data: data,
+      p_revision: revision,
+      p_archive: archive,
+    });
+  }
+  applyPlans(batch: MealPlan[], revision: number, replace: boolean) {
+    return this.rpc("apply_meal_plans", {
+      p_batch: batch,
+      p_revision: revision,
+      p_replace: replace,
+    });
+  }
+  savePlannerSettings(week: 0 | 1, variety: number) {
+    return this.rpc("save_planner_settings", {
+      p_week_start: week,
+      p_variety_days: variety,
+    });
   }
   saveProfile(p: Profile, revision: number) {
     return this.rpc("save_my_profile", { p_data: p, p_revision: revision });
@@ -96,6 +145,15 @@ export class PreviewRepository implements Repository {
   mode = "preview" as const;
   private s: HouseholdState;
   private serial = 0;
+  private library: PlanningState = {
+    ingredients: structuredClone(
+      ingredientSeed.ingredients,
+    ) as unknown as Ingredient[],
+    recipes: structuredClone(recipes.recipes) as unknown as PlannedRecipe[],
+    substitutions: structuredClone(substitutionSeed.rules),
+    plans: [],
+    revision: 0,
+  };
   private lastTimestamp = Date.now();
   private timestamp(): string {
     this.lastTimestamp = Math.max(Date.now(), this.lastTimestamp + 1);
@@ -201,6 +259,139 @@ export class PreviewRepository implements Repository {
       meal_locks: [],
     };
   }
+  private unlocked(day: string) {
+    if (
+      Date.now() >=
+      Math.min(
+        ...this.s.members
+          .filter((m) => m.status === "active")
+          .map((m) => Date.parse(dayCutoff(day, m.time_zone))),
+      )
+    )
+      throw new DomainError("day_closed");
+  }
+  private syncPlans() {
+    for (const m of this.library.plans) {
+      this.s.meals = this.s.meals.filter(
+        (x) => !(x.day === m.day && x.type === m.type),
+      );
+      for (const p of m.portions)
+        this.s.meals.push({
+          member_id: p.member_id,
+          day: m.day,
+          type: m.type,
+          name: p.name,
+          kcal: p.kcal,
+          recipe_id: p.recipe_id ?? undefined,
+          eating_out: p.eating_out,
+        });
+    }
+  }
+  async deleteMeal(day: string, type: MealType, revision: number) {
+    this.me();
+    this.unlocked(day);
+    if (revision !== this.serial) throw new DomainError("stale_plan");
+    this.library.plans = this.library.plans.filter(
+      (m) => !(m.day === day && m.type === type),
+    );
+    this.s.meals = this.s.meals.filter(
+      (m) => !(m.day === day && m.type === type),
+    );
+    this.serial++;
+  }
+  async savePromptPreference(after: string | null) {
+    this.me();
+    this.library.prompt_show_after = after ?? "never";
+    this.serial++;
+  }
+  async saveContent(
+    kind: "ingredient" | "recipe",
+    data: Ingredient | PlannedRecipe,
+    revision: number,
+    archive: boolean,
+  ) {
+    this.me();
+    const collection =
+      kind === "ingredient" ? this.library.ingredients : this.library.recipes;
+    const old = collection.find((x) => x.id === data.id);
+    if ((old?.revision ?? (old ? 1 : 0)) !== revision)
+      throw new DomainError("stale_content");
+    const next = {
+      ...structuredClone(data),
+      revision: revision + 1,
+      archived: archive,
+    };
+    const at = collection.findIndex((x) => x.id === data.id);
+    if (at < 0) (collection as unknown[]).push(next);
+    else (collection as unknown[])[at] = next;
+    if (kind === "ingredient")
+      for (const m of this.library.plans) {
+        try {
+          this.unlocked(m.day);
+        } catch {
+          continue;
+        }
+        m.portions = m.portions.map((p) =>
+          p.eating_out ? p : recalculateLines(p, this.library.ingredients),
+        );
+        m.revision++;
+      }
+    this.serial++;
+    this.syncPlans();
+  }
+  async applyPlans(batch: MealPlan[], revision: number, replace: boolean) {
+    this.me();
+    if (revision !== this.serial) throw new DomainError("stale_plan");
+    const originals = structuredClone(this.library.plans),
+      plans = originals.filter(
+        (m) =>
+          !replace || !batch.some((x) => x.day === m.day && x.type === m.type),
+      );
+    for (const m of batch) {
+      this.unlocked(m.day);
+      const old = originals.find((x) => x.day === m.day && x.type === m.type);
+      if (old && !replace) throw new DomainError("existing_meal");
+      for (const p of m.portions) {
+        const member = this.s.members.find(
+          (x) => x.id === p.member_id && x.status === "active" && x.onboarded,
+        );
+        if (!member?.profile) throw new DomainError("invalid_member");
+        if (
+          !p.eating_out &&
+          p.lines.some(
+            (l) =>
+              !allowed(
+                this.library.ingredients.find((i) => i.id === l.ingredient_id)!,
+                member.profile!,
+              ),
+          )
+        )
+          throw new DomainError("diet_conflict");
+      }
+      if (varietyConflict(m, plans, this.s.household.variety_days))
+        throw new DomainError("variety_conflict");
+      const i = plans.findIndex((x) => x.day === m.day && x.type === m.type);
+      const saved = { ...m, revision: (old?.revision ?? 0) + 1 };
+      if (i < 0) plans.push(saved);
+      else plans[i] = saved;
+    }
+    this.library.plans = plans;
+    this.serial++;
+    this.syncPlans();
+  }
+  async savePlannerSettings(week: 0 | 1, variety: number) {
+    this.me();
+    if (
+      ![0, 1].includes(week) ||
+      !Number.isInteger(variety) ||
+      variety < 1 ||
+      variety > 14
+    )
+      throw new DomainError("invalid_recipe");
+    this.s.household.week_start = week;
+    this.s.household.variety_days = variety;
+    this.serial++;
+  }
   private me() {
     const m = this.s.members.find((m) => m.id === this.s.viewer_id)!;
     if (m.status !== "active") throw new DomainError("access_denied");
@@ -216,6 +407,7 @@ export class PreviewRepository implements Repository {
   async load(zone: string) {
     this.s.server_now = new Date().toISOString();
     this.me().time_zone = zone;
+    this.s.planning = { ...this.library, revision: this.serial };
     return structuredClone(this.s);
   }
   async saveProfile(p: Profile, revision: number) {
@@ -250,6 +442,7 @@ export class PreviewRepository implements Repository {
       inputs: structuredClone(this.me().profile!),
     });
     this.me().onboarded = true;
+    this.serial++;
   }
   async saveEntry(input: EntryInput) {
     const m = this.me(),
@@ -380,6 +573,17 @@ export class PreviewRepository implements Repository {
     const m = this.s.members.find((m) => m.id === id && m.status === "active");
     if (!m) throw new DomainError("invalid_member");
     m.status = "removed";
+    for (const plan of this.library.plans) {
+      try {
+        this.unlocked(plan.day);
+      } catch {
+        continue;
+      }
+      plan.portions = plan.portions.filter((p) => p.member_id !== id);
+      plan.revision++;
+    }
+    this.serial++;
+    this.syncPlans();
     this.s.budget_overrides = this.s.budget_overrides.filter(
       (b) => b.member_id !== id || b.day <= localDay(m.time_zone),
     );

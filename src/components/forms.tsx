@@ -21,10 +21,16 @@ const meals: MealType[] = ["breakfast", "lunch", "dinner"];
 export function ProfileForm({
   member,
   today,
+  catalogue,
   language,
   busy,
   onSave,
-}: { member: Member; today: string; onSave: (p: Profile) => void } & Base) {
+}: {
+  member: Member;
+  today: string;
+  catalogue?: { id: string; name: Record<Language, string> }[];
+  onSave: (p: Profile) => void;
+} & Base) {
   const t = translator(language);
   const [p, setP] = useState<Profile>(
     member.profile ?? {
@@ -203,9 +209,9 @@ export function ProfileForm({
         />
       </label>
       <div className="ingredient-picker">
-        {ingredients
+        {(catalogue ?? ingredients)
           .filter((i) =>
-            i.name[language]
+            (i.name[language] || i.name.en || i.name.es)
               .toLocaleLowerCase()
               .includes(query.toLocaleLowerCase()),
           )
@@ -223,7 +229,7 @@ export function ProfileForm({
                   )
                 }
               />
-              {i.name[language]}
+              {i.name[language] || i.name.en || i.name.es}
             </label>
           ))}
       </div>
