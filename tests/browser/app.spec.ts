@@ -83,7 +83,7 @@ test("owner invitations, recipe preparation, and all five tabs", async ({
   ).toBeVisible();
   await nav.getByRole("button", { name: "Recipes", exact: true }).click();
   await page
-    .getByRole("searchbox", { name: "Search recipes" })
+    .getByRole("searchbox", { name: "Search collection" })
     .fill("Chickpea and tomato toast");
   await page.getByRole("button", { name: /Chickpea and tomato toast/ }).click();
   await expect(
