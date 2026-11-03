@@ -152,7 +152,7 @@ Prepare 40–50 recipes spanning breakfast and European/international everyday m
 
 Archiving preserves existing/historical references while preventing new selections or suggestions that depend on unresolved archived ingredients. Archive referenced recipes instead of deleting history.
 
-Imports are reproducible setup artifacts, not mandatory live external lookups for each calculation. The [starter food pack](starter-content.md) now provides 97 CoFID-linked ingredients, 48 bilingual recipes and 19 contextual substitution candidates, checked against a checksum-pinned source workbook. No Supabase import has occurred. The Compendium activity catalogue remains a separate source-delivery item; product-label and kitchen review are still required for actual household use.
+Imports are reproducible setup artifacts, not mandatory live external lookups for each calculation. The [starter food pack](starter-content.md) now provides 97 CoFID-linked ingredients, 48 bilingual recipes and 19 contextual substitution candidates, checked against a checksum-pinned source workbook. No Supabase import has occurred. The first [Compendium import](activity-sources.md) now supplies 24 choices for ages 19–59; product-label and kitchen review are still required for actual household use.
 
 ## 7. Historical integrity and timezone handling
 
@@ -242,6 +242,6 @@ The [review report](technical-review.md) records design scenarios and arithmetic
 
 No unresolved product question blocks this blueprint. The shopping date-range behavior was confirmed during the review.
 
-Food-source manifests, initial conversion/variety/substitution metadata and bilingual recipes are prepared in the [starter pack](../content/starter/README.md), with explicit source gaps and unconfirmed reference piece weights. Remaining milestone deliverables include household content review, Compendium activity coverage, actual screen composition, database migrations/imports, application tests and deployment configuration. The initial owner's email and hosting/OAuth accounts are setup inputs needed later.
+Food-source manifests, initial conversion/variety/substitution metadata and bilingual recipes are prepared in the [starter pack](../content/starter/README.md), with explicit source gaps and unconfirmed reference piece weights. The [first milestone](milestone-1.md) now supplies the initial screen composition, foundation migrations and local application tests. Remaining deliveries include household content review, additional activity age coverage, menu/shopping implementation, hosted imports and deployment verification. The initial owner's email and hosting/OAuth accounts are setup inputs needed later.
 
-No new feature scope, stack, calorie formula, or paid service was introduced. Application implementation remains a separate next step under the approved milestone process.
+No new feature scope, stack, calorie formula, or paid service was introduced. Further implementation follows the approved milestone process after the first milestone review.

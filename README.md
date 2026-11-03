@@ -9,4 +9,17 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Bilingual starter recipe book](content/starter/recipes.md)
 - [Starter food pack, source notice and rebuild instructions](content/starter/README.md)
 
-The repository currently contains specifications and validated starter food content/tooling. Application implementation and deployment have not started. The agreed four milestones each end with a user review.
+Milestone 1 is implemented: responsive bilingual light/dark interface, Supabase Google-auth/household permissions, adult profiles, calorie-target review, three meal budgets, and food/activity/weight logs. Services have not been provisioned or deployed. The agreed four milestones each end with a user review.
+
+```sh
+npm ci
+npm run dev
+```
+
+Choose **Explore the preview** for a temporary sample household, or follow the [Supabase setup instructions](docs/setup.md) to connect your project. Preview data stays in memory and is discarded on reload or exit.
+
+- [Milestone 1 review and scope boundaries](docs/milestone-1.md)
+- [Run, configure and verify the app](docs/setup.md)
+- [Activity source and age-coverage notes](docs/activity-sources.md)
+
+Checks: `npm run build`, `npm test`, and `npm run test:browser` (Chromium required). Meal planning, generated shopping and offline installation are the following milestones.

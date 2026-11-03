@@ -1,3 +1,11 @@
 .cache/
 __pycache__/
 *.py[cod]
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+playwright-report/
+test-results/

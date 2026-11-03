@@ -1,0 +1,67 @@
+# Run and connect the foundation
+
+Milestone 1 is implemented; services have not been provisioned. Meal planning, shopping generation, installability and offline storage remain later milestones. Read [the review notes](milestone-1.md) before connecting real household data.
+
+## Local development
+
+Use Node.js 24 LTS and npm. From the repository root:
+
+```sh
+npm ci
+npm run dev
+```
+
+Open the address printed by Vite. **Explore the preview** opens an in-memory sample household. It makes no Supabase requests, sends no invitations and loses all changes when the page reloads or you exit. Preview is available in development; production requires an explicit `VITE_ENABLE_PREVIEW=true` build setting. It never authenticates a user or bypasses database permissions.
+
+```sh
+npm run build
+npm test
+npx playwright install chromium
+npm run test:browser
+```
+
+Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Chromium. Set `CHROMIUM_PATH` to override. Unit/integration tests run PostgreSQL through PGlite, including the actual migrations, role grants and row-level policies. They do not substitute for testing the hosted OAuth flow.
+
+## Supabase setup
+
+1. Create the intended household's Supabase project. One project currently serves **one** household. Keep `public` as the exposed Data API schema; **do not expose `app_private`**.
+2. Apply these migrations, in order, using the Supabase SQL editor as the project administrator (or a linked Supabase CLI migration workflow):
+   - `supabase/migrations/202611030001_foundation.sql`
+   - `supabase/migrations/202611030002_activities.sql`
+3. Configure the owner's approved Google email in the SQL editor, replacing the example. This function is deliberately inaccessible to application users:
+
+   ```sql
+   select app_private.configure_owner('owner@example.com');
+   ```
+
+   The first verified Google account with that exact normalized address initializes the household. Subsequent ownership transfers do not reset when the original owner signs in again. No client environment variable can claim ownership. After initialization, the owner configuration cannot be changed through this function.
+
+4. Enable **Google** in Supabase Authentication → Providers. Create a Google OAuth web client and use the callback URL shown by Supabase (normally `https://<project-ref>.supabase.co/auth/v1/callback`) as its authorized redirect URI. Save the Google client ID and secret **only in Supabase**, never in this repository or `VITE_*` settings. Keep other sign-in providers disabled. Database authorization also verifies the account's confirmed Google identity.
+5. Set Supabase's Site URL to the intended app origin. Add exact redirect URLs for that origin's `/` and, for development, `http://localhost:5173/` and/or `http://127.0.0.1:5173/`. Avoid unrestricted production redirect wildcards. The application uses PKCE and returns to its own origin.
+6. Copy `.env.example` to `.env.local`, then fill in the project URL and **publishable** key:
+
+   ```dotenv
+   VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+   VITE_SUPABASE_PUBLISHABLE_KEY=<project-publishable-key>
+   VITE_ENABLE_PREVIEW=false
+   ```
+
+   A legacy anonymous key is also accepted by the SDK. Never use a secret or service-role key in the frontend. These two public values are embedded at build time; authorization is enforced by database roles, row-level read policies and controlled write functions.
+
+7. Restart Vite or rebuild after changing environment settings. Sign in as the configured owner, complete the profile and accept the target and three budgets. Approve other Google addresses under Profile → Invite member. **This approves access; it does not send an email.** Share the app's address with the invitee separately.
+
+The revision table is added to `supabase_realtime` when that publication exists. Only a non-sensitive revision counter is published; clients fetch a fresh authorized snapshot. Foreground refresh and a once-per-minute visible-page refresh also pick up changes and date rollovers. Verify Realtime in the hosted project, particularly after member removal.
+
+## Cloudflare Pages settings for the later deployment milestone
+
+Build command: `npm run build`. Output directory: `dist`. Use Node 24 and the two public Supabase environment values above. Preview is off unless explicitly enabled. `_redirects` provides the SPA fallback; `_headers` provides security headers and self-hosted-asset caching. The current content security policy permits the standard `*.supabase.co` API and WebSocket domains. Adjust that allowlist if a custom Supabase domain is used.
+
+No service worker or offline health cache is registered yet. Google session persistence is managed by the Supabase SDK; household health data stays in React memory and is cleared on sign-out. Actual PWA installation/offline behavior is milestone 3. HTTPS is required for deployment. Provisioning and deployment remain subject to the agreed release milestone.
+
+## Hosted acceptance checks still required
+
+- Confirm a non-approved Google account cannot read household data, including direct REST requests; only the approved owner can initialize.
+- Sign in with two approved real accounts on Android Chrome and iPhone Safari; verify profile ownership, shared reads, invitations, transfer, removal and fresh-token access revocation.
+- Confirm PKCE redirects, refresh, sign-out and browser storage clearing on the final HTTPS origin.
+- Confirm revision notifications and foreground date rollover with users in different IANA timezones. Database tests cover the two lock models, but hosted-browser integration still needs verification.
+- Review project backup, retention and actual provider/free-plan limits before entering real household history. No live service configuration or hosted end-to-end result is claimed by the local test suite.
