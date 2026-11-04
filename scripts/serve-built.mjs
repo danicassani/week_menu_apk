@@ -38,6 +38,16 @@ const server = createServer(async (req, res) => {
     const pathname = decodeURIComponent(
       new URL(req.url, "http://localhost").pathname,
     );
+    // Cloudflare Pages canonicalizes /index.html to /. Keep this in release
+    // tests: a redirected cached response cannot answer Chrome navigations.
+    if (pathname === "/index.html") {
+      res.writeHead(308, {
+        Location: "/" + new URL(req.url, "http://localhost").search,
+        "Cache-Control": "no-store",
+      });
+      res.end();
+      return;
+    }
     let file = path.resolve(root, "." + pathname);
     if (!file.startsWith(root + path.sep) && file !== root) {
       res.writeHead(403);

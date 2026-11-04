@@ -450,3 +450,113 @@ test("a missing cached entry script shows recovery instead of a blank offline ap
     page.getByRole("heading", { name: "Good to see you, Alex." }),
   ).toBeVisible();
 });
+test("Cloudflare canonical HTML redirects cannot poison navigation or OAuth returns", async ({
+  page,
+  request,
+  context,
+}) => {
+  const redirect = await request.get("/index.html", { maxRedirects: 0 });
+  expect(redirect.status()).toBe(308);
+  expect(redirect.headers()["location"]).toBe("/");
+  await enter(page);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex." }),
+  ).toBeVisible();
+  await page.goto("/?error=access_denied&error_description=canonical-test");
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex." }),
+  ).toBeVisible();
+  await context.setOffline(true);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Your household, offline" }),
+  ).toBeVisible();
+  const redirected = await page.evaluate(async () => {
+    const result: boolean[] = [];
+    for (const key of await caches.keys()) {
+      const response = await (await caches.open(key)).match("/index.html");
+      if (response) result.push(response.redirected);
+    }
+    return result;
+  });
+  expect(redirected).toEqual([false]);
+});
+test("legacy redirected entries are usable while their repairing worker installs", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  await page.evaluate(async () => {
+    for (const key of await caches.keys()) {
+      const cache = await caches.open(key);
+      if (await cache.match("/index.html")) {
+        const redirected = await fetch("/index.html?legacy=1");
+        if (!redirected.redirected) throw Error("Test server did not redirect");
+        await cache.put("/index.html", redirected);
+      }
+    }
+  });
+  await context.setOffline(true);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Your household, offline" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Coffee for the household", { exact: true }),
+  ).toBeVisible();
+});
+test("an installed worker stuck on a redirected page upgrades without deleting pending checks", async ({
+  page,
+  context,
+}) => {
+  const { readFile, writeFile } = await import("node:fs/promises"),
+    original = await readFile("dist/sw.js", "utf8");
+  const assets = JSON.parse(
+      /const PUBLIC_ASSETS=(\[[^\n]+\]);/.exec(original)![1],
+    ),
+    legacyKey = "week-menu-shell-legacy-canonical";
+  const legacy = `const NAME=${JSON.stringify(legacyKey)},ASSETS=${JSON.stringify(assets)};
+ self.addEventListener('install',e=>e.waitUntil(caches.open(NAME).then(c=>c.addAll(ASSETS))));
+ self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
+ self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==location.origin)return;
+ e.respondWith(caches.open(NAME).then(async c=>(await c.match(e.request.mode==='navigate'?'/index.html':e.request))??fetch(e.request)));});`;
+  try {
+    await writeFile("dist/sw.js", legacy);
+    await enter(page);
+    const old = context.serviceWorkers()[0];
+    await context.setOffline(true);
+    await page.getByRole("checkbox").click();
+    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(page.reload()).rejects.toThrow("ERR_FAILED");
+    await writeFile("dist/sw.js", original);
+    await context.setOffline(false);
+    const installed = context.waitForEvent("serviceworker");
+    await old.evaluate(async () => {
+      await (self as any).registration.update();
+    });
+    const replacement = await installed;
+    await expect
+      .poll(() =>
+        replacement.evaluate(async () => {
+          const scope = self as any;
+          return (
+            scope.registration.active?.state === "activated" &&
+            !(await caches.has("week-menu-shell-legacy-canonical"))
+          );
+        }),
+      )
+      .toBe(true);
+    await context.setOffline(true);
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Your household, offline" }),
+    ).toBeVisible();
+    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByText("1 pending sync", { exact: true }),
+    ).toBeVisible();
+  } finally {
+    await writeFile("dist/sw.js", original);
+  }
+});

@@ -3,7 +3,20 @@ const allowed = new Set(PUBLIC_ASSETS);
 async function cached(path) {
   try {
     const response = await (await caches.open(CACHE_NAME)).match(path);
-    return response?.ok ? response : undefined;
+    if (!response?.ok) return undefined;
+    // Chrome rejects redirected responses for navigation requests with redirect
+    // mode "manual". Normalize legacy entries as well as fixing new downloads.
+    if (path === "/index.html" && response.redirected) {
+      const headers = new Headers(response.headers);
+      headers.delete("content-encoding");
+      headers.delete("content-length");
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
+    }
+    return response;
   } catch {
     // Browser storage can fail even with a working network. Never fail the
     // navigation or asset request just because its optional cache failed.
@@ -43,7 +56,13 @@ async function healthyPreviousShell() {
     if (!key.startsWith("week-menu-shell-") || key === CACHE_NAME) continue;
     const cache = await caches.open(key),
       html = await cache.match("/index.html");
-    if (await completePage(html, (path) => cache.match(path))) return true;
+    // Older releases cached Cloudflare's /index.html -> / redirect. Those
+    // entries can be complete yet unusable for navigation, so repair immediately.
+    if (
+      !html?.redirected &&
+      (await completePage(html, (path) => cache.match(path)))
+    )
+      return true;
   }
   return false;
 }
@@ -51,7 +70,12 @@ let repairFlight;
 function repairShell() {
   repairFlight ??= (async () => {
     const responses = await Promise.all(
-      PUBLIC_ASSETS.map((path) => fetch(path, { cache: "reload" })),
+      PUBLIC_ASSETS.map((path) =>
+        fetch(path === "/index.html" ? "/" : path, {
+          cache: "reload",
+          redirect: "error",
+        }),
+      ),
     );
     if (responses.some((response) => !response.ok)) return;
     const index = PUBLIC_ASSETS.indexOf("/index.html");
@@ -88,7 +112,20 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       try {
-        await (await caches.open(CACHE_NAME)).addAll(PUBLIC_ASSETS);
+        const cache = await caches.open(CACHE_NAME);
+        await cache.addAll(
+          PUBLIC_ASSETS.filter((path) => path !== "/index.html"),
+        );
+        // Request the canonical URL directly, retaining the logical cache key.
+        // Cloudflare returns 308 for /index.html; storing that followed response
+        // and serving it to a navigation causes Chrome's ERR_FAILED.
+        const html = await fetch("/", { cache: "reload", redirect: "error" });
+        if (
+          !html.ok ||
+          !html.headers.get("content-type")?.includes("text/html")
+        )
+          throw new Error("invalid_app_shell");
+        await cache.put("/index.html", html);
       } catch (error) {
         // Storage denial/quota is different from a failed asset download: install
         // a network-capable worker instead of leaving a broken predecessor stuck.
