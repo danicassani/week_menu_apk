@@ -9,19 +9,20 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Bilingual starter recipe book](content/starter/recipes.md)
 - [Starter food pack, source notice and rebuild instructions](content/starter/README.md)
 
-Milestones 1–2 are implemented: responsive bilingual light/dark interface, Supabase Google-auth/household permissions, adult profiles, calorie-target review, three meal budgets, food/activity/weight logs, editable household content and reviewed menu planning. The household has an initial deployment; the new planning migrations and frontend rollout are documented separately. The agreed four milestones each end with a user review.
+Milestones 1–3 are implemented for review: responsive bilingual light/dark interface, Supabase Google-auth/household permissions, adult profiles, calorie-target review, three meal budgets, food/activity/weight logs, editable household content reviewed menu planning, shared shopping, installation and offline viewing/checklists. The household has an initial deployment; the new planning migrations and frontend rollout are documented separately. The agreed four milestones each end with a user review.
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Choose **Explore the preview** for a temporary sample household, or follow the [Supabase setup instructions](docs/setup.md) to connect your project. Preview data stays in memory and is discarded on reload or exit.
+Choose **Explore the preview** for a temporary sample household, or follow the [Supabase setup instructions](docs/setup.md) to connect your project. The fictional preview retains its menu/catalogue/shopping simulator within the current tab for offline reloads; health logs stay in memory. Exiting clears its saved data.
 
 - [Milestone 1 review and scope boundaries](docs/milestone-1.md)
 - [Run, configure and verify the app](docs/setup.md)
 - [Activity source and age-coverage notes](docs/activity-sources.md)
 
-Checks: `npm run build`, `npm test`, and `npm run test:browser` (Chromium required). Generated shopping and offline installation are the following milestone.
+Checks: `npm run build`, `npm test`, `npm run test:browser`, and `npm run test:pwa` (Chromium required). Hosted and cross-device acceptance remains milestone 4.
 
 - [Milestone 2 review and database rollout](docs/milestone-2.md)
+- [Milestone 3 review, offline behavior and migration](docs/milestone-3.md)

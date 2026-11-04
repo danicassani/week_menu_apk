@@ -1,3 +1,16 @@
+import { authStorage, AUTH_STORAGE_KEY, clearLocalAuth } from "./auth-storage";
+import { requireDiscardOrSynced } from "./offline-store";
+import {
+  emptyShopping,
+  shoppingRequirements,
+  shoppingChanges,
+  shoppingFingerprint,
+  applyShoppingPreview,
+  type ShoppingState,
+  type ShoppingPreview,
+  type CheckOperation,
+  type CheckReceipt,
+} from "../domain/shopping";
 import ingredientSeed from "../../content/starter/ingredients.json";
 import substitutionSeed from "../../content/starter/substitutions.json";
 import {
@@ -35,21 +48,76 @@ const url = import.meta.env.VITE_SUPABASE_URL,
 export const supabase: SupabaseClient | null =
   url && key
     ? createClient(url, key, {
-        auth: { flowType: "pkce", detectSessionInUrl: true },
+        auth: {
+          flowType: "pkce",
+          detectSessionInUrl: true,
+          storage: authStorage,
+          storageKey: AUTH_STORAGE_KEY,
+        },
       })
     : null;
 export const previewAvailable =
   import.meta.env.DEV || import.meta.env.VITE_ENABLE_PREVIEW === "true";
 export class SupabaseRepository implements Repository {
   mode = "supabase" as const;
-  constructor(private client: SupabaseClient) {}
+  constructor(
+    private client: SupabaseClient,
+    readonly accountId: string,
+  ) {}
   private async rpc<T = void>(
     name: string,
     args?: Record<string, unknown>,
   ): Promise<T> {
-    const { data, error } = await this.client.rpc(name, args);
+    const {
+      data: { session },
+      error: authError,
+    } = await this.client.auth.getSession();
+    if (authError) throw authError;
+    if (!session || session.user.id !== this.accountId)
+      throw new DomainError("account_changed");
+    const { data, error } = await this.client
+      .rpc(name, args)
+      .setHeader("Authorization", `Bearer ${session.access_token}`);
     if (error) throw new DomainError(error.message);
     return data as T;
+  }
+  getShopping() {
+    return this.rpc<ShoppingState>("get_shopping_state");
+  }
+  previewShopping(start: string, end: string) {
+    return this.rpc<ShoppingPreview>("preview_shopping_list", {
+      p_start: start,
+      p_end: end,
+    });
+  }
+  applyShopping(p: ShoppingPreview) {
+    return this.rpc("apply_shopping_list", {
+      p_start: p.start_date,
+      p_end: p.end_date,
+      p_revision: p.content_revision,
+      p_fingerprint: p.source_fingerprint,
+    });
+  }
+  saveManualItem(id: string, label: string, amount: string, revision: number) {
+    return this.rpc("save_manual_shopping_item", {
+      p_id: id,
+      p_label: label,
+      p_amount: amount,
+      p_revision: revision,
+    });
+  }
+  deleteManualItem(id: string, revision: number) {
+    return this.rpc("delete_manual_shopping_item", {
+      p_id: id,
+      p_revision: revision,
+    });
+  }
+  checkShopping(op: CheckOperation) {
+    return this.rpc<CheckReceipt>("set_shopping_checked", {
+      p_operation: op.id,
+      p_item: op.item_id,
+      p_checked: op.checked,
+    });
   }
   async load(zone: string) {
     await this.rpc("bootstrap_member", { p_timezone: zone });
@@ -134,15 +202,26 @@ export class SupabaseRepository implements Repository {
   leave() {
     return this.rpc("leave_household");
   }
-  async signOut() {
-    const { error } = await this.client.auth.signOut({ scope: "local" });
-    if (error) throw error;
+  async signOut(discardPending = false) {
+    await requireDiscardOrSynced(this.accountId, discardPending);
+    await this.client.auth.stopAutoRefresh();
+    if (navigator.onLine) {
+      try {
+        await this.client.auth.signOut({ scope: "local" });
+      } catch {
+        /* Local sign-out still completes; remote revocation may need connectivity. */
+      }
+    }
+    clearLocalAuth();
   }
 }
 
 // Ephemeral, explicitly labelled preview. It never authenticates or accesses Supabase.
 export class PreviewRepository implements Repository {
   mode = "preview" as const;
+  readonly accountId = "preview";
+  private shopping = emptyShopping();
+  private receipts = new Map<string, CheckReceipt>();
   private s: HouseholdState;
   private serial = 0;
   private library: PlanningState = {
@@ -213,6 +292,18 @@ export class PreviewRepository implements Repository {
       recipe_id: id,
       name: recipes.recipes.find((r) => r.id === id)!.name,
     });
+    try {
+      const saved = sessionStorage.getItem("week-menu-demo-server");
+      if (saved) {
+        const data = JSON.parse(saved);
+        this.library = data.library;
+        this.shopping = data.shopping;
+        this.serial = data.serial;
+        this.receipts = new Map(data.receipts ?? []);
+      }
+    } catch {
+      /* Fresh preview if tab storage is unavailable. */
+    }
     this.s = {
       server_now: new Date().toISOString(),
       viewer_id: "alex",
@@ -258,6 +349,154 @@ export class PreviewRepository implements Repository {
       budget_overrides: [],
       meal_locks: [],
     };
+  }
+  private persistDemo() {
+    try {
+      sessionStorage.setItem(
+        "week-menu-demo-server",
+        JSON.stringify({
+          library: this.library,
+          shopping: this.shopping,
+          serial: this.serial,
+          receipts: [...this.receipts],
+        }),
+      );
+    } catch {
+      /* No real household data is stored by the simulator. */
+    }
+  }
+  async getShopping() {
+    this.me();
+    const s = structuredClone(this.shopping);
+    s.observation_revision = this.serial;
+    s.changes_available =
+      !!s.start_date &&
+      s.applied_fingerprint !==
+        shoppingFingerprint(
+          shoppingRequirements(
+            this.library.plans,
+            s.start_date,
+            s.end_date!,
+            this.library.ingredients,
+          ),
+          s.start_date,
+          s.end_date!,
+        );
+    return s;
+  }
+  async previewShopping(start: string, end: string) {
+    this.me();
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(start) ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(end) ||
+      start > end
+    )
+      throw new DomainError("invalid_shopping_range");
+    const rows = shoppingRequirements(
+      this.library.plans,
+      start,
+      end,
+      this.library.ingredients,
+    );
+    return {
+      start_date: start,
+      end_date: end,
+      content_revision: this.shopping.content_revision,
+      source_fingerprint: shoppingFingerprint(rows, start, end),
+      changes: shoppingChanges(this.shopping, rows),
+    };
+  }
+  async applyShopping(p: ShoppingPreview) {
+    const fresh = await this.previewShopping(p.start_date, p.end_date);
+    if (
+      fresh.source_fingerprint !== p.source_fingerprint ||
+      fresh.content_revision !== p.content_revision
+    )
+      throw new DomainError("stale_shopping");
+    this.shopping = applyShoppingPreview(this.shopping, fresh);
+    this.serial++;
+    this.persistDemo();
+  }
+  async saveManualItem(
+    id: string,
+    label: string,
+    amount: string,
+    revision: number,
+  ) {
+    this.me();
+    if (!label.trim() || label.length > 160 || amount.length > 80)
+      throw new DomainError("invalid_shopping_item");
+    const old = this.shopping.items.find((i) => i.id === id);
+    if (
+      old &&
+      revision === 0 &&
+      old.name.en === label.trim() &&
+      old.amount === amount
+    )
+      return;
+    if (old && (old.source !== "manual" || old.content_revision !== revision))
+      throw new DomainError("stale_shopping");
+    if (!old && revision !== 0) throw new DomainError("stale_shopping");
+    const item = {
+      id,
+      source: "manual" as const,
+      key: null,
+      ingredient_id: null,
+      name: { en: label.trim(), es: label.trim() },
+      amount,
+      quantity: null,
+      unit: "",
+      reference_state: "",
+      quantity_basis: "",
+      checked: old?.checked ?? false,
+      increased: false,
+      content_revision: (old?.content_revision ?? 0) + 1,
+      checked_revision: old?.checked_revision ?? 0,
+    };
+    this.shopping.items = this.shopping.items
+      .filter((i) => i.id !== id)
+      .concat(item);
+    this.shopping.content_revision++;
+    this.serial++;
+    this.persistDemo();
+  }
+  async deleteManualItem(id: string, revision: number) {
+    this.me();
+    const old = this.shopping.items.find((i) => i.id === id);
+    if (!old) return;
+    if (old.source !== "manual") throw new DomainError("generated_item");
+    if (old.content_revision !== revision)
+      throw new DomainError("stale_shopping");
+    this.shopping.items = this.shopping.items.filter((i) => i.id !== id);
+    this.shopping.content_revision++;
+    this.serial++;
+    this.persistDemo();
+  }
+  async checkShopping(op: CheckOperation) {
+    this.me();
+    const old = this.receipts.get(op.id);
+    if (old) {
+      if (old.item_id !== op.item_id || old.checked !== op.checked)
+        throw new DomainError("operation_mismatch");
+      return structuredClone(old);
+    }
+    const item = this.shopping.items.find((i) => i.id === op.item_id);
+    if (item) {
+      item.checked = op.checked;
+      item.increased = op.checked ? false : item.increased;
+      item.checked_revision++;
+      this.serial++;
+    }
+    const ack: CheckReceipt = {
+      operation_id: op.id,
+      item_id: op.item_id,
+      status: item ? "applied" : "removed",
+      checked: op.checked,
+      item_revision: item?.checked_revision ?? null,
+    };
+    this.receipts.set(op.id, ack);
+    this.persistDemo();
+    return structuredClone(ack);
   }
   private unlocked(day: string) {
     if (
@@ -406,8 +645,11 @@ export class PreviewRepository implements Repository {
   }
   async load(zone: string) {
     this.s.server_now = new Date().toISOString();
+    this.syncPlans();
     this.me().time_zone = zone;
     this.s.planning = { ...this.library, revision: this.serial };
+    this.s.shopping = await this.getShopping();
+    this.persistDemo();
     return structuredClone(this.s);
   }
   async saveProfile(p: Profile, revision: number) {
@@ -599,7 +841,13 @@ export class PreviewRepository implements Repository {
       throw new DomainError("transfer_before_leaving");
     this.removeData(this.me().id);
   }
-  async signOut() {
-    /* The App drops this in-memory repository and all household data. */
+  async signOut(discardPending = false) {
+    await requireDiscardOrSynced(this.accountId, discardPending);
+    try {
+      sessionStorage.removeItem("week-menu-demo-server");
+      sessionStorage.removeItem("week-menu-preview-active");
+    } catch {
+      /* Ephemeral fallback. */
+    }
   }
 }

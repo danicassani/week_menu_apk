@@ -1,4 +1,10 @@
 import type {
+  ShoppingState,
+  ShoppingPreview,
+  CheckOperation,
+  CheckReceipt,
+} from "./shopping";
+import type {
   PlanningState,
   Ingredient,
   PlannedRecipe,
@@ -96,6 +102,7 @@ export interface PersonalDay {
   } | null;
 }
 export interface HouseholdState {
+  shopping?: ShoppingState;
   planning?: PlanningState;
   server_now: string;
   viewer_id: string;
@@ -128,6 +135,18 @@ export interface EntryInput {
   activity_code?: string;
 }
 export interface Repository {
+  readonly accountId: string;
+  getShopping(): Promise<ShoppingState>;
+  previewShopping(start: string, end: string): Promise<ShoppingPreview>;
+  applyShopping(preview: ShoppingPreview): Promise<void>;
+  saveManualItem(
+    id: string,
+    label: string,
+    amount: string,
+    revision: number,
+  ): Promise<void>;
+  deleteManualItem(id: string, revision: number): Promise<void>;
+  checkShopping(operation: CheckOperation): Promise<CheckReceipt>;
   mode: "preview" | "supabase";
   saveContent(
     kind: "ingredient" | "recipe",
@@ -158,5 +177,5 @@ export interface Repository {
   invite(email: string): Promise<void>;
   remove(memberId: string): Promise<void>;
   transfer(memberId: string): Promise<void>;
-  signOut(): Promise<void>;
+  signOut(discardPending?: boolean): Promise<void>;
 }

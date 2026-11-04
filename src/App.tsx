@@ -1,3 +1,22 @@
+import { ShoppingPage } from "./pages/shopping";
+import { OfflineShell } from "./pages/offline";
+import { SignOutDialog } from "./components/sign-out";
+import { useConnection } from "./lib/use-offline";
+import {
+  activeOfflineAccount,
+  rememberAccount,
+  cacheLoadedView,
+  purgeOfflineAccount,
+  readOfflineAccount,
+  requireDiscardOrSynced,
+} from "./lib/offline-store";
+import { syncShopping } from "./lib/shopping-sync";
+import {
+  authIsBlocked,
+  allowLocalAuth,
+  clearLocalAuth,
+} from "./lib/auth-storage";
+import { DomainError } from "./domain/calories";
 import { Planner, ContentManager } from "./pages/planner";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -81,17 +100,60 @@ const navigation = [
 export default function App() {
   const [session, setSession] = useState<Session | null>(null),
     [checking, setChecking] = useState(!!supabase),
-    [preview, setPreview] = useState(false),
+    [preview, setPreview] = useState(() => {
+      try {
+        return (
+          previewAvailable &&
+          sessionStorage.getItem("week-menu-preview-active") === "true"
+        );
+      } catch {
+        return false;
+      }
+    }),
     [authError, setAuthError] = useState("");
+  const online = useConnection();
+  const [offlineAccount, setOfflineAccount] = useState<string | null>(null),
+    [forceSaved, setForceSaved] = useState(false);
+  useEffect(() => {
+    let active = true;
+    const expected = preview ? "preview" : session?.user.id;
+    activeOfflineAccount()
+      .then((id) => {
+        if (active)
+          setOfflineAccount(
+            expected ?? (id === "preview" && !previewAvailable ? null : id),
+          );
+      })
+      .catch(() => {
+        if (active) setOfflineAccount(expected ?? null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [online, session?.user.id, preview]);
+  useEffect(() => {
+    if (online) setForceSaved(false);
+  }, [online]);
   const [language, setLanguage] = useState<Language>("en"),
-    [theme, setTheme] = useState(
-      () =>
-        localStorage.getItem("week-menu-theme") ??
-        (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"),
-    );
+    [theme, setTheme] = useState(() => {
+      try {
+        return (
+          localStorage.getItem("week-menu-theme") ??
+          (matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light")
+        );
+      } catch {
+        return "light";
+      }
+    });
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem("week-menu-theme", theme);
+    try {
+      localStorage.setItem("week-menu-theme", theme);
+    } catch {
+      /* Theme still applies for this session. */
+    }
   }, [theme]);
   useEffect(() => {
     document.documentElement.lang = language;
@@ -101,13 +163,13 @@ export default function App() {
     let alive = true;
     supabase.auth.getSession().then(({ data, error }) => {
       if (alive) {
-        setSession(data.session);
+        setSession(authIsBlocked() ? null : data.session);
         setChecking(false);
         if (error) setAuthError(errorMessage(error, language));
       }
     });
     const { data } = supabase.auth.onAuthStateChange((_event, next) => {
-      setSession(next);
+      setSession(authIsBlocked() ? null : next);
       setChecking(false);
     });
     return () => {
@@ -118,6 +180,7 @@ export default function App() {
   const t = translator(language);
   const auth = async () => {
     if (!supabase) return;
+    allowLocalAuth();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -134,9 +197,56 @@ export default function App() {
       key: identity,
       repo: preview
         ? new PreviewRepository(deviceZone())
-        : new SupabaseRepository(supabase!),
+        : new SupabaseRepository(supabase!, identity),
     };
   if (!identity) repoRef.current = null;
+  const exit = () => {
+    setPreview(false);
+    setSession(null);
+    setOfflineAccount(null);
+    setForceSaved(false);
+    repoRef.current = null;
+    try {
+      sessionStorage.removeItem("week-menu-preview-active");
+    } catch {
+      /* Ephemeral mode. */
+    }
+  };
+  const useSaved = () => {
+    setOfflineAccount(
+      preview ? "preview" : (session?.user.id ?? offlineAccount),
+    );
+    setForceSaved(true);
+  };
+  if ((!online || forceSaved) && offlineAccount) {
+    const repo =
+      repoRef.current?.repo.accountId === offlineAccount
+        ? repoRef.current.repo
+        : supabase
+          ? new SupabaseRepository(supabase, offlineAccount)
+          : {
+              accountId: offlineAccount,
+              getShopping: async () => {
+                throw new DomainError("offline_requires_connection");
+              },
+              checkShopping: async () => {
+                throw new DomainError("offline_requires_connection");
+              },
+              signOut: async (discard = false) => {
+                await requireDiscardOrSynced(offlineAccount, discard);
+                clearLocalAuth();
+              },
+            };
+    return (
+      <OfflineShell
+        accountId={offlineAccount}
+        repo={repo}
+        language={language}
+        onExit={exit}
+        onTryOnline={() => setForceSaved(false)}
+      />
+    );
+  }
   if (checking)
     return (
       <div className="loading-screen">
@@ -153,11 +263,8 @@ export default function App() {
         setLanguage={setLanguage}
         theme={theme}
         setTheme={setTheme}
-        onExit={() => {
-          setPreview(false);
-          setSession(null);
-          repoRef.current = null;
-        }}
+        onExit={exit}
+        onUseSaved={useSaved}
       />
     );
   return (
@@ -230,7 +337,17 @@ export default function App() {
             </p>
           )}
           {previewAvailable && (
-            <Button secondary onClick={() => setPreview(true)}>
+            <Button
+              secondary
+              onClick={() => {
+                try {
+                  sessionStorage.setItem("week-menu-preview-active", "true");
+                } catch {
+                  /* Ephemeral mode. */
+                }
+                setPreview(true);
+              }}
+            >
               {t("Explore the preview", "Explorar la vista previa")}
               <ArrowRight size={17} />
             </Button>
@@ -294,6 +411,7 @@ function Workspace({
   theme,
   setTheme,
   onExit,
+  onUseSaved,
 }: {
   repository: Repository;
   language: Language;
@@ -301,6 +419,7 @@ function Workspace({
   theme: string;
   setTheme: (t: string) => void;
   onExit: () => void;
+  onUseSaved: () => void;
 }) {
   const [s, setS] = useState<HouseholdState | null>(null),
     [fatal, setFatal] = useState(""),
@@ -311,7 +430,10 @@ function Workspace({
       null,
     ),
     [dialog, setDialog] = useState<Dialog | null>(null),
-    [inviteEmail, setInviteEmail] = useState("");
+    [inviteEmail, setInviteEmail] = useState(""),
+    [exitOpen, setExitOpen] = useState(false),
+    [cacheWarning, setCacheWarning] = useState("");
+  const remembered = useRef(false);
   const mounted = useRef(true),
     sequence = useRef(0),
     languageRef = useRef(language),
@@ -328,6 +450,7 @@ function Workspace({
         e instanceof Error &&
         /access_denied|google_identity_required/.test(e.message)
       ) {
+        await purgeOfflineAccount(repo.accountId).catch(() => {});
         setS(null);
         setDialog(null);
         setFatal(errorMessage(e, languageRef.current));
@@ -335,6 +458,22 @@ function Workspace({
       throw e;
     }
     if (mounted.current && n === sequence.current) {
+      if (
+        !remembered.current &&
+        (repo.mode === "preview" || !authIsBlocked())
+      ) {
+        try {
+          await rememberAccount(
+            repo.accountId,
+            next.members.find((m) => m.id === next.viewer_id)?.profile
+              ?.language ?? languageRef.current,
+          );
+          remembered.current = true;
+        } catch {
+          setCacheWarning("offline_storage_unavailable");
+        }
+      }
+      if (!mounted.current || n !== sequence.current) return next;
       setS(next);
       setSelected((id) =>
         next.members.some((m) => m.id === id) ? id : next.viewer_id,
@@ -392,6 +531,33 @@ function Workspace({
     };
   }, [refresh, repo]);
   useEffect(() => {
+    if (s && remembered.current)
+      void cacheLoadedView(repo.accountId, s, tab).catch(() =>
+        setCacheWarning("offline_storage_unavailable"),
+      );
+  }, [s, tab, repo.accountId]);
+  useEffect(() => {
+    const sync = () => {
+      if (navigator.onLine && remembered.current)
+        void syncShopping(repo).catch((e) => {
+          if (
+            e instanceof Error &&
+            /access_denied|google_identity_required/.test(e.message)
+          ) {
+            setS(null);
+            setFatal(errorMessage(e, languageRef.current));
+          }
+        });
+    };
+    sync();
+    window.addEventListener("online", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      window.removeEventListener("online", sync);
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, [repo, s?.viewer_id]);
+  useEffect(() => {
     const preference = s?.members.find((m) => m.id === s.viewer_id)?.profile
       ?.language;
     if (preference) setLanguage(preference);
@@ -427,18 +593,31 @@ function Workspace({
       if (mounted.current) setBusy(false);
     }
   };
-  const signOut = async () => {
-    if (await operate(() => repo.signOut(), undefined, false)) {
-      setS(null);
-      onExit();
-    }
-  };
+  const signOut = () => setExitOpen(true);
+  const exitDialog = exitOpen ? (
+    <SignOutDialog
+      repo={repo}
+      language={language}
+      onClose={() => setExitOpen(false)}
+      onExit={() => {
+        setS(null);
+        onExit();
+      }}
+    />
+  ) : null;
   if (fatal)
     return (
       <div className="loading-screen">
+        {exitDialog}
         <span className="brand-mark">w.</span>
         <h1>{t("A private table", "Una mesa privada")}</h1>
         <p role="alert">{fatal}</p>
+        <Button secondary onClick={onUseSaved}>
+          {t(
+            "View saved menu, recipes & shopping",
+            "Ver menú, recetas y compra guardados",
+          )}
+        </Button>
         <Button onClick={signOut} busy={busy}>
           {t("Back to sign-in", "Volver a iniciar sesión")}
         </Button>
@@ -549,6 +728,7 @@ function Workspace({
                     : "";
   return (
     <div className="app-shell">
+      {exitDialog}
       <a className="skip-link" href="#main-content">
         {t("Skip to content", "Ir al contenido")}
       </a>
@@ -603,24 +783,7 @@ function Workspace({
               )}
             </p>
           </div>
-          <button
-            className="signout"
-            onClick={() =>
-              confirm(
-                t("Sign out?", "¿Cerrar sesión?"),
-                t(
-                  "Cached household information will be cleared from this session.",
-                  "Se borrará la información del hogar de esta sesión.",
-                ),
-                async () => {
-                  await repo.signOut();
-                  setS(null);
-                  onExit();
-                },
-                false,
-              )
-            }
-          >
+          <button className="signout" onClick={() => setExitOpen(true)}>
             <LogOut size={17} />
             {repo.mode === "preview"
               ? t("Exit preview", "Salir de vista previa")
@@ -730,6 +893,11 @@ function Workspace({
               <ChevronDown size={14} />
             </label>
           </div>
+          {cacheWarning && (
+            <p className="note warning" role="status">
+              {errorMessage(new Error(cacheWarning), language)}
+            </p>
+          )}
           {!own && (
             <div className="viewing-notice">
               <Users size={15} />
@@ -744,7 +912,7 @@ function Workspace({
           ) : tab === "menu" ? (
             <Planner {...v} />
           ) : tab === "shopping" ? (
-            <Shopping {...v} />
+            <ShoppingPage {...v} />
           ) : tab === "recipes" ? (
             <ContentManager {...v} />
           ) : (
@@ -778,12 +946,12 @@ function Workspace({
                 confirm(
                   t("Leave this household?", "¿Salir de este hogar?"),
                   t(
-                    "You will lose access. Your historical records will remain in household history.",
-                    "Perderás el acceso. Tus registros anteriores se conservarán en el historial del hogar.",
+                    "You will lose access. Your historical records stay in household history. Any remaining unsynchronized shopping checks will be discarded; synchronize them before leaving if you want to keep them.",
+                    "Perderás el acceso. Tu historial se conserva en el hogar. Se descartarán las marcas de compra aún pendientes; sincronízalas antes de salir si quieres conservarlas.",
                   ),
                   async () => {
                     await repo.leave();
-                    await repo.signOut();
+                    await repo.signOut(true);
                     setS(null);
                     onExit();
                   },

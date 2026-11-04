@@ -4,6 +4,8 @@ import { daysBetween } from "./dates";
 import type { MealType, Profile } from "./types";
 export type Names = { en: string; es: string };
 export interface Ingredient {
+  quantity_basis?: string;
+  shopping_policy?: string;
   id: string;
   name: Names;
   state: string;
@@ -54,6 +56,9 @@ export interface Substitution {
   instruction_override: Names;
 }
 export interface PortionLine {
+  reference_state?: string;
+  quantity_basis?: string;
+  shopping_policy?: string;
   ingredient_id: string;
   component_id: string;
   quantity: number;
@@ -199,6 +204,9 @@ export function makePortion(
     const grams = gramsFor(r.ingredient, quantity, r.unit),
       kcal = new Decimal(grams).mul(r.energy).div(100).toNumber();
     return {
+      reference_state: r.ingredient.state,
+      quantity_basis: r.ingredient.quantity_basis ?? "edible_reference_weight",
+      shopping_policy: r.ingredient.shopping_policy ?? "include",
       ingredient_id: r.ingredient.id,
       component_id: r.component_id,
       quantity,
@@ -275,6 +283,9 @@ export function recalculateLines(
     if (energy === null) throw new DomainError("missing_nutrition");
     return {
       ...l,
+      reference_state: i.state,
+      quantity_basis: i.quantity_basis ?? "edible_reference_weight",
+      shopping_policy: i.shopping_policy ?? "include",
       name: i.name,
       grams,
       kcal: new Decimal(grams).mul(energy).div(100).toNumber(),

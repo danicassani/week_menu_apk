@@ -2985,3 +2985,286 @@ textarea {
     font-size: 16px;
   }
 }
+/* Shared shopping, local sync and offline views. */
+.shopping-range .form-grid {
+  max-width: 550px;
+}
+.shopping-range > .fine-print {
+  margin-top: 12px;
+}
+.shopping-range {
+  margin-bottom: 22px;
+}
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 18px 0;
+}
+.sync-status .text-link {
+  margin-left: auto;
+}
+.shopping-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  padding: 18px 0;
+}
+.shopping-progress > span:not(.pill) {
+  color: var(--muted);
+}
+.shopping-progress .pill {
+  margin-left: auto;
+}
+.shopping-group {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 22px;
+  margin-bottom: 20px;
+}
+.shopping-group > h2 {
+  margin-bottom: 14px;
+}
+.shopping-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.shopping-checklist li {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  gap: 12px;
+  padding: 16px 0;
+}
+.shopping-checklist li:last-child {
+  border: 0;
+}
+.shopping-checklist label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+.shopping-checklist input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.shopping-checklist label > span {
+  min-width: 0;
+}
+.shopping-checklist b {
+  display: block;
+  font-size: 13px;
+  font-weight: 550;
+  overflow-wrap: anywhere;
+}
+.shopping-checklist small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.shopping-checklist .checked b {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+.shopping-checklist .increased {
+  border-left: 3px solid var(--ink);
+  padding-left: 13px;
+}
+.quantity-increased {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+.shopping-checklist .fine-print {
+  display: block;
+  margin-top: 5px;
+}
+.shopping-diff {
+  list-style: none;
+  margin: 20px 0;
+  padding: 0;
+}
+.shopping-diff li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 12px;
+}
+.shopping-diff b {
+  display: block;
+}
+.shopping-diff div > span {
+  display: block;
+  margin-top: 5px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.shopping-diff li > span {
+  white-space: nowrap;
+  font-size: 11px;
+}
+.offline-shell {
+  max-width: 1140px;
+  margin: auto;
+  padding: 0 35px 60px;
+}
+.offline-header {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 25px 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 30px;
+}
+.offline-header .brand {
+  margin-right: auto;
+}
+.offline-badge {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+}
+.offline-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+.offline-time {
+  font-size: 10px;
+  color: var(--muted);
+  margin: 20px 0;
+}
+.offline-shell .day-card h2 {
+  margin-bottom: 17px;
+}
+.offline-shell .meal-card {
+  text-align: left;
+}
+.offline-shell .meal-card:disabled {
+  opacity: 1;
+}
+.offline-limit {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 30px 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.offline-shell .recipe-grid {
+  margin-top: 20px;
+}
+.pwa-notice {
+  position: fixed;
+  z-index: 30;
+  bottom: 20px;
+  right: 22px;
+  max-width: 510px;
+  padding: 14px 17px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 8px 35px #0002;
+  border-radius: 9px;
+  font-size: 11px;
+}
+.pwa-notice .button {
+  min-height: 35px;
+  padding: 9px 12px;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.offline-shell .week-toolbar {
+  flex-wrap: wrap;
+}
+.offline-shell .member-select {
+  margin-left: auto !important;
+}
+@media (max-width: 620px) {
+  .shopping-group {
+    padding: 18px;
+  }
+  .shopping-checklist b {
+    font-size: 12px;
+  }
+  .shopping-checklist small {
+    font-size: 10px;
+  }
+  .shopping-checklist label {
+    gap: 12px;
+  }
+  .shopping-checklist li {
+    padding-top: 18px;
+    padding-bottom: 18px;
+  }
+  .shopping-range {
+    padding: 18px;
+  }
+  .shopping-progress {
+    font-size: 10px;
+  }
+  .shopping-diff li {
+    align-items: flex-start;
+  }
+  .shopping-diff li > span {
+    font-size: 10px;
+    white-space: normal;
+  }
+  .offline-shell {
+    padding: 0 20px 35px;
+  }
+  .offline-header {
+    padding: 19px 0;
+    margin-bottom: 25px;
+  }
+  .offline-header .brand {
+    font-size: 18px;
+  }
+  .offline-tabs .button {
+    flex: 1;
+    font-size: 11px;
+  }
+  .offline-shell .meal-card {
+    display: block;
+  }
+  .offline-shell .meal-card h3 {
+    margin-bottom: 8px;
+  }
+  .pwa-notice {
+    left: 12px;
+    right: 12px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    max-width: none;
+    gap: 8px;
+    padding: 12px;
+    font-size: 10px;
+    flex-wrap: wrap;
+  }
+  .pwa-notice > span {
+    flex: 1;
+    min-width: 150px;
+  }
+  .offline-shell .page-heading h1 {
+    font-size: 25px;
+  }
+}
