@@ -158,3 +158,138 @@ test("accepting a downloaded app update retains offline pending checks", async (
     await writeFile(file, original);
   }
 });
+test("a waiting release cannot replace the active shell before the user accepts it", async ({
+  page,
+  context,
+}) => {
+  const { readFile, writeFile, unlink } = await import("node:fs/promises");
+  await enter(page);
+  const html = await readFile("dist/index.html", "utf8"),
+    worker = await readFile("dist/sw.js", "utf8");
+  try {
+    await writeFile(
+      "dist/release-marker.js",
+      'document.documentElement.dataset.releaseMarker="new-release";',
+    );
+    await writeFile(
+      "dist/index.html",
+      html.replace(
+        "</head>",
+        '<script src="/release-marker.js"></script></head>',
+      ),
+    );
+    await writeFile(
+      "dist/sw.js",
+      worker
+        .replace(
+          /(const CACHE_NAME=)("[^"]+")/,
+          (_, prefix, value) =>
+            prefix + JSON.stringify(JSON.parse(value) + "-next-release"),
+        )
+        .replace(
+          "const PUBLIC_ASSETS=[",
+          'const PUBLIC_ASSETS=["/release-marker.js",',
+        ),
+    );
+    await page.evaluate(async () => {
+      await (await navigator.serviceWorker.getRegistration())!.update();
+    });
+    await expect(
+      page.getByRole("button", { name: "Update & reload" }),
+    ).toBeVisible();
+    await page.reload();
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-release-marker",
+      "new-release",
+    );
+    await expect(
+      page.getByRole("button", { name: "Update & reload" }),
+    ).toBeVisible();
+    await context.setOffline(true);
+    await page.getByRole("checkbox").click();
+    await expect(page.getByRole("checkbox")).toBeChecked();
+    await page.getByRole("button", { name: "Update & reload" }).click();
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-release-marker",
+      "new-release",
+    );
+    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByText("1 pending sync", { exact: true }),
+    ).toBeVisible();
+  } finally {
+    await writeFile("dist/index.html", html);
+    await writeFile("dist/sw.js", worker);
+    await unlink("dist/release-marker.js");
+  }
+});
+test("production security headers and manifest are served; callback URLs never enter the shell cache", async ({
+  page,
+  request,
+}) => {
+  const root = await request.get("/"),
+    headers = root.headers();
+  expect(headers["cache-control"]).toBe("no-store");
+  expect(headers["content-security-policy"]).toContain(
+    "frame-ancestors 'none'",
+  );
+  expect(headers["content-security-policy"]).toContain("script-src 'self'");
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  const manifestResponse = await request.get("/manifest.webmanifest");
+  expect(manifestResponse.headers()["cache-control"]).toBe("no-cache");
+  const manifest = await manifestResponse.json();
+  expect(manifest.display).toBe("standalone");
+  expect(manifest.start_url).toBe("/");
+  for (const icon of manifest.icons) {
+    const r = await request.get(icon.src);
+    expect(r.headers()["content-type"]).toContain("image/png");
+  }
+  expect((await request.get("/sw.js")).headers()["cache-control"]).toBe(
+    "no-cache",
+  );
+  await enter(page);
+  await page.goto("/?error=access_denied&error_description=release-test");
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex." }),
+  ).toBeVisible();
+  const urls = await page.evaluate(async () => {
+    const out: string[] = [];
+    for (const key of await caches.keys())
+      out.push(...(await (await caches.open(key)).keys()).map((r) => r.url));
+    return out;
+  });
+  expect(
+    urls.some(
+      (url) =>
+        url.includes("?") || url.includes("/auth/") || url.includes("supabase"),
+    ),
+  ).toBe(false);
+});
+test("an initial worker install failure is visible while the online app remains usable", async ({
+  page,
+}) => {
+  const { readFile, writeFile } = await import("node:fs/promises");
+  const worker = await readFile("dist/sw.js", "utf8");
+  try {
+    await writeFile(
+      "dist/sw.js",
+      'self.addEventListener("install",e=>e.waitUntil(Promise.reject(new Error("test installation failure"))));',
+    );
+    await page.goto("/");
+    await expect(
+      page.getByText(
+        "Offline app loading is unavailable in this browser. Keep a connection to reopen the app.",
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await page
+      .getByRole("button", { name: "Explore the preview", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "Good to see you, Alex." }),
+    ).toBeVisible();
+  } finally {
+    await writeFile("dist/sw.js", worker);
+  }
+});

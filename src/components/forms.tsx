@@ -447,8 +447,8 @@ export function LogForm({
           </label>
           <p className="muted">
             {t(
-              "For extra food outside planned meals. Replacing a planned meal with eating out arrives with meal planning.",
-              "Para comida adicional fuera de las comidas planificadas. La opción de sustituir una comida por comer fuera llegará con la planificación.",
+              "For extra food outside planned meals. To replace a planned meal with eating out, open that meal in Menu.",
+              "Para comida adicional fuera de las comidas planificadas. Para sustituir una comida por comer fuera, ábrela en Menú.",
             )}
           </p>
         </>

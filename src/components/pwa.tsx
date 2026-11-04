@@ -38,7 +38,11 @@ export function PwaUpdates() {
     return () => observer.disconnect();
   }, []);
   useEffect(() => {
-    if (!import.meta.env.PROD || !("serviceWorker" in navigator)) return;
+    if (!import.meta.env.PROD) return;
+    if (!("serviceWorker" in navigator)) {
+      setShellUnavailable(true);
+      return;
+    }
     let active = true;
     const install = (e: Event) => {
         e.preventDefault();
@@ -56,17 +60,25 @@ export function PwaUpdates() {
         if (!active) return;
         setRegistration(reg);
         if (reg.waiting) setWaiting(true);
-        reg.addEventListener("updatefound", () => {
+        const watchInstalling = () => {
           const worker = reg.installing;
-          worker?.addEventListener("statechange", () => {
+          if (!worker) return;
+          const changed = () => {
+            if (!active) return;
             if (
-              active &&
               worker.state === "installed" &&
               navigator.serviceWorker.controller
             )
               setWaiting(true);
-          });
-        });
+            if (worker.state === "redundant" && !reg.active)
+              setShellUnavailable(true);
+            if (worker.state === "activated") setShellUnavailable(false);
+          };
+          worker.addEventListener("statechange", changed);
+          changed();
+        };
+        watchInstalling();
+        reg.addEventListener("updatefound", watchInstalling);
       })
       .catch(() => {
         if (active) setShellUnavailable(true);

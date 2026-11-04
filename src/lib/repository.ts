@@ -300,6 +300,8 @@ export class PreviewRepository implements Repository {
         this.shopping = data.shopping;
         this.serial = data.serial;
         this.receipts = new Map(data.receipts ?? []);
+        if (data.language === "en" || data.language === "es")
+          p.language = data.language;
       }
     } catch {
       /* Fresh preview if tab storage is unavailable. */
@@ -359,6 +361,7 @@ export class PreviewRepository implements Repository {
           shopping: this.shopping,
           serial: this.serial,
           receipts: [...this.receipts],
+          language: this.me().profile?.language ?? "en",
         }),
       );
     } catch {

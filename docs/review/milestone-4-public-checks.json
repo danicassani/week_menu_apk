@@ -1,0 +1,81 @@
+{
+  "public_deployment": {
+    "origin": "https://week-menu-apk.pages.dev",
+    "checked_at": "2026-11-04T06:01:49.768Z",
+    "result": "passed",
+    "shell_version": "week-menu-shell-2b07e2b7c7ed94820fa4",
+    "checks": [
+      {
+        "path": "/",
+        "status": 200,
+        "bytes": 1361,
+        "sha256": "8ba9b4450091ce5eec37a5d39b330415c4a6e0d7f50a27a274a9d3e27b75c4fa"
+      },
+      {
+        "path": "/manifest.webmanifest",
+        "status": 200,
+        "bytes": 658,
+        "sha256": "d4e7860b4a98e6f180f6b7d90d66fa045fa09a08e18a9f2a1ac898c87f80e3bf"
+      },
+      {
+        "path": "/icon-192.png",
+        "status": 200,
+        "bytes": 3979,
+        "sha256": "a1556a63abfc57540d0daead6c8fd3a73f005ae791b54aa90abbc258ed8b3256"
+      },
+      {
+        "path": "/icon-512.png",
+        "status": 200,
+        "bytes": 14089,
+        "sha256": "26a108e1c0ee46c9a011029c0e5a01b202eb6b2d5a33749d33340e91160f38c3"
+      },
+      {
+        "path": "/icon-maskable.png",
+        "status": 200,
+        "bytes": 13108,
+        "sha256": "0810c695ebb2ad4f72535f583901866e636897ff8903f95aa593cabef6cd48f5"
+      },
+      {
+        "path": "/sw.js",
+        "status": 200,
+        "bytes": 2728,
+        "sha256": "56e2fde5e36efb193220e50f31967335f36bd7aea270095fac55d42440c02c92"
+      },
+      {
+        "path": "/assets/index-pMaB0vZQ.js",
+        "status": 200,
+        "bytes": 206530,
+        "sha256": "bc3969bfce7a96a075c7059853feacecdc7c7183cc4cfb27f11d0b6b6726bb0a"
+      }
+    ],
+    "limits": "Public files/headers only. OAuth, RLS, Realtime, database migrations and physical-device installation are not verified."
+  },
+  "backend_anonymous": {
+    "checked_at": "2026-11-04T06:06:39.101944+00:00",
+    "origin": "https://lgkjhpskcagaycundyyf.supabase.co",
+    "anonymous_checks": [
+      {
+        "route": "/rest/v1/members?select=id&limit=1",
+        "status": 401,
+        "code": "42501"
+      },
+      {
+        "route": "/rest/v1/shopping_items?select=id&limit=1",
+        "status": 401,
+        "code": "42501"
+      },
+      {
+        "route": "/rest/v1/rpc/get_household_snapshot",
+        "status": 401,
+        "code": "42501"
+      },
+      {
+        "route": "/rest/v1/rpc/get_shopping_state",
+        "status": 401,
+        "code": "42501"
+      }
+    ]
+  },
+  "google_provider_enabled": true,
+  "limits": "No tokens, keys or household records included. Signed-in OAuth, Realtime, physical-device installation and complete migration inventory remain unverified."
+}

@@ -24,37 +24,26 @@ self.addEventListener("fetch", (event) => {
   // Household data and authentication are never cached by the service worker.
   if (request.method !== "GET" || url.origin !== self.location.origin) return;
   if (request.mode === "navigate") {
+    // Keep the installed HTML paired with this worker's asset version until the
+    // user accepts the update. OAuth query parameters still reach the page URL;
+    // neither callback URLs nor navigation responses enter the public cache.
     event.respondWith(
-      (async () => {
-        try {
-          const response = await fetch(request);
-          if (!response.ok) throw new Error("navigation_failed");
-          // Never store OAuth callback URLs, codes, errors or authenticated responses.
-          if (
-            !url.search &&
-            url.pathname === "/" &&
-            response.type === "basic" &&
-            response.headers.get("content-type")?.includes("text/html")
-          ) {
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put("/index.html", response.clone());
-          }
-          return response;
-        } catch {
-          return (await caches.match("/index.html")) ?? Response.error();
-        }
-      })(),
+      caches
+        .open(CACHE_NAME)
+        .then(
+          async (cache) => (await cache.match("/index.html")) ?? fetch(request),
+        ),
     );
     return;
   }
   if (url.search || !allowed.has(url.pathname)) return;
   event.respondWith(
     (async () => {
-      const cached = await caches.match(url.pathname);
+      const cache = await caches.open(CACHE_NAME);
+      const cached = await cache.match(url.pathname);
       if (cached) return cached;
       const response = await fetch(request);
       if (response.ok && response.type === "basic") {
-        const cache = await caches.open(CACHE_NAME);
         await cache.put(url.pathname, response.clone());
       }
       return response;
