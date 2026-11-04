@@ -1,6 +1,19 @@
 # PWA cache recovery
 
-A normal Chrome profile failed with `ERR_FAILED`, while Incognito worked; clearing only the app's site data restored access. This isolates the incident to profile-local state but does not prove its exact cause: the original worker/cache state was erased before diagnostics could be collected. It is consistent with a failing or incomplete saved app shell, and is not evidence of a Supabase outage.
+## Confirmed Cloudflare redirect failure
+
+The first recovery patch (PR #5) did not resolve the incident. Follow-up public checks confirmed that Cloudflare Pages returns **HTTP 308 from `/index.html` to `/`**. `Cache.addAll` followed that redirect and stored an HTML `Response` with `redirected: true`. Chrome rejects that response when the worker supplies it to a navigation whose redirect mode is `manual`, producing `net::ERR_FAILED`.
+
+The local production server previously returned `/index.html` directly, so it missed the hosting behavior. After adding the same 308 canonical redirect to the test server, the old worker reproduced **the exact `page.reload: net::ERR_FAILED` failure**. This is a demonstrated defect, rather than an inference that stored bytes were corrupt.
+
+The follow-up fix requests canonical `/` directly for HTML installation and repair, retaining `/index.html` only as an internal cache key. It normalizes redirected legacy HTML responses before serving them and classifies such old shells as broken, allowing a replacement worker to activate without an unreachable update button. Regression tests include the actual old-worker failure, upgrading that installed worker and retaining pending offline checks, repeated navigation/OAuth-error returns, and offline reloads. All production/mobile test servers now emulate Cloudflare's redirect.
+
+No database migration, authentication change or site-data deletion is required. Existing blocked clients need to receive the new worker; Chrome's worker update or a developer-tools update can do that without deleting sessions or IndexedDB.
+
+## Additional storage recovery protections
+
+
+The initial Incognito/site-reset comparison established profile-local state and prompted PR #5. The canonical-redirect reproduction above subsequently identified the hosting-specific navigation defect that the original local server did not exercise.
 
 Review found a concrete failure path: an exception opening or reading Cache Storage rejected the service worker's navigation promise without trying the network. A second path could serve cached HTML whose required script had disappeared. Browser storage eviction, denial, quota pressure and interrupted updates therefore need recovery paths.
 
