@@ -16,10 +16,13 @@ Open the address printed by Vite. **Explore the preview** opens a fictional samp
 ```sh
 npm run build
 npm test
-npx playwright install chromium
+npx playwright install --with-deps chromium webkit
 npm run test:browser
 npm run test:pwa
+npm run test:release
 ```
+
+The [release verification report](milestone-4.md) separates executed checks from pending real-device/Google-session acceptance. `npm run check:deployment -- https://week-menu-apk.pages.dev` audits only public hosting files and headers.
 
 Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Chromium. Set `CHROMIUM_PATH` to override. Unit/integration tests run PostgreSQL through PGlite, including the actual migrations, role grants and row-level policies. They do not substitute for testing the hosted OAuth flow.
 

@@ -9,7 +9,7 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Bilingual starter recipe book](content/starter/recipes.md)
 - [Starter food pack, source notice and rebuild instructions](content/starter/README.md)
 
-Milestones 1–3 are implemented for review: responsive bilingual light/dark interface, Supabase Google-auth/household permissions, adult profiles, calorie-target review, three meal budgets, food/activity/weight logs, editable household content reviewed menu planning, shared shopping, installation and offline viewing/checklists. The household has an initial deployment; the new planning migrations and frontend rollout are documented separately. The agreed four milestones each end with a user review.
+Milestones 1–3 are implemented: responsive bilingual light/dark interface, Supabase Google-auth/household permissions, adult profiles, calorie-target review, three meal budgets, food/activity/weight logs, editable household content reviewed menu planning, shared shopping, installation and offline viewing/checklists. The household has an initial deployment; the new planning migrations and frontend rollout are documented separately. The agreed four milestones each end with a user review.
 
 ```sh
 npm ci
@@ -22,7 +22,8 @@ Choose **Explore the preview** for a temporary sample household, or follow the [
 - [Run, configure and verify the app](docs/setup.md)
 - [Activity source and age-coverage notes](docs/activity-sources.md)
 
-Checks: `npm run build`, `npm test`, `npm run test:browser`, and `npm run test:pwa` (Chromium required). Hosted and cross-device acceptance remains milestone 4.
+Checks: `npm run build`, `npm test`, `npm run test:browser`, and `npm run test:pwa` (Chromium required). Milestone 4 adds Chromium/WebKit release checks and a public deployment audit; signed-in and physical-device acceptance remains pending.
 
 - [Milestone 2 review and database rollout](docs/milestone-2.md)
 - [Milestone 3 review, offline behavior and migration](docs/milestone-3.md)
+- [Milestone 4 verification and live acceptance](docs/milestone-4.md)

@@ -33,6 +33,34 @@ export function Modal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      onKeyDown={(e) => {
+        if (e.key !== "Tab") return;
+        const dialog = e.currentTarget;
+        const controls = [
+          ...dialog.querySelectorAll<HTMLElement>(
+            "a[href], button, input, select, textarea, [tabindex]",
+          ),
+        ].filter(
+          (el) =>
+            el.tabIndex >= 0 &&
+            !el.matches(":disabled") &&
+            el.getClientRects().length > 0,
+        );
+        const first = controls[0],
+          last = controls.at(-1);
+        if (!first || !last) return;
+        if (
+          e.shiftKey &&
+          (document.activeElement === first ||
+            document.activeElement === dialog)
+        ) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }}
       aria-label={title}
     >
       <div className="modal-header">

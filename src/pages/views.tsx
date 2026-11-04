@@ -685,8 +685,8 @@ export function Menu(v: ViewProps) {
         <Info size={17} />
         <span>
           {t(
-            "Meal planning is coming soon. You can already set personal meal-budget overrides.",
-            "La planificación de comidas estará disponible pronto. Ya puedes ajustar presupuestos de comidas individuales.",
+            "Review the menu to plan meals and adjust personal meal-budget overrides.",
+            "Revisa el menú para planificar comidas y ajustar los presupuestos individuales.",
           )}
         </span>
       </div>
@@ -854,8 +854,8 @@ export function Recipes(v: ViewProps) {
       )}
       <p className="fine-print content-credit">
         {t(
-          "Original starter recipes · nutrition from UK CoFID 2021 (Open Government Licence v3.0). Recipe and catalogue editing are coming soon.",
-          "Recetas originales · nutrición de UK CoFID 2021 (Open Government Licence v3.0). La edición de recetas y catálogo estará disponible pronto.",
+          "Original starter recipes · nutrition from UK CoFID 2021 (Open Government Licence v3.0).",
+          "Recetas originales · nutrición de UK CoFID 2021 (Open Government Licence v3.0).",
         )}
       </p>
     </>
@@ -952,47 +952,6 @@ export function RecipeDetail({
           {t("Licence", "Licencia")}
         </a>
       </p>
-    </>
-  );
-}
-export function Shopping(v: ViewProps) {
-  const t = translator(v.language);
-  return (
-    <>
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">
-            {t("For the whole household", "Para todo el hogar")}
-          </span>
-          <h1>{t("The shopping list", "La lista de la compra")}</h1>
-          <p>
-            {t(
-              "One place for everything you need.",
-              "Todo lo que necesitáis, en un solo lugar.",
-            )}
-          </p>
-        </div>
-      </div>
-      <section className="panel shopping-empty">
-        <Empty
-          icon={<ShoppingBasket size={34} />}
-          heading={t(
-            "Good plans make good lists",
-            "Un buen plan, una buena lista",
-          )}
-          action={
-            <Button secondary onClick={() => v.navigate("recipes")}>
-              {t("Explore starter recipes", "Explorar recetas iniciales")}
-              <ArrowRight size={16} />
-            </Button>
-          }
-        >
-          {t(
-            "Plan meals to build one shared shopping list. This feature is coming soon.",
-            "Planifica comidas para crear una lista de compra compartida. Esta función estará disponible pronto.",
-          )}
-        </Empty>
-      </section>
     </>
   );
 }

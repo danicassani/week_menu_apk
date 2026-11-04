@@ -69,7 +69,6 @@ import {
   ProfileView,
   RecipeDetail,
   Recipes,
-  Shopping,
   type ViewProps,
 } from "./pages/views";
 
