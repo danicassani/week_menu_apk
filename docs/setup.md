@@ -1,6 +1,6 @@
 # Run and connect the foundation
 
-Milestones 1–2 are implemented. For an existing deployment, follow the incremental [planning rollout](milestone-2.md#database-rollout). Shopping generation, installability and offline storage remain later milestones. Read [the review notes](milestone-1.md) before connecting real household data.
+Milestones 1–3 are implemented for review. For an existing deployment, follow the incremental [planning rollout](milestone-2.md#database-rollout), then the [shopping/PWA rollout](milestone-3.md#existing-project-rollout). Read [the review notes](milestone-1.md) before connecting real household data.
 
 ## Local development
 
@@ -11,13 +11,14 @@ npm ci
 npm run dev
 ```
 
-Open the address printed by Vite. **Explore the preview** opens an in-memory sample household. It makes no Supabase requests, sends no invitations and loses all changes when the page reloads or you exit. Preview is available in development; production requires an explicit `VITE_ENABLE_PREVIEW=true` build setting. It never authenticates a user or bypasses database permissions.
+Open the address printed by Vite. **Explore the preview** opens a fictional sample household. It makes no Supabase requests and sends no invitations. Its menu, catalogue and shopping simulator persist within the current browser tab for offline-reload testing; profiles and health logs stay in memory. Exiting the preview clears its saved data. Preview is available in development; production requires an explicit `VITE_ENABLE_PREVIEW=true` build setting. It never authenticates a user or bypasses database permissions.
 
 ```sh
 npm run build
 npm test
 npx playwright install chromium
 npm run test:browser
+npm run test:pwa
 ```
 
 Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Chromium. Set `CHROMIUM_PATH` to override. Unit/integration tests run PostgreSQL through PGlite, including the actual migrations, role grants and row-level policies. They do not substitute for testing the hosted OAuth flow.
@@ -30,6 +31,7 @@ Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Ch
    - `supabase/migrations/202611030002_activities.sql`
    - `supabase/migrations/202611030003_planning.sql`
    - `supabase/migrations/202611030004_starter_food.sql`
+   - `supabase/migrations/202611040005_shopping_offline.sql`
 3. Configure the owner's approved Google email in the SQL editor, replacing the example. This function is deliberately inaccessible to application users:
 
    ```sql
@@ -58,7 +60,7 @@ The revision table is added to `supabase_realtime` when that publication exists.
 
 Build command: `npm run build`. Output directory: `dist`. Use Node 24 and the two public Supabase environment values above. Preview is off unless explicitly enabled. `_redirects` provides the SPA fallback; `_headers` provides security headers and self-hosted-asset caching. The current content security policy permits the standard `*.supabase.co` API and WebSocket domains. Adjust that allowlist if a custom Supabase domain is used.
 
-No service worker or offline health cache is registered yet. Google session persistence is managed by the Supabase SDK; household health data stays in React memory and is cleared on sign-out. Actual PWA installation/offline behavior is milestone 3. HTTPS is required for deployment. Provisioning and deployment remain subject to the agreed release milestone.
+The production build registers a public-shell service worker. Menu, recipes and shopping views are saved in account-scoped IndexedDB after loading them online; only shopping checkboxes can be edited offline. Profile and health logs stay in React memory. Sign-out requires synchronizing or explicitly discarding pending checks, then clears local household data. See [milestone 3](milestone-3.md) for installation, updates and storage limits. HTTPS is required for deployment. Provisioning and deployment remain subject to the agreed release milestone.
 
 ## Hosted acceptance checks still required
 

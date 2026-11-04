@@ -94,7 +94,7 @@ test("owner invitations, recipe preparation, and all five tabs", async ({
   await expect(page.locator(".day-card")).toHaveCount(7);
   await nav.getByRole("button", { name: "Shopping", exact: true }).click();
   await expect(
-    page.getByRole("heading", { name: "Good plans make good lists" }),
+    page.getByRole("heading", { name: "The shopping list" }),
   ).toBeVisible();
 });
 test("mobile, dark mode, and Spanish remain usable without horizontal overflow", async ({

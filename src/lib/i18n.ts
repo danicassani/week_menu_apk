@@ -2,6 +2,58 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  invalid_shopping_range: [
+    "Choose a valid shopping date range.",
+    "Elige un intervalo de fechas válido.",
+  ],
+  stale_shopping: [
+    "The menu or shopping list changed. Refresh the preview and review before applying.",
+    "El menú o la lista cambiaron. Actualiza y revisa la vista previa antes de aplicar.",
+  ],
+  invalid_shopping_item: [
+    "Enter a product name and a short quantity or note.",
+    "Introduce un producto y una cantidad o nota breve.",
+  ],
+  operation_mismatch: [
+    "This saved operation has conflicting data. Reconnect and review the list.",
+    "Esta operación guardada tiene datos incompatibles. Conéctate y revisa la lista.",
+  ],
+  generated_item: [
+    "Review menu quantities to change a generated item.",
+    "Revisa las cantidades del menú para cambiar un producto generado.",
+  ],
+  missing_shopping_reference: [
+    "An ingredient lacks its original quantity reference. Ask the owner to review the catalogue history.",
+    "Falta la referencia original de cantidad de un ingrediente. Pide al propietario que revise el historial del catálogo.",
+  ],
+  offline_storage_unavailable: [
+    "Device storage is unavailable. Shopping changes cannot be saved safely.",
+    "El almacenamiento del dispositivo no está disponible. No se pueden guardar los cambios de compra con seguridad.",
+  ],
+  shopping_not_cached: [
+    "Load the shopping list online before checking items.",
+    "Carga la lista con conexión antes de marcar productos.",
+  ],
+  pending_shopping_changes: [
+    "Synchronize pending shopping changes or explicitly discard them before signing out.",
+    "Sincroniza los cambios pendientes o descártalos expresamente antes de cerrar sesión.",
+  ],
+  account_changed: [
+    "The signed-in account changed. Reload before synchronizing.",
+    "La cuenta conectada cambió. Recarga antes de sincronizar.",
+  ],
+  account_signed_out: [
+    "This device was signed out. Sign in again to load household data.",
+    "Se cerró la sesión en este dispositivo. Inicia sesión para cargar los datos.",
+  ],
+  offline_requires_connection: [
+    "Reconnect to use this feature.",
+    "Vuelve a conectarte para usar esta función.",
+  ],
+  invalid_sync_receipt: [
+    "Synchronization could not be confirmed. Your pending changes are retained.",
+    "No se pudo confirmar la sincronización. Se conservan los cambios pendientes.",
+  ],
   stale_content: [
     "This content changed. Your draft is retained; reload and review before saving.",
     "El contenido cambió. Conservamos tu borrador; carga la versión actual y revísala antes de guardar.",
