@@ -293,3 +293,160 @@ test("an initial worker install failure is visible while the online app remains 
     await writeFile("dist/sw.js", worker);
   }
 });
+test("cache API failure falls back to the network instead of ERR_FAILED", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  const worker = context.serviceWorkers()[0];
+  await worker.evaluate(() => {
+    caches.open = async () => {
+      throw new DOMException("Storage unavailable", "SecurityError");
+    };
+  });
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex." }),
+  ).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Shopping", exact: true })
+    .click();
+  await expect(
+    page.getByText("Coffee for the household", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Offline app loading is unavailable in this browser. Keep a connection to reopen the app.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+});
+test("missing shell offline shows recovery guidance, preserves queued checks and repairs on reconnect", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  await context.setOffline(true);
+  await page.reload();
+  await page.getByRole("checkbox").click();
+  await expect(page.getByRole("checkbox")).toBeChecked();
+  await page.evaluate(async () => {
+    for (const key of await caches.keys()) await caches.delete(key);
+  });
+  const response = await page.reload();
+  expect(response!.status()).toBe(503);
+  await expect(
+    page.getByRole("heading", { name: "Reconnect to open Week Menu" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/pending shopping changes have not been deleted/),
+  ).toBeVisible();
+  await context.setOffline(false);
+  await page.getByRole("link", { name: "Try again" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex." }),
+  ).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Shopping", exact: true })
+    .click();
+  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect
+    .poll(() =>
+      page.evaluate(async () => {
+        const keys = await caches.keys();
+        for (const key of keys)
+          if (await (await caches.open(key)).match("/index.html")) return true;
+        return false;
+      }),
+    )
+    .toBe(true);
+  await context.setOffline(true);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Your household, offline" }),
+  ).toBeVisible();
+  await expect(page.getByRole("checkbox")).toBeChecked();
+});
+test("a new worker replaces an incomplete predecessor without an unreachable update button", async ({
+  page,
+  context,
+}) => {
+  const { readFile, writeFile } = await import("node:fs/promises");
+  await enter(page);
+  const original = await readFile("dist/sw.js", "utf8");
+  const before = await page.evaluate(
+    () => navigator.serviceWorker.controller!.scriptURL,
+  );
+  try {
+    await page.evaluate(async () => {
+      for (const key of await caches.keys())
+        await (await caches.open(key)).delete("/index.html");
+    });
+    await writeFile(
+      "dist/sw.js",
+      original.replace(
+        /(const CACHE_NAME=)("[^"]+")/,
+        (_, prefix, value) =>
+          prefix + JSON.stringify(JSON.parse(value) + "-repair"),
+      ),
+    );
+    await page.evaluate(async () => {
+      await (await navigator.serviceWorker.getRegistration())!.update();
+    });
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          const reg = await navigator.serviceWorker.getRegistration();
+          return !!reg?.active && !reg.waiting && !reg.installing;
+        }),
+      )
+      .toBe(true);
+    await expect
+      .poll(() =>
+        page.evaluate(async () => {
+          return (await caches.keys()).some((key) => key.endsWith("-repair"));
+        }),
+      )
+      .toBe(true);
+    await context.setOffline(true);
+    await page.reload();
+    await expect(
+      page.getByRole("heading", { name: "Your household, offline" }),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Coffee for the household", { exact: true }),
+    ).toBeVisible();
+    expect(before).toContain("/sw.js");
+  } finally {
+    await writeFile("dist/sw.js", original);
+  }
+});
+test("a missing cached entry script shows recovery instead of a blank offline app", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  await page.evaluate(async () => {
+    for (const key of await caches.keys()) {
+      const cache = await caches.open(key),
+        html = await cache.match("/index.html");
+      if (html) {
+        const entry = /<script[^>]+src="([^"]+)"/.exec(await html.text())?.[1];
+        if (entry) await cache.delete(entry);
+      }
+    }
+  });
+  await context.setOffline(true);
+  const response = await page.reload();
+  expect(response!.status()).toBe(503);
+  await expect(
+    page.getByRole("heading", { name: "Reconnect to open Week Menu" }),
+  ).toBeVisible();
+  await context.setOffline(false);
+  await page.getByRole("link", { name: "Try again" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex." }),
+  ).toBeVisible();
+});

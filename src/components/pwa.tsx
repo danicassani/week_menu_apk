@@ -55,7 +55,7 @@ export function PwaUpdates() {
     window.addEventListener("beforeinstallprompt", install);
     window.addEventListener("appinstalled", done);
     navigator.serviceWorker
-      .register("/sw.js", { scope: "/" })
+      .register("/sw.js", { scope: "/", updateViaCache: "none" })
       .then((reg) => {
         if (!active) return;
         setRegistration(reg);
@@ -83,6 +83,26 @@ export function PwaUpdates() {
       .catch(() => {
         if (active) setShellUnavailable(true);
       });
+    const shellStatus = () => {
+      const worker = navigator.serviceWorker.controller;
+      if (!worker) return;
+      const channel = new MessageChannel();
+      channel.port1.onmessage = (event) => {
+        if (active) setShellUnavailable(event.data?.available === false);
+        channel.port1.close();
+      };
+      worker.postMessage({ type: "SHELL_STATUS" }, [channel.port2]);
+      window.setTimeout(() => channel.port1.close(), 5000);
+    };
+    const repaired = (event: MessageEvent) => {
+      if (active && event.data?.type === "SHELL_REPAIRED")
+        setShellUnavailable(false);
+    };
+    navigator.serviceWorker.addEventListener("message", repaired);
+    navigator.serviceWorker.addEventListener("controllerchange", shellStatus);
+    void navigator.serviceWorker.ready.then(() => {
+      if (active) shellStatus();
+    });
     const visible = () => {
       if (document.visibilityState === "visible" && navigator.onLine)
         void navigator.serviceWorker
@@ -96,6 +116,11 @@ export function PwaUpdates() {
       window.removeEventListener("beforeinstallprompt", install);
       window.removeEventListener("appinstalled", done);
       document.removeEventListener("visibilitychange", visible);
+      navigator.serviceWorker.removeEventListener(
+        "controllerchange",
+        shellStatus,
+      );
+      navigator.serviceWorker.removeEventListener("message", repaired);
     };
   }, []);
   if (new URLSearchParams(location.search).has("code")) return null;
