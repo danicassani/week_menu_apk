@@ -10,6 +10,7 @@ import {
   Utensils,
 } from "lucide-react";
 import { Button, Modal, Empty } from "../components/ui";
+import { RecipeReader } from "../components/recipe-reader";
 import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
 import { targetOn } from "../domain/state";
 import {
@@ -161,6 +162,7 @@ export function Planner(v: ViewProps) {
     [editing, setEditing] = useState<MealPlan | null>(null),
     [notice, setNotice] = useState(""),
     [previewNotice, setPreviewNotice] = useState(""),
+    [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null);
@@ -522,8 +524,22 @@ export function Planner(v: ViewProps) {
               {m.portions.map((p) => (
                 <div key={p.member_id}>
                   <b>{v.s.members.find((x) => x.id === p.member_id)?.name}</b> ·{" "}
-                  {name(p.name, v.language)} · {Math.round(p.kcal)} / {p.budget}{" "}
-                  kcal
+                  <button
+                    className="text-link suggested-recipe-link"
+                    disabled={
+                      !p.recipe_snapshot &&
+                      !lib.recipes.some((r) => r.id === p.recipe_id)
+                    }
+                    onClick={() =>
+                      setReadingRecipe(
+                        p.recipe_snapshot ??
+                          lib.recipes.find((r) => r.id === p.recipe_id)!,
+                      )
+                    }
+                  >
+                    {name(p.name, v.language)}
+                  </button>{" "}
+                  · {Math.round(p.kcal)} / {p.budget} kcal
                   {m.type === "breakfast" && p.member_id === v.s.viewer_id && (
                     <Button
                       secondary
@@ -632,6 +648,14 @@ export function Planner(v: ViewProps) {
             {t("Delete editable meals", "Borrar comidas editables")}
           </Button>
         </Modal>
+      )}
+      {readingRecipe && (
+        <RecipeReader
+          recipe={readingRecipe}
+          ingredients={lib.ingredients}
+          language={v.language}
+          onClose={() => setReadingRecipe(null)}
+        />
       )}
       {inspection && (
         <MealSnapshotView
@@ -1069,6 +1093,7 @@ export function ContentManager(v: ViewProps) {
   const t = translator(v.language),
     lib = v.s.planning;
   const [tab, setTab] = useState<"recipes" | "ingredients">("recipes"),
+    [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
     [query, setQuery] = useState(""),
     [archived, setArchived] = useState(false),
     [editor, setEditor] = useState<{
@@ -1197,10 +1222,12 @@ export function ContentManager(v: ViewProps) {
             className="recipe-card"
             key={item.id}
             onClick={() =>
-              setEditor({
-                kind: tab === "recipes" ? "recipe" : "ingredient",
-                data: structuredClone(item),
-              })
+              tab === "recipes"
+                ? setReadingRecipe(structuredClone(item as PlannedRecipe))
+                : setEditor({
+                    kind: "ingredient",
+                    data: structuredClone(item),
+                  })
             }
           >
             <div className="recipe-card-content">
@@ -1214,10 +1241,6 @@ export function ContentManager(v: ViewProps) {
                         .map((m) => mealLabel(m, v.language))
                         .join(" · ")}
               </p>
-              <span className="text-link">
-                {t("View / edit", "Ver / editar")}
-                <Pencil size={13} />
-              </span>
             </div>
           </button>
         ))}
@@ -1228,6 +1251,21 @@ export function ContentManager(v: ViewProps) {
           "Nutrición inicial: UK CoFID 2021. Contiene información del sector público británico bajo Open Government Licence v3.0. El contenido del hogar conserva su idioma, con traducciones manuales opcionales.",
         )}
       </p>
+      {readingRecipe && (
+        <RecipeReader
+          recipe={readingRecipe}
+          ingredients={lib.ingredients}
+          language={v.language}
+          onClose={() => setReadingRecipe(null)}
+          onEdit={() => {
+            const current =
+              lib.recipes.find((r) => r.id === readingRecipe.id) ??
+              readingRecipe;
+            setReadingRecipe(null);
+            setEditor({ kind: "recipe", data: structuredClone(current) });
+          }}
+        />
+      )}
       {editor && (
         <ContentEditor
           v={v}

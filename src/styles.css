@@ -241,6 +241,11 @@ select {
 .text-link:hover {
   color: var(--muted);
 }
+.suggested-recipe-link {
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .brand {
   display: flex;
   align-items: center;

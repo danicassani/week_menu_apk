@@ -171,3 +171,77 @@ test("create a recipe on a phone", async ({ page }) => {
     ),
   ).toBe(true);
 });
+
+test("suggested recipe names open read-only details without losing the draft", async ({
+  page,
+}) => {
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Menu", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Suggest the week", exact: true })
+    .click();
+  const draft = await page.locator(".preview-meal").allTextContents();
+  const recipe = page.locator(".preview-meal button.text-link").first();
+  const title = await recipe.innerText();
+  await recipe.click();
+  const reader = page.getByRole("dialog", { name: title, exact: true });
+  await expect(reader.locator(".ingredient-list li").first()).toBeVisible();
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  await expect(
+    reader.getByRole("button", { name: "Edit recipe", exact: true }),
+  ).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(reader).toHaveCount(0);
+  await expect(
+    page.getByRole("dialog", { name: "Review your menu suggestions" }),
+  ).toBeVisible();
+  expect(await page.locator(".preview-meal").allTextContents()).toEqual(draft);
+  await expect(recipe).toBeFocused();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save" })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("recipe cards open a reader and editing requires an explicit action", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("button", { name: "Recipes", exact: true })
+    .click();
+  const search = page.getByRole("searchbox", { name: "Search collection" });
+  await search.fill("Chickpea and tomato toast");
+  const card = page.locator(".recipe-card").first();
+  await expect(card).not.toContainText("View / edit");
+  await card.click();
+  const reader = page.getByRole("dialog", {
+    name: "Chickpea and tomato toast",
+    exact: true,
+  });
+  await expect(reader.locator(".instructions li").first()).toBeVisible();
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  await reader
+    .getByRole("button", { name: "Edit recipe", exact: true })
+    .click();
+  await expect(page.getByLabel("English name", { exact: true })).toHaveValue(
+    "Chickpea and tomato toast",
+  );
+  await page.getByLabel("English name", { exact: true }).fill("Unsaved change");
+  await page.keyboard.press("Escape");
+  await card.click();
+  await expect(
+    page.getByRole("dialog", {
+      name: "Chickpea and tomato toast",
+      exact: true,
+    }),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
