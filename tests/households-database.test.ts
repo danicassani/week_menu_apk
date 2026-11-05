@@ -121,12 +121,83 @@ beforeAll(async () => {
   await db.exec(
     readFileSync("supabase/migrations/202611040006_households.sql", "utf8"),
   );
+  // A managed auth schema need not allow an app's new executor role to enter
+  // it. Identity resolvers keep their existing administrator permissions.
+  await db.exec("revoke usage on schema auth from week_menu_executor");
+  await db.exec(
+    readFileSync(
+      "supabase/migrations/202611050007_auth_namespace_independence.sql",
+      "utf8",
+    ),
+  );
 }, 60000);
 afterAll(async () => {
   await db?.close();
 });
 
 describe("v2 tenant migration and lifecycle", () => {
+  it("loads the migrated household without auth schema access for the executor", async () => {
+    await as(alice);
+    expect((await access()).active.membership_id).toBe(alice);
+    await expect(rpc("get_household_snapshot")).resolves.toMatchObject({
+      viewer_id: alice,
+      context: {
+        account_id: alice,
+        membership_id: alice,
+        legacy_binding: true,
+      },
+    });
+  });
+
+  it("preserves restricted auth access, function ownership and data when the repair is reapplied", async () => {
+    await db.exec("reset role");
+    expect(
+      (
+        await db.query<any>(
+          "select has_schema_privilege('week_menu_executor','auth','USAGE') allowed",
+        )
+      ).rows[0].allowed,
+    ).toBe(false);
+    const owners = () =>
+      db.query(
+        "select p.proname,r.rolname,p.proacl::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace join pg_roles r on r.oid=p.proowner where n.nspname='app_private' and p.proname in ('api_snapshot','api_invite') order by p.proname",
+      );
+    const before = (await owners()).rows;
+    await as(alice);
+    const snapshot = await rpc("get_household_snapshot");
+    await db.exec("reset role");
+    await db.exec(
+      readFileSync(
+        "supabase/migrations/202611050007_auth_namespace_independence.sql",
+        "utf8",
+      ),
+    );
+    expect((await owners()).rows).toEqual(before);
+    expect(before.every((r: any) => r.rolname === "week_menu_executor")).toBe(
+      true,
+    );
+    expect(
+      (
+        await db.query(
+          "select p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace join pg_roles r on r.oid=p.proowner where n.nspname='app_private' and r.rolname='week_menu_executor' and p.prosrc ~ '\\mauth[[:space:]]*\\.'",
+        )
+      ).rows,
+    ).toEqual([]);
+    await db.exec("set role week_menu_executor");
+    await expect(db.exec("select auth.uid()")).rejects.toMatchObject({
+      code: "42501",
+      message: "permission denied for schema auth",
+    });
+    await as(alice);
+    const after = await rpc("get_household_snapshot");
+    expect(after.context).toEqual(snapshot.context);
+    expect(after.members).toEqual(snapshot.members);
+    expect(after.targets).toEqual(snapshot.targets);
+    expect(after.entries).toEqual(snapshot.entries);
+    expect(after.planning).toEqual(snapshot.planning);
+    expect(after.shopping).toEqual(snapshot.shopping);
+  });
+
   it("preserves the existing household, profiles, targets, catalogue and receipt identities", async () => {
     await as(alice);
     contextA = (await access()).active;
