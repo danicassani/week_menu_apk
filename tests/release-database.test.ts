@@ -124,6 +124,13 @@ describe.each([false, true])(
             "utf8",
           ),
         );
+        await db.exec("revoke usage on schema auth from week_menu_executor");
+        await db.exec(
+          readFileSync(
+            "supabase/migrations/202611050007_auth_namespace_independence.sql",
+            "utf8",
+          ),
+        );
         migrated = true;
         await actor(a);
       }

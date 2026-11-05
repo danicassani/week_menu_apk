@@ -30,6 +30,8 @@ Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Ch
 
 **Version 2 branch:** the first multi-household checkpoint requires the additional migration and matching client described in the [v2 milestone 1 review](version-2/milestone-1.md). The original v1 setup below remains the prerequisite for initializing an empty project; it is not the complete setup for the v2 client. Do not reapply migrations 1–5 to an existing database.
 
+If the v2 client reports `42501: permission denied for schema auth` on `get_household_snapshot`, use the additive [auth-permission repair](version-2/auth-permission-repair.md) after migration 6. It preserves the existing household and does not require replaying earlier migrations.
+
 1. Create the intended household's Supabase project. One project currently serves **one** household. Keep `public` as the exposed Data API schema; **do not expose `app_private`**.
 2. Apply these migrations, in order, using the Supabase SQL editor as the project administrator (or a linked Supabase CLI migration workflow):
    - `supabase/migrations/202611030001_foundation.sql`
