@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button, Modal, Empty } from "../components/ui";
 import { RecipeReader } from "../components/recipe-reader";
+import { IngredientReader } from "../components/ingredient-reader";
 import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
 import { targetOn } from "../domain/state";
 import {
@@ -1094,6 +1095,9 @@ export function ContentManager(v: ViewProps) {
     lib = v.s.planning;
   const [tab, setTab] = useState<"recipes" | "ingredients">("recipes"),
     [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
+    [readingIngredient, setReadingIngredient] = useState<Ingredient | null>(
+      null,
+    ),
     [query, setQuery] = useState(""),
     [archived, setArchived] = useState(false),
     [editor, setEditor] = useState<{
@@ -1224,10 +1228,7 @@ export function ContentManager(v: ViewProps) {
             onClick={() =>
               tab === "recipes"
                 ? setReadingRecipe(structuredClone(item as PlannedRecipe))
-                : setEditor({
-                    kind: "ingredient",
-                    data: structuredClone(item),
-                  })
+                : setReadingIngredient(structuredClone(item as Ingredient))
             }
           >
             <div className="recipe-card-content">
@@ -1263,6 +1264,20 @@ export function ContentManager(v: ViewProps) {
               readingRecipe;
             setReadingRecipe(null);
             setEditor({ kind: "recipe", data: structuredClone(current) });
+          }}
+        />
+      )}
+      {readingIngredient && (
+        <IngredientReader
+          ingredient={readingIngredient}
+          language={v.language}
+          onClose={() => setReadingIngredient(null)}
+          onEdit={() => {
+            const current =
+              lib.ingredients.find((i) => i.id === readingIngredient.id) ??
+              readingIngredient;
+            setReadingIngredient(null);
+            setEditor({ kind: "ingredient", data: structuredClone(current) });
           }}
         />
       )}

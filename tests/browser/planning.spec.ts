@@ -138,9 +138,42 @@ test("create ingredient and confirm a household piece conversion", async ({
     .getByRole("searchbox", { name: "Search collection" })
     .fill("Test household egg");
   await page.getByRole("button", { name: /Test household egg/ }).click();
+  const reader = page.getByRole("dialog", {
+    name: "Test household egg",
+    exact: true,
+  });
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  await expect(reader).toContainText("1 egg = 55 g");
+  await expect(reader).toContainText("Quantity step: 0.5 egg");
+  await expect(reader).toContainText("140");
+  await expect(reader).toContainText("Raw edible");
+  await reader
+    .getByRole("button", { name: "Edit ingredient", exact: true })
+    .click();
   await expect(
     page.getByLabel("Grams per unit", { exact: true }).last(),
   ).toHaveValue("55");
+  await page
+    .getByLabel("English name", { exact: true })
+    .fill("Unsaved ingredient");
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: /Test household egg/ }).click();
+  await expect(reader).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page.getByRole("button", { name: /Test household egg/ }).click();
+  await expect(
+    reader.getByRole("button", { name: "Editar ingrediente", exact: true }),
+  ).toBeVisible();
+  await expect(reader).toContainText("Crudo comestible");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
 });
 test("create a recipe on a phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
