@@ -11,7 +11,7 @@ export function SignOutDialog({
 }: {
   repo: Pick<
     Repository,
-    "accountId" | "getShopping" | "checkShopping" | "signOut"
+    "accountId" | "offlineId" | "getShopping" | "checkShopping" | "signOut"
   >;
   language: Language;
   onClose: () => void;

@@ -1,14 +1,17 @@
 import { ShoppingPage } from "./pages/shopping";
 import { OfflineShell } from "./pages/offline";
 import { SignOutDialog } from "./components/sign-out";
+import { HouseholdOnboarding } from "./pages/household-onboarding";
+import { offlineContext, type HouseholdAccess } from "./domain/households";
 import { useConnection } from "./lib/use-offline";
 import {
   activeOfflineAccount,
   rememberAccount,
   cacheLoadedView,
   purgeOfflineAccount,
-  readOfflineAccount,
   requireDiscardOrSynced,
+  cacheIdentity,
+  bindOfflineHousehold,
 } from "./lib/offline-store";
 import { syncShopping } from "./lib/shopping-sync";
 import {
@@ -120,7 +123,13 @@ export default function App() {
       .then((id) => {
         if (active)
           setOfflineAccount(
-            expected ?? (id === "preview" && !previewAvailable ? null : id),
+            expected
+              ? id && (offlineContext(id)?.account_id ?? id) === expected
+                ? id
+                : expected
+              : id === "preview" && !previewAvailable
+                ? null
+                : id,
           );
       })
       .catch(() => {
@@ -213,18 +222,39 @@ export default function App() {
   };
   const useSaved = () => {
     setOfflineAccount(
-      preview ? "preview" : (session?.user.id ?? offlineAccount),
+      repoRef.current ? cacheIdentity(repoRef.current.repo) : offlineAccount,
     );
     setForceSaved(true);
   };
+  const offlineOwner = offlineAccount
+    ? (offlineContext(offlineAccount)?.account_id ?? offlineAccount)
+    : null;
+  // Wait for the SDK's account identity before showing a cached household. A
+  // previous account's active cache must never flash during session discovery.
+  if (
+    checking ||
+    ((!online || forceSaved) && identity && offlineOwner !== identity)
+  )
+    return (
+      <div className="loading-screen">
+        <span className="brand-mark">w.</span>
+        <p>{t("Setting the table…", "Preparando la mesa…")}</p>
+      </div>
+    );
   if ((!online || forceSaved) && offlineAccount) {
+    const context = offlineContext(offlineAccount);
     const repo =
-      repoRef.current?.repo.accountId === offlineAccount
+      repoRef.current && cacheIdentity(repoRef.current.repo) === offlineAccount
         ? repoRef.current.repo
         : supabase
-          ? new SupabaseRepository(supabase, offlineAccount)
+          ? new SupabaseRepository(
+              supabase,
+              context?.account_id ?? offlineAccount,
+              context,
+            )
           : {
-              accountId: offlineAccount,
+              accountId: context?.account_id ?? offlineAccount,
+              offlineId: offlineAccount,
               getShopping: async () => {
                 throw new DomainError("offline_requires_connection");
               },
@@ -246,13 +276,6 @@ export default function App() {
       />
     );
   }
-  if (checking)
-    return (
-      <div className="loading-screen">
-        <span className="brand-mark">w.</span>
-        <p>{t("Setting the table…", "Preparando la mesa…")}</p>
-      </div>
-    );
   if (identity && repoRef.current)
     return (
       <Workspace
@@ -359,8 +382,8 @@ export default function App() {
           <span className="welcome-invite">
             <Users size={15} />
             {t(
-              "A private space. Approved household members only.",
-              "Un espacio privado. Solo miembros del hogar aprobados.",
+              "Your own household. Join others by invitation.",
+              "Tu propio hogar. Únete a otros por invitación.",
             )}
           </span>
         </div>
@@ -431,8 +454,11 @@ function Workspace({
     [dialog, setDialog] = useState<Dialog | null>(null),
     [inviteEmail, setInviteEmail] = useState(""),
     [exitOpen, setExitOpen] = useState(false),
-    [cacheWarning, setCacheWarning] = useState("");
-  const remembered = useRef(false);
+    [cacheWarning, setCacheWarning] = useState(""),
+    [householdAccess, setHouseholdAccess] = useState<HouseholdAccess | null>(
+      null,
+    );
+  const remembered = useRef<string | null>(null);
   const mounted = useRef(true),
     sequence = useRef(0),
     languageRef = useRef(language),
@@ -445,11 +471,30 @@ function Workspace({
     try {
       next = await repo.load(deviceZone());
     } catch (e) {
+      if (!mounted.current || n !== sequence.current) throw e;
       if (
         e instanceof Error &&
-        /access_denied|google_identity_required/.test(e.message)
+        /household_required/.test(e.message) &&
+        repo.householdAccess
       ) {
-        await purgeOfflineAccount(repo.accountId).catch(() => {});
+        if (remembered.current)
+          await purgeOfflineAccount(remembered.current).catch(() => {});
+        remembered.current = null;
+        setS(null);
+        setDialog(null);
+        setFatal("");
+        setHouseholdAccess(await repo.householdAccess());
+      }
+      if (
+        e instanceof Error &&
+        /access_denied|google_identity_required|membership_changed/.test(
+          e.message,
+        )
+      ) {
+        await purgeOfflineAccount(
+          remembered.current ?? cacheIdentity(repo),
+        ).catch(() => {});
+        remembered.current = null;
         setS(null);
         setDialog(null);
         setFatal(errorMessage(e, languageRef.current));
@@ -458,22 +503,24 @@ function Workspace({
     }
     if (mounted.current && n === sequence.current) {
       if (
-        !remembered.current &&
+        remembered.current !== cacheIdentity(repo) &&
         (repo.mode === "preview" || !authIsBlocked())
       ) {
         try {
-          await rememberAccount(
-            repo.accountId,
+          const lang =
             next.members.find((m) => m.id === next.viewer_id)?.profile
-              ?.language ?? languageRef.current,
-          );
-          remembered.current = true;
+              ?.language ?? languageRef.current;
+          if (next.context) await bindOfflineHousehold(next.context, lang);
+          else await rememberAccount(cacheIdentity(repo), lang);
+          remembered.current = cacheIdentity(repo);
         } catch {
           setCacheWarning("offline_storage_unavailable");
         }
       }
       if (!mounted.current || n !== sequence.current) return next;
       setS(next);
+      setHouseholdAccess(null);
+      setFatal("");
       setSelected((id) =>
         next.members.some((m) => m.id === id) ? id : next.viewer_id,
       );
@@ -488,7 +535,13 @@ function Workspace({
           ?.language;
         if (lang) setLanguage(lang);
       })
-      .catch((e) => setFatal(errorMessage(e, languageRef.current)));
+      .catch((e) => {
+        if (!(
+          e instanceof Error &&
+          /household_required|request_superseded/.test(e.message)
+        ))
+          setFatal(errorMessage(e, languageRef.current));
+      });
     return () => {
       mounted.current = false;
       sequence.current++;
@@ -497,25 +550,28 @@ function Workspace({
   useEffect(() => {
     const onVisible = () => {
       if (document.visibilityState === "visible")
-        refresh().catch((e) =>
+        refresh().catch((e) => {
+          if (e instanceof Error && e.message.includes("request_superseded"))
+            return;
           setMessage({
             text: errorMessage(e, languageRef.current),
             error: true,
-          }),
-        );
+          });
+        });
     };
     document.addEventListener("visibilitychange", onVisible);
     const timer = window.setInterval(onVisible, 60000);
     const channel =
-      repo.mode === "supabase" && supabase
+      repo.mode === "supabase" && supabase && s?.household.id
         ? supabase
-            .channel("household-changes")
+            .channel(`household-${s.household.id}`)
             .on(
               "postgres_changes",
               {
                 event: "UPDATE",
                 schema: "public",
                 table: "household_revision",
+                filter: `household_id=eq.${s.household.id}`,
               },
               () => {
                 refresh().catch(() => {});
@@ -528,20 +584,24 @@ function Workspace({
       clearInterval(timer);
       if (channel && supabase) void supabase.removeChannel(channel);
     };
-  }, [refresh, repo]);
+  }, [refresh, repo, s?.household.id]);
   useEffect(() => {
     if (s && remembered.current)
-      void cacheLoadedView(repo.accountId, s, tab).catch(() =>
+      void cacheLoadedView(cacheIdentity(repo), s, tab).catch(() =>
         setCacheWarning("offline_storage_unavailable"),
       );
-  }, [s, tab, repo.accountId]);
+  }, [s, tab, repo, repo.offlineId]);
   useEffect(() => {
     const sync = () => {
+      const id = cacheIdentity(repo);
       if (navigator.onLine && remembered.current)
         void syncShopping(repo).catch((e) => {
+          if (id !== cacheIdentity(repo)) return;
           if (
             e instanceof Error &&
-            /access_denied|google_identity_required/.test(e.message)
+            /access_denied|google_identity_required|membership_changed|household_required/.test(
+              e.message,
+            )
           ) {
             setS(null);
             setFatal(errorMessage(e, languageRef.current));
@@ -604,6 +664,32 @@ function Workspace({
       }}
     />
   ) : null;
+  if (householdAccess && repo.createHousehold && repo.joinHousehold)
+    return (
+      <>
+        {exitDialog}
+        <HouseholdOnboarding
+          repo={repo}
+          access={householdAccess}
+          language={language}
+          onReady={async () => {
+            try {
+              await refresh();
+            } catch (e) {
+              if (!(
+                e instanceof Error && e.message.includes("household_required")
+              ))
+                throw e;
+            }
+          }}
+          onRefresh={async () => {
+            setHouseholdAccess(await repo.householdAccess!());
+          }}
+          onSignOut={signOut}
+          onLanguage={() => setLanguage(language === "en" ? "es" : "en")}
+        />
+      </>
+    );
   if (fatal)
     return (
       <div className="loading-screen">
@@ -611,6 +697,14 @@ function Workspace({
         <span className="brand-mark">w.</span>
         <h1>{t("A private table", "Una mesa privada")}</h1>
         <p role="alert">{fatal}</p>
+        <Button
+          secondary
+          onClick={() =>
+            void refresh().catch((e) => setFatal(errorMessage(e, language)))
+          }
+        >
+          {t("Reload current household", "Recargar hogar actual")}
+        </Button>
         <Button secondary onClick={onUseSaved}>
           {t(
             "View saved menu, recipes & shopping",
@@ -634,6 +728,10 @@ function Workspace({
     own = member.id === me.id,
     day = dayAt(s.server_now, member.time_zone),
     target = targetOn(s, member.id, day);
+  const householdName =
+    s.household.name === "Our household"
+      ? t("Our household", "Nuestro hogar")
+      : s.household.name;
   const offerReview = async () => {
     let next: Dialog | undefined;
     if (
@@ -750,7 +848,7 @@ function Workspace({
             <Users size={17} />
           </span>
           <div>
-            <b>{t("Our household", "Nuestro hogar")}</b>
+            <b>{householdName}</b>
             <span>
               {s.members.filter((m) => m.status === "active").length}{" "}
               {t("people, one table", "personas, una mesa")}
@@ -793,7 +891,7 @@ function Workspace({
       <div className="workspace">
         <header className="topbar">
           <div className="breadcrumb">
-            <span>{t("Our household", "Nuestro hogar")}</span>
+            <span>{householdName}</span>
             <span>/</span>
             <b>{navigation.find((n) => n.id === tab)?.[language]}</b>
           </div>

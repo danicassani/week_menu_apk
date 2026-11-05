@@ -10,8 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:browser": "playwright test",
-    "format": "prettier --write src tests scripts README.md public/manifest.webmanifest *.ts *.json index.html docs/setup.md docs/milestone-*.md docs/activity-sources.md .github/workflows/ci.yml",
-    "format:check": "prettier --check src tests scripts README.md public/manifest.webmanifest *.ts *.json index.html docs/setup.md docs/milestone-*.md docs/activity-sources.md .github/workflows/ci.yml",
+    "test:households": "playwright test --config playwright.households.config.ts",
+    "format": "prettier --write src tests scripts README.md public/manifest.webmanifest *.ts *.json index.html docs/setup.md docs/milestone-*.md docs/version-2/*.md docs/activity-sources.md .github/workflows/ci.yml",
+    "format:check": "prettier --check src tests scripts README.md public/manifest.webmanifest *.ts *.json index.html docs/setup.md docs/milestone-*.md docs/version-2/*.md docs/activity-sources.md .github/workflows/ci.yml",
     "test:pwa": "playwright test --config playwright.pwa.config.ts",
     "test:release": "playwright test --config playwright.release.config.ts",
     "check:deployment": "node scripts/check-deployment.mjs"

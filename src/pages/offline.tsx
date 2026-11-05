@@ -28,7 +28,7 @@ export function OfflineShell({
   accountId: string;
   repo: Pick<
     Repository,
-    "accountId" | "getShopping" | "checkShopping" | "signOut"
+    "accountId" | "offlineId" | "getShopping" | "checkShopping" | "signOut"
   >;
   language: Language;
   onExit: () => void;

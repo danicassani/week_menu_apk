@@ -1,5 +1,11 @@
 import { authStorage, AUTH_STORAGE_KEY, clearLocalAuth } from "./auth-storage";
-import { requireDiscardOrSynced } from "./offline-store";
+import { requireDiscardOrSynced, purgeOfflineAccount } from "./offline-store";
+import {
+  offlineKey,
+  assertOperationContext,
+  type HouseholdAccess,
+  type HouseholdContext,
+} from "../domain/households";
 import {
   emptyShopping,
   shoppingRequirements,
@@ -60,14 +66,25 @@ export const previewAvailable =
   import.meta.env.DEV || import.meta.env.VITE_ENABLE_PREVIEW === "true";
 export class SupabaseRepository implements Repository {
   mode = "supabase" as const;
+  private context: HouseholdContext | null;
+  private loadSequence = 0;
+  get offlineId() {
+    return this.context ? offlineKey(this.context) : this.accountId;
+  }
   constructor(
     private client: SupabaseClient,
     readonly accountId: string,
-  ) {}
+    context: HouseholdContext | null = null,
+  ) {
+    this.context = context?.account_id === accountId ? context : null;
+  }
   private async rpc<T = void>(
     name: string,
     args?: Record<string, unknown>,
+    scoped = true,
   ): Promise<T> {
+    const context = this.context;
+    if (scoped && !context) throw new DomainError("household_required");
     const {
       data: { session },
       error: authError,
@@ -76,7 +93,15 @@ export class SupabaseRepository implements Repository {
     if (!session || session.user.id !== this.accountId)
       throw new DomainError("account_changed");
     const { data, error } = await this.client
-      .rpc(name, args)
+      .rpc(name, {
+        ...args,
+        ...(scoped
+          ? {
+              p_household_id: context!.household_id,
+              p_membership_id: context!.membership_id,
+            }
+          : {}),
+      })
       .setHeader("Authorization", `Bearer ${session.access_token}`);
     if (error) throw new DomainError(error.message);
     return data as T;
@@ -113,6 +138,7 @@ export class SupabaseRepository implements Repository {
     });
   }
   checkShopping(op: CheckOperation) {
+    assertOperationContext(this.context, op);
     return this.rpc<CheckReceipt>("set_shopping_checked", {
       p_operation: op.id,
       p_item: op.item_id,
@@ -120,9 +146,47 @@ export class SupabaseRepository implements Repository {
     });
   }
   async load(zone: string) {
-    await this.rpc("bootstrap_member", { p_timezone: zone });
+    const sequence = ++this.loadSequence;
+    const access = await this.householdAccess();
+    if (sequence !== this.loadSequence)
+      throw new DomainError("request_superseded");
+    if (!access.active) {
+      if (this.context)
+        await purgeOfflineAccount(this.offlineId).catch(() => {});
+      this.context = null;
+      throw new DomainError("household_required");
+    }
+    if (
+      this.context &&
+      offlineKey(this.context) !== offlineKey(access.active)
+    ) {
+      await purgeOfflineAccount(this.offlineId).catch(() => {});
+      this.context = null;
+      throw new DomainError("membership_changed");
+    }
+    this.context = access.active;
+    await this.rpc("bootstrap_member", { p_timezone: zone }, false);
     const s = await this.rpc<HouseholdState>("get_household_snapshot");
+    if (sequence !== this.loadSequence)
+      throw new DomainError("request_superseded");
     return s;
+  }
+  householdAccess() {
+    return this.rpc<HouseholdAccess>("get_household_access", undefined, false);
+  }
+  createHousehold(name: string, timezone: string) {
+    return this.rpc<void>(
+      "create_household",
+      { p_name: name, p_timezone: timezone },
+      false,
+    );
+  }
+  joinHousehold(invitation: string, timezone: string) {
+    return this.rpc<void>(
+      "join_household",
+      { p_invitation: invitation, p_timezone: timezone },
+      false,
+    );
   }
   deleteMeal(day: string, type: MealType, revision: number) {
     return this.rpc("delete_planned_meal", {
@@ -203,7 +267,7 @@ export class SupabaseRepository implements Repository {
     return this.rpc("leave_household");
   }
   async signOut(discardPending = false) {
-    await requireDiscardOrSynced(this.accountId, discardPending);
+    await requireDiscardOrSynced(this.offlineId, discardPending);
     await this.client.auth.stopAutoRefresh();
     if (navigator.onLine) {
       try {

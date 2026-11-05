@@ -10,6 +10,7 @@ import type {
   PlannedRecipe,
   MealPlan,
 } from "./planning";
+import type { HouseholdAccess, HouseholdContext } from "./households";
 export type Language = "en" | "es";
 export type MealType = "breakfast" | "lunch" | "dinner";
 export type ActivityLevel = "sedentary" | "light" | "active" | "very_active";
@@ -102,11 +103,13 @@ export interface PersonalDay {
   } | null;
 }
 export interface HouseholdState {
+  context?: HouseholdContext;
   shopping?: ShoppingState;
   planning?: PlanningState;
   server_now: string;
   viewer_id: string;
   household: {
+    id?: string;
     name: string;
     owner_id: string;
     week_start: 0 | 1;
@@ -136,6 +139,10 @@ export interface EntryInput {
 }
 export interface Repository {
   readonly accountId: string;
+  readonly offlineId?: string;
+  householdAccess?(): Promise<HouseholdAccess>;
+  createHousehold?(name: string, timezone: string): Promise<void>;
+  joinHousehold?(invitation: string, timezone: string): Promise<void>;
   getShopping(): Promise<ShoppingState>;
   previewShopping(start: string, end: string): Promise<ShoppingPreview>;
   applyShopping(preview: ShoppingPreview): Promise<void>;

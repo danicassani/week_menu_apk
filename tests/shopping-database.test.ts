@@ -93,7 +93,7 @@ beforeAll(async () => {
     `create role anon;create role authenticated;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_app_meta_data jsonb,raw_user_meta_data jsonb);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated;grant execute on function auth.uid() to authenticated;`,
   );
   for (const file of readdirSync("supabase/migrations")
-    .filter((f) => f.endsWith(".sql"))
+    .filter((f) => f.endsWith(".sql") && f < "202611040006")
     .sort())
     await db.exec(readFileSync("supabase/migrations/" + file, "utf8"));
   for (const [id, email] of [

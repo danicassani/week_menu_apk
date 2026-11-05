@@ -2,6 +2,16 @@ import { DomainError } from "../domain/calories";
 import type { HouseholdState, Language, Tab } from "../domain/types";
 import type { MealPlan, PlannedRecipe, Ingredient } from "../domain/planning";
 import type { ShoppingState, CheckOperation } from "../domain/shopping";
+import {
+  offlineContext,
+  offlineKey,
+  type HouseholdContext,
+} from "../domain/households";
+
+export const cacheIdentity = (repo: {
+  accountId: string;
+  offlineId?: string;
+}) => repo.offlineId ?? repo.accountId;
 export interface OfflineAccount {
   account_id: string;
   language: Language;
@@ -166,11 +176,68 @@ export async function activeOfflineAccount(): Promise<string | null> {
 export async function rememberAccount(id: string, language: Language) {
   return mutate(id, (current) => ({ ...current, language }), true);
 }
+// Upgrade only when the server confirms the original v1 membership. An account
+// joining another household must never inherit its previous queue or cached view.
+export async function bindOfflineHousehold(
+  context: HouseholdContext,
+  language: Language,
+) {
+  const id = offlineKey(context),
+    db = await openDB();
+  return new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(STORE, "readwrite"),
+      store = tx.objectStore(STORE);
+    const records = store.getAll();
+    records.onsuccess = () => {
+      const rows = records.result as OfflineAccount[];
+      const previous = rows.find((r) => r.account_id === id);
+      const legacy = rows.find((r) => r.account_id === context.account_id);
+      const source = previous ?? (context.legacy_binding ? legacy : undefined);
+      const next = { ...(source ?? base(id)), account_id: id, language };
+      if (!previous && source)
+        next.pending = source.pending.map((op) => ({
+          ...op,
+          household_id: context.household_id,
+          membership_id: context.membership_id,
+        }));
+      for (const row of rows) {
+        const old = offlineContext(row.account_id);
+        if (
+          row.account_id !== id &&
+          (row.account_id === context.account_id ||
+            old?.account_id === context.account_id)
+        ) {
+          if (row !== source) next.discarded += row.pending?.length ?? 0;
+          store.delete(row.account_id);
+          store.put({ account_id: "blocked:" + row.account_id, blocked: true });
+        }
+      }
+      store.put(next);
+      store.delete("blocked:" + id);
+      store.put({ account_id: "__active__", value: id });
+    };
+    tx.oncomplete = () => {
+      emit(id);
+      resolve();
+    };
+    tx.onabort = tx.onerror = () =>
+      reject(new DomainError("offline_storage_unavailable"));
+  });
+}
 export async function cacheLoadedView(
   id: string,
   state: HouseholdState,
   tab: Tab,
 ) {
+  const context = offlineContext(id);
+  if (
+    context &&
+    (!state.context ||
+      context.account_id !== state.context.account_id ||
+      context.household_id !== state.context.household_id ||
+      context.membership_id !== state.context.membership_id)
+  )
+    throw new DomainError("membership_changed");
   if (!["menu", "recipes", "shopping"].includes(tab)) return;
   const saved_at = new Date().toISOString();
   return mutate(id, (current) => {
@@ -235,6 +302,12 @@ export async function enqueueCheck(
     if (!current.shopping?.items.some((i) => i.id === item_id))
       throw new DomainError("shopping_not_cached");
     op = {
+      ...(offlineContext(id)
+        ? {
+            household_id: offlineContext(id)!.household_id,
+            membership_id: offlineContext(id)!.membership_id,
+          }
+        : {}),
       id: operation_id,
       item_id,
       checked,
@@ -286,10 +359,41 @@ export async function purgeOfflineAccount(id: string) {
   });
 }
 export async function requireDiscardOrSynced(id: string, discard: boolean) {
-  const current = await readOfflineAccount(id);
-  if (current?.pending.length && !discard)
-    throw new DomainError("pending_shopping_changes");
-  await purgeOfflineAccount(id);
+  const account = offlineContext(id)?.account_id ?? id,
+    db = await openDB();
+  return new Promise<void>((resolve, reject) => {
+    let reason: unknown;
+    const tx = db.transaction(STORE, "readwrite"),
+      store = tx.objectStore(STORE),
+      request = store.getAll();
+    request.onsuccess = () => {
+      const rows = (request.result as OfflineAccount[]).filter(
+        (r) =>
+          r.account_id === account ||
+          offlineContext(r.account_id)?.account_id === account,
+      );
+      if (!discard && rows.some((r) => r.pending?.length)) {
+        reason = new DomainError("pending_shopping_changes");
+        tx.abort();
+        return;
+      }
+      const keys = new Set([id, account, ...rows.map((r) => r.account_id)]);
+      for (const key of keys) {
+        store.delete(key);
+        store.put({ account_id: "blocked:" + key, blocked: true });
+      }
+      const active = store.get("__active__");
+      active.onsuccess = () => {
+        if (keys.has(active.result?.value)) store.delete("__active__");
+      };
+    };
+    tx.oncomplete = () => {
+      emit(id);
+      resolve();
+    };
+    tx.onabort = tx.onerror = () =>
+      reject(reason ?? new DomainError("offline_storage_unavailable"));
+  });
 }
 // Test and upgrade lifecycle: close connections without clearing persisted operations.
 export async function closeOfflineStore() {

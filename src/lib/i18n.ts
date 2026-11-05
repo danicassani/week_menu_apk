@@ -179,6 +179,26 @@ const messages: Record<string, [string, string]> = {
     "This household is not ready yet. Its owner must complete setup.",
     "Este hogar aún no está listo. El propietario debe completar la configuración.",
   ],
+  household_required: [
+    "Create a household or accept an invitation to continue.",
+    "Crea un hogar o acepta una invitación para continuar.",
+  ],
+  already_in_household: [
+    "You already belong to a household. Reload to view it.",
+    "Ya perteneces a un hogar. Recarga para verlo.",
+  ],
+  invalid_household_name: [
+    "Enter a household name of 1–80 characters.",
+    "Introduce un nombre de hogar de entre 1 y 80 caracteres.",
+  ],
+  invalid_invitation: [
+    "This invitation is unavailable or belongs to another Google email address.",
+    "Esta invitación no está disponible o corresponde a otra dirección de Google.",
+  ],
+  membership_changed: [
+    "Your household access changed. Reconnect to load your current household; outdated shopping changes cannot be applied.",
+    "Tu acceso al hogar ha cambiado. Vuelve a conectarte para cargar tu hogar actual; no se pueden aplicar los cambios de compra anteriores.",
+  ],
 };
 export function errorMessage(error: unknown, language: Language) {
   const code = error instanceof Error ? error.message : String(error);

@@ -6,7 +6,11 @@ import { formatShoppingQuantity } from "../domain/shopping";
 import { addDays } from "../domain/dates";
 import { translator, errorMessage } from "../lib/i18n";
 import { useShoppingQueue } from "../lib/use-offline";
-import { cacheShopping, dismissDiscarded } from "../lib/offline-store";
+import {
+  cacheShopping,
+  dismissDiscarded,
+  cacheIdentity,
+} from "../lib/offline-store";
 import { ShoppingChecklist } from "../components/shopping-list";
 import { Modal, Button, Empty } from "../components/ui";
 export function ShoppingPage(v: ViewProps) {
@@ -25,7 +29,7 @@ export function ShoppingPage(v: ViewProps) {
     [message, setMessage] = useState("");
   useEffect(() => {
     if (server)
-      void cacheShopping(v.repository.accountId, server).catch(() =>
+      void cacheShopping(cacheIdentity(v.repository), server).catch(() =>
         setMessage(
           t(
             "Offline storage is unavailable. Shopping checks cannot be queued safely.",
@@ -33,7 +37,7 @@ export function ShoppingPage(v: ViewProps) {
           ),
         ),
       );
-  }, [server, v.repository.accountId]);
+  }, [server, v.repository.offlineId, v.repository.accountId]);
   if (!server)
     return (
       <Empty
@@ -202,7 +206,7 @@ export function ShoppingPage(v: ViewProps) {
           </span>
           <button
             className="text-link"
-            onClick={() => void dismissDiscarded(v.repository.accountId)}
+            onClick={() => void dismissDiscarded(cacheIdentity(v.repository))}
           >
             {t("Dismiss", "Cerrar")}
           </button>
