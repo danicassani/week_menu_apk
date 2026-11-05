@@ -163,8 +163,7 @@ export function Planner(v: ViewProps) {
     [previewNotice, setPreviewNotice] = useState(""),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
-    [inspection, setInspection] = useState<MealPlan | null>(null),
-    [snoozeDays, setSnoozeDays] = useState(30);
+    [inspection, setInspection] = useState<MealPlan | null>(null);
   if (!lib)
     return (
       <Empty
@@ -259,16 +258,6 @@ export function Planner(v: ViewProps) {
         </div>
       </div>
       <div className="panel planner-controls">
-        <Button
-          secondary
-          disabled={
-            v.busy ||
-            !lib.plans.some((p) => days.includes(p.day) && !closed(v, p.day))
-          }
-          onClick={() => setDeletingWeek(lib.revision)}
-        >
-          {t("Delete week", "Borrar semana")}
-        </Button>
         <div className="button-row">
           <Button
             secondary
@@ -299,6 +288,16 @@ export function Planner(v: ViewProps) {
           >
             {t("Suggest the week", "Sugerir la semana")}
           </Button>
+          <Button
+            secondary
+            disabled={
+              v.busy ||
+              !lib.plans.some((p) => days.includes(p.day) && !closed(v, p.day))
+            }
+            onClick={() => setDeletingWeek(lib.revision)}
+          >
+            {t("Delete week", "Borrar semana")}
+          </Button>
         </div>
         <label className="check-row">
           <input
@@ -311,90 +310,6 @@ export function Planner(v: ViewProps) {
             "Sustituir comidas existentes explícitamente (requiere vista previa)",
           )}
         </label>
-        <div className="form-grid">
-          <label>
-            {t("Week starts on", "La semana empieza en")}
-            <select
-              value={v.s.household.week_start}
-              onChange={(e) =>
-                void v.operate(() =>
-                  v.repository.savePlannerSettings(
-                    Number(e.target.value) as 0 | 1,
-                    v.s.household.variety_days,
-                  ),
-                )
-              }
-            >
-              <option value={1}>{t("Monday", "Lunes")}</option>
-              <option value={0}>{t("Sunday", "Domingo")}</option>
-            </select>
-          </label>
-          <label>
-            {t("Variety window · days", "Intervalo de variedad · días")}
-            <select
-              value={v.s.household.variety_days}
-              onChange={(e) =>
-                void v.operate(() =>
-                  v.repository.savePlannerSettings(
-                    v.s.household.week_start,
-                    Number(e.target.value),
-                  ),
-                )
-              }
-            >
-              {Array.from({ length: 14 }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  {i + 1}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <label>
-          {t("Reminder delay · days", "Plazo del recordatorio · días")}
-          <input
-            type="number"
-            min="1"
-            max="3650"
-            value={snoozeDays}
-            onChange={(e) => {
-              const n = e.target.valueAsNumber;
-              if (Number.isInteger(n) && n >= 1 && n <= 3650) setSnoozeDays(n);
-            }}
-          />
-        </label>
-        <div className="button-row">
-          <Button
-            secondary
-            onClick={() =>
-              void v.operate(() =>
-                v.repository.savePromptPreference(v.s.server_now),
-              )
-            }
-          >
-            {t(
-              "Enable recipe-update prompts",
-              "Activar avisos para actualizar recetas",
-            )}
-          </Button>
-          <Button
-            secondary
-            onClick={() =>
-              void v.operate(() =>
-                v.repository.savePromptPreference(
-                  new Date(
-                    Date.parse(v.s.server_now) + snoozeDays * 86400000,
-                  ).toISOString(),
-                ),
-              )
-            }
-          >
-            {t(
-              `Hide prompts for ${snoozeDays} days`,
-              `Ocultar avisos durante ${snoozeDays} días`,
-            )}
-          </Button>
-        </div>
       </div>
       {notice && (
         <div className="note" role="status">

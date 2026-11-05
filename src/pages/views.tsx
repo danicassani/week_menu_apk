@@ -1,3 +1,4 @@
+import { PlannerSettings } from "../components/planner-settings";
 import { MealSnapshotView } from "./planner";
 import type { MealPlan } from "../domain/planning";
 import { useState } from "react";
@@ -1129,6 +1130,7 @@ export function ProfileView(
           )}
         </section>
       </div>
+      {v.own && <PlannerSettings {...v} />}
       <section className="panel history-panel">
         <SectionTitle
           title={t("Your recorded history", "Historial registrado")}
