@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("saved portions generate a reviewed list; range changes retain manual checked items", async ({
+test("saved portions automatically generate a list; range changes retain manual checked items", async ({
   page,
 }) => {
   await page.clock.setFixedTime(new Date("2026-11-03T12:00:00Z"));
@@ -17,16 +17,6 @@ test("saved portions generate a reviewed list; range changes retain manual check
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await nav.getByRole("button", { name: "Shopping", exact: true }).click();
-  await page.getByLabel("From", { exact: true }).fill("2026-11-03");
-  await page.getByLabel("Through", { exact: true }).fill("2026-11-08");
-  await page.getByRole("button", { name: "Review menu quantities" }).click();
-  await expect(
-    page.getByRole("dialog", { name: "Review shopping changes" }),
-  ).toBeVisible();
-  await expect(page.locator(".shopping-diff li")).not.toHaveCount(0);
-  await expect(page.getByRole("checkbox")).toHaveCount(0);
-  await page.getByRole("button", { name: "Apply reviewed changes" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.getByRole("checkbox").first()).toBeEnabled();
   await page.getByRole("button", { name: "Add item", exact: true }).click();
   await page.getByLabel("Product", { exact: true }).fill("Kitchen towels");
@@ -40,8 +30,7 @@ test("saved portions generate a reviewed list; range changes retain manual check
   await expect(page.locator(".sync-status")).toContainText("Connected");
   await page.getByLabel("From", { exact: true }).fill("2026-11-09");
   await page.getByLabel("Through", { exact: true }).fill("2026-11-09");
-  await page.getByRole("button", { name: "Review menu quantities" }).click();
-  await page.getByRole("button", { name: "Apply reviewed changes" }).click();
+  await page.getByRole("button", { name: "Apply date range" }).click();
   await expect(page.getByRole("checkbox")).toHaveCount(1);
   await expect(manual).toBeChecked();
   await page.setViewportSize({ width: 390, height: 844 });

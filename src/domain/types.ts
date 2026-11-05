@@ -167,6 +167,7 @@ export interface Repository {
     replace: boolean,
   ): Promise<void>;
   deleteMeal(day: string, type: MealType, revision: number): Promise<void>;
+  deleteWeek(start: string, revision: number): Promise<void>;
   savePromptPreference(after: string | null): Promise<void>;
   savePlannerSettings(week: 0 | 1, variety: number): Promise<void>;
   load(timezone: string): Promise<HouseholdState>;

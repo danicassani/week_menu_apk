@@ -86,17 +86,6 @@ for (const language of ["en", "es"] as const) {
     await nav
       .getByRole("button", { name: t("Shopping", "Compra"), exact: true })
       .click();
-    await page
-      .getByRole("button", {
-        name: t("Review menu quantities", "Revisar cantidades del menú"),
-      })
-      .click();
-    await expect(page.locator(".shopping-diff li")).not.toHaveCount(0);
-    await page
-      .getByRole("button", {
-        name: t("Apply reviewed changes", "Aplicar cambios revisados"),
-      })
-      .click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.getByRole("checkbox").first()).toBeEnabled();
     await page.evaluate(async () => {
