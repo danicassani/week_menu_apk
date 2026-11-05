@@ -6,6 +6,59 @@ test.beforeEach(async ({ page }) => {
     .getByRole("button", { name: "Explore the preview", exact: true })
     .click();
 });
+test("re-rolls an own breakfast in preview, automatically fills shopping and deletes the accepted week", async ({
+  page,
+}) => {
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Menu", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Suggest the week", exact: true })
+    .click();
+  const cards = page.locator(".preview-meal");
+  const breakfast = cards
+    .filter({
+      has: page.getByRole("button", {
+        name: "Re-roll my breakfast",
+        exact: true,
+      }),
+    })
+    .first();
+  const before = await cards.allTextContents();
+  const noa = await breakfast.locator(":scope > div").last().textContent();
+  await breakfast
+    .getByRole("button", { name: "Re-roll my breakfast", exact: true })
+    .click();
+  const after = await cards.allTextContents();
+  expect(after.filter((text, i) => text !== before[i])).toHaveLength(1);
+  expect(await breakfast.locator(":scope > div").last().textContent()).toBe(
+    noa,
+  );
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save" })
+    .click();
+  await nav.getByRole("button", { name: "Shopping", exact: true }).click();
+  await expect(page.getByRole("checkbox").first()).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: "Apply reviewed changes" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Add item", exact: true }).click();
+  await page
+    .getByLabel("Product", { exact: true })
+    .fill("Keep this manual item");
+  await page.getByRole("button", { name: "Save item", exact: true }).click();
+  await nav.getByRole("button", { name: "Menu", exact: true }).click();
+  await page.getByRole("button", { name: "Delete week", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Delete editable meals", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await nav.getByRole("button", { name: "Shopping", exact: true }).click();
+  await expect(page.getByRole("checkbox")).toHaveCount(1);
+  await expect(
+    page.getByText("Keep this manual item", { exact: true }),
+  ).toBeVisible();
+});
 test("preview and commit a menu, replace one participant with eating out", async ({
   page,
 }) => {

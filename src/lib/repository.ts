@@ -38,7 +38,7 @@ import {
   validateBudgets,
   validateProfile,
 } from "../domain/calories";
-import { addDays, dayCutoff, localDay } from "../domain/dates";
+import { addDays, dayCutoff, localDay, weekDays } from "../domain/dates";
 import type {
   Budgets,
   EntryInput,
@@ -192,6 +192,12 @@ export class SupabaseRepository implements Repository {
     return this.rpc("delete_planned_meal", {
       p_day: day,
       p_type: type,
+      p_revision: revision,
+    });
+  }
+  deleteWeek(start: string, revision: number) {
+    return this.rpc("delete_planned_week", {
+      p_start: start,
       p_revision: revision,
     });
   }
@@ -593,6 +599,62 @@ export class PreviewRepository implements Repository {
         });
     }
   }
+  private autoShopping() {
+    const first = this.library.plans
+      .map((p) => p.day)
+      .filter((d) => d >= this.today())
+      .sort()[0];
+    if (!this.shopping.start_date && !first) return;
+    const days = weekDays(first ?? this.today(), this.s.household.week_start);
+    const start = this.shopping.start_date ?? days[0],
+      end = this.shopping.end_date ?? days[6];
+    const rows = shoppingRequirements(
+      this.library.plans,
+      start,
+      end,
+      this.library.ingredients,
+    );
+    const fingerprint = shoppingFingerprint(rows, start, end);
+    if (
+      this.shopping.start_date === start &&
+      this.shopping.end_date === end &&
+      this.shopping.applied_fingerprint === fingerprint
+    )
+      return;
+    this.serial++;
+    this.shopping = applyShoppingPreview(this.shopping, {
+      start_date: start,
+      end_date: end,
+      content_revision: this.shopping.content_revision,
+      source_fingerprint: fingerprint,
+      changes: shoppingChanges(this.shopping, rows),
+    });
+    this.persistDemo();
+  }
+  async deleteWeek(start: string, revision: number) {
+    this.me();
+    if (revision !== this.serial) throw new DomainError("stale_plan");
+    const end = addDays(start, 6);
+    const kept = this.library.plans.filter((p) => {
+      if (p.day < start || p.day > end) return true;
+      try {
+        this.unlocked(p.day);
+        return false;
+      } catch {
+        return true;
+      }
+    });
+    this.library.plans = kept;
+    this.s.meals = this.s.meals.filter(
+      (p) =>
+        p.day < start ||
+        p.day > end ||
+        kept.some((k) => k.day === p.day && k.type === p.type),
+    );
+    this.serial++;
+    this.syncPlans();
+    this.autoShopping();
+  }
   async deleteMeal(day: string, type: MealType, revision: number) {
     this.me();
     this.unlocked(day);
@@ -604,6 +666,7 @@ export class PreviewRepository implements Repository {
       (m) => !(m.day === day && m.type === type),
     );
     this.serial++;
+    this.autoShopping();
   }
   async savePromptPreference(after: string | null) {
     this.me();
@@ -644,6 +707,7 @@ export class PreviewRepository implements Repository {
       }
     this.serial++;
     this.syncPlans();
+    this.autoShopping();
   }
   async applyPlans(batch: MealPlan[], revision: number, replace: boolean) {
     this.me();
@@ -684,6 +748,7 @@ export class PreviewRepository implements Repository {
     this.library.plans = plans;
     this.serial++;
     this.syncPlans();
+    this.autoShopping();
   }
   async savePlannerSettings(week: 0 | 1, variety: number) {
     this.me();
@@ -714,6 +779,7 @@ export class PreviewRepository implements Repository {
     this.s.server_now = new Date().toISOString();
     this.syncPlans();
     this.me().time_zone = zone;
+    this.autoShopping();
     this.s.planning = { ...this.library, revision: this.serial };
     this.s.shopping = await this.getShopping();
     this.persistDemo();

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Plus, ShoppingBasket, RefreshCw, Info, WifiOff } from "lucide-react";
 import type { ViewProps } from "./views";
-import type { ShoppingPreview, ShoppingItem } from "../domain/shopping";
-import { formatShoppingQuantity } from "../domain/shopping";
+import type { ShoppingItem } from "../domain/shopping";
 import { addDays } from "../domain/dates";
 import { translator, errorMessage } from "../lib/i18n";
 import { useShoppingQueue } from "../lib/use-offline";
@@ -19,7 +18,6 @@ export function ShoppingPage(v: ViewProps) {
     server = v.s.shopping;
   const [start, setStart] = useState(server?.start_date ?? v.day),
     [end, setEnd] = useState(server?.end_date ?? addDays(v.day, 6)),
-    [preview, setPreview] = useState<ShoppingPreview | null>(null),
     [manual, setManual] = useState<{
       id: string;
       label: string;
@@ -60,14 +58,10 @@ export function ShoppingPage(v: ViewProps) {
         ? cached
         : server;
   const review = async () => {
-    let result: ShoppingPreview | undefined;
-    if (
-      await v.operate(async () => {
-        result = await v.repository.previewShopping(start, end);
-      })
-    ) {
-      setPreview(result!);
-    }
+    await v.operate(async () => {
+      const changes = await v.repository.previewShopping(start, end);
+      await v.repository.applyShopping(changes);
+    });
   };
   const edit = (item: ShoppingItem) =>
     setManual({
@@ -86,8 +80,8 @@ export function ShoppingPage(v: ViewProps) {
           <h1>{t("The shopping list", "La lista de la compra")}</h1>
           <p>
             {t(
-              "From your saved portions, with room for everyday extras.",
-              "A partir de vuestras porciones guardadas, con espacio para lo demás.",
+              "Updated automatically when your menu changes. Manual additions are kept.",
+              "Se actualiza automáticamente al cambiar el menú. Se conservan los productos manuales.",
             )}
           </p>
         </div>
@@ -135,7 +129,7 @@ export function ShoppingPage(v: ViewProps) {
           onClick={() => void review()}
         >
           <RefreshCw size={16} />
-          {t("Review menu quantities", "Revisar cantidades del menú")}
+          {t("Apply date range", "Aplicar intervalo de fechas")}
         </Button>
         <p className="fine-print">
           {shopping.start_date
@@ -144,8 +138,8 @@ export function ShoppingPage(v: ViewProps) {
                 `Lista actual: ${shopping.start_date} — ${shopping.end_date}`,
               )
             : t(
-                "Choose dates to generate the household list.",
-                "Elige fechas para generar la lista del hogar.",
+                "Save a menu to fill the household list automatically.",
+                "Guarda un menú para llenar la lista del hogar automáticamente.",
               )}
         </p>
       </section>
@@ -154,8 +148,8 @@ export function ShoppingPage(v: ViewProps) {
           <Info size={18} />
           <span>
             {t(
-              "Your menu has changes available. Review them before updating the list.",
-              "Hay cambios disponibles en el menú. Revísalos antes de actualizar la lista.",
+              "The list needs synchronizing with the menu. Apply the current date range to retry.",
+              "La lista necesita sincronizarse con el menú. Aplica el intervalo actual para reintentarlo.",
             )}
           </span>
           <button
@@ -257,95 +251,6 @@ export function ShoppingPage(v: ViewProps) {
             )}
           </Empty>
         </section>
-      )}
-      {preview && (
-        <Modal
-          title={t("Review shopping changes", "Revisar cambios de compra")}
-          wide
-          onClose={() => setPreview(null)}
-        >
-          <p className="form-intro">
-            {t(
-              "Manual additions always stay. Increased quantities uncheck the item and are highlighted; decreases retain the current checked state.",
-              "Los añadidos manuales se conservan. Los aumentos desmarcan el producto y se destacan; las reducciones conservan su marca actual.",
-            )}
-          </p>
-          <p>
-            {preview.start_date} — {preview.end_date}
-          </p>
-          <ul className="shopping-diff">
-            {preview.changes
-              .filter((c) => c.action !== "unchanged")
-              .map((c) => (
-                <li key={c.key}>
-                  <div>
-                    <b>
-                      {(c.after?.name ?? c.before!.name)[v.language] ||
-                        (c.after?.name ?? c.before!.name).en ||
-                        (c.after?.name ?? c.before!.name).es}
-                    </b>
-                    <span>
-                      {
-                        {
-                          add: t("Add", "Añadir"),
-                          increase: t(
-                            "Increase · uncheck",
-                            "Aumentar · desmarcar",
-                          ),
-                          decrease: t(
-                            "Decrease · preserve check",
-                            "Reducir · conservar marca",
-                          ),
-                          remove: t(
-                            "Remove generated item",
-                            "Eliminar producto del menú",
-                          ),
-                          update: t("Update name", "Actualizar nombre"),
-                          unchanged: t("Unchanged", "Sin cambios"),
-                        }[c.action]
-                      }
-                    </span>
-                  </div>
-                  <span>
-                    {c.before
-                      ? formatShoppingQuantity(c.before, v.language)
-                      : "—"}{" "}
-                    →{" "}
-                    {c.after
-                      ? formatShoppingQuantity(
-                          { ...c.after, source: "generated", amount: "" },
-                          v.language,
-                        )
-                      : "—"}
-                  </span>
-                </li>
-              ))}
-          </ul>
-          <p className="fine-print">
-            {preview.changes.filter((c) => c.action === "unchanged").length}{" "}
-            {t(
-              "generated items remain unchanged. Current checked states are read when applying.",
-              "productos del menú se mantienen. Se conserva el estado de compra vigente al aplicar.",
-            )}
-          </p>
-          <Button
-            busy={v.busy}
-            onClick={async () => {
-              if (
-                await v.operate(
-                  () => v.repository.applyShopping(preview),
-                  t("Shopping list updated.", "Lista de compra actualizada."),
-                )
-              )
-                setPreview(null);
-            }}
-          >
-            {t("Apply reviewed changes", "Aplicar cambios revisados")}
-          </Button>
-          <Button secondary busy={v.busy} onClick={() => void review()}>
-            {t("Refresh preview", "Actualizar vista previa")}
-          </Button>
-        </Modal>
       )}
       {manual && (
         <Modal

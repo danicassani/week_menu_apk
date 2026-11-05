@@ -52,13 +52,15 @@ function eligible(v: ViewProps) {
     (m) => m.status === "active" && m.onboarded && m.profile,
   );
 }
-function suggested(
+export function suggested(
   v: ViewProps,
   lib: PlanningState,
   day: string,
   type: MealType,
   retained: MealPlan[],
   recipeId?: string,
+  previous?: MealPlan,
+  breakfastMember?: string,
 ): MealPlan | null {
   const members = eligible(v);
   if (!members.length) return null;
@@ -66,6 +68,7 @@ function suggested(
     (r) =>
       !r.archived &&
       r.meal_types.includes(type) &&
+      (type === "breakfast" || r.id !== previous?.shared_recipe_id) &&
       (!recipeId || r.id === recipeId),
   );
   const rotate = (items: PlannedRecipe[], offset: number) =>
@@ -79,18 +82,30 @@ function suggested(
         (type === "dinner" ? 13 : 0),
     ),
   );
+  if (previous) {
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+  }
   if (type === "breakfast") {
     const portions: PlannedPortion[] = [];
     for (const member of members) {
+      const old = previous?.portions.find((p) => p.member_id === member.id);
+      if (previous && breakfastMember && member.id !== breakfastMember) {
+        if (old) portions.push(structuredClone(old));
+        continue;
+      }
       let found: PlannedPortion | undefined;
       for (const r of rotate(order, portions.length * 3)) {
+        if (r.id === old?.recipe_id) continue;
         try {
           found = makePortion(
             r,
             member.id,
             member.profile!,
             budgetFor(v, member.id, day, type),
-            false,
+            old?.dessert ?? false,
             lib.ingredients,
             lib.substitutions,
           );
@@ -117,7 +132,8 @@ function suggested(
             m.id,
             m.profile!,
             budgetFor(v, m.id, day, type),
-            false,
+            previous?.portions.find((p) => p.member_id === m.id)?.dessert ??
+              false,
             lib.ingredients,
             lib.substitutions,
           ),
@@ -144,6 +160,8 @@ export function Planner(v: ViewProps) {
     } | null>(null),
     [editing, setEditing] = useState<MealPlan | null>(null),
     [notice, setNotice] = useState(""),
+    [previewNotice, setPreviewNotice] = useState(""),
+    [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null),
     [snoozeDays, setSnoozeDays] = useState(30);
@@ -161,6 +179,7 @@ export function Planner(v: ViewProps) {
     );
   const days = weekDays(anchor, v.s.household.week_start);
   const generate = (slots: { day: string; type: MealType }[]) => {
+    setPreviewNotice("");
     const retained = lib.plans.filter(
         (m) =>
           !replace || !slots.some((s) => s.day === m.day && s.type === m.type),
@@ -186,6 +205,40 @@ export function Planner(v: ViewProps) {
     }
     setPreview({ plans, revision: lib.revision, replace, gaps });
   };
+  const reroll = (meal: MealPlan) => {
+    if (!preview || preview.revision !== lib.revision || closed(v, meal.day))
+      return;
+    const retained = lib.plans.filter(
+      (saved) =>
+        !preview.plans.some(
+          (draft) => draft.day === saved.day && draft.type === saved.type,
+        ),
+    );
+    const next = suggested(
+      v,
+      lib,
+      meal.day,
+      meal.type,
+      [...retained, ...preview.plans.filter((p) => p !== meal)],
+      undefined,
+      meal,
+      v.s.viewer_id,
+    );
+    if (!next) {
+      setPreviewNotice(
+        t(
+          "No different suitable recipe is available. Your suggestion is unchanged. Add more recipes to increase variety.",
+          "No hay otra receta adecuada. Se mantiene la sugerencia. Añade más recetas para aumentar la variedad.",
+        ),
+      );
+      return;
+    }
+    setPreviewNotice("");
+    setPreview({
+      ...preview,
+      plans: preview.plans.map((p) => (p === meal ? next : p)),
+    });
+  };
   return (
     <>
       <div className="page-heading">
@@ -206,6 +259,16 @@ export function Planner(v: ViewProps) {
         </div>
       </div>
       <div className="panel planner-controls">
+        <Button
+          secondary
+          disabled={
+            v.busy ||
+            !lib.plans.some((p) => days.includes(p.day) && !closed(v, p.day))
+          }
+          onClick={() => setDeletingWeek(lib.revision)}
+        >
+          {t("Delete week", "Borrar semana")}
+        </Button>
         <div className="button-row">
           <Button
             secondary
@@ -425,16 +488,22 @@ export function Planner(v: ViewProps) {
                                 lib,
                                 day,
                                 type,
-                                lib.plans,
+                                lib.plans.filter(
+                                  (p) => p.day !== day || p.type !== type,
+                                ),
+                                undefined,
+                                plan,
+                                v.s.viewer_id,
                               );
-                              if (next)
+                              if (next) {
+                                setPreviewNotice("");
                                 setPreview({
                                   plans: [next],
                                   revision: lib.revision,
                                   replace: true,
                                   gaps: [],
                                 });
-                              else
+                              } else
                                 setNotice(
                                   t(
                                     "No suitable recipe. Add more recipes to increase variety.",
@@ -443,7 +512,7 @@ export function Planner(v: ViewProps) {
                                 );
                             }}
                           >
-                            {t("Alternative", "Alternativa")}
+                            {t("Preview another recipe", "Probar otra receta")}
                           </button>
                         )}
                       </div>
@@ -464,6 +533,11 @@ export function Planner(v: ViewProps) {
           wide
           onClose={() => setPreview(null)}
         >
+          {previewNotice && (
+            <p className="note warning" role="status">
+              {previewNotice}
+            </p>
+          )}
           {preview.revision !== lib.revision && (
             <div className="note warning">
               <p>
@@ -517,11 +591,40 @@ export function Planner(v: ViewProps) {
               <h3>
                 {m.day} · {mealLabel(m.type, v.language)}
               </h3>
+              {m.type !== "breakfast" && (
+                <Button
+                  secondary
+                  disabled={
+                    v.busy ||
+                    closed(v, m.day) ||
+                    preview.revision !== lib.revision
+                  }
+                  onClick={() => reroll(m)}
+                >
+                  {t("Re-roll meal", "Volver a sugerir comida")}
+                </Button>
+              )}
               {m.portions.map((p) => (
                 <div key={p.member_id}>
                   <b>{v.s.members.find((x) => x.id === p.member_id)?.name}</b> ·{" "}
                   {name(p.name, v.language)} · {Math.round(p.kcal)} / {p.budget}{" "}
                   kcal
+                  {m.type === "breakfast" && p.member_id === v.s.viewer_id && (
+                    <Button
+                      secondary
+                      disabled={
+                        v.busy ||
+                        closed(v, m.day) ||
+                        preview.revision !== lib.revision
+                      }
+                      onClick={() => reroll(m)}
+                    >
+                      {t(
+                        "Re-roll my breakfast",
+                        "Volver a sugerir mi desayuno",
+                      )}
+                    </Button>
+                  )}
                   {p.substitutions.map((r, i) => (
                     <p className="note" key={i}>
                       {name(
@@ -569,6 +672,49 @@ export function Planner(v: ViewProps) {
             }}
           >
             {t("Approve suggestions & save", "Aprobar sugerencias y guardar")}
+          </Button>
+        </Modal>
+      )}
+      {deletingWeek !== null && (
+        <Modal
+          title={t(
+            "Delete this week's meals?",
+            "¿Borrar las comidas de esta semana?",
+          )}
+          onClose={() => {
+            if (!v.busy) setDeletingWeek(null);
+          }}
+        >
+          <p>
+            {days[0]} — {days[6]}
+          </p>
+          {deletingWeek !== lib.revision && (
+            <p role="alert">
+              {t(
+                "The menu changed. Close this dialog and review the week again.",
+                "El menú ha cambiado. Cierra este diálogo y revisa la semana de nuevo.",
+              )}
+            </p>
+          )}
+          <p>
+            {t(
+              "This deletes editable meals in the displayed week and updates shopping automatically. Closed days and manual shopping additions are kept.",
+              "Se borrarán las comidas editables de la semana mostrada y se actualizará la compra automáticamente. Se conservan los días cerrados y los productos añadidos manualmente.",
+            )}
+          </p>
+          <Button
+            busy={v.busy}
+            disabled={deletingWeek !== lib.revision}
+            onClick={async () => {
+              if (
+                await v.operate(() =>
+                  v.repository.deleteWeek(days[0], deletingWeek),
+                )
+              )
+                setDeletingWeek(null);
+            }}
+          >
+            {t("Delete editable meals", "Borrar comidas editables")}
           </Button>
         </Modal>
       )}

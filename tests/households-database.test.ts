@@ -625,3 +625,75 @@ describe("v2 tenant migration and lifecycle", () => {
     ).rejects.toThrow("one_active_household_per_account");
   });
 });
+
+it("updates shopping in the menu transaction and deletes only editable meals of a week", async () => {
+  await db.exec("reset role");
+  await db.exec(
+    readFileSync(
+      "supabase/migrations/202611050008_automatic_menu_shopping.sql",
+      "utf8",
+    ),
+  );
+  await as(alice);
+  let s = await rpc("get_household_snapshot"),
+    lib = s.planning;
+  const day = addDays(s.server_now.slice(0, 10), 14);
+  const recipe = lib.recipes.find((r: any) => r.id === "b01");
+  const person = s.members.find((m: any) => m.id === alice);
+  const portion = makePortion(
+    recipe,
+    alice,
+    person.profile,
+    350,
+    false,
+    lib.ingredients,
+    lib.substitutions,
+  );
+  const meals = [day, addDays(day, 1)].map((day) => ({
+    day,
+    type: "breakfast",
+    revision: 0,
+    portions: [portion],
+  }));
+  await rpc("apply_meal_plans", [meals, lib.revision, false]);
+  let list = await rpc("get_shopping_state");
+  expect(list.items.some((i: any) => i.source === "generated")).toBe(true);
+  expect(list.items.find((i: any) => i.id === item).checked).toBe(true);
+  expect(list.changes_available).toBe(false);
+  const row = list.items.find((i: any) => i.source === "generated");
+  await rpc("set_shopping_checked", [crypto.randomUUID(), row.id, true]);
+  lib = await rpc("get_planning_library");
+  const changed = structuredClone(lib.plans.find((m: any) => m.day === day));
+  for (const line of changed.portions[0].lines) line.quantity *= 2;
+  await rpc("apply_meal_plans", [[changed], lib.revision, true]);
+  list = await rpc("get_shopping_state");
+  expect(list.items.find((i: any) => i.id === row.id)).toMatchObject({
+    checked: false,
+    increased: true,
+  });
+  await db.exec("reset role");
+  await db.query(
+    "update public.meal_date_locks set closed=true where household_id=$1 and day=$2",
+    [contextA.household_id, day],
+  );
+  await as(alice);
+  lib = await rpc("get_planning_library");
+  await expect(
+    rpc("delete_planned_week", [list.start_date, lib.revision - 1]),
+  ).rejects.toThrow("stale_plan");
+  await rpc("delete_planned_week", [list.start_date, lib.revision]);
+  const after = await rpc("get_household_snapshot");
+  expect(after.planning.plans.find((m: any) => m.day === day)).toEqual(
+    lib.plans.find((m: any) => m.day === day),
+  );
+  expect(after.planning.plans.some((m: any) => m.day === addDays(day, 1))).toBe(
+    false,
+  );
+  expect(after.shopping.items.find((i: any) => i.id === item).checked).toBe(
+    true,
+  );
+  expect(after.shopping.changes_available).toBe(false);
+  const repeated = await rpc("get_household_snapshot");
+  expect(repeated.planning.revision).toBe(after.planning.revision);
+  expect(repeated.shopping).toEqual(after.shopping);
+});

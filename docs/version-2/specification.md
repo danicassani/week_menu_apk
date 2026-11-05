@@ -4,6 +4,8 @@ Status: implementation started following the user's instruction. Confirmed produ
 
 ## Budget constraint
 
+Latest menu workflow update: the user requested [preview re-rolls, week deletion and automatic shopping](menu-controls.md). Shopping now updates automatically after saved menu changes; this supersedes the previous requirement to review and apply a shopping diff. Closed days and manual shopping additions remain protected.
+
 The user wants to remain on free tiers for now. No paid plan, billable add-on or approval of overage charges is implied. Use native emojis for recipe/ingredient illustrations and personal avatars in this revised draft; photo uploads, thumbnails and photo-provider selection are deferred. Emojis are stored as small text values and rendered with the device's existing fonts, without an image-hosting service. Database, authentication and synchronization quotas still apply.
 
 ## 1. Confirmed scope
@@ -111,7 +113,7 @@ For a source eating-out portion:
 
 Version one explicitly clears a portion's `recipe_id` and `recipe_snapshot` when it becomes eating out. Some old individual breakfasts therefore have no recoverable recipe; copying must surface that gap. For version two, retain a separate immutable underlying-recipe reference when switching modes so future copying can recover it. Existing shared recipe references may be sufficient for a shared slot, but they are not a substitute for missing individual breakfast provenance.
 
-Preserve source per-person dessert choices where still applicable and show the current result in the preview. New members have no historical personal choice; their defaults need to be resolved visibly. Outside-food, weight and activity logs are not copied. Copying does not automatically accept a new calorie target, alter personal budgets or apply shopping-list changes. After saving the copied plan, use the normal reviewed shopping diff.
+Preserve source per-person dessert choices where still applicable and show the current result in the preview. New members have no historical personal choice; their defaults need to be resolved visibly. Outside-food, weight and activity logs are not copied. Copying does not automatically accept a new calorie target, alter personal budgets or apply shopping-list changes. After saving the copied plan, reconcile shopping automatically using the configured date range.
 
 ## 9. Ratings
 
