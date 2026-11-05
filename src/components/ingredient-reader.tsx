@@ -16,7 +16,7 @@ export function IngredientReader({
 }) {
   const t = translator(language);
   const states: Record<string, string> = {
-    raw_edible: t("Raw edible", "Crudo comestible"),
+    raw_edible: t("Raw", "Crudo"),
     dry: t("Dry", "Seco"),
     ready_to_use: t("Ready to use", "Listo para usar"),
     cooked: t("Cooked", "Cocinado"),
@@ -50,10 +50,14 @@ export function IngredientReader({
           t("Unknown", "Desconocida")}
       </p>
       <p>
-        <b>
-          {t("Nutrition reference state", "Estado de referencia nutricional")}
-        </b>
-        : {states[ingredient.state] ?? ingredient.state}
+        <b>{t("Food state", "Estado del alimento")}</b>:{" "}
+        {states[ingredient.state] ?? ingredient.state}
+      </p>
+      <p className="fine-print">
+        {t(
+          "Calories are for 100 g of the edible food in this state. For example, dry rice and cooked rice have different values.",
+          "Las calorías corresponden a 100 g de la parte comestible en este estado. Por ejemplo, el arroz seco y el cocido tienen valores distintos.",
+        )}
       </p>
       <p>
         <b>

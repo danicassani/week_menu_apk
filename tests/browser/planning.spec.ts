@@ -146,7 +146,7 @@ test("create ingredient and confirm a household piece conversion", async ({
   await expect(reader).toContainText("1 egg = 55 g");
   await expect(reader).toContainText("Quantity step: 0.5 egg");
   await expect(reader).toContainText("140");
-  await expect(reader).toContainText("Raw edible");
+  await expect(reader).toContainText("Raw");
   await reader
     .getByRole("button", { name: "Edit ingredient", exact: true })
     .click();
@@ -168,7 +168,36 @@ test("create ingredient and confirm a household piece conversion", async ({
   await expect(
     reader.getByRole("button", { name: "Editar ingrediente", exact: true }),
   ).toBeVisible();
-  await expect(reader).toContainText("Crudo comestible");
+  await expect(reader).toContainText("Crudo");
+  await reader
+    .getByRole("button", { name: "Editar ingrediente", exact: true })
+    .click();
+  const energy = page.getByLabel("Energía · kcal por 100 g", { exact: true });
+  const state = page.getByRole("combobox", {
+    name: "Estado del alimento",
+    exact: true,
+  });
+  await expect(state).toHaveAccessibleDescription(
+    /Las calorías corresponden a 100 g/,
+  );
+  for (const width of [360, 390, 540, 800]) {
+    await page.setViewportSize({ width, height: 844 });
+    const a = await energy.boundingBox(),
+      b = await state.boundingBox();
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    if (width <= 600) {
+      expect(Math.abs(a!.x - b!.x)).toBeLessThan(1);
+      expect(Math.abs(a!.width - b!.width)).toBeLessThan(1);
+      expect(b!.y).toBeGreaterThanOrEqual(a!.y + a!.height);
+    } else {
+      expect(Math.abs(a!.y - b!.y)).toBeLessThan(1);
+    }
+  }
+  await state.selectOption("cooked");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page.getByRole("button", { name: /Test household egg/ }).click();
+  await expect(reader).toContainText("Cocinado");
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

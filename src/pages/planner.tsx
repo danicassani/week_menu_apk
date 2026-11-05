@@ -1441,6 +1441,7 @@ function ContentEditor({
       onClose={onClose}
     >
       <form
+        className="content-editor-form"
         onSubmit={(e) => {
           e.preventDefault();
           void save(false);
@@ -1490,7 +1491,7 @@ function ContentEditor({
         </p>
         {kind === "ingredient" ? (
           <>
-            <div className="form-grid">
+            <div className="form-grid ingredient-nutrition-fields">
               <label>
                 {t("Energy · kcal per 100 g", "Energía · kcal por 100 g")}
                 <input
@@ -1511,11 +1512,9 @@ function ContentEditor({
                 />
               </label>
               <label>
-                {t(
-                  "Nutrition reference state",
-                  "Estado de referencia nutricional",
-                )}
+                {t("Food state", "Estado del alimento")}
                 <select
+                  aria-describedby="ingredient-state-help"
                   value={food.state}
                   onChange={(e) => update({ state: e.target.value })}
                 >
@@ -1524,7 +1523,7 @@ function ContentEditor({
                       <option key={state} value={state}>
                         {
                           {
-                            raw_edible: t("Raw edible", "Crudo comestible"),
+                            raw_edible: t("Raw", "Crudo"),
                             dry: t("Dry", "Seco"),
                             ready_to_use: t("Ready to use", "Listo para usar"),
                             cooked: t("Cooked", "Cocinado"),
@@ -1536,6 +1535,12 @@ function ContentEditor({
                 </select>
               </label>
             </div>
+            <p className="fine-print" id="ingredient-state-help">
+              {t(
+                "Calories are for 100 g of the edible food in this state. For example, dry rice and cooked rice have different values.",
+                "Las calorías corresponden a 100 g de la parte comestible en este estado. Por ejemplo, el arroz seco y el cocido tienen valores distintos.",
+              )}
+            </p>
             <label>
               {t(
                 "Canonical main/base ingredient key",

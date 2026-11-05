@@ -1592,6 +1592,19 @@ input[type="checkbox"] {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
+.ingredient-nutrition-fields {
+  align-items: end;
+}
+.ingredient-nutrition-fields input,
+.ingredient-nutrition-fields select {
+  height: 3rem;
+}
+@media (max-width: 600px) {
+  .content-editor-form > .form-grid,
+  .content-editor-form .ingredient-nutrition-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .form-grid.three label {
   font-size: 10px;
 }
