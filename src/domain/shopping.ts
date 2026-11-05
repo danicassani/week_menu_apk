@@ -49,6 +49,8 @@ export interface ShoppingPreview {
   changes: ShoppingChange[];
 }
 export interface CheckOperation {
+  household_id?: string;
+  membership_id?: string;
   id: string;
   item_id: string;
   checked: boolean;

@@ -4,6 +4,7 @@ import {
   subscribeOffline,
   type OfflineAccount,
   enqueueCheck,
+  cacheIdentity,
 } from "./offline-store";
 import { syncAfterEnqueue, syncShopping } from "./shopping-sync";
 import type { Repository } from "../domain/types";
@@ -54,9 +55,13 @@ export function useOfflineAccount(id: string | null) {
   return { data, error, reload };
 }
 export function useShoppingQueue(
-  repo: Pick<Repository, "accountId" | "getShopping" | "checkShopping">,
+  repo: Pick<
+    Repository,
+    "accountId" | "offlineId" | "getShopping" | "checkShopping"
+  >,
 ) {
-  const { data, error, reload } = useOfflineAccount(repo.accountId),
+  const scopeId = cacheIdentity(repo);
+  const { data, error, reload } = useOfflineAccount(scopeId),
     online = useConnection(),
     [syncing, setSyncing] = useState(false),
     [syncError, setSyncError] = useState("");
@@ -94,7 +99,7 @@ export function useShoppingQueue(
   }, [online, sync]);
   const check = async (id: string, checked: boolean) => {
     try {
-      await enqueueCheck(repo.accountId, id, checked);
+      await enqueueCheck(scopeId, id, checked);
       setSyncError("");
       if (navigator.onLine) {
         setSyncing(true);

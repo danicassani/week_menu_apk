@@ -11,7 +11,13 @@ import {
   acknowledgeCheck,
   requireDiscardOrSynced,
   purgeOfflineAccount,
+  bindOfflineHousehold,
 } from "../src/lib/offline-store";
+import {
+  offlineKey,
+  assertOperationContext,
+  type HouseholdContext,
+} from "../src/domain/households";
 import { syncShopping } from "../src/lib/shopping-sync";
 import {
   emptyShopping,
@@ -341,4 +347,88 @@ it("purges cached views when authoritative post-sync refresh discovers removal",
   };
   await expect(syncShopping(repo, () => true)).rejects.toThrow("access_denied");
   expect(await readOfflineAccount("alice")).toBeNull();
+});
+
+const contextA: HouseholdContext = {
+  account_id: "alice",
+  household_id: "home-a",
+  membership_id: "membership-a",
+  legacy_binding: true,
+};
+const contextB: HouseholdContext = {
+  account_id: "alice",
+  household_id: "home-b",
+  membership_id: "membership-b",
+};
+it("upgrades the verified original household queue without losing operation IDs or order", async () => {
+  await ready();
+  const first = await enqueueCheck("alice", "item-1", true),
+    second = await enqueueCheck("alice", "item-1", false);
+  await bindOfflineHousehold(contextA, "es");
+  const saved = await readOfflineAccount(offlineKey(contextA));
+  expect(saved?.pending.map((op) => op.id)).toEqual([first.id, second.id]);
+  expect(saved?.pending[0]).toMatchObject({
+    household_id: "home-a",
+    membership_id: "membership-a",
+  });
+  expect(saved?.language).toBe("es");
+  expect(await readOfflineAccount("alice")).toBeNull();
+  expect(await activeOfflineAccount()).toBe(offlineKey(contextA));
+  await expect(cacheShopping("alice", state())).rejects.toThrow(
+    "account_signed_out",
+  );
+});
+it("never transfers old cached views or queued intent to a different household or rejoined membership", async () => {
+  await ready();
+  await enqueueCheck("alice", "item-1", true);
+  await bindOfflineHousehold(contextB, "en");
+  expect((await readOfflineAccount(offlineKey(contextB)))?.pending).toEqual([]);
+  expect(
+    (await readOfflineAccount(offlineKey(contextB)))?.shopping,
+  ).toBeUndefined();
+  await cacheShopping(offlineKey(contextB), state());
+  await enqueueCheck(offlineKey(contextB), "item-1", true);
+  const rejoin = { ...contextB, membership_id: "rejoined" };
+  await bindOfflineHousehold(rejoin, "en");
+  expect(await readOfflineAccount(offlineKey(contextB))).toBeNull();
+  expect((await readOfflineAccount(offlineKey(rejoin)))?.pending).toEqual([]);
+  await expect(cacheShopping(offlineKey(contextB), state())).rejects.toThrow(
+    "account_signed_out",
+  );
+});
+it("binds new queue envelopes and refuses stale membership operations before sending", async () => {
+  await bindOfflineHousehold(contextA, "en");
+  await cacheShopping(offlineKey(contextA), state());
+  const op = await enqueueCheck(offlineKey(contextA), "item-1", true);
+  expect(op).toMatchObject({
+    household_id: "home-a",
+    membership_id: "membership-a",
+  });
+  expect(() => assertOperationContext(contextB, op)).toThrow(
+    "membership_changed",
+  );
+  expect(() => assertOperationContext(contextA, op)).not.toThrow();
+  expect(() =>
+    assertOperationContext(contextA, { ...op, membership_id: "removed" }),
+  ).toThrow("membership_changed");
+});
+it("refuses a late snapshot belonging to another household and clears every account scope on sign-out", async () => {
+  await bindOfflineHousehold(contextA, "en");
+  await expect(
+    cacheLoadedView(
+      offlineKey(contextA),
+      { context: contextB } as HouseholdState,
+      "menu",
+    ),
+  ).rejects.toThrow("membership_changed");
+  await cacheShopping(offlineKey(contextA), state());
+  await enqueueCheck(offlineKey(contextA), "item-1", true);
+  await rememberAccount("alice", "en"); // An old tab tries to reactivate a v1 cache.
+  await expect(requireDiscardOrSynced("alice", false)).rejects.toThrow(
+    "pending_shopping_changes",
+  );
+  await requireDiscardOrSynced("alice", true);
+  expect(await readOfflineAccount("alice")).toBeNull();
+  expect(await readOfflineAccount(offlineKey(contextA))).toBeNull();
+  expect(await activeOfflineAccount()).toBeNull();
 });

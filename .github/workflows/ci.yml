@@ -20,6 +20,7 @@ jobs:
       - run: npm test
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:browser
+      - run: npm run test:households
       - run: npm run test:pwa
       - run: npm run test:release
       - uses: actions/upload-artifact@v4
