@@ -121,9 +121,7 @@ test("create ingredient and confirm a household piece conversion", async ({
   await page
     .getByRole("button", { name: "New ingredient", exact: true })
     .click();
-  await page
-    .getByLabel("English name", { exact: true })
-    .fill("Test household egg");
+  await page.getByLabel("Name", { exact: true }).fill("Test household egg");
   await page.getByLabel("Energy · kcal per 100 g").fill("140");
   await page
     .getByRole("button", { name: "Add conversion", exact: true })
@@ -153,9 +151,7 @@ test("create ingredient and confirm a household piece conversion", async ({
   await expect(
     page.getByLabel("Grams per unit", { exact: true }).last(),
   ).toHaveValue("55");
-  await page
-    .getByLabel("English name", { exact: true })
-    .fill("Unsaved ingredient");
+  await page.getByLabel("Name", { exact: true }).fill("Unsaved ingredient");
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: /Test household egg/ }).click();
   await expect(reader).toBeVisible();
@@ -211,9 +207,14 @@ test("create a recipe on a phone", async ({ page }) => {
     .getByRole("button", { name: "Recipes", exact: true })
     .click();
   await page.getByRole("button", { name: "New recipe", exact: true }).click();
+  await expect(
+    page.getByLabel("Spanish translation", { exact: true }).first(),
+  ).not.toBeVisible();
+  await page.getByLabel("Name", { exact: true }).fill("Household porridge");
+  await page.getByLabel("Component name", { exact: true }).fill("Porridge");
   await page
-    .getByLabel("English name", { exact: true })
-    .fill("Household porridge");
+    .getByLabel("Instructions", { exact: true })
+    .fill("Cook the oats.\nServe warm.");
   await page
     .getByRole("button", { name: "Add ingredient", exact: true })
     .click();
@@ -227,6 +228,41 @@ test("create a recipe on a phone", async ({ page }) => {
   await expect(
     page.getByRole("button", { name: /Household porridge/ }),
   ).toBeVisible();
+  await page.getByRole("button", { name: /Household porridge/ }).click();
+  await expect(page.getByRole("dialog")).toContainText("Serve warm.");
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page.getByRole("button", { name: /Household porridge/ }).click();
+  await page
+    .getByRole("button", { name: "Editar receta", exact: true })
+    .click();
+  await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue(
+    "Household porridge",
+  );
+  await expect(
+    page.getByRole("textbox", { name: "Instrucciones", exact: true }),
+  ).toHaveValue("Cook the oats.\nServe warm.");
+  await page.getByLabel("Nombre", { exact: true }).fill("Gachas del hogar");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page.getByRole("searchbox").fill("Gachas del hogar");
+  await expect(
+    page.getByRole("button", { name: /Gachas del hogar/ }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Cambiar idioma", exact: true })
+    .click();
+  await page.getByRole("searchbox").fill("Household porridge");
+  await page.getByRole("button", { name: /Household porridge/ }).click();
+  await page.getByRole("button", { name: "Edit recipe", exact: true }).click();
+  await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
+    "Household porridge",
+  );
+  await page.locator("details").first().locator("summary").click();
+  await expect(
+    page.getByLabel("Spanish translation", { exact: true }).first(),
+  ).toHaveValue("Gachas del hogar");
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -289,10 +325,10 @@ test("recipe cards open a reader and editing requires an explicit action", async
   await reader
     .getByRole("button", { name: "Edit recipe", exact: true })
     .click();
-  await expect(page.getByLabel("English name", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
     "Chickpea and tomato toast",
   );
-  await page.getByLabel("English name", { exact: true }).fill("Unsaved change");
+  await page.getByLabel("Name", { exact: true }).fill("Unsaved change");
   await page.keyboard.press("Escape");
   await card.click();
   await expect(

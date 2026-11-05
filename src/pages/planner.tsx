@@ -12,6 +12,7 @@ import {
 import { Button, Modal, Empty } from "../components/ui";
 import { RecipeReader } from "../components/recipe-reader";
 import { IngredientReader } from "../components/ingredient-reader";
+import { ContentTextField } from "../components/content-text-field";
 import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
 import { targetOn } from "../domain/state";
 import {
@@ -1467,28 +1468,14 @@ function ContentEditor({
             </Button>
           </div>
         )}
-        <div className="form-grid">
-          {(["en", "es"] as const).map((lang) => (
-            <label key={lang}>
-              {lang === "en"
-                ? t("English name", "Nombre en inglés")
-                : t("Spanish name", "Nombre en español")}
-              <input
-                maxLength={160}
-                value={data.name[lang]}
-                onChange={(e) =>
-                  update({ name: { ...data.name, [lang]: e.target.value } })
-                }
-              />
-            </label>
-          ))}
-        </div>
-        <p className="fine-print">
-          {t(
-            "Enter at least one name. Translations are optional and manual.",
-            "Introduce al menos un nombre. Las traducciones son opcionales y manuales.",
-          )}
-        </p>
+        <ContentTextField
+          key={revision}
+          label={t("Name", "Nombre")}
+          value={data.name}
+          language={v.language}
+          required
+          onChange={(name) => update({ name })}
+        />
         {kind === "ingredient" ? (
           <>
             <div className="form-grid ingredient-nutrition-fields">
@@ -1764,21 +1751,14 @@ function ContentEditor({
                     <Trash2 size={15} />
                   </button>
                 </div>
-                <div className="form-grid">
-                  {(["en", "es"] as const).map((lang) => (
-                    <label key={lang}>
-                      {lang === "en" ? "English" : "Español"}
-                      <input
-                        value={c.name[lang]}
-                        onChange={(e) =>
-                          component(ci, {
-                            name: { ...c.name, [lang]: e.target.value },
-                          })
-                        }
-                      />
-                    </label>
-                  ))}
-                </div>
+                <ContentTextField
+                  key={`name-${revision}`}
+                  label={t("Component name", "Nombre del componente")}
+                  value={c.name}
+                  language={v.language}
+                  onChange={(name) => component(ci, { name })}
+                />
+
                 <label>
                   {t("Component type", "Tipo de componente")}
                   <select
@@ -1915,33 +1895,26 @@ function ContentEditor({
                   <Plus size={14} />
                   {t("Add ingredient", "Añadir ingrediente")}
                 </Button>
-                <div className="form-grid">
-                  {(["en", "es"] as const).map((lang) => (
-                    <label key={lang}>
-                      {t("Instructions", "Instrucciones")} ·{" "}
-                      {lang === "en" ? "English" : "Español"}
-                      <textarea
-                        rows={5}
-                        value={c.instructions.map((s) => s[lang]).join("\n")}
-                        onChange={(e) => {
-                          const lines = e.target.value.split("\n"),
-                            other = c.instructions;
-                          component(ci, {
-                            instructions: Array.from(
-                              { length: Math.max(lines.length, other.length) },
-                              (_, i) => ({
-                                ...other[i],
-                                en: other[i]?.en ?? "",
-                                es: other[i]?.es ?? "",
-                                [lang]: lines[i] ?? "",
-                              }),
-                            ),
-                          });
-                        }}
-                      />
-                    </label>
-                  ))}
-                </div>
+                <ContentTextField
+                  key={`instructions-${revision}`}
+                  label={t("Instructions", "Instrucciones")}
+                  value={{
+                    en: c.instructions.map((s) => s.en).join("\n"),
+                    es: c.instructions.map((s) => s.es).join("\n"),
+                  }}
+                  language={v.language}
+                  multiline
+                  onChange={(value) => {
+                    const en = value.en.split("\n"),
+                      es = value.es.split("\n");
+                    component(ci, {
+                      instructions: Array.from(
+                        { length: Math.max(en.length, es.length) },
+                        (_, i) => ({ en: en[i] ?? "", es: es[i] ?? "" }),
+                      ),
+                    });
+                  }}
+                />
               </section>
             ))}
             <Button

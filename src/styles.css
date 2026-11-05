@@ -1595,6 +1595,14 @@ input[type="checkbox"] {
 .ingredient-nutrition-fields {
   align-items: end;
 }
+.optional-translation {
+  margin-bottom: 18px;
+}
+.optional-translation summary {
+  cursor: pointer;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
 .ingredient-nutrition-fields input,
 .ingredient-nutrition-fields select {
   height: 3rem;
