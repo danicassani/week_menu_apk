@@ -168,3 +168,36 @@ test("goal reached offers maintenance without automatically accepting it", async
   await page.getByRole("button", { name: "Close / Cerrar" }).click();
   await expect(page.locator(".target-number")).toContainText("2,142");
 });
+
+test("menu actions stay together and planner preferences live in the person's profile", async ({
+  page,
+}) => {
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Menu", exact: true }).click();
+  expect(
+    await page
+      .getByRole("button", { name: "Suggest the week", exact: true })
+      .evaluate((el) => el.nextElementSibling?.textContent?.trim()),
+  ).toBe("Delete week");
+  await expect(page.getByLabel("Week starts on")).toHaveCount(0);
+  await expect(page.getByLabel("Variety window · days")).toHaveCount(0);
+  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Settings", exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("Week starts on").selectOption("0");
+  await expect(page.getByLabel("Week starts on")).toHaveValue("0");
+  await page.getByLabel("Variety window · days").selectOption("5");
+  await expect(page.getByLabel("Variety window · days")).toHaveValue("5");
+  await expect(
+    page.getByText(/they do not send phone notifications/),
+  ).toBeVisible();
+  await nav.getByRole("button", { name: "Menu", exact: true }).click();
+  await expect(page.locator(".day-card h2").first()).toContainText("Sunday");
+  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await expect(page.getByLabel("Variety window · days")).toHaveValue("5");
+  await page.getByLabel("View household member").selectOption("noa");
+  await expect(
+    page.getByRole("heading", { name: "Settings", exact: true }),
+  ).toHaveCount(0);
+});
