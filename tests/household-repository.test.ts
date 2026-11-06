@@ -53,6 +53,19 @@ it("loads membership before binding all data requests to the expected household 
     p_household_id: "home-a",
     p_membership_id: "member-a",
   });
+  const priorCalls = request.mock.calls.length;
+  await repo.setShoppingRange("2026-11-09", "2026-11-15");
+  expect(request.mock.calls.slice(priorCalls)).toEqual([
+    [
+      "set_shopping_date_range",
+      {
+        p_household_id: "home-a",
+        p_membership_id: "member-a",
+        p_start: "2026-11-09",
+        p_end: "2026-11-15",
+      },
+    ],
+  ]);
   await repo.saveEntry({ kind: "food", description: "Coffee", value: 90 });
   expect(request).toHaveBeenLastCalledWith(
     "save_my_daily_entry",

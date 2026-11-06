@@ -147,6 +147,7 @@ export interface Repository {
   getShopping(): Promise<ShoppingState>;
   previewShopping(start: string, end: string): Promise<ShoppingPreview>;
   applyShopping(preview: ShoppingPreview): Promise<void>;
+  setShoppingRange(start: string, end: string): Promise<void>;
   saveManualItem(
     id: string,
     label: string,

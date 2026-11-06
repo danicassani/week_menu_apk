@@ -30,6 +30,11 @@ test("saved portions automatically generate a list; range changes retain manual 
   await page.getByLabel("Through", { exact: true }).fill("2026-11-09");
   await page.getByRole("button", { name: "Apply date range" }).click();
   await expect(page.getByRole("checkbox")).toHaveCount(1);
+  await expect(
+    page.getByText("Date range applied. Shopping list updated.", {
+      exact: true,
+    }),
+  ).toBeVisible();
   await expect(manual).toBeChecked();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -41,4 +46,51 @@ test("saved portions automatically generate a list; range changes retain manual 
     path: "test-results/shopping-mobile.png",
     fullPage: true,
   });
+});
+
+test("an empty week clears the generated shopping list and stays empty after reload", async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date("2026-11-03T12:00:00Z"));
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Explore the preview", exact: true })
+    .click();
+  const nav = () => page.getByRole("navigation", { name: "Main navigation" });
+  await nav().getByRole("button", { name: "Menu", exact: true }).click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  await nav().getByRole("button", { name: "Shopping", exact: true }).click();
+  await expect(page.getByRole("checkbox").first()).toBeEnabled();
+  await page.getByLabel("From", { exact: true }).fill("2026-11-09");
+  await page.getByLabel("Through", { exact: true }).fill("2026-11-15");
+  await page
+    .getByRole("button", { name: "Apply date range", exact: true })
+    .click();
+  await expect(page.getByRole("checkbox")).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Your list starts here", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Date range applied. Shopping list updated.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.reload();
+  await nav().getByRole("button", { name: "Shopping", exact: true }).click();
+  await expect(page.getByRole("checkbox")).toHaveCount(0);
+  await expect(page.getByLabel("From", { exact: true })).toHaveValue(
+    "2026-11-09",
+  );
+  await expect(page.getByLabel("Through", { exact: true })).toHaveValue(
+    "2026-11-15",
+  );
+  await page.getByLabel("From", { exact: true }).fill("2026-11-02");
+  await page.getByLabel("Through", { exact: true }).fill("2026-11-08");
+  await page
+    .getByRole("button", { name: "Apply date range", exact: true })
+    .click();
+  await expect(page.getByRole("checkbox").first()).toBeVisible();
 });

@@ -110,6 +110,9 @@ export class SupabaseRepository implements Repository {
   getShopping() {
     return this.rpc<ShoppingState>("get_shopping_state");
   }
+  setShoppingRange(start: string, end: string) {
+    return this.rpc("set_shopping_date_range", { p_start: start, p_end: end });
+  }
   previewShopping(start: string, end: string) {
     return this.rpc<ShoppingPreview>("preview_shopping_list", {
       p_start: start,
@@ -496,6 +499,9 @@ export class PreviewRepository implements Repository {
     this.shopping = applyShoppingPreview(this.shopping, fresh);
     this.serial++;
     this.persistDemo();
+  }
+  async setShoppingRange(start: string, end: string) {
+    await this.applyShopping(await this.previewShopping(start, end));
   }
   async saveManualItem(
     id: string,
