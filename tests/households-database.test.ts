@@ -700,11 +700,47 @@ it("updates shopping in the menu transaction and deletes only editable meals of 
 
 it("resolves pinned starter content without copying household rows and isolates edits and personal presentation", async () => {
   await db.exec("reset role");
-  for (const file of [
-    "202611060009_shared_catalogue.sql",
-    "202611060010_presentation.sql",
-  ])
-    await db.exec(readFileSync("supabase/migrations/" + file, "utf8"));
+  await db.exec(
+    readFileSync(
+      "supabase/migrations/202611060009_shared_catalogue.sql",
+      "utf8",
+    ),
+  );
+  // Supabase's migration administrator is not a PostgreSQL superuser. In
+  // particular, the new function owner needs CREATE in its target schema.
+  await db.exec(`
+    create role presentation_migrator nologin nosuperuser inherit;
+    grant week_menu_executor to presentation_migrator;
+    grant usage,create on schema public to presentation_migrator;
+    grant usage,create on schema app_private to presentation_migrator with grant option;
+    revoke create on schema public from public,week_menu_executor;
+    alter table public.members owner to presentation_migrator;
+    grant trigger on public.food_items,public.saved_recipes to presentation_migrator;
+    set role presentation_migrator;
+  `);
+  await db.exec(
+    readFileSync("supabase/migrations/202611060010_presentation.sql", "utf8"),
+  );
+  await db.exec("reset role");
+  const privileges = (
+    await db.query<{
+      public_create: boolean;
+      private_create: boolean;
+      public_definer: boolean;
+      private_owner: string;
+    }>(`
+    select has_schema_privilege('week_menu_executor','public','CREATE') public_create,
+      has_schema_privilege('week_menu_executor','app_private','CREATE') private_create,
+      (select prosecdef from pg_proc where oid='public.save_my_presentation(uuid,uuid,jsonb)'::regprocedure) public_definer,
+      (select pg_get_userbyid(proowner) from pg_proc where oid='app_private.api_save_presentation(uuid,uuid,jsonb)'::regprocedure) private_owner
+  `)
+  ).rows[0];
+  expect(privileges).toEqual({
+    public_create: false,
+    private_create: false,
+    public_definer: false,
+    private_owner: "week_menu_executor",
+  });
   const fresh = crypto.randomUUID();
   await db.query(
     "insert into auth.users values($1,'starter-new@example.com',now(),'{\"provider\":\"google\"}','{}')",

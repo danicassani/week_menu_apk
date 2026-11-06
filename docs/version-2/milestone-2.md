@@ -28,3 +28,11 @@ Review on staging with two real households: preserve existing private edits/hist
 Database coverage applies the real migrations and checks common resolution in a new household with zero copied food rows, private override isolation, immutable starter writes, personal preference persistence and forged-context/invalid-payload rejection. Browser coverage exercises Large text, avatar selection and a recipe emoji on a phone viewport alongside existing menu, shopping, reading/editing and household onboarding flows. Production build, formatting and offline/PWA regression checks are run before publication.
 
 Photos, pantry, preparation-time limits and automatic translation remain deferred. Suggestion locks, swaps, copying weeks and ratings remain the next planning milestone.
+
+## Recovery: migration 10 fails with schema permission error
+
+The original migration 10 transferred a public function to `week_menu_executor`, which intentionally lacks CREATE on `public`. A hosted migration administrator without PostgreSQL superuser privileges can therefore receive `42501: permission denied for schema public`.
+
+Use the corrected migration 10 in full, as the migration administrator (`postgres` in the SQL Editor). The failed original script is transactional: it does not commit the presentation column or partially install its functions. Do not repeat migration 9 or reset household data. No manual grant on `public` is needed.
+
+The corrected RPC is a public security-invoker wrapper around a private executor-owned helper. It temporarily grants CREATE only on `app_private` to transfer helper ownership within the same transaction, then revokes CREATE before commit, following migration 6. Context and caller-only updates remain inside the private helper. The regression fixture applies migration 10 as a non-superuser and verifies that the executor has CREATE on neither schema afterward, then exercises the real presentation and cross-household checks.
