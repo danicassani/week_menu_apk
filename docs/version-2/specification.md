@@ -1,6 +1,6 @@
 # Version 2 — specification draft
 
-Status: implementation started following the user's instruction. Confirmed product decisions are recorded below; recommendations and unresolved choices are labelled separately. The [first milestone](milestone-1.md) implements household isolation and onboarding locally for review. Live migration, paid services and deployment are not part of this checkpoint. Version-one behavior remains the baseline except where this document explicitly changes it.
+Status: implementation started following the user's instruction. Confirmed product decisions are recorded below; recommendations and unresolved choices are labelled separately. The [first milestone](milestone-1.md) implements household isolation and onboarding locally for review. The [second milestone](milestone-2.md) adds the shared starter catalogue and personal presentation; the [third milestone](milestone-3.md) adds draft locks, swaps, week copies and informational ratings. Each implementation has a review checkpoint. Hosted acceptance and production rollout belong to milestone 4. Version-one behavior remains the baseline except where this document explicitly changes it.
 
 ## Budget constraint
 

@@ -3369,3 +3369,17 @@ html[data-text-size="large"] {
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;
 }
+.star-choice {
+  font-size: 1.7rem;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.star-choice[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: var(--subtle);
+}
+.recipe-rating {
+  margin: 18px 0;
+}
