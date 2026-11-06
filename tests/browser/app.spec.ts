@@ -207,14 +207,46 @@ test("personal text size and emoji preferences survive navigation", async ({
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const nav = page.getByRole("navigation", { name: "Mobile navigation" });
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "View household member", exact: true })
+    .selectOption("noa");
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
+  await expect(
+    page.getByRole("combobox", { name: "View household member", exact: true }),
+  ).toHaveValue("alex");
   await page
     .getByRole("combobox", { name: "Text size", exact: true })
     .selectOption("large");
   await expect(page.locator("html")).toHaveAttribute("data-text-size", "large");
-  await page
-    .getByRole("combobox", { name: "Your avatar", exact: true })
-    .selectOption("🐱");
+  await expect(
+    page.getByRole("combobox", { name: "Your avatar", exact: true }),
+  ).toHaveCount(0);
+  const avatar = page.getByRole("button", {
+    name: "Change my avatar",
+    exact: true,
+  });
+  await avatar.click();
+  const picker = page.getByRole("dialog", {
+    name: "Choose your avatar",
+    exact: true,
+  });
+  const cells = picker.locator(".emoji-choice");
+  expect(await cells.count()).toBeGreaterThan(10);
+  const first = await cells.nth(0).boundingBox(),
+    second = await cells.nth(1).boundingBox();
+  expect(first!.width).toBeGreaterThanOrEqual(44);
+  expect(first!.height).toBeGreaterThanOrEqual(44);
+  expect(first!.y).toBe(second!.y);
+  expect(first!.x).toBeLessThan(second!.x);
+  await page.screenshot({ path: "test-results/avatar-grid-mobile.png" });
+  await picker.getByRole("button", { name: "Choose 🐱", exact: true }).click();
+  await expect(picker).toHaveCount(0);
+  await expect(avatar).toBeFocused();
+  await expect(
+    page.getByRole("button", { name: "Open my profile", exact: true }),
+  ).toContainText("🐱");
   await nav.getByRole("button", { name: "Recipes", exact: true }).click();
   await page
     .getByRole("button", { name: "New ingredient", exact: true })
@@ -240,7 +272,32 @@ test("personal text size and emoji preferences survive navigation", async ({
     ),
   ).toBe(true);
   await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await expect(avatar).toContainText("🐱");
+  await page
+    .getByRole("combobox", { name: "View household member", exact: true })
+    .selectOption("noa");
+  await expect(avatar).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
+  await avatar.click();
   await expect(
-    page.getByRole("combobox", { name: "Your avatar", exact: true }),
-  ).toHaveValue("🐱");
+    picker.getByRole("button", { name: "Choose 🐱", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("Escape");
+  await expect(picker).toHaveCount(0);
+  await expect(avatar).toBeFocused();
+  await page
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Cambiar mi avatar", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "Elige tu avatar", exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Elegir 🦊", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Abrir mi perfil", exact: true }),
+  ).toContainText("🦊");
 });

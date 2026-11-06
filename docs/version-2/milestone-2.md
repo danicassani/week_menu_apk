@@ -8,7 +8,7 @@ Status: implemented for review. Hosted Supabase migrations and deployment have n
 - Existing content write RPCs retain revision checks and write only private overrides. Nutrition calculations, historical snapshots and shopping reconciliation retain their existing behavior. Future starter releases need a separate reviewed adoption flow; there is no automatic update.
 - Text uses relative units with 17 px Standard and 19 px Large roots. The personal setting appears under Profile → Settings. Browser zoom remains available.
 - Native emoji defaults and an optional bounded picker appear on recipe/ingredient cards and in their editor. There are no photos, media buckets or external emoji assets.
-- Each member can choose their own emoji avatar in Profile → Settings. Avatars appear in the member selector, header and household/profile member displays. Names remain visible.
+- Each member can click their own avatar in Profile to choose an emoji from a grid dialog. The header avatar opens the signed-in person’s Profile, even when viewing someone else. The former avatar dropdown has been removed from Settings. Avatars appear in the member selector, header and household/profile member displays. Names remain visible.
 - Presentation preferences have a separate member field/RPC, outside calorie-profile inputs. The RPC resolves the caller and validates the expected household/membership. Owners cannot use it to change another person's settings. Server validation rejects arbitrary emoji text; cached presentation is cleared by the existing scoped sign-out/revocation purge.
 - Saved offline catalogue views retain content emojis and member avatars/text preferences. No new health data is added to offline storage.
 

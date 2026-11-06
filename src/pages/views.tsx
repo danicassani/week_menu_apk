@@ -1,3 +1,4 @@
+import { AvatarPicker } from "../components/avatar-picker";
 import { PlannerSettings } from "../components/planner-settings";
 import { MealSnapshotView } from "./planner";
 import type { MealPlan } from "../domain/planning";
@@ -996,9 +997,13 @@ export function ProfileView(
       <div className="profile-grid">
         <section className="panel profile-summary">
           <div className="profile-heading">
-            <span aria-hidden="true" className="avatar large">
-              {v.member.presentation?.avatar ?? v.member.name.charAt(0)}
-            </span>
+            {v.own ? (
+              <AvatarPicker {...v} />
+            ) : (
+              <span aria-hidden="true" className="avatar large">
+                {v.member.presentation?.avatar ?? v.member.name.charAt(0)}
+              </span>
+            )}
             <div>
               <h2>{v.member.name}</h2>
               <p>

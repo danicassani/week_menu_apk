@@ -3321,3 +3321,41 @@ html[data-text-size] {
 html[data-text-size="large"] {
   font-size: 19px;
 }
+
+.avatar-profile-link {
+  min-width: 44px;
+  min-height: 44px;
+}
+.avatar-picker-trigger {
+  position: relative;
+}
+.avatar-picker-trigger::after {
+  content: "✎";
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  width: 24px;
+  height: 24px;
+  font-size: 0.875rem;
+}
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+  gap: 8px;
+}
+.emoji-choice {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px;
+  font-size: 1.65rem;
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+.emoji-choice:hover,
+.emoji-choice[aria-pressed="true"] {
+  background: var(--subtle);
+  border-color: var(--ink);
+}

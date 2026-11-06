@@ -1,4 +1,3 @@
-import { EMOJIS } from "../domain/presentation";
 import { useState } from "react";
 import { Button } from "./ui";
 import { translator } from "../lib/i18n";
@@ -36,27 +35,6 @@ export function PlannerSettings(v: ViewProps) {
           >
             <option value="standard">{t("Standard", "Normal")}</option>
             <option value="large">{t("Large", "Grande")}</option>
-          </select>
-        </label>
-        <label>
-          {t("Your avatar", "Tu avatar")}
-          <select
-            disabled={v.busy}
-            value={v.member.presentation?.avatar ?? "🧑"}
-            onChange={(e) =>
-              void v.operate(() =>
-                v.repository.savePresentation({
-                  avatar: e.target.value,
-                  text_size: v.member.presentation?.text_size ?? "standard",
-                }),
-              )
-            }
-          >
-            {EMOJIS.map((emoji) => (
-              <option key={emoji} value={emoji}>
-                {emoji}
-              </option>
-            ))}
           </select>
         </label>
       </div>

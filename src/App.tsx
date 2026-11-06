@@ -950,9 +950,19 @@ function Workspace({
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>
             <div className="topbar-divider" />
-            <span aria-hidden="true" className="avatar small">
-              {me.presentation?.avatar ?? me.name.charAt(0)}
-            </span>
+            <button
+              type="button"
+              className="avatar small avatar-profile-link"
+              aria-label={t("Open my profile", "Abrir mi perfil")}
+              onClick={() => {
+                setSelected(me.id);
+                navigate("profile");
+              }}
+            >
+              <span aria-hidden="true">
+                {me.presentation?.avatar ?? me.name.charAt(0)}
+              </span>
+            </button>
           </div>
         </header>
         {repo.mode === "preview" && (
