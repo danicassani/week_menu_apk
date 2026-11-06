@@ -348,9 +348,18 @@ export function Planner(v: ViewProps) {
                       {mealLabel(type, v.language)}
                     </span>
                     <h3>
-                      {p
-                        ? name(p.name, v.language)
-                        : t("Not planned", "Sin planificar")}
+                      {p && plan && !p.eating_out ? (
+                        <button
+                          className="meal-recipe-link"
+                          onClick={() => setInspection(plan)}
+                        >
+                          {name(p.name, v.language)}
+                        </button>
+                      ) : p ? (
+                        name(p.name, v.language)
+                      ) : (
+                        t("Not planned", "Sin planificar")
+                      )}
                     </h3>
                     {p && (
                       <>
@@ -362,7 +371,7 @@ export function Planner(v: ViewProps) {
                               ? t("With dessert", "Con postre")
                               : t("At home", "En casa")}
                         </p>
-                        {p.warnings.length > 0 && (
+                        {!closed(v, day) && p.warnings.length > 0 && (
                           <span className="pill">
                             {t(
                               "Review portions / substitutions",
@@ -372,12 +381,16 @@ export function Planner(v: ViewProps) {
                         )}
                       </>
                     )}
-                    {closed(v, day) && plan && (
+                    {plan && (
                       <button
                         className="text-link"
                         onClick={() => setInspection(plan)}
                       >
-                        {t("View recorded meal", "Ver comida registrada")}
+                        {closed(v, day)
+                          ? t("View recorded meal", "Ver comida registrada")
+                          : p && !p.eating_out
+                            ? t("View recipe", "Ver receta")
+                            : t("View meal", "Ver comida")}
                       </button>
                     )}
                     {!closed(v, day) && (

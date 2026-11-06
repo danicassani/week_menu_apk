@@ -3359,3 +3359,13 @@ html[data-text-size="large"] {
   background: var(--subtle);
   border-color: var(--ink);
 }
+
+.meal-recipe-link {
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  padding: 0;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}

@@ -343,3 +343,81 @@ test("recipe cards open a reader and editing requires an explicit action", async
     ),
   ).toBe(true);
 });
+
+test("saved future recipes can be read and closed days hide portion prompts and editing", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const menu = () =>
+    page
+      .getByRole("navigation", { name: "Mobile navigation" })
+      .getByRole("button", { name: "Menu", exact: true })
+      .click();
+  await menu();
+  await page
+    .getByRole("button", { name: "Suggest the week", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  // Ensure this regression actually exercises a stored portion warning.
+  await page.evaluate(() => {
+    const saved = JSON.parse(sessionStorage.getItem("week-menu-demo-server")!);
+    for (const meal of saved.library.plans)
+      for (const portion of meal.portions)
+        portion.warnings = ["review_portions"];
+    sessionStorage.setItem("week-menu-demo-server", JSON.stringify(saved));
+  });
+  await page.reload();
+  await menu();
+  const day = page.locator(".day-card").nth(2); // Wednesday, after the frozen Tuesday.
+  const recipe = day.locator(".meal-recipe-link").first();
+  const title = await recipe.innerText();
+  await expect(
+    day.getByText("Review portions / substitutions", { exact: true }).first(),
+  ).toBeVisible();
+  await recipe.click();
+  const reader = page.getByRole("dialog");
+  await expect(reader).toContainText(title);
+  await expect(reader.locator(".ingredient-list li").first()).toBeVisible();
+  await expect(reader.locator(".instructions li").first()).toBeVisible();
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  const instructions = await reader.locator(".instructions").allTextContents();
+  await page.keyboard.press("Escape");
+  await day
+    .getByRole("button", { name: "View recipe", exact: true })
+    .first()
+    .click();
+  expect(await reader.locator(".instructions").allTextContents()).toEqual(
+    instructions,
+  );
+  await page.keyboard.press("Escape");
+  await page.clock.setFixedTime(new Date("2026-11-06T12:00:00Z"));
+  await page.reload();
+  await menu();
+  await expect(day.getByText("Locked", { exact: true })).toBeVisible();
+  await expect(
+    day.getByText("Review portions / substitutions", { exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    day.getByRole("button", { name: "Review meal", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    day.getByRole("button", { name: "Preview another recipe", exact: true }),
+  ).toHaveCount(0);
+  await day
+    .getByRole("button", { name: "View recorded meal", exact: true })
+    .first()
+    .click();
+  expect(await reader.locator(".instructions").allTextContents()).toEqual(
+    instructions,
+  );
+  await page.keyboard.press("Escape");
+  await page
+    .locator(".day-card")
+    .nth(5)
+    .getByRole("button", { name: "View recipe", exact: true })
+    .first()
+    .click();
+  await expect(reader.locator(".instructions li").first()).toBeVisible();
+});
