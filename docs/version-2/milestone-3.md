@@ -4,6 +4,8 @@ Implemented for review. No hosted SQL or deployment has been performed.
 
 ## Planning controls
 
+Preview actions use compact icon buttons: open/closed padlocks toggle locks, circular arrows re-roll/regenerate, up/down arrows select a swap, X cancels it and the final check saves the reviewed menu. Labels remain available through tooltips and assistive technology. Breakfast controls sit beside each person; shared controls sit beside the meal heading.
+
 - Preview suggestions have shared-meal locks and individual breakfast locks. Regenerate unlocked preserves locked portions, while failed alternative searches retain the original choice and show a notice. Locks are temporary draft controls; they do not alter historical date locks or survive a new generation.
 - Select Swap suggestion, then Swap here on another draft slot. Shared lunches/dinners can swap when both recipes support the destination types; a breakfast swaps only the signed-in person's portion. Other breakfasts remain unchanged. Locked slots must be unlocked first. Destination portions are rebuilt using accepted budgets/overrides, active members, dietary exclusions, current catalogue nutrition and conversions, and dessert choices. Variety is checked against the resulting draft plus retained saved neighbors. Failure preserves the draft.
 - Copy a week accepts a source date (normalized using the household's week-start preference) and previews choices for the displayed destination week. Everyone's known breakfasts and shared meals are included. Existing destinations stay by default; the existing replacement checkbox explicitly opts into replacement. Closed destinations remain unchanged. Logs and targets are never copied, and the source week is never modified.

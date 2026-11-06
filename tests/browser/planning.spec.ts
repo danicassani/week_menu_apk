@@ -537,3 +537,112 @@ test("recipe stars save one informational rating without opening the editor", as
     page.getByRole("dialog").locator("input,textarea,select"),
   ).toHaveCount(0);
 });
+
+for (const lang of ["en", "es"] as const) {
+  test(`${lang}: compact preview uses accessible icon actions and toggles padlocks`, async ({
+    page,
+  }) => {
+    const t = (en: string, es: string) => (lang === "en" ? en : es);
+    await page.setViewportSize({ width: 390, height: 844 });
+    if (lang === "es")
+      await page
+        .getByRole("button", { name: "Switch language", exact: true })
+        .click();
+    if (lang === "es")
+      await page
+        .getByRole("button", { name: "Cambiar tema", exact: true })
+        .click();
+    await page
+      .getByRole("navigation", {
+        name: t("Mobile navigation", "Navegación móvil"),
+      })
+      .getByRole("button", { name: t("Menu", "Menú"), exact: true })
+      .click();
+    await page
+      .getByRole("button", {
+        name: t("Suggest the week", "Sugerir la semana"),
+        exact: true,
+      })
+      .click();
+    const reader = page.getByRole("dialog");
+    const actions = reader.locator(".preview-action");
+    expect(await actions.count()).toBeGreaterThan(20);
+    expect(
+      (await actions.allTextContents()).every((text) => text.trim() === ""),
+    ).toBe(true);
+    const breakfast = page
+      .locator(".preview-meal")
+      .filter({
+        has: page.getByRole("button", {
+          name: t("Re-roll my breakfast", "Volver a sugerir mi desayuno"),
+          exact: true,
+        }),
+      })
+      .first();
+    const portions = breakfast.locator(".preview-portion");
+    await expect(portions.nth(0).locator(".preview-action")).toHaveCount(3);
+    await expect(portions.nth(1).locator(".preview-action")).toHaveCount(1);
+    const lock = portions.first().getByRole("button", {
+      name: t("Lock breakfast", "Bloquear desayuno"),
+      exact: true,
+    });
+    await expect(lock.locator(".lucide-lock-open")).toHaveCount(1);
+    const box = await lock.boundingBox();
+    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+    await lock.click();
+    const unlock = portions.first().getByRole("button", {
+      name: t("Unlock breakfast", "Desbloquear desayuno"),
+      exact: true,
+    });
+    await expect(unlock).toHaveAttribute("aria-pressed", "true");
+    await expect(unlock.locator(".lucide-lock")).toHaveCount(1);
+    await expect(unlock).toHaveAttribute(
+      "title",
+      t("Unlock breakfast", "Desbloquear desayuno"),
+    );
+    await expect(
+      breakfast.getByRole("button", {
+        name: t("Re-roll my breakfast", "Volver a sugerir mi desayuno"),
+        exact: true,
+      }),
+    ).toBeDisabled();
+    await page.screenshot({ path: `test-results/compact-preview-${lang}.png` });
+    await unlock.click();
+    await breakfast
+      .getByRole("button", {
+        name: t("Swap suggestion", "Intercambiar sugerencia"),
+        exact: true,
+      })
+      .click();
+    const cancel = breakfast.getByRole("button", {
+      name: t("Cancel selected swap", "Cancelar intercambio seleccionado"),
+      exact: true,
+    });
+    await expect(cancel).toHaveAttribute("aria-pressed", "true");
+    await expect(cancel.locator(".lucide-arrow-down-up")).toHaveCount(1);
+    await cancel.click();
+    await expect(
+      page.getByRole("button", {
+        name: t("Swap here", "Intercambiar aquí"),
+        exact: true,
+      }),
+    ).toHaveCount(0);
+    await expect(
+      page
+        .getByRole("button", {
+          name: t(
+            "Approve suggestions & save",
+            "Aprobar sugerencias y guardar",
+          ),
+          exact: true,
+        })
+        .locator(".lucide-check"),
+    ).toHaveCount(1);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+  });
+}
