@@ -31,3 +31,9 @@ The date-range button now uses `set_shopping_date_range` once instead of a previ
 Apply [migration 12](../../supabase/migrations/202611060012_shopping_date_range.sql) once, after migrations 6–11 and before deploying this client. It adds only an authenticated, context-bound API and a private helper owned by the existing RLS-restricted executor. It does not change household tables or broaden their write grants. Existing preview/apply APIs remain available for older clients.
 
 The reported production connection message could not be reproduced without the affected session; the existing empty-range reconciliation passed the final-schema SQL reproduction. This change removes the legacy two-request path and its inter-request concurrency window. Regression tests cover an empty range with/without manual additions, persistence across reload, return to populated dates, invalid dates, forged contexts and access denial.
+
+## Daily meal budgets and shopping feedback
+
+The daily budget dialog shows breakfast, lunch and dinner as three labeled number fields on one row, including on phones. It preloads the selected date's overrides or accepted personal defaults. One save applies only changed fields through the existing individual-budget API; a blank field restores that meal's default. Use defaults removes that date's overrides. Changing dates loads the corresponding values; existing meal portions still require manual review. No new SQL migration is required.
+
+Unknown errors while applying a shopping range now say that the list could not be updated for that interval. Known errors retain their specific explanation, including invalid ranges, access changes and a changed menu/list requiring the date range to be applied again. Shopping synchronization also uses action-specific wording. These messages describe the failed action without assuming a connectivity cause.

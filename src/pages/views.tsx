@@ -40,7 +40,12 @@ import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
 
 export type ViewProps = {
   repository: import("../domain/types").Repository;
-  operate: (task: () => Promise<void>, success?: string) => Promise<boolean>;
+  operate: (
+    task: () => Promise<void>,
+    success?: string,
+    load?: boolean,
+    failure?: string,
+  ) => Promise<boolean>;
   s: HouseholdState;
   member: Member;
   language: Language;
@@ -407,8 +412,8 @@ export function Dashboard(v: ViewProps) {
               <button
                 className="icon-button"
                 aria-label={t(
-                  "Adjust a meal budget",
-                  "Ajustar presupuesto de una comida",
+                  "Adjust meal budgets",
+                  "Ajustar presupuestos de las comidas",
                 )}
                 onClick={() => v.openBudget()}
               >

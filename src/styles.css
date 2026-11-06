@@ -1603,6 +1603,28 @@ input[type="checkbox"] {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
+.meal-budget-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.meal-budget-fields label,
+.meal-budget-fields input {
+  min-width: 0;
+}
+.meal-budget-fields label {
+  overflow-wrap: anywhere;
+}
+.meal-budget-fields input {
+  padding-inline: 8px;
+  appearance: textfield;
+  font-variant-numeric: tabular-nums;
+}
+.meal-budget-fields input::-webkit-inner-spin-button,
+.meal-budget-fields input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 .ingredient-nutrition-fields {
   align-items: end;
 }
