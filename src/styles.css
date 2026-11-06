@@ -20,7 +20,7 @@
   font-synthesis: none;
   color: #252525;
   background: #f7f7f5;
-  font-size: 14px;
+  font-size: 16px;
   --bg: #f7f7f5;
   --surface: #fff;
   --subtle: #f3f3f1;
@@ -108,12 +108,12 @@ h1 {
   line-height: 1.3;
 }
 h2 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   font-weight: 750;
   letter-spacing: -0.45px;
 }
 h3 {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   line-height: 1.55;
 }
@@ -157,7 +157,7 @@ select {
   top: 10px;
 }
 .eyebrow {
-  font-size: 10px;
+  font-size: 0.625rem;
   letter-spacing: 1.45px;
   text-transform: uppercase;
   font-weight: 650;
@@ -165,12 +165,12 @@ select {
 }
 .muted {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.7;
 }
 .fine-print {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   line-height: 1.7;
 }
 .button {
@@ -186,7 +186,7 @@ select {
   font-weight: 550;
   line-height: 1.4;
   min-height: 43px;
-  font-size: 12px;
+  font-size: 0.75rem;
   transition:
     opacity 0.15s,
     transform 0.15s;
@@ -232,7 +232,7 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--ink);
   padding: 4px 0;
@@ -252,7 +252,7 @@ select {
   gap: 10px;
   text-decoration: none;
   font-family: "Manrope Variable", sans-serif;
-  font-size: 21px;
+  font-size: 1.3125rem;
   font-weight: 800;
   letter-spacing: -1px;
 }
@@ -270,7 +270,7 @@ select {
   border-radius: 10px;
   font-family: "Manrope Variable", sans-serif;
   font-weight: 800;
-  font-size: 25px;
+  font-size: 1.5625rem;
   letter-spacing: -2px;
   padding-bottom: 4px;
 }
@@ -284,7 +284,7 @@ select {
   justify-content: center;
   background: var(--subtle);
   border: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 650;
 }
 .avatar.small {
@@ -294,12 +294,12 @@ select {
 .avatar.large {
   height: 58px;
   width: 58px;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .pill {
   display: inline-flex;
   align-items: center;
-  font-size: 9px;
+  font-size: 0.5625rem;
   padding: 4px 7px;
   border: 1px solid var(--line);
   border-radius: 4px;
@@ -350,18 +350,18 @@ select {
   place-items: center;
 }
 .household-badge b {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 600;
   display: block;
 }
 .household-badge div > span {
   display: block;
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
   margin-top: 4px;
 }
 .nav-eyebrow {
-  font-size: 8px;
+  font-size: 0.5rem;
   letter-spacing: 1.8px;
   font-weight: 600;
   color: var(--soft);
@@ -382,7 +382,7 @@ select {
   border-radius: 6px;
   color: var(--muted);
   text-align: left;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 .nav-item:hover {
@@ -409,7 +409,7 @@ select {
   padding: 15px;
   border-radius: 8px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .sidebar-tip p {
   margin-top: 7px;
@@ -420,7 +420,7 @@ select {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   padding: 20px 10px 0;
 }
 .signout:hover {
@@ -442,7 +442,7 @@ select {
   display: flex;
   align-items: center;
   gap: 13px;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
 }
 .breadcrumb b {
@@ -458,12 +458,12 @@ select {
   gap: 8px;
 }
 .today-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   margin-right: 14px;
 }
 .language-label {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--ink);
   font-weight: 600;
 }
@@ -485,7 +485,7 @@ select {
   padding: 7px 40px;
   border-bottom: 1px solid var(--line);
   background: var(--subtle);
-  font-size: 9px;
+  font-size: 0.5625rem;
   letter-spacing: 0.3px;
   color: var(--muted);
 }
@@ -505,7 +505,7 @@ select {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 9px;
+  font-size: 0.5625rem;
   padding: 0;
   color: var(--muted);
 }
@@ -522,7 +522,7 @@ select {
   margin-bottom: 23px;
 }
 .member-selector-row > .eyebrow {
-  font-size: 8px;
+  font-size: 0.5rem;
   letter-spacing: 1.8px;
   color: var(--soft);
 }
@@ -530,7 +530,7 @@ select {
   display: flex !important;
   align-items: center;
   gap: 8px;
-  font-size: 10px !important;
+  font-size: 0.625rem !important;
   margin: 0 !important;
   color: var(--muted) !important;
 }
@@ -541,7 +541,7 @@ select {
   padding: 6px 0 !important;
   margin: 0 !important;
   width: auto !important;
-  font-size: 10px !important;
+  font-size: 0.625rem !important;
   color: var(--ink);
   font-weight: 550;
 }
@@ -556,7 +556,7 @@ select {
   gap: 8px;
   padding: 12px;
   margin-bottom: 22px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
 }
 .page-heading {
@@ -569,17 +569,17 @@ select {
 .page-heading .eyebrow {
   display: block;
   margin-bottom: 8px;
-  font-size: 8px;
+  font-size: 0.5rem;
   letter-spacing: 1.7px;
 }
 .page-heading p {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   margin-top: 9px;
 }
 .date-mark {
   text-align: right;
-  font-size: 10px;
+  font-size: 0.625rem;
   border-left: 1px solid var(--line);
   padding-left: 22px;
 }
@@ -589,7 +589,7 @@ select {
   display: block;
 }
 .date-mark b {
-  font-size: 21px;
+  font-size: 1.3125rem;
   font-family: "Manrope Variable", sans-serif;
   font-weight: 650;
   letter-spacing: -0.6px;
@@ -607,7 +607,7 @@ select {
   margin-bottom: 24px;
 }
 .setup-card p {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   margin-top: 5px;
 }
@@ -635,7 +635,7 @@ select {
 .target-card-heading .eyebrow {
   color: inherit;
   opacity: 0.6;
-  font-size: 9px;
+  font-size: 0.5625rem;
   letter-spacing: 1.7px;
 }
 .target-card-heading svg {
@@ -643,7 +643,7 @@ select {
 }
 .target-number {
   font-family: "Manrope Variable", sans-serif;
-  font-size: 48px;
+  font-size: 3rem;
   letter-spacing: -2px;
   font-weight: 600;
   line-height: 1.2;
@@ -651,14 +651,14 @@ select {
 }
 .target-number > span {
   font-family: "DM Sans Variable", sans-serif;
-  font-size: 13px;
+  font-size: 0.8125rem;
   letter-spacing: 0;
   opacity: 0.6;
   margin-left: 9px;
   font-weight: 400;
 }
 .target-card > p {
-  font-size: 10px;
+  font-size: 0.625rem;
   opacity: 0.55;
   margin-top: 4px;
 }
@@ -679,7 +679,7 @@ select {
   display: flex;
   justify-content: space-between;
   margin-top: 10px;
-  font-size: 9px;
+  font-size: 0.5625rem;
   gap: 7px;
   opacity: 0.65;
 }
@@ -711,14 +711,14 @@ select {
   color: var(--ink);
 }
 .number-cell > span {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   margin: 15px 0 8px;
 }
 .number-cell > strong {
   font-family: "Manrope Variable", sans-serif;
   font-weight: 650;
-  font-size: 27px;
+  font-size: 1.6875rem;
   letter-spacing: -0.8px;
   white-space: nowrap;
 }
@@ -732,7 +732,7 @@ select {
   margin-left: 5px;
 }
 .number-cell > p {
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
   margin-top: 7px;
 }
@@ -749,7 +749,7 @@ select {
   margin-bottom: 18px;
 }
 .section-title p {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   margin-top: 6px;
 }
@@ -780,14 +780,14 @@ select {
   align-items: center;
   gap: 7px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 0.5625rem;
 }
 .meal-card-top .pill {
-  font-size: 7px;
+  font-size: 0.4375rem;
   padding: 3px 5px;
 }
 .meal-card h3 {
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.65;
   letter-spacing: -0.15px;
   margin-bottom: 13px;
@@ -799,13 +799,13 @@ select {
   justify-content: space-between;
   margin-top: auto;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 0.5625rem;
   gap: 4px;
 }
 .meal-card-bottom b {
   font-weight: 550;
   color: var(--ink);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .meal-card-bottom .icon-button {
   padding: 0;
@@ -833,7 +833,7 @@ select {
   gap: 10px;
 }
 .budget-strip .eyebrow {
-  font-size: 7px;
+  font-size: 0.4375rem;
   letter-spacing: 1.5px;
 }
 .budget-values {
@@ -841,7 +841,7 @@ select {
   flex-wrap: wrap;
   gap: 18px;
   margin-top: 8px;
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
 }
 .budget-values b {
@@ -852,7 +852,7 @@ select {
 .planning-note {
   display: flex;
   gap: 8px;
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
   padding: 14px 2px 28px;
   line-height: 1.8;
@@ -881,12 +881,12 @@ select {
   background: var(--subtle);
 }
 .week-glance button > span {
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
   text-transform: capitalize;
 }
 .week-glance button > b {
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 550;
   margin-top: 9px;
 }
@@ -926,7 +926,7 @@ select {
   margin-bottom: 16px;
 }
 .log-panel h2 {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .quick-actions {
   display: flex;
@@ -940,7 +940,7 @@ select {
   justify-content: center;
   border: 1px solid var(--line);
   border-radius: 5px;
-  font-size: 9px;
+  font-size: 0.5625rem;
   padding: 8px 7px;
   flex: 1;
 }
@@ -966,11 +966,11 @@ select {
   color: var(--muted);
 }
 .log-empty h3 {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 .log-empty p {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   line-height: 1.9;
   margin: 7px auto 0;
@@ -1006,7 +1006,7 @@ select {
   min-width: 0;
 }
 .entry b {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 550;
   line-height: 1.6;
   display: block;
@@ -1015,7 +1015,7 @@ select {
 .entry span:not(.entry-icon) {
   display: block;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 0.5625rem;
   margin-top: 3px;
 }
 .entry-actions {
@@ -1044,11 +1044,11 @@ select {
   width: 37px;
 }
 .shopping-shortcut h3 {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 650;
 }
 .shopping-shortcut p {
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
   margin-top: 3px;
 }
@@ -1062,12 +1062,12 @@ select {
   padding: 0 9px;
 }
 .quiet-note .eyebrow {
-  font-size: 7px;
+  font-size: 0.4375rem;
   letter-spacing: 1.5px;
 }
 .quiet-note p {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 0.625rem;
   line-height: 1.85;
   margin-top: 9px;
 }
@@ -1079,7 +1079,7 @@ select {
   margin-top: 45px;
   padding: 19px 0 25px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 0.5rem;
 }
 .footer-dot {
   margin: 0 6px;
@@ -1094,7 +1094,7 @@ select {
 }
 .week-toolbar h2 {
   font-family: "DM Sans Variable", sans-serif;
-  font-size: 13px;
+  font-size: 0.8125rem;
   letter-spacing: 0;
   font-weight: 550;
 }
@@ -1126,12 +1126,12 @@ select {
   gap: 12px;
 }
 .day-card-heading > div > span:first-child {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   text-transform: capitalize;
 }
 .day-card-heading b {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 400;
   color: var(--muted);
 }
@@ -1173,10 +1173,10 @@ select {
   width: auto !important;
   min-width: 140px;
   margin: 0 !important;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 .result-count {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   margin-bottom: 20px;
 }
@@ -1223,7 +1223,7 @@ select {
   top: 17px;
   left: 18px;
   color: var(--soft);
-  font-size: 10px;
+  font-size: 0.625rem;
   letter-spacing: 1px;
 }
 .recipe-art .pill {
@@ -1231,14 +1231,14 @@ select {
   bottom: 11px;
   right: 11px;
   background: var(--surface);
-  font-size: 8px;
+  font-size: 0.5rem;
   border: 0;
 }
 .recipe-card-content {
   padding: 18px;
 }
 .recipe-card h3 {
-  font-size: 13px;
+  font-size: 0.8125rem;
   min-height: 42px;
   line-height: 1.65;
 }
@@ -1246,7 +1246,7 @@ select {
   display: flex;
   justify-content: space-between;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 0.625rem;
   gap: 6px;
   margin-top: 14px;
 }
@@ -1256,7 +1256,7 @@ select {
   align-items: center;
 }
 .recipe-card .fine-print {
-  font-size: 8px;
+  font-size: 0.5rem;
   margin-top: 7px;
 }
 .collection-mark {
@@ -1267,12 +1267,12 @@ select {
 }
 .collection-mark b {
   font-family: "Manrope Variable", sans-serif;
-  font-size: 30px;
+  font-size: 1.875rem;
   color: var(--ink);
   letter-spacing: -1px;
 }
 .collection-mark > span {
-  font-size: 9px;
+  font-size: 0.5625rem;
   max-width: 50px;
   line-height: 1.6;
 }
@@ -1286,7 +1286,7 @@ select {
   margin-bottom: 20px;
 }
 .recipe-detail-summary > span {
-  font-size: 11px;
+  font-size: 0.6875rem;
   padding: 8px 11px;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -1310,7 +1310,7 @@ select {
   border-bottom: 1px solid var(--line);
   gap: 20px;
   padding: 9px 0;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .ingredient-list b {
   font-weight: 550;
@@ -1318,7 +1318,7 @@ select {
 }
 .instructions {
   padding-left: 20px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
   line-height: 1.9;
 }
@@ -1331,7 +1331,7 @@ select {
   background: var(--subtle);
   border-radius: 6px;
   margin-top: 12px;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .preparation p {
   margin-top: 8px;
@@ -1360,12 +1360,12 @@ select {
   color: var(--muted);
 }
 .empty h3 {
-  font-size: 18px;
+  font-size: 1.125rem;
   letter-spacing: -0.5px;
 }
 .empty p {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.75rem;
   margin-top: 10px;
 }
 .empty .button {
@@ -1383,7 +1383,7 @@ select {
   margin-bottom: 27px;
 }
 .profile-heading p {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   margin-top: 5px;
 }
@@ -1398,11 +1398,11 @@ select {
   gap: 7px;
 }
 .profile-facts span {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
 }
 .profile-facts b {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 550;
 }
 .preference-tags {
@@ -1413,7 +1413,7 @@ select {
 }
 .profile-target {
   font-family: "Manrope Variable", sans-serif;
-  font-size: 40px;
+  font-size: 2.5rem;
   font-weight: 650;
   letter-spacing: -1.5px;
   margin-top: 22px;
@@ -1434,7 +1434,7 @@ select {
   justify-content: space-between;
   border-bottom: 1px solid var(--line);
   padding: 12px 0;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
 }
 .default-budgets b {
@@ -1462,11 +1462,11 @@ select {
 }
 .member-row b {
   font-weight: 550;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .member-row div > span {
   display: block;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   margin-top: 4px;
 }
@@ -1482,12 +1482,12 @@ select {
   padding: 20px 0;
 }
 .approved-emails h3 {
-  font-size: 11px;
+  font-size: 0.6875rem;
   margin-bottom: 10px;
 }
 .approved-emails > span {
   display: block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   line-height: 2;
   overflow-wrap: anywhere;
@@ -1500,7 +1500,7 @@ select {
   gap: 10px;
   color: var(--muted);
   padding: 20px 0 5px;
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .household-footer svg {
   margin-top: 3px;
@@ -1539,7 +1539,7 @@ select {
   border-bottom: 1px solid var(--line);
 }
 .modal-header h2 {
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.6;
 }
 .modal-body {
@@ -1551,7 +1551,7 @@ select {
 }
 label {
   display: block;
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 500;
   color: var(--ink);
   margin-bottom: 18px;
@@ -1567,7 +1567,7 @@ select {
   display: block;
   margin-top: 8px;
   min-height: 42px;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 input::placeholder {
   color: var(--soft);
@@ -1580,7 +1580,7 @@ input[type="checkbox"] {
 }
 .form-intro {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 0.75rem;
   margin-bottom: 25px;
 }
 .form-grid {
@@ -1614,7 +1614,7 @@ input[type="checkbox"] {
   }
 }
 .form-grid.three label {
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .input-unit {
   position: relative;
@@ -1627,7 +1627,7 @@ input[type="checkbox"] {
   right: 11px;
   top: 14px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 0.625rem;
   pointer-events: none;
 }
 .rule {
@@ -1653,7 +1653,7 @@ form > .muted {
   align-items: center;
   gap: 9px;
   margin: 0;
-  font-size: 11px;
+  font-size: 0.6875rem;
   padding: 8px 0;
   font-weight: 400;
 }
@@ -1665,7 +1665,7 @@ form > .muted {
   background: var(--subtle);
   padding: 13px 14px;
   border-radius: 7px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   line-height: 1.8;
   margin: 15px 0;
@@ -1693,11 +1693,11 @@ form > .muted {
 .target-proposal .eyebrow {
   color: inherit;
   opacity: 0.65;
-  font-size: 9px;
+  font-size: 0.5625rem;
 }
 .target-proposal strong {
   font-family: "Manrope Variable", sans-serif;
-  font-size: 43px;
+  font-size: 2.6875rem;
   letter-spacing: -1px;
   font-weight: 650;
   margin: 12px 0 6px;
@@ -1712,7 +1712,7 @@ form > .muted {
 }
 .target-proposal > span:last-child {
   opacity: 0.65;
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .calculation {
   margin: 15px 0 28px;
@@ -1721,7 +1721,7 @@ form > .muted {
   display: flex;
   justify-content: space-between;
   gap: 15px;
-  font-size: 10px;
+  font-size: 0.625rem;
   padding: 11px 0;
   border-bottom: 1px solid var(--line);
   color: var(--muted);
@@ -1747,7 +1747,7 @@ form > .muted {
   box-shadow: 0 5px 35px #0003;
   border: 1px solid var(--line);
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .toast > span {
   line-height: 1.65;
@@ -1772,12 +1772,12 @@ form > .muted {
   gap: 25px;
 }
 .loading-screen p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
   max-width: 450px;
 }
 .loading-screen h1 {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 .spin {
   animation: spin 1s linear infinite;
@@ -1806,7 +1806,7 @@ form > .muted {
   padding: 65px 0;
 }
 .welcome-copy > .eyebrow {
-  font-size: 9px;
+  font-size: 0.5625rem;
   letter-spacing: 2px;
 }
 .welcome-copy h1 {
@@ -1819,7 +1819,7 @@ form > .muted {
   color: var(--muted);
 }
 .welcome-copy > p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--muted);
   max-width: 350px;
   line-height: 1.95;
@@ -1832,12 +1832,12 @@ form > .muted {
   display: flex;
   gap: 7px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 0.625rem;
   margin-top: 18px;
   align-items: center;
 }
 .welcome-copy > .setup-hint {
-  font-size: 11px;
+  font-size: 0.6875rem;
   font-weight: 500;
 }
 .welcome-visual {
@@ -1854,7 +1854,7 @@ form > .muted {
 .visual-top {
   display: flex;
   justify-content: space-between;
-  font-size: 7px;
+  font-size: 0.4375rem;
   letter-spacing: 2px;
   color: var(--muted);
 }
@@ -1884,13 +1884,13 @@ form > .muted {
   align-items: flex-end;
 }
 .visual-bottom div > span {
-  font-size: 7px;
+  font-size: 0.4375rem;
   letter-spacing: 2px;
   color: var(--muted);
 }
 .visual-bottom strong {
   font-family: "Manrope Variable", sans-serif;
-  font-size: 27px;
+  font-size: 1.6875rem;
   letter-spacing: -0.9px;
   font-weight: 600;
   display: block;
@@ -1898,7 +1898,7 @@ form > .muted {
   margin-top: 10px;
 }
 .visual-spark {
-  font-size: 55px;
+  font-size: 3.4375rem;
   line-height: 1;
   font-weight: 400;
 }
@@ -1908,11 +1908,11 @@ form > .muted {
   gap: 15px;
   border-top: 1px solid var(--line);
   padding: 24px 0;
-  font-size: 9px;
+  font-size: 0.5625rem;
   color: var(--muted);
 }
 .inline-error {
-  font-size: 12px !important;
+  font-size: 0.75rem !important;
   color: var(--ink) !important;
   padding: 12px;
   border: 1px dashed var(--soft);
@@ -1931,19 +1931,19 @@ form > .muted {
     padding: 20px;
   }
   .meal-card h3 {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
   .meal-type {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .target-card {
     padding: 28px 30px;
   }
   .target-number {
-    font-size: 55px;
+    font-size: 3.4375rem;
   }
   .number-cell > strong {
-    font-size: 34px;
+    font-size: 2.125rem;
   }
   .panel {
     padding: 25px;
@@ -2022,13 +2022,13 @@ form > .muted {
     padding: 0 14px;
   }
   .number-cell > strong {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .target-card {
     padding: 23px 21px;
   }
   .target-footer {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .recipe-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2066,13 +2066,13 @@ form > .muted {
     padding-right: 13px;
   }
   .sidebar .brand {
-    font-size: 18px;
+    font-size: 1.125rem;
     gap: 8px;
   }
   .brand-mark {
     width: 32px;
     height: 32px;
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .workspace {
     margin-left: 180px;
@@ -2082,10 +2082,10 @@ form > .muted {
     gap: 8px;
   }
   .household-badge b {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .household-badge div > span {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .household-icon {
     width: 26px;
@@ -2122,35 +2122,35 @@ form > .muted {
   }
   .number-cell > span {
     margin-top: 5px;
-    font-size: 10px;
+    font-size: 0.625rem;
     max-width: 70%;
   }
   .number-cell > strong {
     margin-top: 4px;
-    font-size: 26px;
+    font-size: 1.625rem;
   }
   .number-cell > p {
-    font-size: 9px;
+    font-size: 0.5625rem;
     max-width: 95%;
   }
   .page-heading {
     margin-bottom: 25px;
   }
   .page-heading h1 {
-    font-size: 27px;
+    font-size: 1.6875rem;
   }
   .page-heading p {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .date-mark {
     padding-left: 15px;
     min-width: 76px;
   }
   .date-mark b {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .date-mark span {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .profile-grid {
     grid-template-columns: 1fr;
@@ -2166,7 +2166,7 @@ form > .muted {
   }
   .page-heading > .button {
     padding: 10px;
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .toast {
     left: calc(50% + 90px);
@@ -2180,10 +2180,10 @@ form > .muted {
     gap: 6px;
   }
   .day-card-heading .pill {
-    font-size: 7px;
+    font-size: 0.4375rem;
   }
   .day-card-heading > div > b {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .compact .meal-cards {
     gap: 8px;
@@ -2193,10 +2193,10 @@ form > .muted {
     min-height: 140px;
   }
   .compact h3 {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .day-card-heading .text-link {
-    font-size: 9px;
+    font-size: 0.5625rem;
     white-space: nowrap;
   }
   .history-panel .entry-list {
@@ -2225,16 +2225,16 @@ form > .muted {
     width: 65px;
   }
   .visual-bottom strong {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
   .welcome-copy h1 {
-    font-size: 49px;
+    font-size: 3.0625rem;
   }
   .welcome-copy > p {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .welcome-copy .button {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
 }
 @media (max-width: 620px) {
@@ -2255,7 +2255,7 @@ form > .muted {
     display: block;
     text-decoration: none;
     font-family: "Manrope Variable", sans-serif;
-    font-size: 30px;
+    font-size: 1.875rem;
     font-weight: 800;
     letter-spacing: -2px;
   }
@@ -2271,19 +2271,19 @@ form > .muted {
   }
   .today-label {
     display: block;
-    font-size: 9px;
+    font-size: 0.5625rem;
     margin-right: 5px;
   }
   .preview-banner {
     padding: 8px 21px;
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .preview-description {
-    font-size: 8px;
+    font-size: 0.5rem;
     letter-spacing: 0;
   }
   .preview-banner button {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   #main-content {
     padding: 20px 21px 0;
@@ -2292,26 +2292,26 @@ form > .muted {
     margin-bottom: 25px;
   }
   .member-selector-row > .eyebrow {
-    font-size: 7px;
+    font-size: 0.4375rem;
   }
   .member-select select {
-    font-size: 10px !important;
+    font-size: 0.625rem !important;
   }
   .page-heading {
     gap: 10px;
     margin-bottom: 25px;
   }
   .page-heading .eyebrow {
-    font-size: 7px;
+    font-size: 0.4375rem;
     letter-spacing: 1.2px;
     margin-bottom: 8px;
   }
   .page-heading h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
     letter-spacing: -1px;
   }
   .page-heading p {
-    font-size: 11px;
+    font-size: 0.6875rem;
     line-height: 1.7;
     margin-top: 9px;
     max-width: 255px;
@@ -2328,16 +2328,16 @@ form > .muted {
     border-radius: 9px;
   }
   .target-card-heading .eyebrow {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .target-number {
-    font-size: 50px;
+    font-size: 3.125rem;
   }
   .target-card > p {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .target-footer {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .progress {
     margin-top: 22px;
@@ -2350,14 +2350,14 @@ form > .muted {
     padding: 0 21px;
   }
   .number-cell > span {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .number-cell > strong {
-    font-size: 27px;
+    font-size: 1.6875rem;
     margin-top: 5px;
   }
   .number-cell > p {
-    font-size: 8px;
+    font-size: 0.5rem;
     max-width: 120px;
   }
   .number-cell .stat-icon {
@@ -2373,13 +2373,13 @@ form > .muted {
     gap: 10px;
   }
   .section-title h2 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .section-title p {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .section-title .text-link {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .meal-cards {
     display: flex;
@@ -2400,20 +2400,20 @@ form > .muted {
     gap: 9px;
   }
   .meal-type {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .meal-card-top .pill {
     display: inline-flex;
-    font-size: 7px;
+    font-size: 0.4375rem;
   }
   .meal-card h3 {
-    font-size: 13px;
+    font-size: 0.8125rem;
     max-width: 250px;
     margin: 0;
   }
   .meal-card-bottom {
     margin-top: 0;
-    font-size: 9px;
+    font-size: 0.5625rem;
     gap: 12px;
   }
   .meal-card-bottom .icon-button {
@@ -2425,13 +2425,13 @@ form > .muted {
   }
   .budget-values {
     gap: 13px;
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .budget-values b {
     margin-left: 3px;
   }
   .planning-note {
-    font-size: 9px;
+    font-size: 0.5625rem;
     padding-bottom: 25px;
   }
   .week-glance {
@@ -2442,10 +2442,10 @@ form > .muted {
     padding: 9px 0;
   }
   .week-glance button > span {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .week-glance button > b {
-    font-size: 14px;
+    font-size: 0.875rem;
     margin-top: 8px;
   }
   .meal-dots {
@@ -2463,7 +2463,7 @@ form > .muted {
     padding: 21px;
   }
   .log-panel h2 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .quick-actions {
     gap: 9px;
@@ -2471,7 +2471,7 @@ form > .muted {
   }
   .quick-actions button {
     padding: 10px;
-    font-size: 10px;
+    font-size: 0.625rem;
     gap: 7px;
   }
   .quick-actions svg {
@@ -2482,34 +2482,34 @@ form > .muted {
     padding: 25px 15px 15px;
   }
   .log-empty h3 {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .log-empty p {
-    font-size: 11px;
+    font-size: 0.6875rem;
     max-width: 255px;
   }
   .shopping-shortcut {
     padding: 20px;
   }
   .shopping-shortcut h3 {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .shopping-shortcut p {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .quiet-note {
     padding: 7px 4px !important;
     max-width: 300px;
   }
   .quiet-note p {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .app-footer {
     margin-top: 30px;
     padding-bottom: 100px;
     flex-direction: column;
     gap: 7px;
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .bottom-nav {
     position: fixed;
@@ -2532,7 +2532,7 @@ form > .muted {
     justify-content: center;
     gap: 6px;
     color: var(--muted);
-    font-size: 8px;
+    font-size: 0.5rem;
     min-width: 52px;
     height: 48px;
     border-radius: 6px;
@@ -2546,7 +2546,7 @@ form > .muted {
     left: 50%;
     max-width: calc(100vw - 28px);
     width: max-content;
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 10px 13px;
   }
   .modal {
@@ -2561,17 +2561,17 @@ form > .muted {
     padding: 17px 19px;
   }
   .modal-header h2 {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .modal-body {
     padding: 21px;
   }
   .modal-body input,
   .modal-body select {
-    font-size: 16px;
+    font-size: 1rem;
   }
   .modal-body label {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .form-grid {
     gap: 0 13px;
@@ -2585,22 +2585,22 @@ form > .muted {
   .input-unit span {
     right: 7px;
     top: 17px;
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .form-intro {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .note {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .calculation div {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .target-proposal strong {
-    font-size: 42px;
+    font-size: 2.625rem;
   }
   .viewing-notice {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .setup-card {
     padding: 17px;
@@ -2611,7 +2611,7 @@ form > .muted {
     display: none;
   }
   .setup-card p {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .setup-card .button {
     margin: 0;
@@ -2622,13 +2622,13 @@ form > .muted {
     gap: 8px;
   }
   .week-toolbar h2 {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .week-toolbar .button-row {
     gap: 8px;
   }
   .week-toolbar > .text-link {
-    font-size: 9px;
+    font-size: 0.5625rem;
     padding-top: 10px;
   }
   .day-list {
@@ -2642,13 +2642,13 @@ form > .muted {
     gap: 8px;
   }
   .day-card-heading > div > span:first-child {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .day-card-heading > div > b {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .day-card-heading > .text-link {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .compact .meal-card {
     display: grid;
@@ -2656,7 +2656,7 @@ form > .muted {
     min-height: 0;
   }
   .compact h3 {
-    font-size: 11px;
+    font-size: 0.6875rem;
     max-width: 200px;
   }
   .compact .meal-card-top {
@@ -2666,21 +2666,21 @@ form > .muted {
     display: none;
   }
   .compact .meal-type {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .compact .meal-card-bottom b {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .recipe-toolbar {
     gap: 9px;
   }
   .recipe-toolbar > select {
     min-width: 0;
-    font-size: 11px;
+    font-size: 0.6875rem;
     padding: 10px;
   }
   .recipe-toolbar .search-field input {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .recipe-grid {
     gap: 12px;
@@ -2696,12 +2696,12 @@ form > .muted {
     height: 75px;
   }
   .recipe-index {
-    font-size: 8px;
+    font-size: 0.5rem;
     top: 12px;
     left: 12px;
   }
   .recipe-art .pill {
-    font-size: 6px;
+    font-size: 0.375rem;
     bottom: 8px;
     right: 8px;
     padding: 3px 5px;
@@ -2710,13 +2710,13 @@ form > .muted {
     padding: 12px;
   }
   .recipe-card h3 {
-    font-size: 11px;
+    font-size: 0.6875rem;
     min-height: 52px;
     line-height: 1.65;
     letter-spacing: -0.15px;
   }
   .recipe-card-content > div {
-    font-size: 9px;
+    font-size: 0.5625rem;
     gap: 4px;
     margin-top: 10px;
   }
@@ -2724,33 +2724,33 @@ form > .muted {
     gap: 1px;
   }
   .recipe-card .fine-print {
-    font-size: 7px;
+    font-size: 0.4375rem;
   }
   .result-count {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .content-credit {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .recipe-detail-summary {
     gap: 6px;
   }
   .recipe-detail-summary > span {
-    font-size: 9px;
+    font-size: 0.5625rem;
     padding: 8px;
   }
   .recipe-component h3 {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .recipe-component .pill {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .ingredient-list li,
   .instructions {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .preparation {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .shopping-empty {
     padding: 15px;
@@ -2760,13 +2760,13 @@ form > .muted {
     padding: 30px 10px;
   }
   .empty h3 {
-    font-size: 17px;
+    font-size: 1.0625rem;
   }
   .empty p {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .page-heading > .button {
-    font-size: 9px;
+    font-size: 0.5625rem;
     padding: 10px;
     min-height: 38px;
   }
@@ -2781,10 +2781,10 @@ form > .muted {
     gap: 21px;
   }
   .profile-facts b {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .profile-facts span {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .history-panel,
   .household-panel {
@@ -2796,24 +2796,24 @@ form > .muted {
   }
   .history-panel .button,
   .household-panel .button {
-    font-size: 9px;
+    font-size: 0.5625rem;
     padding: 9px;
     min-height: 35px;
     gap: 5px;
   }
   .history-panel .section-title h2,
   .household-panel .section-title h2 {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
   .history-panel .section-title p,
   .household-panel .section-title p {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .entry b {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .entry span:not(.entry-icon) {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .entry-actions .icon-button {
     min-width: 30px;
@@ -2822,19 +2822,19 @@ form > .muted {
     gap: 10px;
   }
   .member-controls .text-link {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .member-row {
     gap: 10px;
   }
   .member-row b {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .member-row div > span {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .household-footer {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .welcome {
     padding: 23px;
@@ -2848,21 +2848,21 @@ form > .muted {
     min-height: 0;
   }
   .welcome-copy h1 {
-    font-size: 58px;
+    font-size: 3.625rem;
     letter-spacing: -2.5px;
   }
   .welcome-copy > p {
-    font-size: 13px;
+    font-size: 0.8125rem;
     max-width: 330px;
   }
   .welcome-copy > .eyebrow {
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .welcome-copy > .button {
     padding: 13px 15px;
   }
   .welcome-invite {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .welcome-visual {
     min-height: 355px;
@@ -2872,21 +2872,21 @@ form > .muted {
     margin: 22px auto;
   }
   .visual-bottom strong {
-    font-size: 23px;
+    font-size: 1.4375rem;
   }
   .welcome footer {
     flex-direction: column;
     gap: 10px;
-    font-size: 8px;
+    font-size: 0.5rem;
   }
   .welcome header .brand {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
   .welcome header .icon-button {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .modal-body form > .button {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -2916,7 +2916,7 @@ form > .muted {
 .portion-editor {
   padding: 18px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .preview-meal h3,
 .portion-editor h3 {
@@ -2953,7 +2953,7 @@ fieldset {
   padding: 15px;
 }
 legend {
-  font-size: 11px;
+  font-size: 0.6875rem;
   padding: 0 7px;
 }
 textarea {
@@ -2978,7 +2978,7 @@ textarea {
   margin-top: 15px;
 }
 .meal-card > p {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
 }
 @media (max-width: 620px) {
@@ -2989,13 +2989,13 @@ textarea {
     grid-template-columns: 1fr 1fr;
   }
   .conversion-row label {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .planner-controls .button {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .planner-controls b {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .meal-card > .button-row {
     grid-column: 1/-1;
@@ -3008,7 +3008,7 @@ textarea {
     grid-column: 1/-1;
   }
   textarea {
-    font-size: 16px;
+    font-size: 1rem;
   }
 }
 /* Shared shopping, local sync and offline views. */
@@ -3026,7 +3026,7 @@ textarea {
   align-items: center;
   gap: 10px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
   padding: 18px 0;
 }
 .sync-status .text-link {
@@ -3036,7 +3036,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
+  font-size: 0.75rem;
   padding: 18px 0;
 }
 .shopping-progress > span:not(.pill) {
@@ -3089,7 +3089,7 @@ textarea {
 }
 .shopping-checklist b {
   display: block;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 550;
   overflow-wrap: anywhere;
 }
@@ -3097,7 +3097,7 @@ textarea {
   display: block;
   margin-top: 5px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 .shopping-checklist .checked b {
   text-decoration: line-through;
@@ -3111,7 +3111,7 @@ textarea {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
   margin-top: 8px;
 }
@@ -3131,7 +3131,7 @@ textarea {
   gap: 15px;
   padding: 14px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .shopping-diff b {
   display: block;
@@ -3139,12 +3139,12 @@ textarea {
 .shopping-diff div > span {
   display: block;
   margin-top: 5px;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
 }
 .shopping-diff li > span {
   white-space: nowrap;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 .offline-shell {
   max-width: 1140px;
@@ -3166,7 +3166,7 @@ textarea {
   display: flex;
   gap: 7px;
   align-items: center;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
 }
 .offline-tabs {
@@ -3175,7 +3175,7 @@ textarea {
   margin: 20px 0;
 }
 .offline-time {
-  font-size: 10px;
+  font-size: 0.625rem;
   color: var(--muted);
   margin: 20px 0;
 }
@@ -3189,7 +3189,7 @@ textarea {
   opacity: 1;
 }
 .offline-limit {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: var(--muted);
   margin: 30px 0;
   padding-top: 20px;
@@ -3212,12 +3212,12 @@ textarea {
   border: 1px solid var(--line);
   box-shadow: 0 8px 35px #0002;
   border-radius: 9px;
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 .pwa-notice .button {
   min-height: 35px;
   padding: 9px 12px;
-  font-size: 10px;
+  font-size: 0.625rem;
   flex-shrink: 0;
 }
 .offline-shell .week-toolbar {
@@ -3231,10 +3231,10 @@ textarea {
     padding: 18px;
   }
   .shopping-checklist b {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .shopping-checklist small {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .shopping-checklist label {
     gap: 12px;
@@ -3247,13 +3247,13 @@ textarea {
     padding: 18px;
   }
   .shopping-progress {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .shopping-diff li {
     align-items: flex-start;
   }
   .shopping-diff li > span {
-    font-size: 10px;
+    font-size: 0.625rem;
     white-space: normal;
   }
   .offline-shell {
@@ -3264,11 +3264,11 @@ textarea {
     margin-bottom: 25px;
   }
   .offline-header .brand {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
   .offline-tabs .button {
     flex: 1;
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .offline-shell .meal-card {
     display: block;
@@ -3283,7 +3283,7 @@ textarea {
     max-width: none;
     gap: 8px;
     padding: 12px;
-    font-size: 10px;
+    font-size: 0.625rem;
     flex-wrap: wrap;
   }
   .pwa-notice > span {
@@ -3291,7 +3291,7 @@ textarea {
     min-width: 150px;
   }
   .offline-shell .page-heading h1 {
-    font-size: 25px;
+    font-size: 1.5625rem;
   }
 }
 /* Household entry remains a single-column flow on both phone and desktop. */
@@ -3313,4 +3313,11 @@ textarea {
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: space-between;
+}
+
+html[data-text-size] {
+  font-size: 17px;
+}
+html[data-text-size="large"] {
+  font-size: 19px;
 }

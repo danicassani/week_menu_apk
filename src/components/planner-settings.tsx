@@ -1,3 +1,4 @@
+import { EMOJIS } from "../domain/presentation";
 import { useState } from "react";
 import { Button } from "./ui";
 import { translator } from "../lib/i18n";
@@ -18,6 +19,47 @@ export function PlannerSettings(v: ViewProps) {
           "El inicio de semana y la variedad se aplican al hogar. Los avisos para actualizar recetas son personales.",
         )}
       </p>
+      <div className="form-grid">
+        <label>
+          {t("Text size", "Tamaño del texto")}
+          <select
+            disabled={v.busy}
+            value={v.member.presentation?.text_size ?? "standard"}
+            onChange={(e) =>
+              void v.operate(() =>
+                v.repository.savePresentation({
+                  avatar: v.member.presentation?.avatar ?? "🧑",
+                  text_size: e.target.value as "standard" | "large",
+                }),
+              )
+            }
+          >
+            <option value="standard">{t("Standard", "Normal")}</option>
+            <option value="large">{t("Large", "Grande")}</option>
+          </select>
+        </label>
+        <label>
+          {t("Your avatar", "Tu avatar")}
+          <select
+            disabled={v.busy}
+            value={v.member.presentation?.avatar ?? "🧑"}
+            onChange={(e) =>
+              void v.operate(() =>
+                v.repository.savePresentation({
+                  avatar: e.target.value,
+                  text_size: v.member.presentation?.text_size ?? "standard",
+                }),
+              )
+            }
+          >
+            {EMOJIS.map((emoji) => (
+              <option key={emoji} value={emoji}>
+                {emoji}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <div className="form-grid">
         <label>
           {t("Week starts on", "La semana empieza en")}

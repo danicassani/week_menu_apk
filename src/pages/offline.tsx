@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { foodEmoji } from "../domain/presentation";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -43,6 +44,13 @@ export function OfflineShell({
     [query, setQuery] = useState(""),
     [notice, setNotice] = useState(""),
     [exit, setExit] = useState(false);
+  useEffect(() => {
+    document.documentElement.dataset.textSize =
+      data?.presentation?.text_size ?? "standard";
+    return () => {
+      delete document.documentElement.dataset.textSize;
+    };
+  }, [data?.presentation?.text_size]);
   const lang = data?.language ?? language,
     t = translator(lang),
     shopping = data?.shopping;
@@ -234,7 +242,7 @@ export function OfflineShell({
                   >
                     {data.menu.members.map((m) => (
                       <option key={m.id} value={m.id}>
-                        {m.name}
+                        {m.presentation?.avatar ?? ""} {m.name}
                       </option>
                     ))}
                   </select>
@@ -338,7 +346,10 @@ export function OfflineShell({
                       onClick={() => setRecipe(r)}
                     >
                       <div className="recipe-card-content">
-                        <h3>{name(r.name)}</h3>
+                        <h3>
+                          <span aria-hidden="true">{foodEmoji(r, true)}</span>{" "}
+                          {name(r.name)}
+                        </h3>
                         <p className="muted">
                           {r.meal_types
                             .map((m) => mealLabel(m, lang))

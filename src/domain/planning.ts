@@ -4,6 +4,7 @@ import { daysBetween } from "./dates";
 import type { MealType, Profile } from "./types";
 export type Names = { en: string; es: string };
 export interface Ingredient {
+  emoji?: string;
   quantity_basis?: string;
   shopping_policy?: string;
   id: string;
@@ -38,6 +39,7 @@ export interface RecipeComponent {
   reference_energy_kcal?: number;
 }
 export interface PlannedRecipe {
+  emoji?: string;
   id: string;
   name: Names;
   meal_types: string[];
