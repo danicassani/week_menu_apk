@@ -88,11 +88,22 @@ export function swapDraft(
   state: HouseholdState,
   lib: PlanningState,
   locks: string[],
+  breakfastMember = state.viewer_id,
 ) {
   if (a === b || (a.type === "breakfast") !== (b.type === "breakfast"))
     throw Error("invalid_recipe");
-  const own = state.viewer_id;
-  if (locks.includes(lockKey(a, own)) || locks.includes(lockKey(b, own)))
+  const selectedMember = breakfastMember;
+  if (
+    a.type === "breakfast" &&
+    !state.members.some(
+      (m) => m.id === selectedMember && m.status === "active" && m.onboarded,
+    )
+  )
+    throw Error("invalid_member");
+  if (
+    locks.includes(lockKey(a, selectedMember)) ||
+    locks.includes(lockKey(b, selectedMember))
+  )
     throw Error("locked_suggestion");
   const first = replan(
       b,
@@ -100,7 +111,7 @@ export function swapDraft(
       a.type,
       state,
       lib,
-      a.type === "breakfast" ? own : undefined,
+      a.type === "breakfast" ? selectedMember : undefined,
     ),
     second = replan(
       a,
@@ -108,7 +119,7 @@ export function swapDraft(
       b.type,
       state,
       lib,
-      a.type === "breakfast" ? own : undefined,
+      a.type === "breakfast" ? selectedMember : undefined,
     );
   if (first.gaps.length || second.gaps.length)
     throw Error("no_suitable_recipe");
@@ -118,15 +129,15 @@ export function swapDraft(
       : {
           ...original,
           portions: original.portions.map((p) =>
-            p.member_id === own
-              ? next.portions.find((q) => q.member_id === own)!
+            p.member_id === selectedMember
+              ? next.portions.find((q) => q.member_id === selectedMember)!
               : p,
           ),
         };
   if (
     a.type === "breakfast" &&
-    (!first.plan.portions.some((p) => p.member_id === own) ||
-      !second.plan.portions.some((p) => p.member_id === own))
+    (!first.plan.portions.some((p) => p.member_id === selectedMember) ||
+      !second.plan.portions.some((p) => p.member_id === selectedMember))
   )
     throw Error("no_suitable_recipe");
   const result = plans.map((p) =>

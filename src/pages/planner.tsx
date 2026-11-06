@@ -7,6 +7,9 @@ import {
   Lock,
   LockOpen,
   RefreshCw,
+  Dices,
+  Eraser,
+  Import,
   ArrowDownUp,
   X,
   Check,
@@ -166,7 +169,11 @@ export function Planner(v: ViewProps) {
   const [anchor, setAnchor] = useState(v.day),
     [replace, setReplace] = useState(false),
     [locks, setLocks] = useState<string[]>([]),
-    [swapFrom, setSwapFrom] = useState<MealPlan | null>(null),
+    [swapFrom, setSwapFrom] = useState<{
+      meal: MealPlan;
+      memberId?: string;
+    } | null>(null),
+    [calorieHelp, setCalorieHelp] = useState<PlannedPortion | null>(null),
     [copyOpen, setCopyOpen] = useState(false),
     [copyStart, setCopyStart] = useState(addDays(v.day, -7)),
     [preview, setPreview] = useState<{
@@ -197,6 +204,7 @@ export function Planner(v: ViewProps) {
   const days = weekDays(anchor, v.s.household.week_start);
   const generate = (slots: { day: string; type: MealType }[]) => {
     setPreviewNotice("");
+    setCalorieHelp(null);
     setLocks([]);
     setSwapFrom(null);
     const retained = lib.plans.filter(
@@ -224,10 +232,10 @@ export function Planner(v: ViewProps) {
     }
     setPreview({ plans, revision: lib.revision, replace, gaps });
   };
-  const reroll = (meal: MealPlan) => {
+  const reroll = (meal: MealPlan, memberId = v.s.viewer_id) => {
     if (
       !preview ||
-      locks.includes(lockKey(meal, v.s.viewer_id)) ||
+      locks.includes(lockKey(meal, memberId)) ||
       preview.revision !== lib.revision ||
       closed(v, meal.day)
     )
@@ -246,7 +254,7 @@ export function Planner(v: ViewProps) {
       [...retained, ...preview.plans.filter((p) => p !== meal)],
       undefined,
       meal,
-      v.s.viewer_id,
+      memberId,
     );
     if (!next) {
       setPreviewNotice(
@@ -386,14 +394,25 @@ export function Planner(v: ViewProps) {
     setSwapFrom(null);
     setPreviewNotice("");
     setCopyOpen(false);
+    setCalorieHelp(null);
     setPreview({ plans, gaps, replace, revision: lib.revision });
   };
-  const swapTo = (meal: MealPlan) => {
+  const swapTo = (meal: MealPlan, memberId?: string) => {
     if (!preview || !swapFrom || preview.revision !== lib.revision) return;
     try {
+      if (swapFrom.meal.type === "breakfast" && memberId !== swapFrom.memberId)
+        throw Error("invalid_member");
       setPreview({
         ...preview,
-        plans: swapDraft(preview.plans, swapFrom, meal, v.s, lib, locks),
+        plans: swapDraft(
+          preview.plans,
+          swapFrom.meal,
+          meal,
+          v.s,
+          lib,
+          locks,
+          swapFrom.memberId,
+        ),
       });
       setSwapFrom(null);
       setPreviewNotice("");
@@ -454,32 +473,30 @@ export function Planner(v: ViewProps) {
               )
             }
           >
-            {t("Suggest the week", "Sugerir la semana")}
+            {t("Suggest week", "Sugerir semana")}
           </Button>
-          <Button
-            secondary
+          <IconAction
+            icon={Eraser}
+            label={t("Delete week", "Borrar semana")}
             disabled={
               v.busy ||
               !lib.plans.some((p) => days.includes(p.day) && !closed(v, p.day))
             }
             onClick={() => setDeletingWeek(lib.revision)}
-          >
-            {t("Delete week", "Borrar semana")}
-          </Button>
-          <Button secondary onClick={() => setCopyOpen(true)}>
-            {t("Copy a week", "Copiar una semana")}
-          </Button>
+          />
+          <IconAction
+            icon={Import}
+            label={t("Copy a week", "Copiar una semana")}
+            onClick={() => setCopyOpen(true)}
+          />
         </div>
         <label className="check-row">
           <input
             type="checkbox"
-            checked={replace}
-            onChange={(e) => setReplace(e.target.checked)}
+            checked={!replace}
+            onChange={(e) => setReplace(!e.target.checked)}
           />
-          {t(
-            "Replace existing meals explicitly (preview required)",
-            "Sustituir comidas existentes explícitamente (requiere vista previa)",
-          )}
+          {t("Only empty slots", "Solo huecos vacíos")}
         </label>
       </div>
       {notice && (
@@ -663,9 +680,13 @@ export function Planner(v: ViewProps) {
           onClose={() => setPreview(null)}
         >
           <div className="preview-toolbar">
+            <span className="preview-date-range">
+              {days[0].slice(8, 10)}/{days[0].slice(5, 7)} -{" "}
+              {days[6].slice(8, 10)}/{days[6].slice(5, 7)}
+            </span>
             <IconAction
               label={t("Regenerate unlocked", "Regenerar no bloqueadas")}
-              icon={RefreshCw}
+              icon={Dices}
               disabled={v.busy || preview.revision !== lib.revision}
               onClick={regenerate}
             />
@@ -680,8 +701,8 @@ export function Planner(v: ViewProps) {
           {swapFrom && (
             <p role="status">
               {t(
-                "Choose a destination suggestion below. Breakfast swaps affect only your own portion.",
-                "Elige una sugerencia de destino. Los intercambios de desayuno solo afectan a tu porción.",
+                "Choose a destination below. Breakfast swaps affect only the selected person's portion.",
+                "Elige un destino. Los intercambios de desayuno solo afectan a la persona seleccionada.",
               )}
             </p>
           )}
@@ -738,45 +759,74 @@ export function Planner(v: ViewProps) {
             </p>
           )}
           {preview.plans.map((m) => {
-            const swapAction = (
-              <IconAction
-                icon={ArrowDownUp}
-                label={
-                  swapFrom === m
+            const swapAction = (memberId?: string) => {
+              const selected =
+                swapFrom?.meal === m && swapFrom?.memberId === memberId;
+              const other = memberId && memberId !== v.s.viewer_id;
+              const person =
+                v.s.members.find((x) => x.id === memberId)?.name ?? "";
+              const label = selected
+                ? other
+                  ? t(
+                      `Cancel selected swap for ${person}`,
+                      `Cancelar intercambio de ${person}`,
+                    )
+                  : t(
+                      "Cancel selected swap",
+                      "Cancelar intercambio seleccionado",
+                    )
+                : swapFrom
+                  ? other
                     ? t(
-                        "Cancel selected swap",
-                        "Cancelar intercambio seleccionado",
+                        `Swap breakfast here for ${person}`,
+                        `Intercambiar aquí el desayuno de ${person}`,
                       )
-                    : swapFrom
-                      ? t("Swap here", "Intercambiar aquí")
-                      : t("Swap suggestion", "Intercambiar sugerencia")
-                }
-                aria-pressed={swapFrom === m}
-                disabled={
-                  v.busy ||
-                  preview.revision !== lib.revision ||
-                  locks.includes(lockKey(m, v.s.viewer_id))
-                }
-                onClick={() =>
-                  swapFrom === m
-                    ? setSwapFrom(null)
-                    : swapFrom
-                      ? swapTo(m)
-                      : setSwapFrom(m)
-                }
-              />
-            );
+                    : t("Swap here", "Intercambiar aquí")
+                  : other
+                    ? t(
+                        `Swap breakfast for ${person}`,
+                        `Intercambiar desayuno de ${person}`,
+                      )
+                    : t("Swap suggestion", "Intercambiar sugerencia");
+              return (
+                <IconAction
+                  icon={ArrowDownUp}
+                  label={label}
+                  aria-pressed={selected}
+                  disabled={
+                    v.busy ||
+                    preview.revision !== lib.revision ||
+                    locks.includes(lockKey(m, memberId)) ||
+                    !!(
+                      swapFrom &&
+                      ((swapFrom.meal.type === "breakfast") !==
+                        (m.type === "breakfast") ||
+                        (m.type === "breakfast" &&
+                          swapFrom.memberId !== memberId))
+                    )
+                  }
+                  onClick={() =>
+                    selected
+                      ? setSwapFrom(null)
+                      : swapFrom
+                        ? swapTo(m, memberId)
+                        : setSwapFrom({ meal: m, memberId })
+                  }
+                />
+              );
+            };
             return (
               <div className="preview-meal" key={m.day + m.type}>
                 <div className="preview-meal-heading">
                   <h3>
-                    {m.day} · {mealLabel(m.type, v.language)}
+                    {formatDay(m.day, v.language, { weekday: "long" })} ·{" "}
+                    {mealLabel(m.type, v.language)}
                   </h3>
                   {m.type !== "breakfast" && (
                     <div className="preview-actions">
-                      {swapAction}
+                      {swapAction()}
                       <IconAction
-                        icon={RefreshCw}
+                        icon={Dices}
                         label={t("Re-roll meal", "Volver a sugerir comida")}
                         disabled={
                           v.busy ||
@@ -828,7 +878,24 @@ export function Planner(v: ViewProps) {
                       >
                         {name(p.name, v.language)}
                       </button>{" "}
-                      · {Math.round(p.kcal)} / {p.budget} kcal{" "}
+                      ·{" "}
+                      {p.kcal > p.budget ? (
+                        <button
+                          type="button"
+                          className="preview-calorie-warning"
+                          aria-label={t(
+                            `Calorie warning for ${v.s.members.find((x) => x.id === p.member_id)?.name}: ${Math.round(p.kcal)} kcal`,
+                            `Aviso de calorías para ${v.s.members.find((x) => x.id === p.member_id)?.name}: ${Math.round(p.kcal)} kcal`,
+                          )}
+                          aria-haspopup="dialog"
+                          onClick={() => setCalorieHelp(p)}
+                        >
+                          {Math.round(p.kcal)}
+                        </button>
+                      ) : (
+                        Math.round(p.kcal)
+                      )}{" "}
+                      / {p.budget} kcal{" "}
                       {p.dessert && (
                         <span className="pill">
                           {t("With dessert", "Con postre")}
@@ -837,25 +904,28 @@ export function Planner(v: ViewProps) {
                     </div>
                     {m.type === "breakfast" && (
                       <div className="preview-actions">
-                        {p.member_id === v.s.viewer_id && (
-                          <>
-                            {swapAction}
-                            <IconAction
-                              icon={RefreshCw}
-                              label={t(
-                                "Re-roll my breakfast",
-                                "Volver a sugerir mi desayuno",
-                              )}
-                              disabled={
-                                v.busy ||
-                                closed(v, m.day) ||
-                                locks.includes(lockKey(m, p.member_id)) ||
-                                preview.revision !== lib.revision
-                              }
-                              onClick={() => reroll(m)}
-                            />
-                          </>
-                        )}
+                        {swapAction(p.member_id)}
+                        <IconAction
+                          icon={Dices}
+                          label={
+                            p.member_id === v.s.viewer_id
+                              ? t(
+                                  "Re-roll my breakfast",
+                                  "Volver a sugerir mi desayuno",
+                                )
+                              : t(
+                                  `Re-roll breakfast for ${v.s.members.find((x) => x.id === p.member_id)?.name}`,
+                                  `Volver a sugerir el desayuno de ${v.s.members.find((x) => x.id === p.member_id)?.name}`,
+                                )
+                          }
+                          disabled={
+                            v.busy ||
+                            closed(v, m.day) ||
+                            locks.includes(lockKey(m, p.member_id)) ||
+                            preview.revision !== lib.revision
+                          }
+                          onClick={() => reroll(m, p.member_id)}
+                        />
                         <IconAction
                           icon={
                             locks.includes(lockKey(m, p.member_id))
@@ -887,14 +957,6 @@ export function Planner(v: ViewProps) {
                         . {name(r.instructions, v.language)}
                       </p>
                     ))}
-                    {p.kcal > p.budget && (
-                      <p className="muted">
-                        {t(
-                          "Rounded amounts exceed the budget. Adjust portions manually after saving.",
-                          "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.",
-                        )}
-                      </p>
-                    )}
                   </div>
                 ))}
               </div>
@@ -978,6 +1040,23 @@ export function Planner(v: ViewProps) {
           language={v.language}
           onClose={() => setReadingRecipe(null)}
         />
+      )}
+      {preview && calorieHelp && (
+        <Modal
+          title={t("Calories over budget", "Calorías por encima del objetivo")}
+          onClose={() => setCalorieHelp(null)}
+        >
+          <p>
+            {v.s.members.find((x) => x.id === calorieHelp.member_id)?.name} ·{" "}
+            {Math.round(calorieHelp.kcal)} / {calorieHelp.budget} kcal
+          </p>
+          <p>
+            {t(
+              "Rounded amounts exceed the budget. Adjust portions manually after saving.",
+              "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.",
+            )}
+          </p>
+        </Modal>
       )}
       {inspection && (
         <MealSnapshotView

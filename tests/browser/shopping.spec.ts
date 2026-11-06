@@ -9,9 +9,7 @@ test("saved portions automatically generate a list; range changes retain manual 
     .click();
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Suggest the week", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   await page
     .getByRole("button", { name: "Approve suggestions & save" })
     .click();

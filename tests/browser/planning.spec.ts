@@ -11,9 +11,7 @@ test("re-rolls an own breakfast in preview, automatically fills shopping and del
 }) => {
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Suggest the week", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   const cards = page.locator(".preview-meal");
   const breakfast = cards
     .filter({
@@ -68,9 +66,7 @@ test("preview and commit a menu, replace one participant with eating out", async
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Menu", exact: true })
     .click();
-  await page
-    .getByRole("button", { name: "Suggest the week", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   await expect(
     page.getByRole("dialog", { name: "Review your menu suggestions" }),
   ).toBeVisible();
@@ -277,9 +273,7 @@ test("suggested recipe names open read-only details without losing the draft", a
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Menu", exact: true })
     .click();
-  await page
-    .getByRole("button", { name: "Suggest the week", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   const draft = await page.locator(".preview-meal").allTextContents();
   const recipe = page.locator(".preview-meal button.text-link").first();
   const title = await recipe.innerText();
@@ -354,9 +348,7 @@ test("saved future recipes can be read and closed days hide portion prompts and 
       .getByRole("button", { name: "Menu", exact: true })
       .click();
   await menu();
-  await page
-    .getByRole("button", { name: "Suggest the week", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   await page
     .getByRole("button", { name: "Approve suggestions & save", exact: true })
     .click();
@@ -430,9 +422,7 @@ test("locks preserve suggestions during regeneration, own breakfast swaps stay p
     .getByRole("navigation", { name: "Mobile navigation" })
     .getByRole("button", { name: "Menu", exact: true })
     .click();
-  await page
-    .getByRole("button", { name: "Suggest the week", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   const cards = page.locator(".preview-meal");
   const shared = cards
     .filter({
@@ -560,11 +550,24 @@ for (const lang of ["en", "es"] as const) {
       .click();
     await page
       .getByRole("button", {
-        name: t("Suggest the week", "Sugerir la semana"),
+        name: t("Suggest week", "Sugerir semana"),
         exact: true,
       })
       .click();
     const reader = page.getByRole("dialog");
+    await expect(reader.locator(".preview-date-range")).toHaveText(
+      "02/11 - 08/11",
+    );
+    await expect(reader.locator(".preview-meal h3").first()).toHaveText(
+      t("Tuesday · Breakfast", "martes · Desayuno"),
+    );
+    await expect(
+      reader
+        .getByRole("button", {
+          name: t("Regenerate unlocked", "Regenerar no bloqueadas"),
+        })
+        .locator(".lucide-dices"),
+    ).toHaveCount(1);
     const actions = reader.locator(".preview-action");
     expect(await actions.count()).toBeGreaterThan(20);
     expect(
@@ -581,7 +584,7 @@ for (const lang of ["en", "es"] as const) {
       .first();
     const portions = breakfast.locator(".preview-portion");
     await expect(portions.nth(0).locator(".preview-action")).toHaveCount(3);
-    await expect(portions.nth(1).locator(".preview-action")).toHaveCount(1);
+    await expect(portions.nth(1).locator(".preview-action")).toHaveCount(3);
     const lock = portions.first().getByRole("button", {
       name: t("Lock breakfast", "Bloquear desayuno"),
       exact: true,
@@ -646,3 +649,144 @@ for (const lang of ["en", "es"] as const) {
     ).toBe(true);
   });
 }
+
+test("another member's breakfast can be re-rolled and swapped without changing the viewer", async ({
+  page,
+}) => {
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Menu", exact: true })
+    .click();
+  const onlyEmpty = page.getByRole("checkbox", {
+    name: "Only empty slots",
+    exact: true,
+  });
+  await expect(onlyEmpty).toBeChecked();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  const breakfasts = page.locator(".preview-meal").filter({
+    has: page.getByRole("button", {
+      name: "Re-roll breakfast for Noa",
+      exact: true,
+    }),
+  });
+  const first = breakfasts.nth(0),
+    second = breakfasts.nth(1);
+  const alex = await first
+    .locator(".preview-portion-summary")
+    .first()
+    .innerText();
+  const noa = await first
+    .locator(".preview-portion-summary button.text-link")
+    .nth(1)
+    .innerText();
+  await first
+    .getByRole("button", { name: "Re-roll breakfast for Noa", exact: true })
+    .click();
+  await expect(
+    first.locator(".preview-portion-summary button.text-link").nth(1),
+  ).not.toHaveText(noa);
+  await expect(first.locator(".preview-portion-summary").first()).toHaveText(
+    alex,
+  );
+  const before = await first
+    .locator(".preview-portion-summary button.text-link")
+    .nth(1)
+    .innerText();
+  const destination = await second
+    .locator(".preview-portion-summary button.text-link")
+    .nth(1)
+    .innerText();
+  const secondAlex = await second
+    .locator(".preview-portion-summary")
+    .first()
+    .innerText();
+  await first
+    .getByRole("button", { name: "Swap breakfast for Noa", exact: true })
+    .click();
+  await expect(
+    second.getByRole("button", { name: "Swap here", exact: true }),
+  ).toBeDisabled();
+  await second
+    .getByRole("button", { name: "Swap breakfast here for Noa", exact: true })
+    .click();
+  await expect(
+    first.locator(".preview-portion-summary button.text-link").nth(1),
+  ).toHaveText(destination);
+  await expect(
+    second.locator(".preview-portion-summary button.text-link").nth(1),
+  ).toHaveText(before);
+  await expect(first.locator(".preview-portion-summary").first()).toHaveText(
+    alex,
+  );
+  await expect(second.locator(".preview-portion-summary").first()).toHaveText(
+    secondAlex,
+  );
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  await expect(page.locator(".preview-meal")).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await onlyEmpty.uncheck();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  await expect(page.locator(".preview-meal").first()).toBeVisible();
+});
+
+test("calorie warnings are explained on demand and return focus to the yellow number", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Cambiar tema", exact: true }).click();
+  await page
+    .getByRole("navigation", { name: "Navegación móvil" })
+    .getByRole("button", { name: "Menú", exact: true })
+    .click();
+  const erase = page.getByRole("button", {
+    name: "Borrar semana",
+    exact: true,
+  });
+  const copy = page.getByRole("button", {
+    name: "Copiar una semana",
+    exact: true,
+  });
+  await expect(erase.locator(".lucide-eraser")).toHaveCount(1);
+  await expect(copy.locator(".lucide-import")).toHaveCount(1);
+  expect(await erase.innerText()).toBe("");
+  expect(await copy.innerText()).toBe("");
+  await page
+    .locator(".planner-controls")
+    .screenshot({ path: "test-results/menu-controls-es.png" });
+  await page
+    .getByRole("button", { name: "Sugerir semana", exact: true })
+    .click();
+  const preview = page.getByRole("dialog", {
+    name: "Revisa las sugerencias del menú",
+    exact: true,
+  });
+  const warning = preview.locator(".preview-calorie-warning").first();
+  const explanation =
+    "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.";
+  await expect(preview.getByText(explanation, { exact: true })).toHaveCount(0);
+  await expect(warning).toHaveCSS("color", "rgb(250, 204, 21)");
+  await page.screenshot({ path: "test-results/menu-suggestions-es.png" });
+  await warning.scrollIntoViewIfNeeded();
+  await page.screenshot({
+    path: "test-results/calorie-number-es.png",
+  });
+  await warning.click();
+  const help = page.getByRole("dialog", {
+    name: "Calorías por encima del objetivo",
+    exact: true,
+  });
+  await expect(help.getByText(explanation, { exact: true })).toBeVisible();
+  await page.screenshot({
+    path: "test-results/calorie-explanation-es.png",
+  });
+  await page.keyboard.press("Escape");
+  await expect(help).toHaveCount(0);
+  await expect(preview).toBeVisible();
+  await expect(warning).toBeFocused();
+});

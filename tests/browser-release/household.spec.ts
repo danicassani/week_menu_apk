@@ -64,7 +64,7 @@ for (const language of ["en", "es"] as const) {
       .click();
     await page
       .getByRole("button", {
-        name: t("Suggest the week", "Sugerir la semana"),
+        name: t("Suggest week", "Sugerir semana"),
         exact: true,
       })
       .click();

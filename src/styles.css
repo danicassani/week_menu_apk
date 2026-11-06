@@ -3462,3 +3462,23 @@ html[data-text-size="large"] {
 .preview-meal-heading > .preview-actions {
   margin-left: auto;
 }
+.preview-date-range {
+  margin-right: auto;
+  font-variant-numeric: tabular-nums;
+}
+.preview-calorie-warning {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 2px;
+  color: #896100;
+  font: inherit;
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+:root[data-theme="dark"] .preview-calorie-warning {
+  color: #facc15;
+}
