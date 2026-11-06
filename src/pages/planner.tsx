@@ -10,6 +10,9 @@ import {
   Utensils,
 } from "lucide-react";
 import { Button, Modal, Empty } from "../components/ui";
+import { RecipeReader } from "../components/recipe-reader";
+import { IngredientReader } from "../components/ingredient-reader";
+import { ContentTextField } from "../components/content-text-field";
 import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
 import { targetOn } from "../domain/state";
 import {
@@ -161,6 +164,7 @@ export function Planner(v: ViewProps) {
     [editing, setEditing] = useState<MealPlan | null>(null),
     [notice, setNotice] = useState(""),
     [previewNotice, setPreviewNotice] = useState(""),
+    [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null);
@@ -522,8 +526,22 @@ export function Planner(v: ViewProps) {
               {m.portions.map((p) => (
                 <div key={p.member_id}>
                   <b>{v.s.members.find((x) => x.id === p.member_id)?.name}</b> ·{" "}
-                  {name(p.name, v.language)} · {Math.round(p.kcal)} / {p.budget}{" "}
-                  kcal
+                  <button
+                    className="text-link suggested-recipe-link"
+                    disabled={
+                      !p.recipe_snapshot &&
+                      !lib.recipes.some((r) => r.id === p.recipe_id)
+                    }
+                    onClick={() =>
+                      setReadingRecipe(
+                        p.recipe_snapshot ??
+                          lib.recipes.find((r) => r.id === p.recipe_id)!,
+                      )
+                    }
+                  >
+                    {name(p.name, v.language)}
+                  </button>{" "}
+                  · {Math.round(p.kcal)} / {p.budget} kcal
                   {m.type === "breakfast" && p.member_id === v.s.viewer_id && (
                     <Button
                       secondary
@@ -632,6 +650,14 @@ export function Planner(v: ViewProps) {
             {t("Delete editable meals", "Borrar comidas editables")}
           </Button>
         </Modal>
+      )}
+      {readingRecipe && (
+        <RecipeReader
+          recipe={readingRecipe}
+          ingredients={lib.ingredients}
+          language={v.language}
+          onClose={() => setReadingRecipe(null)}
+        />
       )}
       {inspection && (
         <MealSnapshotView
@@ -1069,6 +1095,10 @@ export function ContentManager(v: ViewProps) {
   const t = translator(v.language),
     lib = v.s.planning;
   const [tab, setTab] = useState<"recipes" | "ingredients">("recipes"),
+    [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
+    [readingIngredient, setReadingIngredient] = useState<Ingredient | null>(
+      null,
+    ),
     [query, setQuery] = useState(""),
     [archived, setArchived] = useState(false),
     [editor, setEditor] = useState<{
@@ -1197,10 +1227,9 @@ export function ContentManager(v: ViewProps) {
             className="recipe-card"
             key={item.id}
             onClick={() =>
-              setEditor({
-                kind: tab === "recipes" ? "recipe" : "ingredient",
-                data: structuredClone(item),
-              })
+              tab === "recipes"
+                ? setReadingRecipe(structuredClone(item as PlannedRecipe))
+                : setReadingIngredient(structuredClone(item as Ingredient))
             }
           >
             <div className="recipe-card-content">
@@ -1214,10 +1243,6 @@ export function ContentManager(v: ViewProps) {
                         .map((m) => mealLabel(m, v.language))
                         .join(" · ")}
               </p>
-              <span className="text-link">
-                {t("View / edit", "Ver / editar")}
-                <Pencil size={13} />
-              </span>
             </div>
           </button>
         ))}
@@ -1228,6 +1253,35 @@ export function ContentManager(v: ViewProps) {
           "Nutrición inicial: UK CoFID 2021. Contiene información del sector público británico bajo Open Government Licence v3.0. El contenido del hogar conserva su idioma, con traducciones manuales opcionales.",
         )}
       </p>
+      {readingRecipe && (
+        <RecipeReader
+          recipe={readingRecipe}
+          ingredients={lib.ingredients}
+          language={v.language}
+          onClose={() => setReadingRecipe(null)}
+          onEdit={() => {
+            const current =
+              lib.recipes.find((r) => r.id === readingRecipe.id) ??
+              readingRecipe;
+            setReadingRecipe(null);
+            setEditor({ kind: "recipe", data: structuredClone(current) });
+          }}
+        />
+      )}
+      {readingIngredient && (
+        <IngredientReader
+          ingredient={readingIngredient}
+          language={v.language}
+          onClose={() => setReadingIngredient(null)}
+          onEdit={() => {
+            const current =
+              lib.ingredients.find((i) => i.id === readingIngredient.id) ??
+              readingIngredient;
+            setReadingIngredient(null);
+            setEditor({ kind: "ingredient", data: structuredClone(current) });
+          }}
+        />
+      )}
       {editor && (
         <ContentEditor
           v={v}
@@ -1388,6 +1442,7 @@ function ContentEditor({
       onClose={onClose}
     >
       <form
+        className="content-editor-form"
         onSubmit={(e) => {
           e.preventDefault();
           void save(false);
@@ -1413,31 +1468,17 @@ function ContentEditor({
             </Button>
           </div>
         )}
-        <div className="form-grid">
-          {(["en", "es"] as const).map((lang) => (
-            <label key={lang}>
-              {lang === "en"
-                ? t("English name", "Nombre en inglés")
-                : t("Spanish name", "Nombre en español")}
-              <input
-                maxLength={160}
-                value={data.name[lang]}
-                onChange={(e) =>
-                  update({ name: { ...data.name, [lang]: e.target.value } })
-                }
-              />
-            </label>
-          ))}
-        </div>
-        <p className="fine-print">
-          {t(
-            "Enter at least one name. Translations are optional and manual.",
-            "Introduce al menos un nombre. Las traducciones son opcionales y manuales.",
-          )}
-        </p>
+        <ContentTextField
+          key={revision}
+          label={t("Name", "Nombre")}
+          value={data.name}
+          language={v.language}
+          required
+          onChange={(name) => update({ name })}
+        />
         {kind === "ingredient" ? (
           <>
-            <div className="form-grid">
+            <div className="form-grid ingredient-nutrition-fields">
               <label>
                 {t("Energy · kcal per 100 g", "Energía · kcal por 100 g")}
                 <input
@@ -1458,11 +1499,9 @@ function ContentEditor({
                 />
               </label>
               <label>
-                {t(
-                  "Nutrition reference state",
-                  "Estado de referencia nutricional",
-                )}
+                {t("Food state", "Estado del alimento")}
                 <select
+                  aria-describedby="ingredient-state-help"
                   value={food.state}
                   onChange={(e) => update({ state: e.target.value })}
                 >
@@ -1471,7 +1510,7 @@ function ContentEditor({
                       <option key={state} value={state}>
                         {
                           {
-                            raw_edible: t("Raw edible", "Crudo comestible"),
+                            raw_edible: t("Raw", "Crudo"),
                             dry: t("Dry", "Seco"),
                             ready_to_use: t("Ready to use", "Listo para usar"),
                             cooked: t("Cooked", "Cocinado"),
@@ -1483,6 +1522,12 @@ function ContentEditor({
                 </select>
               </label>
             </div>
+            <p className="fine-print" id="ingredient-state-help">
+              {t(
+                "Calories are for 100 g of the edible food in this state. For example, dry rice and cooked rice have different values.",
+                "Las calorías corresponden a 100 g de la parte comestible en este estado. Por ejemplo, el arroz seco y el cocido tienen valores distintos.",
+              )}
+            </p>
             <label>
               {t(
                 "Canonical main/base ingredient key",
@@ -1706,21 +1751,14 @@ function ContentEditor({
                     <Trash2 size={15} />
                   </button>
                 </div>
-                <div className="form-grid">
-                  {(["en", "es"] as const).map((lang) => (
-                    <label key={lang}>
-                      {lang === "en" ? "English" : "Español"}
-                      <input
-                        value={c.name[lang]}
-                        onChange={(e) =>
-                          component(ci, {
-                            name: { ...c.name, [lang]: e.target.value },
-                          })
-                        }
-                      />
-                    </label>
-                  ))}
-                </div>
+                <ContentTextField
+                  key={`name-${revision}`}
+                  label={t("Component name", "Nombre del componente")}
+                  value={c.name}
+                  language={v.language}
+                  onChange={(name) => component(ci, { name })}
+                />
+
                 <label>
                   {t("Component type", "Tipo de componente")}
                   <select
@@ -1857,33 +1895,26 @@ function ContentEditor({
                   <Plus size={14} />
                   {t("Add ingredient", "Añadir ingrediente")}
                 </Button>
-                <div className="form-grid">
-                  {(["en", "es"] as const).map((lang) => (
-                    <label key={lang}>
-                      {t("Instructions", "Instrucciones")} ·{" "}
-                      {lang === "en" ? "English" : "Español"}
-                      <textarea
-                        rows={5}
-                        value={c.instructions.map((s) => s[lang]).join("\n")}
-                        onChange={(e) => {
-                          const lines = e.target.value.split("\n"),
-                            other = c.instructions;
-                          component(ci, {
-                            instructions: Array.from(
-                              { length: Math.max(lines.length, other.length) },
-                              (_, i) => ({
-                                ...other[i],
-                                en: other[i]?.en ?? "",
-                                es: other[i]?.es ?? "",
-                                [lang]: lines[i] ?? "",
-                              }),
-                            ),
-                          });
-                        }}
-                      />
-                    </label>
-                  ))}
-                </div>
+                <ContentTextField
+                  key={`instructions-${revision}`}
+                  label={t("Instructions", "Instrucciones")}
+                  value={{
+                    en: c.instructions.map((s) => s.en).join("\n"),
+                    es: c.instructions.map((s) => s.es).join("\n"),
+                  }}
+                  language={v.language}
+                  multiline
+                  onChange={(value) => {
+                    const en = value.en.split("\n"),
+                      es = value.es.split("\n");
+                    component(ci, {
+                      instructions: Array.from(
+                        { length: Math.max(en.length, es.length) },
+                        (_, i) => ({ en: en[i] ?? "", es: es[i] ?? "" }),
+                      ),
+                    });
+                  }}
+                />
               </section>
             ))}
             <Button

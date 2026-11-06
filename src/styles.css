@@ -241,6 +241,11 @@ select {
 .text-link:hover {
   color: var(--muted);
 }
+.suggested-recipe-link {
+  font-size: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .brand {
   display: flex;
   align-items: center;
@@ -1586,6 +1591,27 @@ input[type="checkbox"] {
 .form-grid.three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
+}
+.ingredient-nutrition-fields {
+  align-items: end;
+}
+.optional-translation {
+  margin-bottom: 18px;
+}
+.optional-translation summary {
+  cursor: pointer;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.ingredient-nutrition-fields input,
+.ingredient-nutrition-fields select {
+  height: 3rem;
+}
+@media (max-width: 600px) {
+  .content-editor-form > .form-grid,
+  .content-editor-form .ingredient-nutrition-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 .form-grid.three label {
   font-size: 10px;

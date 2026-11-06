@@ -121,9 +121,7 @@ test("create ingredient and confirm a household piece conversion", async ({
   await page
     .getByRole("button", { name: "New ingredient", exact: true })
     .click();
-  await page
-    .getByLabel("English name", { exact: true })
-    .fill("Test household egg");
+  await page.getByLabel("Name", { exact: true }).fill("Test household egg");
   await page.getByLabel("Energy · kcal per 100 g").fill("140");
   await page
     .getByRole("button", { name: "Add conversion", exact: true })
@@ -138,9 +136,69 @@ test("create ingredient and confirm a household piece conversion", async ({
     .getByRole("searchbox", { name: "Search collection" })
     .fill("Test household egg");
   await page.getByRole("button", { name: /Test household egg/ }).click();
+  const reader = page.getByRole("dialog", {
+    name: "Test household egg",
+    exact: true,
+  });
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  await expect(reader).toContainText("1 egg = 55 g");
+  await expect(reader).toContainText("Quantity step: 0.5 egg");
+  await expect(reader).toContainText("140");
+  await expect(reader).toContainText("Raw");
+  await reader
+    .getByRole("button", { name: "Edit ingredient", exact: true })
+    .click();
   await expect(
     page.getByLabel("Grams per unit", { exact: true }).last(),
   ).toHaveValue("55");
+  await page.getByLabel("Name", { exact: true }).fill("Unsaved ingredient");
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: /Test household egg/ }).click();
+  await expect(reader).toBeVisible();
+  await page.keyboard.press("Escape");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page.getByRole("button", { name: /Test household egg/ }).click();
+  await expect(
+    reader.getByRole("button", { name: "Editar ingrediente", exact: true }),
+  ).toBeVisible();
+  await expect(reader).toContainText("Crudo");
+  await reader
+    .getByRole("button", { name: "Editar ingrediente", exact: true })
+    .click();
+  const energy = page.getByLabel("Energía · kcal por 100 g", { exact: true });
+  const state = page.getByRole("combobox", {
+    name: "Estado del alimento",
+    exact: true,
+  });
+  await expect(state).toHaveAccessibleDescription(
+    /Las calorías corresponden a 100 g/,
+  );
+  for (const width of [360, 390, 540, 800]) {
+    await page.setViewportSize({ width, height: 844 });
+    const a = await energy.boundingBox(),
+      b = await state.boundingBox();
+    expect(a).not.toBeNull();
+    expect(b).not.toBeNull();
+    if (width <= 600) {
+      expect(Math.abs(a!.x - b!.x)).toBeLessThan(1);
+      expect(Math.abs(a!.width - b!.width)).toBeLessThan(1);
+      expect(b!.y).toBeGreaterThanOrEqual(a!.y + a!.height);
+    } else {
+      expect(Math.abs(a!.y - b!.y)).toBeLessThan(1);
+    }
+  }
+  await state.selectOption("cooked");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page.getByRole("button", { name: /Test household egg/ }).click();
+  await expect(reader).toContainText("Cocinado");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
 });
 test("create a recipe on a phone", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -149,9 +207,14 @@ test("create a recipe on a phone", async ({ page }) => {
     .getByRole("button", { name: "Recipes", exact: true })
     .click();
   await page.getByRole("button", { name: "New recipe", exact: true }).click();
+  await expect(
+    page.getByLabel("Spanish translation", { exact: true }).first(),
+  ).not.toBeVisible();
+  await page.getByLabel("Name", { exact: true }).fill("Household porridge");
+  await page.getByLabel("Component name", { exact: true }).fill("Porridge");
   await page
-    .getByLabel("English name", { exact: true })
-    .fill("Household porridge");
+    .getByLabel("Instructions", { exact: true })
+    .fill("Cook the oats.\nServe warm.");
   await page
     .getByRole("button", { name: "Add ingredient", exact: true })
     .click();
@@ -164,6 +227,115 @@ test("create a recipe on a phone", async ({ page }) => {
     .fill("Household porridge");
   await expect(
     page.getByRole("button", { name: /Household porridge/ }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: /Household porridge/ }).click();
+  await expect(page.getByRole("dialog")).toContainText("Serve warm.");
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page.getByRole("button", { name: /Household porridge/ }).click();
+  await page
+    .getByRole("button", { name: "Editar receta", exact: true })
+    .click();
+  await expect(page.getByLabel("Nombre", { exact: true })).toHaveValue(
+    "Household porridge",
+  );
+  await expect(
+    page.getByRole("textbox", { name: "Instrucciones", exact: true }),
+  ).toHaveValue("Cook the oats.\nServe warm.");
+  await page.getByLabel("Nombre", { exact: true }).fill("Gachas del hogar");
+  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page.getByRole("searchbox").fill("Gachas del hogar");
+  await expect(
+    page.getByRole("button", { name: /Gachas del hogar/ }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Cambiar idioma", exact: true })
+    .click();
+  await page.getByRole("searchbox").fill("Household porridge");
+  await page.getByRole("button", { name: /Household porridge/ }).click();
+  await page.getByRole("button", { name: "Edit recipe", exact: true }).click();
+  await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
+    "Household porridge",
+  );
+  await page.locator("details").first().locator("summary").click();
+  await expect(
+    page.getByLabel("Spanish translation", { exact: true }).first(),
+  ).toHaveValue("Gachas del hogar");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test("suggested recipe names open read-only details without losing the draft", async ({
+  page,
+}) => {
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Menu", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Suggest the week", exact: true })
+    .click();
+  const draft = await page.locator(".preview-meal").allTextContents();
+  const recipe = page.locator(".preview-meal button.text-link").first();
+  const title = await recipe.innerText();
+  await recipe.click();
+  const reader = page.getByRole("dialog", { name: title, exact: true });
+  await expect(reader.locator(".ingredient-list li").first()).toBeVisible();
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  await expect(
+    reader.getByRole("button", { name: "Edit recipe", exact: true }),
+  ).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(reader).toHaveCount(0);
+  await expect(
+    page.getByRole("dialog", { name: "Review your menu suggestions" }),
+  ).toBeVisible();
+  expect(await page.locator(".preview-meal").allTextContents()).toEqual(draft);
+  await expect(recipe).toBeFocused();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save" })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+});
+
+test("recipe cards open a reader and editing requires an explicit action", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("button", { name: "Recipes", exact: true })
+    .click();
+  const search = page.getByRole("searchbox", { name: "Search collection" });
+  await search.fill("Chickpea and tomato toast");
+  const card = page.locator(".recipe-card").first();
+  await expect(card).not.toContainText("View / edit");
+  await card.click();
+  const reader = page.getByRole("dialog", {
+    name: "Chickpea and tomato toast",
+    exact: true,
+  });
+  await expect(reader.locator(".instructions li").first()).toBeVisible();
+  await expect(reader.locator("input, select, textarea")).toHaveCount(0);
+  await reader
+    .getByRole("button", { name: "Edit recipe", exact: true })
+    .click();
+  await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
+    "Chickpea and tomato toast",
+  );
+  await page.getByLabel("Name", { exact: true }).fill("Unsaved change");
+  await page.keyboard.press("Escape");
+  await card.click();
+  await expect(
+    page.getByRole("dialog", {
+      name: "Chickpea and tomato toast",
+      exact: true,
+    }),
   ).toBeVisible();
   expect(
     await page.evaluate(
