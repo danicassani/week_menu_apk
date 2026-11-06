@@ -154,3 +154,19 @@ Preserve all version-one calculation, date-locking, shopping reconciliation and 
 - Review the proposed curated emoji picker, defaults and fallback presentation. Photo hosting, upload limits, compression and starter-photo licensing are deferred to a future version. No overage billing has been approved.
 - Exact Standard/Large text sizes, starter-release adoption policy and rating summary details.
 - Final technical design and the staged rollout/review sequence.
+
+## 13. Deferred to the next version: automatic translation
+
+Recorded on 6 November 2026: the user deferred Google Cloud Translation integration to the next version. Current content editing keeps one primary language with optional manual translations; no translation API or billing setup is required for this release.
+
+The future feature should:
+
+- Translate recipe/ingredient names, recipe component names and instructions between English and Spanish when new or changed text is saved. Preserve quantities, units and nutrition data.
+- Store translations for reuse, mark automatically translated text and allow manual corrections without silently overwriting them later.
+- Keep translation requests authenticated and household-scoped, with the API credential stored only as a server secret, never in frontend `VITE_` variables or Git.
+- Enforce a shared monthly character limit below the free allowance, with concurrency-safe accounting and request limits. Save original content even when translation is unavailable or the allowance is exhausted.
+- Review source-language handling, stale translations after source edits, concurrency and provider attribution before implementation.
+
+Candidate provider: Google Cloud Translation Basic (v2), which supports API keys. Pricing checked on 6 November 2026: the first 500,000 characters per month are covered by a recurring $10 credit shared across Basic/Advanced eligible usage; standard NMT usage beyond that costs $20 per million characters. Billing must be enabled. Recheck pricing before implementation; no paid usage or provisioning is authorized by this backlog entry.
+
+Sources: [pricing](https://cloud.google.com/translate/pricing), [setup and billing](https://cloud.google.com/translate/docs/setup), [authentication](https://cloud.google.com/translate/docs/authentication).
