@@ -697,3 +697,102 @@ it("updates shopping in the menu transaction and deletes only editable meals of 
   expect(repeated.planning.revision).toBe(after.planning.revision);
   expect(repeated.shopping).toEqual(after.shopping);
 });
+
+it("resolves pinned starter content without copying household rows and isolates edits and personal presentation", async () => {
+  await db.exec("reset role");
+  for (const file of [
+    "202611060009_shared_catalogue.sql",
+    "202611060010_presentation.sql",
+  ])
+    await db.exec(readFileSync("supabase/migrations/" + file, "utf8"));
+  const fresh = crypto.randomUUID();
+  await db.query(
+    "insert into auth.users values($1,'starter-new@example.com',now(),'{\"provider\":\"google\"}','{}')",
+    [fresh],
+  );
+  await as(fresh);
+  await call("create_household", ["New starter home", "UTC"]);
+  expect(
+    (await rpc("get_planning_library")).recipes.length,
+  ).toBeGreaterThanOrEqual(40);
+  expect(
+    (await db.query("select id from public.food_items")).rows,
+  ).toHaveLength(0);
+  await rpc("save_my_profile", [profile, 0]);
+  const proposal = await rpc("get_my_target_proposal");
+  await rpc("accept_my_target", [
+    { breakfast: 350, lunch: 600, dinner: 600 },
+    proposal.context_revision,
+  ]);
+  const freshState = await rpc("get_household_snapshot");
+  const freshLibrary = freshState.planning;
+  const portion = makePortion(
+    freshLibrary.recipes.find((r: any) => r.id === "b01"),
+    freshState.viewer_id,
+    profile as any,
+    350,
+    false,
+    freshLibrary.ingredients,
+    freshLibrary.substitutions,
+  );
+  await rpc("apply_meal_plans", [
+    [
+      {
+        day: addDays(freshState.server_now.slice(0, 10), 21),
+        type: "breakfast",
+        revision: 0,
+        portions: [portion],
+      },
+    ],
+    freshLibrary.revision,
+    false,
+  ]);
+  expect((await rpc("get_shopping_state")).items.length).toBeGreaterThan(0);
+  await as(carol);
+  let lib = await rpc("get_planning_library");
+  expect(lib.recipes.length).toBeGreaterThanOrEqual(40);
+  expect(lib.ingredients.length).toBeGreaterThan(30);
+  const oats = lib.ingredients.find((i: any) => i.id === "oats");
+  await expect(
+    db.exec("update app_private.starter_content set data='{}'"),
+  ).rejects.toThrow();
+  await rpc("save_household_content", [
+    "ingredient",
+    { ...oats, emoji: "🥣", name: { en: "Carol oats", es: "Avena privada" } },
+    oats.revision,
+    false,
+  ]);
+  lib = await rpc("get_planning_library");
+  expect(lib.ingredients.filter((i: any) => i.id === "oats")).toHaveLength(1);
+  expect(lib.ingredients.find((i: any) => i.id === "oats").name.en).toBe(
+    "Carol oats",
+  );
+  await rpc("save_my_presentation", [{ avatar: "🐱", text_size: "large" }]);
+  const s = await rpc("get_household_snapshot");
+  expect(s.members.find((m: any) => m.id === s.viewer_id).presentation).toEqual(
+    { avatar: "🐱", text_size: "large" },
+  );
+  await expect(
+    rpc("save_my_presentation", [{ avatar: "<img>", text_size: "large" }]),
+  ).rejects.toThrow("invalid_profile");
+  await expect(
+    rpc("save_my_presentation", [{ avatar: null, text_size: null }]),
+  ).rejects.toThrow("invalid_profile");
+  await expect(
+    rpc(
+      "save_my_presentation",
+      [{ avatar: "🐱", text_size: "large" }],
+      contextA,
+    ),
+  ).rejects.toThrow("membership_changed");
+  await as(alice);
+  lib = await rpc("get_planning_library");
+  expect(lib.ingredients.find((i: any) => i.id === "oats").name.en).not.toBe(
+    "Carol oats",
+  );
+  expect(
+    (await rpc("get_household_snapshot")).members.find(
+      (m: any) => m.id === alice,
+    ).presentation.text_size,
+  ).toBe("standard");
+});

@@ -12,6 +12,7 @@ import {
 import { Button, Modal, Empty } from "../components/ui";
 import { RecipeReader } from "../components/recipe-reader";
 import { IngredientReader } from "../components/ingredient-reader";
+import { EMOJIS, foodEmoji } from "../domain/presentation";
 import { ContentTextField } from "../components/content-text-field";
 import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
 import { targetOn } from "../domain/state";
@@ -525,7 +526,16 @@ export function Planner(v: ViewProps) {
               )}
               {m.portions.map((p) => (
                 <div key={p.member_id}>
-                  <b>{v.s.members.find((x) => x.id === p.member_id)?.name}</b> ·{" "}
+                  <b>
+                    <span aria-hidden="true">
+                      {
+                        v.s.members.find((x) => x.id === p.member_id)
+                          ?.presentation?.avatar
+                      }{" "}
+                    </span>
+                    {v.s.members.find((x) => x.id === p.member_id)?.name}
+                  </b>{" "}
+                  ·{" "}
                   <button
                     className="text-link suggested-recipe-link"
                     disabled={
@@ -871,6 +881,12 @@ function MealEditor({
       {plan.portions.map((p, index) => (
         <section className="portion-editor" key={p.member_id}>
           <h3>
+            <span aria-hidden="true">
+              {
+                v.s.members.find((m) => m.id === p.member_id)?.presentation
+                  ?.avatar
+              }{" "}
+            </span>
             {v.s.members.find((m) => m.id === p.member_id)?.name} · {p.budget}{" "}
             kcal
           </h3>
@@ -1233,7 +1249,12 @@ export function ContentManager(v: ViewProps) {
             }
           >
             <div className="recipe-card-content">
-              <h3>{name(item.name, v.language)}</h3>
+              <h3>
+                <span aria-hidden="true">
+                  {foodEmoji(item, tab === "recipes")}
+                </span>{" "}
+                {name(item.name, v.language)}
+              </h3>
               <p className="muted">
                 {item.archived
                   ? t("Archived", "Archivado")
@@ -1476,6 +1497,19 @@ function ContentEditor({
           required
           onChange={(name) => update({ name })}
         />
+        <label>
+          {t("Food emoji", "Emoji del alimento")}
+          <select
+            value={foodEmoji(data, kind === "recipe")}
+            onChange={(e) => update({ emoji: e.target.value })}
+          >
+            {EMOJIS.map((emoji) => (
+              <option key={emoji} value={emoji}>
+                {emoji}
+              </option>
+            ))}
+          </select>
+        </label>
         {kind === "ingredient" ? (
           <>
             <div className="form-grid ingredient-nutrition-fields">
@@ -2011,6 +2045,12 @@ export function MealSnapshotView({
       {plan.portions.map((p) => (
         <section key={p.member_id} className="portion-editor">
           <h3>
+            <span aria-hidden="true">
+              {
+                v.s.members.find((m) => m.id === p.member_id)?.presentation
+                  ?.avatar
+              }{" "}
+            </span>
             {v.s.members.find((m) => m.id === p.member_id)?.name} ·{" "}
             {name(p.name, v.language)} · {Math.round(p.kcal)} kcal
           </h3>

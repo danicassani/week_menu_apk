@@ -996,7 +996,9 @@ export function ProfileView(
       <div className="profile-grid">
         <section className="panel profile-summary">
           <div className="profile-heading">
-            <span className="avatar large">{v.member.name.charAt(0)}</span>
+            <span aria-hidden="true" className="avatar large">
+              {v.member.presentation?.avatar ?? v.member.name.charAt(0)}
+            </span>
             <div>
               <h2>{v.member.name}</h2>
               <p>
@@ -1170,7 +1172,9 @@ export function ProfileView(
         />
         {v.s.members.map((m) => (
           <div className="member-row" key={m.id}>
-            <span className="avatar">{m.name.charAt(0)}</span>
+            <span aria-hidden="true" className="avatar">
+              {m.presentation?.avatar ?? m.name.charAt(0)}
+            </span>
             <div>
               <b>{m.name}</b>
               <span>

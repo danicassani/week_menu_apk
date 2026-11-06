@@ -32,6 +32,7 @@ export interface Profile {
   language: Language;
 }
 export interface Member {
+  presentation?: import("./presentation").Presentation;
   id: string;
   name: string;
   status: "active" | "removed";
@@ -169,6 +170,9 @@ export interface Repository {
   deleteMeal(day: string, type: MealType, revision: number): Promise<void>;
   deleteWeek(start: string, revision: number): Promise<void>;
   savePromptPreference(after: string | null): Promise<void>;
+  savePresentation(
+    preferences: import("./presentation").Presentation,
+  ): Promise<void>;
   savePlannerSettings(week: 0 | 1, variety: number): Promise<void>;
   load(timezone: string): Promise<HouseholdState>;
   saveProfile(profile: Profile, revision: number): Promise<void>;

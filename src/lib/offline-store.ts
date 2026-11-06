@@ -13,13 +13,18 @@ export const cacheIdentity = (repo: {
   offlineId?: string;
 }) => repo.offlineId ?? repo.accountId;
 export interface OfflineAccount {
+  presentation?: import("../domain/presentation").Presentation;
   account_id: string;
   language: Language;
   saved_at: string;
   menu?: {
     saved_at: string;
     plans: MealPlan[];
-    members: { id: string; name: string }[];
+    members: {
+      id: string;
+      name: string;
+      presentation?: import("../domain/presentation").Presentation;
+    }[];
     week_start: 0 | 1;
   };
   recipes?: {
@@ -244,6 +249,8 @@ export async function cacheLoadedView(
     const next = {
       ...current,
       saved_at,
+      presentation: state.members.find((m) => m.id === state.viewer_id)
+        ?.presentation,
       language:
         state.members.find((m) => m.id === state.viewer_id)?.profile
           ?.language ?? current.language,
@@ -252,7 +259,11 @@ export async function cacheLoadedView(
       next.menu = {
         saved_at,
         plans: structuredClone(state.planning.plans),
-        members: state.members.map((m) => ({ id: m.id, name: m.name })),
+        members: state.members.map((m) => ({
+          id: m.id,
+          name: m.name,
+          presentation: m.presentation,
+        })),
         week_start: state.household.week_start,
       };
     if (tab === "recipes" && state.planning)

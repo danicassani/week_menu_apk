@@ -5,6 +5,7 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Product specification](docs/specification.md)
 - [Version 2 specification draft](docs/version-2/specification.md)
 - [Version 2 milestone 1: household isolation and onboarding](docs/version-2/milestone-1.md)
+- [Version 2 milestone 2: shared starters, text sizes and emojis](docs/version-2/milestone-2.md)
 - [Version 2 emoji illustrations and deferred photo research](docs/version-2/media-storage.md)
 - [Reviewed technical blueprint](docs/technical-design.md)
 - [Technical-review findings](docs/technical-review.md)

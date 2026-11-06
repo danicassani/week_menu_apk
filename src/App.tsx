@@ -528,6 +528,14 @@ function Workspace({
     return next;
   }, [repo]);
   useEffect(() => {
+    document.documentElement.dataset.textSize =
+      s?.members.find((m) => m.id === s.viewer_id)?.presentation?.text_size ??
+      "standard";
+    return () => {
+      delete document.documentElement.dataset.textSize;
+    };
+  }, [s]);
+  useEffect(() => {
     mounted.current = true;
     refresh()
       .then((next) => {
@@ -942,7 +950,9 @@ function Workspace({
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>
             <div className="topbar-divider" />
-            <span className="avatar small">{me.name.charAt(0)}</span>
+            <span aria-hidden="true" className="avatar small">
+              {me.presentation?.avatar ?? me.name.charAt(0)}
+            </span>
           </div>
         </header>
         {repo.mode === "preview" && (
@@ -979,6 +989,7 @@ function Workspace({
               >
                 {s.members.map((m) => (
                   <option key={m.id} value={m.id}>
+                    {m.presentation?.avatar ? `${m.presentation.avatar} ` : ""}
                     {m.name}
                     {m.id === me.id ? t(" (you)", " (tú)") : ""}
                     {m.status === "removed"

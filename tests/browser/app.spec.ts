@@ -201,3 +201,46 @@ test("menu actions stay together and planner preferences live in the person's pr
     page.getByRole("heading", { name: "Settings", exact: true }),
   ).toHaveCount(0);
 });
+
+test("personal text size and emoji preferences survive navigation", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const nav = page.getByRole("navigation", { name: "Mobile navigation" });
+  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("combobox", { name: "Text size", exact: true })
+    .selectOption("large");
+  await expect(page.locator("html")).toHaveAttribute("data-text-size", "large");
+  await page
+    .getByRole("combobox", { name: "Your avatar", exact: true })
+    .selectOption("🐱");
+  await nav.getByRole("button", { name: "Recipes", exact: true }).click();
+  await page
+    .getByRole("button", { name: "New ingredient", exact: true })
+    .count();
+  await expect(page.locator("html")).toHaveAttribute("data-text-size", "large");
+  await page.getByRole("button", { name: "New recipe", exact: true }).click();
+  await page.getByLabel("Name", { exact: true }).fill("Emoji soup");
+  await page
+    .getByRole("combobox", { name: "Food emoji", exact: true })
+    .selectOption("🍲");
+  await page
+    .getByRole("button", { name: "Add ingredient", exact: true })
+    .click();
+  await page
+    .getByRole("combobox", { name: "Ingredient", exact: true })
+    .selectOption("oats");
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await page.getByRole("searchbox").fill("Emoji soup");
+  await expect(page.locator(".recipe-card")).toContainText("🍲");
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Your avatar", exact: true }),
+  ).toHaveValue("🐱");
+});

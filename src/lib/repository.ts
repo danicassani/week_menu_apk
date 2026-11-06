@@ -1,3 +1,4 @@
+import { EMOJIS } from "../domain/presentation";
 import { authStorage, AUTH_STORAGE_KEY, clearLocalAuth } from "./auth-storage";
 import { requireDiscardOrSynced, purgeOfflineAccount } from "./offline-store";
 import {
@@ -223,6 +224,9 @@ export class SupabaseRepository implements Repository {
       p_revision: revision,
       p_replace: replace,
     });
+  }
+  savePresentation(preferences: import("../domain/presentation").Presentation) {
+    return this.rpc("save_my_presentation", { p_preferences: preferences });
   }
   savePlannerSettings(week: 0 | 1, variety: number) {
     return this.rpc("save_planner_settings", {
@@ -784,6 +788,16 @@ export class PreviewRepository implements Repository {
     this.s.shopping = await this.getShopping();
     this.persistDemo();
     return structuredClone(this.s);
+  }
+  async savePresentation(
+    preferences: import("../domain/presentation").Presentation,
+  ) {
+    if (!["standard", "large"].includes(preferences.text_size))
+      throw new Error("invalid_profile");
+    if (!(EMOJIS as readonly string[]).includes(preferences.avatar))
+      throw new Error("invalid_profile");
+    this.me().presentation = structuredClone(preferences);
+    this.serial++;
   }
   async saveProfile(p: Profile, revision: number) {
     validateProfile(p);
