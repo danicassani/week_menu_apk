@@ -1,8 +1,15 @@
+import { IconAction } from "../components/icon-action";
 import { RecipeStars } from "../components/recipe-stars";
 import { slotKey, lockKey, replan, swapDraft } from "../domain/menu-draft";
 import { useState } from "react";
 import {
   Plus,
+  Lock,
+  LockOpen,
+  RefreshCw,
+  ArrowDownUp,
+  X,
+  Check,
   ArrowLeft,
   ArrowRight,
   Info,
@@ -655,18 +662,19 @@ export function Planner(v: ViewProps) {
           wide
           onClose={() => setPreview(null)}
         >
-          <div className="button-row">
-            <Button
-              secondary
-              disabled={preview.revision !== lib.revision}
+          <div className="preview-toolbar">
+            <IconAction
+              label={t("Regenerate unlocked", "Regenerar no bloqueadas")}
+              icon={RefreshCw}
+              disabled={v.busy || preview.revision !== lib.revision}
               onClick={regenerate}
-            >
-              {t("Regenerate unlocked", "Regenerar no bloqueadas")}
-            </Button>
+            />
             {swapFrom && (
-              <Button secondary onClick={() => setSwapFrom(null)}>
-                {t("Cancel swap", "Cancelar intercambio")}
-              </Button>
+              <IconAction
+                label={t("Cancel swap", "Cancelar intercambio")}
+                icon={X}
+                onClick={() => setSwapFrom(null)}
+              />
             )}
           </div>
           {swapFrom && (
@@ -690,16 +698,15 @@ export function Planner(v: ViewProps) {
                   "Los datos cambiaron. Revisa una nueva vista previa antes de aplicar.",
                 )}
               </p>
-              <Button
-                secondary
+              <IconAction
+                icon={RefreshCw}
+                label={t("Refresh preview", "Actualizar vista previa")}
                 onClick={() =>
                   generate(
                     preview.plans.map((m) => ({ day: m.day, type: m.type })),
                   )
                 }
-              >
-                {t("Refresh preview", "Actualizar vista previa")}
-              </Button>
+              />
             </div>
           )}
           {preview.gaps.length > 0 && (
@@ -730,138 +737,176 @@ export function Planner(v: ViewProps) {
               )}
             </p>
           )}
-          {preview.plans.map((m) => (
-            <div className="preview-meal" key={m.day + m.type}>
-              <h3>
-                {m.day} · {mealLabel(m.type, v.language)}
-              </h3>
-              <div className="button-row">
-                <Button
-                  secondary
-                  disabled={
-                    preview.revision !== lib.revision ||
-                    locks.includes(lockKey(m, v.s.viewer_id))
-                  }
-                  onClick={() => (swapFrom ? swapTo(m) : setSwapFrom(m))}
-                >
-                  {swapFrom
-                    ? t("Swap here", "Intercambiar aquí")
-                    : t("Swap suggestion", "Intercambiar sugerencia")}
-                </Button>
-                {m.type !== "breakfast" && (
-                  <Button
-                    secondary
-                    aria-pressed={locks.includes(lockKey(m))}
-                    onClick={() => toggleLock(m)}
-                  >
-                    {locks.includes(lockKey(m))
-                      ? t("Unlock meal", "Desbloquear comida")
-                      : t("Lock meal", "Bloquear comida")}
-                  </Button>
-                )}
-              </div>
-              {m.type !== "breakfast" && (
-                <Button
-                  secondary
-                  disabled={
-                    v.busy ||
-                    closed(v, m.day) ||
-                    locks.includes(lockKey(m, v.s.viewer_id)) ||
-                    preview.revision !== lib.revision
-                  }
-                  onClick={() => reroll(m)}
-                >
-                  {t("Re-roll meal", "Volver a sugerir comida")}
-                </Button>
-              )}
-              {m.portions.map((p) => (
-                <div key={p.member_id}>
-                  <b>
-                    <span aria-hidden="true">
-                      {
-                        v.s.members.find((x) => x.id === p.member_id)
-                          ?.presentation?.avatar
-                      }{" "}
-                    </span>
-                    {v.s.members.find((x) => x.id === p.member_id)?.name}
-                  </b>{" "}
-                  ·{" "}
-                  <button
-                    className="text-link suggested-recipe-link"
-                    disabled={
-                      !p.recipe_snapshot &&
-                      !lib.recipes.some((r) => r.id === p.recipe_id)
-                    }
-                    onClick={() =>
-                      setReadingRecipe(
-                        p.recipe_snapshot ??
-                          lib.recipes.find((r) => r.id === p.recipe_id)!,
+          {preview.plans.map((m) => {
+            const swapAction = (
+              <IconAction
+                icon={ArrowDownUp}
+                label={
+                  swapFrom === m
+                    ? t(
+                        "Cancel selected swap",
+                        "Cancelar intercambio seleccionado",
                       )
-                    }
-                  >
-                    {name(p.name, v.language)}
-                  </button>{" "}
-                  · {Math.round(p.kcal)} / {p.budget} kcal{" "}
-                  {p.dessert && (
-                    <span className="pill">
-                      {t("With dessert", "Con postre")}
-                    </span>
-                  )}
-                  {m.type === "breakfast" && p.member_id === v.s.viewer_id && (
-                    <Button
-                      secondary
-                      disabled={
-                        v.busy ||
-                        closed(v, m.day) ||
-                        locks.includes(lockKey(m, p.member_id)) ||
-                        preview.revision !== lib.revision
-                      }
-                      onClick={() => reroll(m)}
-                    >
-                      {t(
-                        "Re-roll my breakfast",
-                        "Volver a sugerir mi desayuno",
-                      )}
-                    </Button>
-                  )}
-                  {m.type === "breakfast" && (
-                    <Button
-                      secondary
-                      aria-pressed={locks.includes(lockKey(m, p.member_id))}
-                      onClick={() => toggleLock(m, p.member_id)}
-                    >
-                      {locks.includes(lockKey(m, p.member_id))
-                        ? t("Unlock breakfast", "Desbloquear desayuno")
-                        : t("Lock breakfast", "Bloquear desayuno")}
-                    </Button>
-                  )}
-                  {p.substitutions.map((r, i) => (
-                    <p className="note" key={i}>
-                      {name(
-                        lib.ingredients.find((x) => x.id === r.from)!.name,
-                        v.language,
-                      )}{" "}
-                      →{" "}
-                      {name(
-                        lib.ingredients.find((x) => x.id === r.to)!.name,
-                        v.language,
-                      )}
-                      . {name(r.instructions, v.language)}
-                    </p>
-                  ))}
-                  {p.kcal > p.budget && (
-                    <p className="muted">
-                      {t(
-                        "Rounded amounts exceed the budget. Adjust portions manually after saving.",
-                        "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.",
-                      )}
-                    </p>
+                    : swapFrom
+                      ? t("Swap here", "Intercambiar aquí")
+                      : t("Swap suggestion", "Intercambiar sugerencia")
+                }
+                aria-pressed={swapFrom === m}
+                disabled={
+                  v.busy ||
+                  preview.revision !== lib.revision ||
+                  locks.includes(lockKey(m, v.s.viewer_id))
+                }
+                onClick={() =>
+                  swapFrom === m
+                    ? setSwapFrom(null)
+                    : swapFrom
+                      ? swapTo(m)
+                      : setSwapFrom(m)
+                }
+              />
+            );
+            return (
+              <div className="preview-meal" key={m.day + m.type}>
+                <div className="preview-meal-heading">
+                  <h3>
+                    {m.day} · {mealLabel(m.type, v.language)}
+                  </h3>
+                  {m.type !== "breakfast" && (
+                    <div className="preview-actions">
+                      {swapAction}
+                      <IconAction
+                        icon={RefreshCw}
+                        label={t("Re-roll meal", "Volver a sugerir comida")}
+                        disabled={
+                          v.busy ||
+                          closed(v, m.day) ||
+                          locks.includes(lockKey(m)) ||
+                          preview.revision !== lib.revision
+                        }
+                        onClick={() => reroll(m)}
+                      />
+                      <IconAction
+                        icon={locks.includes(lockKey(m)) ? Lock : LockOpen}
+                        label={
+                          locks.includes(lockKey(m))
+                            ? t("Unlock meal", "Desbloquear comida")
+                            : t("Lock meal", "Bloquear comida")
+                        }
+                        aria-pressed={locks.includes(lockKey(m))}
+                        disabled={v.busy}
+                        onClick={() => toggleLock(m)}
+                      />
+                    </div>
                   )}
                 </div>
-              ))}
-            </div>
-          ))}
-          <Button
+                {m.portions.map((p) => (
+                  <div className="preview-portion" key={p.member_id}>
+                    <div className="preview-portion-summary">
+                      <b>
+                        <span aria-hidden="true">
+                          {
+                            v.s.members.find((x) => x.id === p.member_id)
+                              ?.presentation?.avatar
+                          }{" "}
+                        </span>
+                        {v.s.members.find((x) => x.id === p.member_id)?.name}
+                      </b>{" "}
+                      ·{" "}
+                      <button
+                        className="text-link suggested-recipe-link"
+                        disabled={
+                          !p.recipe_snapshot &&
+                          !lib.recipes.some((r) => r.id === p.recipe_id)
+                        }
+                        onClick={() =>
+                          setReadingRecipe(
+                            p.recipe_snapshot ??
+                              lib.recipes.find((r) => r.id === p.recipe_id)!,
+                          )
+                        }
+                      >
+                        {name(p.name, v.language)}
+                      </button>{" "}
+                      · {Math.round(p.kcal)} / {p.budget} kcal{" "}
+                      {p.dessert && (
+                        <span className="pill">
+                          {t("With dessert", "Con postre")}
+                        </span>
+                      )}
+                    </div>
+                    {m.type === "breakfast" && (
+                      <div className="preview-actions">
+                        {p.member_id === v.s.viewer_id && (
+                          <>
+                            {swapAction}
+                            <IconAction
+                              icon={RefreshCw}
+                              label={t(
+                                "Re-roll my breakfast",
+                                "Volver a sugerir mi desayuno",
+                              )}
+                              disabled={
+                                v.busy ||
+                                closed(v, m.day) ||
+                                locks.includes(lockKey(m, p.member_id)) ||
+                                preview.revision !== lib.revision
+                              }
+                              onClick={() => reroll(m)}
+                            />
+                          </>
+                        )}
+                        <IconAction
+                          icon={
+                            locks.includes(lockKey(m, p.member_id))
+                              ? Lock
+                              : LockOpen
+                          }
+                          label={
+                            locks.includes(lockKey(m, p.member_id))
+                              ? t("Unlock breakfast", "Desbloquear desayuno")
+                              : t("Lock breakfast", "Bloquear desayuno")
+                          }
+                          aria-pressed={locks.includes(lockKey(m, p.member_id))}
+                          disabled={v.busy}
+                          onClick={() => toggleLock(m, p.member_id)}
+                        />
+                      </div>
+                    )}
+                    {p.substitutions.map((r, i) => (
+                      <p className="note" key={i}>
+                        {name(
+                          lib.ingredients.find((x) => x.id === r.from)!.name,
+                          v.language,
+                        )}{" "}
+                        →{" "}
+                        {name(
+                          lib.ingredients.find((x) => x.id === r.to)!.name,
+                          v.language,
+                        )}
+                        . {name(r.instructions, v.language)}
+                      </p>
+                    ))}
+                    {p.kcal > p.budget && (
+                      <p className="muted">
+                        {t(
+                          "Rounded amounts exceed the budget. Adjust portions manually after saving.",
+                          "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.",
+                        )}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+          <IconAction
+            icon={Check}
+            className="preview-confirm"
+            label={t(
+              "Approve suggestions & save",
+              "Aprobar sugerencias y guardar",
+            )}
             disabled={
               !preview.plans.length || preview.revision !== lib.revision
             }
@@ -880,9 +925,7 @@ export function Planner(v: ViewProps) {
               )
                 setPreview(null);
             }}
-          >
-            {t("Approve suggestions & save", "Aprobar sugerencias y guardar")}
-          </Button>
+          />
         </Modal>
       )}
       {deletingWeek !== null && (
