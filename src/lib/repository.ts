@@ -205,6 +205,9 @@ export class SupabaseRepository implements Repository {
   savePromptPreference(after: string | null) {
     return this.rpc("save_recipe_prompt_preference", { p_after: after });
   }
+  rateRecipe(recipeId: string, stars: number) {
+    return this.rpc("rate_recipe", { p_recipe_id: recipeId, p_stars: stars });
+  }
   saveContent(
     kind: "ingredient" | "recipe",
     data: Ingredient | PlannedRecipe,
@@ -675,6 +678,20 @@ export class PreviewRepository implements Repository {
   async savePromptPreference(after: string | null) {
     this.me();
     this.library.prompt_show_after = after ?? "never";
+    this.serial++;
+  }
+  async rateRecipe(recipeId: string, stars: number) {
+    const member = this.me();
+    if (
+      !Number.isInteger(stars) ||
+      stars < 1 ||
+      stars > 5 ||
+      !this.library.recipes.some((r) => r.id === recipeId)
+    )
+      throw new DomainError("invalid_recipe");
+    this.library.ratings = (this.library.ratings ?? [])
+      .filter((r) => r.recipe_id !== recipeId || r.member_id !== member.id)
+      .concat({ recipe_id: recipeId, member_id: member.id, stars });
     this.serial++;
   }
   async saveContent(

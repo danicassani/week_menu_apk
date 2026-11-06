@@ -1,3 +1,5 @@
+import { RecipeStars } from "../components/recipe-stars";
+import { slotKey, lockKey, replan, swapDraft } from "../domain/menu-draft";
 import { useState } from "react";
 import {
   Plus,
@@ -156,6 +158,10 @@ export function Planner(v: ViewProps) {
     lib = v.s.planning;
   const [anchor, setAnchor] = useState(v.day),
     [replace, setReplace] = useState(false),
+    [locks, setLocks] = useState<string[]>([]),
+    [swapFrom, setSwapFrom] = useState<MealPlan | null>(null),
+    [copyOpen, setCopyOpen] = useState(false),
+    [copyStart, setCopyStart] = useState(addDays(v.day, -7)),
     [preview, setPreview] = useState<{
       plans: MealPlan[];
       revision: number;
@@ -184,6 +190,8 @@ export function Planner(v: ViewProps) {
   const days = weekDays(anchor, v.s.household.week_start);
   const generate = (slots: { day: string; type: MealType }[]) => {
     setPreviewNotice("");
+    setLocks([]);
+    setSwapFrom(null);
     const retained = lib.plans.filter(
         (m) =>
           !replace || !slots.some((s) => s.day === m.day && s.type === m.type),
@@ -210,7 +218,12 @@ export function Planner(v: ViewProps) {
     setPreview({ plans, revision: lib.revision, replace, gaps });
   };
   const reroll = (meal: MealPlan) => {
-    if (!preview || preview.revision !== lib.revision || closed(v, meal.day))
+    if (
+      !preview ||
+      locks.includes(lockKey(meal, v.s.viewer_id)) ||
+      preview.revision !== lib.revision ||
+      closed(v, meal.day)
+    )
       return;
     const retained = lib.plans.filter(
       (saved) =>
@@ -238,10 +251,153 @@ export function Planner(v: ViewProps) {
       return;
     }
     setPreviewNotice("");
+    setSwapFrom(null);
     setPreview({
       ...preview,
       plans: preview.plans.map((p) => (p === meal ? next : p)),
     });
+  };
+  const toggleLock = (meal: MealPlan, member?: string) => {
+    const key = lockKey(meal, member);
+    setLocks((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+    );
+  };
+  const regenerate = () => {
+    if (!preview || preview.revision !== lib.revision) return;
+    let plans = structuredClone(preview.plans);
+    let unavailable = false;
+    const retained = lib.plans.filter(
+      (p) => !plans.some((m) => slotKey(m) === slotKey(p)),
+    );
+    for (const meal of plans) {
+      if (meal.type !== "breakfast" && locks.includes(lockKey(meal))) continue;
+      if (closed(v, meal.day)) continue;
+      if (meal.type === "breakfast") {
+        // Rebuild one person at a time; locked personal portions remain byte-for-byte.
+        for (const member of eligible(v)) {
+          if (locks.includes(lockKey(meal, member.id))) continue;
+          const next = suggested(
+            v,
+            lib,
+            meal.day,
+            meal.type,
+            [...retained, ...plans.filter((p) => slotKey(p) !== slotKey(meal))],
+            undefined,
+            meal,
+            member.id,
+          );
+          if (next) meal.portions = next.portions;
+          else unavailable = true;
+        }
+      } else {
+        const next = suggested(
+          v,
+          lib,
+          meal.day,
+          meal.type,
+          [...retained, ...plans.filter((p) => slotKey(p) !== slotKey(meal))],
+          undefined,
+          meal,
+        );
+        if (next)
+          plans = plans.map((p) => (slotKey(p) === slotKey(meal) ? next : p));
+        else unavailable = true;
+      }
+    }
+    setPreview({ ...preview, plans });
+    setPreviewNotice(
+      unavailable
+        ? t(
+            "Some suggestions have no suitable alternative. They were preserved; add more recipes for variety.",
+            "Algunas sugerencias no tienen otra alternativa adecuada. Se conservan; añade recetas para ampliar la variedad.",
+          )
+        : "",
+    );
+    setSwapFrom(null);
+  };
+  const copyWeek = () => {
+    const sourceDays = weekDays(copyStart, v.s.household.week_start),
+      plans: MealPlan[] = [],
+      gaps: string[] = [];
+    for (let i = 0; i < 7; i++)
+      for (const type of types) {
+        const day = days[i];
+        if (
+          closed(v, day) ||
+          (!replace && lib.plans.some((p) => p.day === day && p.type === type))
+        )
+          continue;
+        const source = lib.plans.find(
+          (p) => p.day === sourceDays[i] && p.type === type,
+        );
+        if (!source) {
+          gaps.push(`${day} · ${mealLabel(type, v.language)}`);
+          continue;
+        }
+        const result = replan(source, day, type, v.s, lib);
+        gaps.push(
+          ...result.gaps.map((g) =>
+            g.replace(` · ${type} · `, ` · ${mealLabel(type, v.language)} · `),
+          ),
+        );
+        const retained = lib.plans.filter(
+          (p) => !replace || !days.includes(p.day) || closed(v, p.day),
+        );
+        if (
+          varietyConflict(
+            result.plan,
+            [...retained, ...plans],
+            v.s.household.variety_days,
+          )
+        )
+          gaps.push(
+            `${day} · ${mealLabel(type, v.language)} · ${t("Variety conflict", "Conflicto de variedad")}`,
+          );
+        else if (result.plan.portions.length) plans.push(result.plan);
+      }
+    for (let pass = 0; pass < 22; pass++) {
+      const retained = lib.plans.filter(
+        (p) => !plans.some((m) => slotKey(m) === slotKey(p)),
+      );
+      const conflicts = plans.filter((p) =>
+        varietyConflict(
+          p,
+          [...retained, ...plans.filter((m) => m !== p)],
+          v.s.household.variety_days,
+        ),
+      );
+      if (!conflicts.length) break;
+      for (const p of conflicts) {
+        gaps.push(
+          `${p.day} · ${mealLabel(p.type, v.language)} · ${t("Variety conflict", "Conflicto de variedad")}`,
+        );
+        plans.splice(plans.indexOf(p), 1);
+      }
+    }
+    setLocks([]);
+    setSwapFrom(null);
+    setPreviewNotice("");
+    setCopyOpen(false);
+    setPreview({ plans, gaps, replace, revision: lib.revision });
+  };
+  const swapTo = (meal: MealPlan) => {
+    if (!preview || !swapFrom || preview.revision !== lib.revision) return;
+    try {
+      setPreview({
+        ...preview,
+        plans: swapDraft(preview.plans, swapFrom, meal, v.s, lib, locks),
+      });
+      setSwapFrom(null);
+      setPreviewNotice("");
+    } catch {
+      setPreviewNotice(
+        t(
+          "Cannot swap these suggestions: review locks, meal types, recipes, budgets and variety. Your draft is unchanged.",
+          "No se pueden intercambiar: revisa bloqueos, tipos de comida, recetas, presupuestos y variedad. Se conserva el borrador.",
+        ),
+      );
+    }
   };
   return (
     <>
@@ -302,6 +458,9 @@ export function Planner(v: ViewProps) {
             onClick={() => setDeletingWeek(lib.revision)}
           >
             {t("Delete week", "Borrar semana")}
+          </Button>
+          <Button secondary onClick={() => setCopyOpen(true)}>
+            {t("Copy a week", "Copiar una semana")}
           </Button>
         </div>
         <label className="check-row">
@@ -457,6 +616,36 @@ export function Planner(v: ViewProps) {
           </section>
         ))}
       </div>
+      {copyOpen && (
+        <Modal
+          title={t("Copy a previous week", "Copiar una semana anterior")}
+          onClose={() => setCopyOpen(false)}
+        >
+          <label>
+            {t("Source week", "Semana de origen")}
+            <input
+              type="date"
+              value={copyStart}
+              onChange={(e) => setCopyStart(e.target.value)}
+            />
+          </label>
+          <p>
+            {t("Destination", "Destino")}: {days[0]} — {days[6]}
+          </p>
+          <p className="note">
+            {t(
+              "Current portions and dietary restrictions will be recalculated. Existing meals are preserved unless replacement is selected. Logs are not copied.",
+              "Se recalculan las porciones y restricciones actuales. Se conservan las comidas existentes salvo que elijas sustituirlas. No se copian registros personales.",
+            )}
+          </p>
+          <Button
+            disabled={!/^\d{4}-\d{2}-\d{2}$/.test(copyStart)}
+            onClick={copyWeek}
+          >
+            {t("Preview copied week", "Revisar semana copiada")}
+          </Button>
+        </Modal>
+      )}
       {preview && (
         <Modal
           title={t(
@@ -466,6 +655,28 @@ export function Planner(v: ViewProps) {
           wide
           onClose={() => setPreview(null)}
         >
+          <div className="button-row">
+            <Button
+              secondary
+              disabled={preview.revision !== lib.revision}
+              onClick={regenerate}
+            >
+              {t("Regenerate unlocked", "Regenerar no bloqueadas")}
+            </Button>
+            {swapFrom && (
+              <Button secondary onClick={() => setSwapFrom(null)}>
+                {t("Cancel swap", "Cancelar intercambio")}
+              </Button>
+            )}
+          </div>
+          {swapFrom && (
+            <p role="status">
+              {t(
+                "Choose a destination suggestion below. Breakfast swaps affect only your own portion.",
+                "Elige una sugerencia de destino. Los intercambios de desayuno solo afectan a tu porción.",
+              )}
+            </p>
+          )}
           {previewNotice && (
             <p className="note warning" role="status">
               {previewNotice}
@@ -524,12 +735,38 @@ export function Planner(v: ViewProps) {
               <h3>
                 {m.day} · {mealLabel(m.type, v.language)}
               </h3>
+              <div className="button-row">
+                <Button
+                  secondary
+                  disabled={
+                    preview.revision !== lib.revision ||
+                    locks.includes(lockKey(m, v.s.viewer_id))
+                  }
+                  onClick={() => (swapFrom ? swapTo(m) : setSwapFrom(m))}
+                >
+                  {swapFrom
+                    ? t("Swap here", "Intercambiar aquí")
+                    : t("Swap suggestion", "Intercambiar sugerencia")}
+                </Button>
+                {m.type !== "breakfast" && (
+                  <Button
+                    secondary
+                    aria-pressed={locks.includes(lockKey(m))}
+                    onClick={() => toggleLock(m)}
+                  >
+                    {locks.includes(lockKey(m))
+                      ? t("Unlock meal", "Desbloquear comida")
+                      : t("Lock meal", "Bloquear comida")}
+                  </Button>
+                )}
+              </div>
               {m.type !== "breakfast" && (
                 <Button
                   secondary
                   disabled={
                     v.busy ||
                     closed(v, m.day) ||
+                    locks.includes(lockKey(m, v.s.viewer_id)) ||
                     preview.revision !== lib.revision
                   }
                   onClick={() => reroll(m)}
@@ -564,13 +801,19 @@ export function Planner(v: ViewProps) {
                   >
                     {name(p.name, v.language)}
                   </button>{" "}
-                  · {Math.round(p.kcal)} / {p.budget} kcal
+                  · {Math.round(p.kcal)} / {p.budget} kcal{" "}
+                  {p.dessert && (
+                    <span className="pill">
+                      {t("With dessert", "Con postre")}
+                    </span>
+                  )}
                   {m.type === "breakfast" && p.member_id === v.s.viewer_id && (
                     <Button
                       secondary
                       disabled={
                         v.busy ||
                         closed(v, m.day) ||
+                        locks.includes(lockKey(m, p.member_id)) ||
                         preview.revision !== lib.revision
                       }
                       onClick={() => reroll(m)}
@@ -579,6 +822,17 @@ export function Planner(v: ViewProps) {
                         "Re-roll my breakfast",
                         "Volver a sugerir mi desayuno",
                       )}
+                    </Button>
+                  )}
+                  {m.type === "breakfast" && (
+                    <Button
+                      secondary
+                      aria-pressed={locks.includes(lockKey(m, p.member_id))}
+                      onClick={() => toggleLock(m, p.member_id)}
+                    >
+                      {locks.includes(lockKey(m, p.member_id))
+                        ? t("Unlock breakfast", "Desbloquear desayuno")
+                        : t("Lock breakfast", "Bloquear desayuno")}
                     </Button>
                   )}
                   {p.substitutions.map((r, i) => (
@@ -911,6 +1165,8 @@ function MealEditor({
                 e.target.checked
                   ? edit(index, {
                       eating_out: true,
+                      underlying_recipe_id:
+                        p.recipe_id ?? p.underlying_recipe_id,
                       description: "",
                       kcal: Number.NaN,
                       lines: [],
@@ -1290,6 +1546,7 @@ export function ContentManager(v: ViewProps) {
       {readingRecipe && (
         <RecipeReader
           recipe={readingRecipe}
+          actions={<RecipeStars v={v} recipeId={readingRecipe.id} />}
           ingredients={lib.ingredients}
           language={v.language}
           onClose={() => setReadingRecipe(null)}

@@ -832,3 +832,110 @@ it("resolves pinned starter content without copying household rows and isolates 
     ).presentation.text_size,
   ).toBe("standard");
 });
+
+it("keeps ratings private and caller-owned, preserves one current rating after rejoining", async () => {
+  await db.exec("reset role");
+  await db.exec(
+    "grant references on public.household to presentation_migrator; set role presentation_migrator",
+  );
+  await db.exec(
+    readFileSync("supabase/migrations/202611060011_recipe_ratings.sql", "utf8"),
+  );
+  await db.exec("reset role");
+  expect(
+    (
+      await db.query<{ ok: boolean }>(
+        "select not has_schema_privilege('week_menu_executor','public','CREATE') and not has_schema_privilege('week_menu_executor','app_private','CREATE') ok",
+      )
+    ).rows[0].ok,
+  ).toBe(true);
+  await as(alice);
+  await rpc("rate_recipe", ["b01", 5]);
+  let lib = await rpc("get_planning_library");
+  expect(lib.ratings.find((r: any) => r.recipe_id === "b01")).toMatchObject({
+    stars: 5,
+    mine: true,
+  });
+  await expect(rpc("rate_recipe", ["b01", 0])).rejects.toThrow(
+    "invalid_recipe",
+  );
+  await expect(rpc("rate_recipe", ["b01", null])).rejects.toThrow(
+    "invalid_recipe",
+  );
+  await expect(rpc("rate_recipe", ["nonexistent", 3])).rejects.toThrow(
+    "invalid_recipe",
+  );
+  await expect(
+    db.exec("update public.recipe_ratings set stars=1"),
+  ).rejects.toThrow();
+  await as(carol);
+  expect((await rpc("get_planning_library")).ratings).toEqual([]);
+  await expect(rpc("rate_recipe", ["b01", 1], contextA)).rejects.toThrow(
+    "membership_changed",
+  );
+  await rpc("rate_recipe", ["b01", 2]);
+  await as(alice);
+  expect(
+    (await rpc("get_planning_library")).ratings.find(
+      (r: any) => r.recipe_id === "b01",
+    ).stars,
+  ).toBe(5);
+  // Eating-out edits retain authoritative home-recipe provenance for later copies.
+  const snapshot = await rpc("get_household_snapshot"),
+    futureDay = addDays(snapshot.server_now.slice(0, 10), 42);
+  const breakfast = makePortion(
+    snapshot.planning.recipes.find((r: any) => r.id === "b01"),
+    alice,
+    snapshot.members.find((m: any) => m.id === alice).profile,
+    350,
+    false,
+    snapshot.planning.ingredients,
+    snapshot.planning.substitutions,
+  );
+  await rpc("apply_meal_plans", [
+    [{ day: futureDay, type: "breakfast", revision: 0, portions: [breakfast] }],
+    snapshot.planning.revision,
+    false,
+  ]);
+  let current = await rpc("get_planning_library");
+  const eatingOut = structuredClone(
+    current.plans.find((m: any) => m.day === futureDay),
+  );
+  Object.assign(eatingOut.portions[0], {
+    eating_out: true,
+    description: "Restaurant",
+    kcal: 450,
+    underlying_recipe_id: "forged",
+  });
+  await rpc("apply_meal_plans", [[eatingOut], current.revision, true]);
+  current = await rpc("get_planning_library");
+  const recorded = current.plans.find((m: any) => m.day === futureDay)
+    .portions[0];
+  expect(recorded.recipe_id).toBeNull();
+  expect(recorded.underlying_recipe_id).toBe("b01");
+  expect(recorded.underlying_recipe_snapshot.id).toBe("b01");
+  const newcomer = crypto.randomUUID();
+  await db.exec("reset role");
+  await db.query(
+    "insert into auth.users values($1,'rating-new@example.com',now(),'{\"provider\":\"google\"}','{}')",
+    [newcomer],
+  );
+  await as(alice);
+  await rpc("invite_member", ["rating-new@example.com"]);
+  await as(newcomer);
+  await call("join_household", [(await access()).invitations[0].id, "UTC"]);
+  const membership = (await access()).active.membership_id;
+  await rpc("rate_recipe", ["b01", 3]);
+  await as(alice);
+  await rpc("remove_member", [membership]);
+  await rpc("invite_member", ["rating-new@example.com"]);
+  await as(newcomer);
+  await call("join_household", [(await access()).invitations[0].id, "UTC"]);
+  await rpc("rate_recipe", ["b01", 4]);
+  lib = await rpc("get_planning_library");
+  expect(lib.ratings.filter((r: any) => r.recipe_id === "b01")).toHaveLength(2);
+  expect(lib.ratings.find((r: any) => r.mine)).toMatchObject({
+    stars: 4,
+    member_id: (await access()).active.membership_id,
+  });
+});

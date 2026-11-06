@@ -421,3 +421,119 @@ test("saved future recipes can be read and closed days hide portion prompts and 
     .click();
   await expect(reader.locator(".instructions li").first()).toBeVisible();
 });
+
+test("locks preserve suggestions during regeneration, own breakfast swaps stay personal and copied weeks are reviewed", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .getByRole("navigation", { name: "Mobile navigation" })
+    .getByRole("button", { name: "Menu", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Suggest the week", exact: true })
+    .click();
+  const cards = page.locator(".preview-meal");
+  const shared = cards
+    .filter({
+      has: page.getByRole("button", { name: "Re-roll meal", exact: true }),
+    })
+    .first();
+  const before = await shared
+    .locator(".suggested-recipe-link")
+    .allTextContents();
+  await shared.getByRole("button", { name: "Lock meal", exact: true }).click();
+  await expect(
+    shared.getByRole("button", { name: "Re-roll meal", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByRole("button", { name: "Regenerate unlocked", exact: true })
+    .click();
+  expect(
+    await shared.locator(".suggested-recipe-link").allTextContents(),
+  ).toEqual(before);
+  const breakfasts = cards.filter({
+    has: page.getByRole("button", {
+      name: "Re-roll my breakfast",
+      exact: true,
+    }),
+  });
+  const a = breakfasts.nth(0),
+    b = breakfasts.nth(1);
+  const first = await a.locator(".suggested-recipe-link").allTextContents(),
+    second = await b.locator(".suggested-recipe-link").allTextContents();
+  await a.getByRole("button", { name: "Swap suggestion", exact: true }).click();
+  await b.getByRole("button", { name: "Swap here", exact: true }).click();
+  expect((await a.locator(".suggested-recipe-link").allTextContents())[0]).toBe(
+    second[0],
+  );
+  expect((await b.locator(".suggested-recipe-link").allTextContents())[0]).toBe(
+    first[0],
+  );
+  expect((await a.locator(".suggested-recipe-link").allTextContents())[1]).toBe(
+    first[1],
+  );
+  expect((await b.locator(".suggested-recipe-link").allTextContents())[1]).toBe(
+    second[1],
+  );
+  const sourceChoices = await page
+    .locator(".preview-meal .suggested-recipe-link")
+    .allTextContents();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  const sourceNames = await page.locator(".meal-recipe-link").allTextContents();
+  await page.getByRole("button", { name: "Next week", exact: true }).click();
+  await page.getByRole("button", { name: "Copy a week", exact: true }).click();
+  await page.getByLabel("Source week", { exact: true }).fill("2026-11-02");
+  await page
+    .getByRole("button", { name: "Preview copied week", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", {
+      name: "Review your menu suggestions",
+      exact: true,
+    }),
+  ).toBeVisible();
+  const copied = await page
+    .locator(".preview-meal .suggested-recipe-link")
+    .allTextContents();
+  expect(copied.length).toBeGreaterThan(0);
+  for (const name of copied) expect(sourceChoices).toContain(name);
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Previous week", exact: true })
+    .click();
+  expect(await page.locator(".meal-recipe-link").allTextContents()).toEqual(
+    sourceNames,
+  );
+});
+
+test("recipe stars save one informational rating without opening the editor", async ({
+  page,
+}) => {
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Recipes", exact: true })
+    .click();
+  await page.getByRole("searchbox").fill("Chickpea and tomato toast");
+  await page.locator(".recipe-card").first().click();
+  await expect(page.getByText("Not rated yet", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Rate 4 stars", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Rate 4 stars", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByText("4.0 / 5 · 1 rating", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Rate 2 stars", exact: true }).click();
+  await expect(
+    page.getByText("2.0 / 5 · 1 rating", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("dialog").locator("input,textarea,select"),
+  ).toHaveCount(0);
+});

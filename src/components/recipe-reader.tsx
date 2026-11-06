@@ -9,12 +9,14 @@ export function RecipeReader({
   language,
   onClose,
   onEdit,
+  actions,
 }: {
   recipe: PlannedRecipe;
   ingredients: Ingredient[];
   language: Language;
   onClose: () => void;
   onEdit?: () => void;
+  actions?: React.ReactNode;
 }) {
   const t = translator(language),
     text = (n: { en: string; es: string }) => n[language] || n.en || n.es;
@@ -25,6 +27,7 @@ export function RecipeReader({
           <Button onClick={onEdit}>{t("Edit recipe", "Editar receta")}</Button>
         </div>
       )}
+      {actions}
       <p className="muted">
         {t(
           "Ingredients for reference servings:",

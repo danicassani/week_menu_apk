@@ -156,6 +156,7 @@ export interface Repository {
   deleteManualItem(id: string, revision: number): Promise<void>;
   checkShopping(operation: CheckOperation): Promise<CheckReceipt>;
   mode: "preview" | "supabase";
+  rateRecipe(recipeId: string, stars: number): Promise<void>;
   saveContent(
     kind: "ingredient" | "recipe",
     data: Ingredient | PlannedRecipe,

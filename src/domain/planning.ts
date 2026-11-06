@@ -75,6 +75,7 @@ export interface PortionLine {
   variety_key: string;
 }
 export interface PlannedPortion {
+  underlying_recipe_id?: string | null;
   member_id: string;
   recipe_id: string | null;
   name: Names;
@@ -97,6 +98,12 @@ export interface MealPlan {
   portions: PlannedPortion[];
 }
 export interface PlanningState {
+  ratings?: {
+    recipe_id: string;
+    member_id: string;
+    stars: number;
+    mine?: boolean;
+  }[];
   prompt_show_after?: string;
   ingredients: Ingredient[];
   recipes: PlannedRecipe[];
