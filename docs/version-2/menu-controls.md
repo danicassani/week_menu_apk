@@ -23,3 +23,11 @@ Domain tests cover different alternatives, exhausted catalogues, individual brea
 The preview toolbar shows the selected calendar week as **DD/MM - DD/MM** and outline dice regenerate unlocked suggestions. Cards show localized weekdays; individual dice choose alternatives and open/closed padlocks control retention. Breakfast swaps move the selected person's choices between days, preserve the other portions, recalculate destination budgets and respect that person's locks. Incompatible destinations are disabled. Shared lunch/dinner swaps retain their existing rules.
 
 Over-budget calorie numbers are gold/yellow, underlined buttons with accessible warning labels and 44 px touch targets. Tapping opens the rounding explanation; closing it returns focus to the number and retains the draft. Other calorie totals stay plain. No schema migration or new external service is required.
+
+## Atomic shopping date-range changes
+
+The date-range button now uses `set_shopping_date_range` once instead of a preview/apply network round trip. The server validates the expected household/membership, locks that household, validates the date range and reconciles the latest menu in the same transaction. An interval without planned home-cooked portions removes all generated products; checked manual additions remain. Reloading preserves the selected empty interval. Selecting a populated interval restores its generated requirements. Menu edits and date-range edits continue using the same increase/decrease/check rules.
+
+Apply [migration 12](../../supabase/migrations/202611060012_shopping_date_range.sql) once, after migrations 6–11 and before deploying this client. It adds only an authenticated, context-bound API and a private helper owned by the existing RLS-restricted executor. It does not change household tables or broaden their write grants. Existing preview/apply APIs remain available for older clients.
+
+The reported production connection message could not be reproduced without the affected session; the existing empty-range reconciliation passed the final-schema SQL reproduction. This change removes the legacy two-request path and its inter-request concurrency window. Regression tests cover an empty range with/without manual additions, persistence across reload, return to populated dates, invalid dates, forged contexts and access denial.

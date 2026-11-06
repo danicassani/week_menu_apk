@@ -277,6 +277,79 @@ describe.each([false, true])(
       expect(meals.find((m) => m.type === "dinner")!.kcal).toBe(550);
       expect(daySummary(person.profile!, [], meals).complete).toBe(true);
     });
+    it("applying an empty date range removes generated items, preserves manual checks and remains empty after reload", async () => {
+      await actor(a);
+      const before = await rpc<ShoppingState>("get_shopping_state");
+      expect(before.items.some((i) => i.source === "generated")).toBe(true);
+      const manual = before.items.filter((i) => i.source === "manual");
+      const start = addDays(day, 30),
+        end = addDays(start, 6);
+      const setRange = async (start: string, end: string) =>
+        v2
+          ? rpc("set_shopping_date_range", [start, end])
+          : apply(
+              await rpc<ShoppingPreview>("preview_shopping_list", [start, end]),
+            );
+      await setRange(start, end);
+      const after = await rpc<ShoppingState>("get_shopping_state");
+      expect(after.start_date).toBe(start);
+      expect(after.end_date).toBe(end);
+      expect(after.items).toEqual(manual);
+      expect((await snapshot()).shopping).toEqual(after);
+      await setRange(start, end);
+      expect((await rpc<ShoppingState>("get_shopping_state")).items).toEqual(
+        manual,
+      );
+      await setRange(day, day);
+      expect(
+        (await rpc<ShoppingState>("get_shopping_state")).items.some(
+          (i) => i.source === "generated",
+        ),
+      ).toBe(true);
+      if (v2) {
+        const original = await rpc<ShoppingState>("get_shopping_state");
+        for (const [a, b] of [
+          [end, start],
+          [null, end],
+          [start, "infinity"],
+        ])
+          await expect(rpc("set_shopping_date_range", [a, b])).rejects.toThrow(
+            "invalid_shopping_range",
+          );
+        const context = (
+          await db.query<any>("select public.get_household_access() r")
+        ).rows[0].r.active;
+        await expect(
+          db.query("select public.set_shopping_date_range($1,$2,$3,$4)", [
+            crypto.randomUUID(),
+            context.membership_id,
+            start,
+            end,
+          ]),
+        ).rejects.toThrow("membership_changed");
+        await expect(
+          db.query("select app_private.api_shopping_range($1,$2,$3,$4)", [
+            context.household_id,
+            crypto.randomUUID(),
+            start,
+            end,
+          ]),
+        ).rejects.toThrow("membership_changed");
+        expect(await rpc<ShoppingState>("get_shopping_state")).toEqual(
+          original,
+        );
+        await actor("40000000-0000-0000-0000-000000000099");
+        await expect(
+          db.query("select public.set_shopping_date_range($1,$2,$3,$4)", [
+            context.household_id,
+            context.membership_id,
+            start,
+            end,
+          ]),
+        ).rejects.toThrow("access_denied");
+        await actor(a);
+      }
+    });
     it("rejects an interleaved stale editor and keeps a closed shared meal immutable across timezone and catalogue changes", async () => {
       await actor(a);
       let lib = await library();

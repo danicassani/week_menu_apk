@@ -57,11 +57,14 @@ export function ShoppingPage(v: ViewProps) {
       (cached.observation_revision ?? 0) >= (server.observation_revision ?? 0)
         ? cached
         : server;
-  const review = async () => {
-    await v.operate(async () => {
-      const changes = await v.repository.previewShopping(start, end);
-      await v.repository.applyShopping(changes);
-    });
+  const applyRange = async () => {
+    await v.operate(
+      () => v.repository.setShoppingRange(start, end),
+      t(
+        "Date range applied. Shopping list updated.",
+        "Intervalo aplicado. Lista de la compra actualizada.",
+      ),
+    );
   };
   const edit = (item: ShoppingItem) =>
     setManual({
@@ -126,7 +129,7 @@ export function ShoppingPage(v: ViewProps) {
         <Button
           busy={v.busy}
           disabled={!queue.online || !start || !end || start > end}
-          onClick={() => void review()}
+          onClick={() => void applyRange()}
         >
           <RefreshCw size={16} />
           {t("Apply date range", "Aplicar intervalo de fechas")}
