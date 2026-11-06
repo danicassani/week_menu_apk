@@ -1,3 +1,5 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { test, expect } from "@playwright/test";
 async function enter(page: import("@playwright/test").Page) {
   await page.goto("/");
@@ -561,4 +563,24 @@ test("an installed worker stuck on a redirected page upgrades without losing sho
   } finally {
     await writeFile("dist/sw.js", original);
   }
+});
+
+test("public deployment auditor accepts the entire built shell including canonical HTML and license text", async () => {
+  const result = await promisify(execFile)(
+    process.execPath,
+    ["scripts/check-deployment.mjs", "http://127.0.0.1:5174"],
+    { timeout: 20000 },
+  );
+  const report = JSON.parse(result.stdout);
+  expect(report.result).toBe("passed");
+  expect(report.index_html_checked_via_root).toBe(true);
+  expect(
+    report.checks.some((c: { path: string }) => c.path === "/fonts-OFL.txt"),
+  ).toBe(true);
+  expect(
+    report.checks.some((c: { path: string }) => c.path.endsWith(".css")),
+  ).toBe(true);
+  expect(
+    report.checks.some((c: { path: string }) => c.path.endsWith(".woff2")),
+  ).toBe(true);
 });

@@ -118,19 +118,15 @@ describe.each([false, true])(
       day = addDays((await snapshot()).server_now.slice(0, 10), 2);
       if (v2) {
         await db.exec("reset role");
-        await db.exec(
-          readFileSync(
-            "supabase/migrations/202611040006_households.sql",
-            "utf8",
-          ),
-        );
-        await db.exec("revoke usage on schema auth from week_menu_executor");
-        await db.exec(
-          readFileSync(
-            "supabase/migrations/202611050007_auth_namespace_independence.sql",
-            "utf8",
-          ),
-        );
+        for (const file of readdirSync("supabase/migrations")
+          .filter((f) => f.endsWith(".sql") && f >= "202611040006")
+          .sort()) {
+          await db.exec(readFileSync("supabase/migrations/" + file, "utf8"));
+          if (file.startsWith("202611040006"))
+            await db.exec(
+              "revoke usage on schema auth from week_menu_executor",
+            );
+        }
         migrated = true;
         await actor(a);
       }
@@ -254,7 +250,7 @@ describe.each([false, true])(
       await expect(apply(outdated)).rejects.toThrow("stale_shopping");
       expect(
         (await rpc<ShoppingState>("get_shopping_state")).changes_available,
-      ).toBe(true);
+      ).toBe(!v2);
       const preview = await rpc<ShoppingPreview>("preview_shopping_list", [
         day,
         day,
@@ -263,7 +259,13 @@ describe.each([false, true])(
         preview.changes.some(
           (c) => c.before?.ingredient_id === "tofu" && c.action === "remove",
         ),
-      ).toBe(true);
+      ).toBe(!v2);
+      if (v2)
+        expect(
+          (await rpc<ShoppingState>("get_shopping_state")).items.some(
+            (i) => i.ingredient_id === "tofu",
+          ),
+        ).toBe(false);
       await apply(preview);
       list = await rpc<ShoppingState>("get_shopping_state");
       expect(list.items.find((i) => i.id === manual)?.checked).toBe(true);
@@ -337,12 +339,35 @@ describe.each([false, true])(
       const unsafeTables =
         await db.query(`select n.nspname,c.relname from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind='r' and n.nspname in('public','app_private') and (
  (n.nspname='public' and (not c.relrowsecurity or has_table_privilege('anon',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') or has_table_privilege('authenticated',c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER'))) or
- (n.nspname='app_private' and (has_table_privilege('anon',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') or has_table_privilege('authenticated',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER'))))`);
+ (n.nspname='app_private' and (has_table_privilege('anon',c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') or (has_table_privilege('authenticated',c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') or (c.relname<>'starter_content' and has_table_privilege('authenticated',c.oid,'SELECT'))))))`);
       expect(unsafeTables.rows).toEqual([]);
       const exposed = await db.query(
         `select p.proname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='app_private' and p.prosecdef and (has_function_privilege('anon',p.oid,'EXECUTE') or not coalesce(p.proconfig @> array['search_path=""'],false))`,
       );
       expect(exposed.rows).toEqual([]);
+      if (v2) {
+        const views = await db.query<{ relname: string; reloptions: string[] }>(
+          "select relname,reloptions from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='app_private' and c.relkind='v'",
+        );
+        expect(views.rows).toHaveLength(4);
+        for (const view of views.rows)
+          expect(view.reloptions).toContain("security_invoker=true");
+        const unsafe = await db.query(
+          "select c.relname from pg_class c join pg_roles r on r.oid=c.relowner join pg_namespace n on n.oid=c.relnamespace where r.rolname='week_menu_executor' and n.nspname in('public','app_private') and c.relkind='r'",
+        );
+        expect(unsafe.rows).toEqual([]);
+        expect(
+          (
+            await db.query<{ ok: boolean }>(
+              "select not has_schema_privilege('week_menu_executor','public','CREATE') and not has_schema_privilege('week_menu_executor','app_private','CREATE') ok",
+            )
+          ).rows[0].ok,
+        ).toBe(true);
+        const common = await db.query<{ relrowsecurity: boolean }>(
+          "select relrowsecurity from pg_class where oid='app_private.starter_content'::regclass",
+        );
+        expect(common.rows[0].relrowsecurity).toBe(true);
+      }
     });
   },
 );

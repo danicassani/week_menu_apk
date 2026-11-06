@@ -1,0 +1,119 @@
+{
+  "origin": "https://week-menu-apk.pages.dev",
+  "checked_at": "2026-11-06T06:24:50.499Z",
+  "result": "passed",
+  "shell_version": "week-menu-shell-ad21c59075ddb1cd17b8",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 1575,
+      "sha256": "05c264a77ce7116a3fba8d55386b74766cc2aec46a0004c2de9ae73aa0b0a793"
+    },
+    {
+      "path": "/manifest.webmanifest",
+      "status": 200,
+      "bytes": 658,
+      "sha256": "d4e7860b4a98e6f180f6b7d90d66fa045fa09a08e18a9f2a1ac898c87f80e3bf"
+    },
+    {
+      "path": "/icon-192.png",
+      "status": 200,
+      "bytes": 3979,
+      "sha256": "a1556a63abfc57540d0daead6c8fd3a73f005ae791b54aa90abbc258ed8b3256"
+    },
+    {
+      "path": "/icon-512.png",
+      "status": 200,
+      "bytes": 14089,
+      "sha256": "26a108e1c0ee46c9a011029c0e5a01b202eb6b2d5a33749d33340e91160f38c3"
+    },
+    {
+      "path": "/icon-maskable.png",
+      "status": 200,
+      "bytes": 13108,
+      "sha256": "0810c695ebb2ad4f72535f583901866e636897ff8903f95aa593cabef6cd48f5"
+    },
+    {
+      "path": "/sw.js",
+      "status": 200,
+      "bytes": 9336,
+      "sha256": "cb067ccc0d112ca2b0f2be967f173d21f3a2ab759809fcdd16ed1423ee1ba928"
+    },
+    {
+      "path": "/assets/index-udKJShBl.js",
+      "status": 200,
+      "bytes": 234930,
+      "sha256": "14657e29d79ee2e0796253680015618fc23519d1f23c839cb39d1ce7a9125538"
+    },
+    {
+      "path": "/apple-touch-icon.png",
+      "status": 200,
+      "bytes": 3639,
+      "sha256": "25164d858453f58e00aa451134f6670ba1308d7a2c62b1758ecc1429df0fdd40"
+    },
+    {
+      "path": "/assets/date-time-DsNs_PRk.js",
+      "status": 200,
+      "bytes": 159091,
+      "sha256": "245d4bcc815f27a4ff7ee892a8a02a75b4dd9b734dcf663ef44f06d16d76972d"
+    },
+    {
+      "path": "/assets/dm-sans-latin-wght-normal-Xz1IZZA0.woff2",
+      "status": 200,
+      "bytes": 36932,
+      "sha256": "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543"
+    },
+    {
+      "path": "/assets/index-l8Mf0HZV.css",
+      "status": 200,
+      "bytes": 47235,
+      "sha256": "287f5bbd7ca6f8ec6c905dbb307634a8d22ee18e727ac9683c1055c35a2c18f8"
+    },
+    {
+      "path": "/assets/manrope-latin-wght-normal-DHIcAJRg.woff2",
+      "status": 200,
+      "bytes": 24836,
+      "sha256": "a30ddcd349703aff7464c34bef3fffdff405ee50c113440d7c8693c02d210972"
+    },
+    {
+      "path": "/assets/nutrition-content-ee-oy7J9.js",
+      "status": 200,
+      "bytes": 286443,
+      "sha256": "1f5e8c40ade1ccab72307b979d9e26530646ccd20fea488e1c39a55efa9a5943"
+    },
+    {
+      "path": "/assets/react-BlIegmVS.js",
+      "status": 200,
+      "bytes": 218747,
+      "sha256": "834fd4324febe43f7f4264069666c1ac16cbf28c29083a3d4490164059c8274f"
+    },
+    {
+      "path": "/assets/rolldown-runtime-WkwZ5CU-.js",
+      "status": 200,
+      "bytes": 599,
+      "sha256": "2629f2ad3cb75a57d98de697127f5af7d777ef572bbcdfa6e3ce8f438cd4527e"
+    },
+    {
+      "path": "/assets/supabase-Bwm3Z89P.js",
+      "status": 200,
+      "bytes": 214389,
+      "sha256": "41b45112f43c2665b03306b09d198e78d4a57087a1fab2619a7fdaad43268fb6"
+    },
+    {
+      "path": "/fonts-OFL.txt",
+      "status": 200,
+      "bytes": 8946,
+      "sha256": "d240e91bf6ce6e0b3143d5e66b99a1f03769a731d588a9d6cc7c6fb90e7b3120"
+    },
+    {
+      "path": "/icon.svg",
+      "status": 200,
+      "bytes": 250,
+      "sha256": "103d6c51e5e6688fd88fa60be3ea6263c0bf5d32052ea44d9ee32ff2de76042f"
+    }
+  ],
+  "declared_public_assets": 17,
+  "index_html_checked_via_root": true,
+  "limits": "Public files/headers only. OAuth, RLS, Realtime, database migrations and physical-device installation are not verified."
+}

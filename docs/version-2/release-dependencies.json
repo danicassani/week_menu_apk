@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-11-06T06:30:47.019602+00:00",
+  "command": "npm audit --omit=dev --json",
+  "result": "passed",
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "limits": "Registry advisories for production dependencies only; not a penetration test or a guarantee that no vulnerability exists."
+}
