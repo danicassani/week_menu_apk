@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-11-06T06:26:04.180Z",
+  "status": 302,
+  "google_authorization_redirect": true,
+  "callback_matches_project": true,
+  "client_id_configured": true,
+  "limits": "Public authorization entry only. No Google login, code exchange, account, household, RLS or Realtime session was exercised."
+}

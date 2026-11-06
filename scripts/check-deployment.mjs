@@ -14,10 +14,12 @@ if (
 )
   throw Error("Use HTTPS outside localhost.");
 const results = [];
+const fetched = new Map();
 async function read(path, type) {
   const url = new URL(path, origin);
   if (url.origin !== origin || url.search || url.hash)
     throw Error("Only same-origin public assets are checked.");
+  if (fetched.has(url.pathname)) return fetched.get(url.pathname);
   const response = await fetch(url, {
     redirect: "error",
     signal: AbortSignal.timeout(20000),
@@ -36,7 +38,9 @@ async function read(path, type) {
     bytes: data.length,
     sha256: createHash("sha256").update(data).digest("hex"),
   });
-  return { text: data.toString(), headers: response.headers };
+  const result = { text: data.toString(), headers: response.headers };
+  fetched.set(url.pathname, result);
+  return result;
 }
 try {
   const root = await read("/", "text/html"),
@@ -81,6 +85,49 @@ try {
   const asset = await read(script, "javascript");
   if (!/immutable/.test(asset.headers.get("cache-control") ?? ""))
     throw Error("Hashed assets must be immutable.");
+  const declared = /const PUBLIC_ASSETS\s*=\s*(\[[^\n]+\]);/.exec(
+    worker.text,
+  )?.[1];
+  if (!declared) throw Error("Missing public-shell asset manifest.");
+  const assets = JSON.parse(declared);
+  if (
+    !Array.isArray(assets) ||
+    assets.length < 1 ||
+    assets.length > 200 ||
+    new Set(assets).size !== assets.length ||
+    !assets.includes("/index.html") ||
+    !assets.includes(script)
+  )
+    throw Error("Invalid public-shell asset manifest.");
+  const types = {
+    ".js": "javascript",
+    ".css": "text/css",
+    ".woff2": "font/woff2",
+    ".svg": "image/svg+xml",
+    ".txt": "text/plain",
+    ".png": "image/png",
+    ".webmanifest": "application/manifest+json",
+  };
+  for (const path of assets) {
+    if (
+      typeof path !== "string" ||
+      !path.startsWith("/") ||
+      path.startsWith("//")
+    )
+      throw Error("Invalid public-shell asset URL.");
+    // Pages canonicalizes /index.html to /. The root response was already
+    // checked; following that redirect as a cached navigation caused ERR_FAILED.
+    if (path === "/index.html") continue;
+    const ext = /\.[^.\/?#]+$/.exec(path)?.[0],
+      type = types[ext];
+    if (!type) throw Error("Unexpected public-shell asset type: " + path);
+    const checked = await read(path, type);
+    if (
+      path.startsWith("/assets/") &&
+      !/immutable/.test(checked.headers.get("cache-control") ?? "")
+    )
+      throw Error("Hashed assets must be immutable: " + path);
+  }
   console.log(
     JSON.stringify(
       {
@@ -89,6 +136,8 @@ try {
         result: "passed",
         shell_version: version,
         checks: results,
+        declared_public_assets: assets.length,
+        index_html_checked_via_root: assets.includes("/index.html"),
         limits:
           "Public files/headers only. OAuth, RLS, Realtime, database migrations and physical-device installation are not verified.",
       },

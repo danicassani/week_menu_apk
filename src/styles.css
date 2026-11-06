@@ -147,14 +147,16 @@ select {
 }
 .skip-link {
   position: fixed;
-  left: 260px;
-  top: -100px;
+  left: 16px;
+  max-width: calc(100vw - 32px);
+  top: 10px;
+  transform: translateY(-200%);
   z-index: 100;
   padding: 15px;
   background: var(--surface);
 }
 .skip-link:focus {
-  top: 10px;
+  transform: translateY(0);
 }
 .eyebrow {
   font-size: 0.625rem;
@@ -561,10 +563,19 @@ select {
 }
 .page-heading {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 22px;
   margin: 0 0 31px;
+}
+.page-heading > div {
+  min-width: 0;
+  flex: 1 1 16rem;
+}
+.page-heading > .button {
+  max-width: 100%;
+  white-space: normal;
 }
 .page-heading .eyebrow {
   display: block;
