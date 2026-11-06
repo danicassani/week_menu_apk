@@ -14,6 +14,7 @@ import type {
 import { ingredients } from "../lib/content";
 import { mealLabel, translator } from "../lib/i18n";
 import { dayAt, localDay } from "../domain/dates";
+import { targetOn } from "../domain/state";
 import { Button } from "./ui";
 
 type Base = { language: Language; busy: boolean };
@@ -564,26 +565,53 @@ export function BudgetForm({
   state: HouseholdState;
   member: Member;
   initialDay: string;
-  onSave: (day: string, meal: MealType, kcal: number | null) => void;
+  onSave: (
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+  ) => void;
 } & Base) {
-  const t = translator(language),
-    [day, setDay] = useState(initialDay),
-    [meal, setMeal] = useState<MealType>("lunch"),
-    [kcal, setKcal] = useState<number | "">("");
-  const existing = state.budget_overrides.find(
-    (b) => b.member_id === member.id && b.day === day && b.meal_type === meal,
+  const t = translator(language);
+  const valuesFor = (date: string) =>
+    Object.fromEntries(
+      meals.map((meal) => [
+        meal,
+        state.budget_overrides.find(
+          (b) =>
+            b.member_id === member.id && b.day === date && b.meal_type === meal,
+        )?.kcal ??
+          targetOn(state, member.id, date)?.budgets[meal] ??
+          "",
+      ]),
+    ) as Record<MealType, number | "">;
+  const [day, setDay] = useState(initialDay),
+    [budgets, setBudgets] = useState(() => valuesFor(initialDay)),
+    [original, setOriginal] = useState(() => valuesFor(initialDay));
+  const changed = meals.some((meal) => budgets[meal] !== original[meal]);
+  const existing = state.budget_overrides.filter(
+    (b) => b.member_id === member.id && b.day === day,
   );
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave(day, meal, Number(kcal));
+        if (changed)
+          onSave(
+            day,
+            Object.fromEntries(
+              meals
+                .filter((meal) => budgets[meal] !== original[meal])
+                .map((meal) => [
+                  meal,
+                  budgets[meal] === "" ? null : budgets[meal],
+                ]),
+            ),
+          );
       }}
     >
       <p className="form-intro">
         {t(
-          "Override one meal without changing your personal defaults. Existing portions need manual review.",
-          "Cambia una comida sin modificar tus valores personales habituales. Revisa manualmente las porciones existentes.",
+          "Adjust meal budgets for this date without changing your personal defaults. Existing portions need manual review.",
+          "Ajusta los presupuestos de esta fecha sin modificar tus valores personales habituales. Revisa manualmente las porciones existentes.",
         )}
       </p>
       <label>
@@ -592,49 +620,66 @@ export function BudgetForm({
           required
           type="date"
           min={dayAt(state.server_now, member.time_zone)}
+          disabled={busy}
           value={day}
-          onChange={(e) => setDay(e.target.value)}
+          onChange={(e) => {
+            const date = e.target.value;
+            setDay(date);
+            const values = valuesFor(date);
+            setBudgets(values);
+            setOriginal(values);
+          }}
         />
       </label>
-      <label>
-        {t("Meal", "Comida")}
-        <select
-          value={meal}
-          onChange={(e) => setMeal(e.target.value as MealType)}
-        >
-          {meals.map((m) => (
-            <option key={m} value={m}>
-              {mealLabel(m, language)}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        {t("Budget · kcal", "Presupuesto · kcal")}
-        <input
-          type="number"
-          required
-          min="1"
-          step="any"
-          value={kcal}
-          placeholder={existing ? String(existing.kcal) : undefined}
-          onChange={(e) =>
-            setKcal(e.target.value === "" ? "" : e.target.valueAsNumber)
-          }
-        />
-      </label>
+      <div
+        className="meal-budget-fields"
+        role="group"
+        aria-label={t("Meal budgets · kcal", "Presupuestos por comida · kcal")}
+      >
+        {meals.map((meal) => (
+          <label key={meal}>
+            {mealLabel(meal, language)}
+            <input
+              type="number"
+              inputMode="decimal"
+              min="1"
+              step="any"
+              aria-label={`${mealLabel(meal, language)} kcal`}
+              value={budgets[meal]}
+              disabled={busy}
+              onChange={(e) =>
+                setBudgets({
+                  ...budgets,
+                  [meal]: e.target.value === "" ? "" : e.target.valueAsNumber,
+                })
+              }
+            />
+          </label>
+        ))}
+      </div>
+      <p className="fine-print">
+        {t(
+          "Calories in kcal. Leave a field empty to use your personal default.",
+          "Calorías en kcal. Deja un campo vacío para usar tu valor habitual.",
+        )}
+      </p>
       <div className="button-row">
-        <Button busy={busy} type="submit">
-          {t("Save override", "Guardar ajuste")}
+        <Button busy={busy} disabled={!changed} type="submit">
+          {t("Save overrides", "Guardar ajustes")}
         </Button>
-        {existing && (
+        {existing.length > 0 && (
           <Button
             secondary
             busy={busy}
             type="button"
-            onClick={() => onSave(day, meal, null)}
+            onClick={() =>
+              onSave(
+                day,
+                Object.fromEntries(existing.map((b) => [b.meal_type, null])),
+              )
+            }
           >
-            {t("Use default", "Usar valor habitual")}
+            {t("Use defaults", "Usar valores habituales")}
           </Button>
         )}
       </div>

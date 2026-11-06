@@ -304,3 +304,103 @@ test("personal text size and emoji preferences survive navigation", async ({
     page.getByRole("button", { name: "Abrir mi perfil", exact: true }),
   ).toContainText("🦊");
 });
+
+for (const language of ["en", "es"] as const) {
+  test(`${language}: edit all daily meal budgets in one row and restore personal defaults`, async ({
+    page,
+  }) => {
+    const t = (en: string, es: string) => (language === "es" ? es : en);
+    await page.setViewportSize({ width: 390, height: 844 });
+    if (language === "es") {
+      await page
+        .getByRole("button", { name: "Switch language", exact: true })
+        .click();
+      await page
+        .getByRole("button", { name: "Cambiar tema", exact: true })
+        .click();
+    }
+    const open = () =>
+      page
+        .getByRole("button", {
+          name: t("Adjust meal budgets", "Ajustar presupuestos de las comidas"),
+          exact: true,
+        })
+        .click();
+    await open();
+    const dialog = page.getByRole("dialog", {
+      name: t("Meal budgets", "Presupuestos de las comidas"),
+      exact: true,
+    });
+    const breakfast = dialog.getByRole("spinbutton", {
+      name: t("Breakfast kcal", "Desayuno kcal"),
+      exact: true,
+    });
+    const lunch = dialog.getByRole("spinbutton", {
+      name: t("Lunch kcal", "Almuerzo kcal"),
+      exact: true,
+    });
+    const dinner = dialog.getByRole("spinbutton", {
+      name: t("Dinner kcal", "Cena kcal"),
+      exact: true,
+    });
+    const save = () =>
+      dialog
+        .getByRole("button", {
+          name: t("Save overrides", "Guardar ajustes"),
+          exact: true,
+        })
+        .click();
+    await expect(dialog.getByRole("combobox")).toHaveCount(0);
+    await expect(breakfast).toHaveValue("400");
+    await expect(lunch).toHaveValue("650");
+    await expect(dinner).toHaveValue("650");
+    for (const width of [320, 390]) {
+      await page.setViewportSize({ width, height: 844 });
+      const boxes = await Promise.all(
+        [breakfast, lunch, dinner].map((input) => input.boundingBox()),
+      );
+      expect(boxes[0]!.y).toBe(boxes[1]!.y);
+      expect(boxes[1]!.y).toBe(boxes[2]!.y);
+      expect(boxes[0]!.x).toBeLessThan(boxes[1]!.x);
+      expect(boxes[1]!.x).toBeLessThan(boxes[2]!.x);
+      expect(
+        await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth),
+      ).toBe(true);
+    }
+    await breakfast.fill("410");
+    await lunch.fill("620");
+    await dinner.fill("710");
+    await dialog.screenshot({
+      path: `test-results/meal-budgets-${language}.png`,
+    });
+    await save();
+    await expect(dialog).toHaveCount(0);
+    await open();
+    await expect(breakfast).toHaveValue("410");
+    await expect(lunch).toHaveValue("620");
+    await expect(dinner).toHaveValue("710");
+    const date = dialog.getByLabel(t("Date", "Fecha"), { exact: true });
+    await date.fill("2026-11-04");
+    await expect(breakfast).toHaveValue("400");
+    await expect(lunch).toHaveValue("650");
+    await expect(dinner).toHaveValue("650");
+    await date.fill("2026-11-03");
+    await lunch.fill("");
+    await save();
+    await open();
+    await expect(breakfast).toHaveValue("410");
+    await expect(lunch).toHaveValue("650");
+    await expect(dinner).toHaveValue("710");
+    await dialog
+      .getByRole("button", {
+        name: t("Use defaults", "Usar valores habituales"),
+        exact: true,
+      })
+      .click();
+    await expect(dialog).toHaveCount(0);
+    await open();
+    await expect(breakfast).toHaveValue("400");
+    await expect(lunch).toHaveValue("650");
+    await expect(dinner).toHaveValue("650");
+  });
+}

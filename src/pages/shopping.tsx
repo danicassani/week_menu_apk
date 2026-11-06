@@ -64,6 +64,11 @@ export function ShoppingPage(v: ViewProps) {
         "Date range applied. Shopping list updated.",
         "Intervalo aplicado. Lista de la compra actualizada.",
       ),
+      true,
+      t(
+        "Could not update the shopping list for this date range. Try again.",
+        "No se ha podido actualizar la lista para este intervalo. Inténtalo de nuevo.",
+      ),
     );
   };
   const edit = (item: ShoppingItem) =>
@@ -190,7 +195,15 @@ export function ShoppingPage(v: ViewProps) {
       </div>
       {(queue.error || message) && (
         <p className="note warning" role="alert">
-          {message || errorMessage(new Error(queue.error), v.language)}
+          {message ||
+            errorMessage(
+              new Error(queue.error),
+              v.language,
+              t(
+                "Could not synchronize the shopping list. Try again.",
+                "No se ha podido sincronizar la lista de la compra. Inténtalo de nuevo.",
+              ),
+            )}
         </p>
       )}
       {!!queue.data?.discarded && (

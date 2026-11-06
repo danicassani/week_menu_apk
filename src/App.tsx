@@ -638,6 +638,7 @@ function Workspace({
     task: () => Promise<void>,
     success?: string,
     load = true,
+    failure?: string,
   ) => {
     if (busyRef.current) return false;
     busyRef.current = true;
@@ -648,7 +649,7 @@ function Workspace({
       if (success) setMessage({ text: success, error: false });
       return true;
     } catch (e) {
-      setMessage({ text: errorMessage(e, language), error: true });
+      setMessage({ text: errorMessage(e, language, failure), error: true });
       if (
         e instanceof Error &&
         /stale_profile|stale_content|stale_plan/.test(e.message)
@@ -811,7 +812,7 @@ function Workspace({
         : dialog?.kind === "target"
           ? t("Review your calorie target", "Revisa tu objetivo calórico")
           : dialog?.kind === "budget"
-            ? t("One meal, a different budget", "Una comida, otro presupuesto")
+            ? t("Meal budgets", "Presupuestos de las comidas")
             : dialog?.kind === "recipe"
               ? dialog.recipe.name[language]
               : dialog?.kind === "invite"
@@ -1244,13 +1245,20 @@ function Workspace({
               state={s}
               language={language}
               busy={busy}
-              onSave={async (day, meal, kcal) => {
+              onSave={async (day, changes) => {
                 if (
                   await operate(
-                    () => repo.saveBudgetOverride(day, meal, kcal),
+                    async () => {
+                      for (const [meal, kcal] of Object.entries(changes))
+                        await repo.saveBudgetOverride(
+                          day,
+                          meal as MealType,
+                          kcal,
+                        );
+                    },
                     t(
-                      "Meal budget updated. Review existing portions manually.",
-                      "Presupuesto actualizado. Revisa las porciones existentes manualmente.",
+                      "Meal budgets updated. Review existing portions manually.",
+                      "Presupuestos actualizados. Revisa las porciones existentes manualmente.",
                     ),
                   )
                 )

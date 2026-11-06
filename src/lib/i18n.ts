@@ -7,8 +7,8 @@ const messages: Record<string, [string, string]> = {
     "Elige un intervalo de fechas válido.",
   ],
   stale_shopping: [
-    "The menu or shopping list changed. Refresh the preview and review before applying.",
-    "El menú o la lista cambiaron. Actualiza y revisa la vista previa antes de aplicar.",
+    "The menu or shopping list changed. Apply the date range again.",
+    "El menú o la lista cambiaron. Vuelve a aplicar el intervalo de fechas.",
   ],
   invalid_shopping_item: [
     "Enter a product name and a short quantity or note.",
@@ -200,15 +200,20 @@ const messages: Record<string, [string, string]> = {
     "Tu acceso al hogar ha cambiado. Vuelve a conectarte para cargar tu hogar actual; no se pueden aplicar los cambios de compra anteriores.",
   ],
 };
-export function errorMessage(error: unknown, language: Language) {
+export function errorMessage(
+  error: unknown,
+  language: Language,
+  fallback?: string,
+) {
   const code = error instanceof Error ? error.message : String(error);
   const found = Object.keys(messages).find((k) => code.includes(k));
   return found
     ? messages[found][language === "es" ? 1 : 0]
-    : translator(language)(
-        "Could not save this change. Check your connection and try again.",
-        "No se ha podido guardar. Comprueba tu conexión e inténtalo de nuevo.",
-      );
+    : (fallback ??
+        translator(language)(
+          "Could not save this change. Check your connection and try again.",
+          "No se ha podido guardar. Comprueba tu conexión e inténtalo de nuevo.",
+        ));
 }
 export const mealLabel = (type: string, language: Language) =>
   ({
