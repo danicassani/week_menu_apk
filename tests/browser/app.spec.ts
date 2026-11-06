@@ -176,8 +176,8 @@ test("menu actions stay together and planner preferences live in the person's pr
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
   expect(
     await page
-      .getByRole("button", { name: "Suggest the week", exact: true })
-      .evaluate((el) => el.nextElementSibling?.textContent?.trim()),
+      .getByRole("button", { name: "Suggest week", exact: true })
+      .evaluate((el) => el.nextElementSibling?.getAttribute("aria-label")),
   ).toBe("Delete week");
   await expect(page.getByLabel("Week starts on")).toHaveCount(0);
   await expect(page.getByLabel("Variety window · days")).toHaveCount(0);
@@ -194,6 +194,9 @@ test("menu actions stay together and planner preferences live in the person's pr
   ).toBeVisible();
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
   await expect(page.locator(".day-card h2").first()).toContainText("Sunday");
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  await expect(page.locator(".preview-date-range")).toHaveText("01/11 - 07/11");
+  await page.keyboard.press("Escape");
   await nav.getByRole("button", { name: "Profile", exact: true }).click();
   await expect(page.getByLabel("Variety window · days")).toHaveValue("5");
   await page.getByLabel("View household member").selectOption("noa");

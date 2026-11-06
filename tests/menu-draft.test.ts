@@ -93,3 +93,51 @@ it("shared swaps reject variety conflicts atomically and missing or archived rec
     s.members.length,
   );
 });
+it("swaps another member's breakfasts, reprices the destination and respects that member's locks", async () => {
+  const { s, lib, v, day } = await fixture();
+  const member = s.members.find((m) => m.id !== s.viewer_id)!;
+  const a = suggested(v, lib, day, "breakfast", [])!;
+  const b = suggested(
+    v,
+    lib,
+    addDays(day, 1),
+    "breakfast",
+    [],
+    undefined,
+    a,
+    member.id,
+  )!;
+  const original = structuredClone([a, b]);
+  s.budget_overrides.push({
+    member_id: member.id,
+    day: a.day,
+    meal_type: "breakfast",
+    kcal: 275,
+  });
+  const result = swapDraft(
+    [a, b],
+    a,
+    b,
+    s,
+    lib,
+    [lockKey(a, s.viewer_id)],
+    member.id,
+  );
+  expect(
+    result[0].portions.find((p) => p.member_id === member.id)!.recipe_id,
+  ).toBe(b.portions.find((p) => p.member_id === member.id)!.recipe_id);
+  expect(
+    result[1].portions.find((p) => p.member_id === member.id)!.recipe_id,
+  ).toBe(a.portions.find((p) => p.member_id === member.id)!.recipe_id);
+  expect(
+    result[0].portions.find((p) => p.member_id === member.id)!.budget,
+  ).toBe(275);
+  for (let i = 0; i < 2; i++)
+    expect(result[i].portions.filter((p) => p.member_id !== member.id)).toEqual(
+      original[i].portions.filter((p) => p.member_id !== member.id),
+    );
+  expect([a, b]).toEqual(original);
+  expect(() =>
+    swapDraft([a, b], a, b, s, lib, [lockKey(b, member.id)], member.id),
+  ).toThrow("locked_suggestion");
+});

@@ -54,7 +54,7 @@ for (const language of ["en", "es"] as const) {
       .click();
     await page
       .getByRole("button", {
-        name: t("Suggest the week", "Sugerir la semana"),
+        name: t("Suggest week", "Sugerir semana"),
         exact: true,
       })
       .click();
@@ -119,6 +119,46 @@ for (const language of ["en", "es"] as const) {
     expect(
       (await a.locator(".suggested-recipe-link").allTextContents())[1],
     ).toBe(beforeA[1]);
+    const viewerAfterSwap = (
+      await a.locator(".suggested-recipe-link").allTextContents()
+    )[0];
+    await a
+      .getByRole("button", {
+        name: t(
+          "Re-roll breakfast for Noa",
+          "Volver a sugerir el desayuno de Noa",
+        ),
+        exact: true,
+      })
+      .click();
+    const otherA = (
+      await a.locator(".suggested-recipe-link").allTextContents()
+    )[1];
+    const otherB = (
+      await b.locator(".suggested-recipe-link").allTextContents()
+    )[1];
+    expect(otherA).not.toBe(beforeA[1]);
+    await a
+      .getByRole("button", {
+        name: t("Swap breakfast for Noa", "Intercambiar desayuno de Noa"),
+        exact: true,
+      })
+      .click();
+    await b
+      .getByRole("button", {
+        name: t(
+          "Swap breakfast here for Noa",
+          "Intercambiar aquí el desayuno de Noa",
+        ),
+        exact: true,
+      })
+      .click();
+    expect(await a.locator(".suggested-recipe-link").allTextContents()).toEqual(
+      [viewerAfterSwap, otherB],
+    );
+    expect(
+      (await b.locator(".suggested-recipe-link").allTextContents())[1],
+    ).toBe(otherA);
     await page
       .getByRole("button", {
         name: t("Approve suggestions & save", "Aprobar sugerencias y guardar"),

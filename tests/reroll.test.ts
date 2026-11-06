@@ -85,3 +85,26 @@ it("keeps variety restrictions when choosing an alternative", async () => {
     ),
   ).toBeNull();
 });
+it("re-rolls another member's breakfast without changing the viewer's portion", async () => {
+  const { v, lib, day } = await fixture();
+  const member = v.s.members.find((m) => m.id !== v.s.viewer_id)!;
+  const old = suggested(v, lib, day, "breakfast", [])!;
+  const snapshot = structuredClone(old);
+  const next = suggested(
+    v,
+    lib,
+    day,
+    "breakfast",
+    [],
+    undefined,
+    old,
+    member.id,
+  )!;
+  expect(
+    next.portions.find((p) => p.member_id === member.id)!.recipe_id,
+  ).not.toBe(old.portions.find((p) => p.member_id === member.id)!.recipe_id);
+  expect(next.portions.filter((p) => p.member_id !== member.id)).toEqual(
+    old.portions.filter((p) => p.member_id !== member.id),
+  );
+  expect(old).toEqual(snapshot);
+});
