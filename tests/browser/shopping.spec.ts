@@ -94,3 +94,31 @@ test("an empty week clears the generated shopping list and stays empty after rel
     .click();
   await expect(page.getByRole("checkbox").first()).toBeVisible();
 });
+
+test("the visible shopping list drops expired quantities at midnight without applying the range again", async ({
+  page,
+}) => {
+  await page.clock.install({ time: new Date("2026-11-03T23:59:00Z") });
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Explore the preview", exact: true })
+    .click();
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Menu", exact: true }).click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  await nav.getByRole("button", { name: "Shopping", exact: true }).click();
+  await expect(page.getByRole("checkbox").first()).toBeEnabled();
+  const before = await page
+    .locator(".shopping-checklist label")
+    .allTextContents();
+  await page.clock.fastForward(61_000);
+  await expect
+    .poll(() => page.locator(".shopping-checklist label").allTextContents())
+    .not.toEqual(before);
+  await expect(
+    page.getByRole("button", { name: "Apply date range", exact: true }),
+  ).toBeVisible();
+});

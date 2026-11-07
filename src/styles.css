@@ -1783,7 +1783,16 @@ form > .muted {
   font-size: 0.75rem;
 }
 .toast > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
   line-height: 1.65;
+}
+.toast > .text-link {
+  flex-shrink: 0;
+  color: inherit;
+}
+.toast > svg {
+  flex-shrink: 0;
 }
 .toast .icon-button {
   color: inherit;
@@ -3503,4 +3512,12 @@ html[data-text-size="large"] {
 }
 :root[data-theme="dark"] .preview-calorie-warning {
   color: #facc15;
+}
+
+.budget-save-error {
+  display: block;
+}
+.budget-save-error > .text-link {
+  display: block;
+  margin-top: 8px;
 }

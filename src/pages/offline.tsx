@@ -14,7 +14,8 @@ import type { Language, Repository } from "../domain/types";
 import { weekDays, localDay, addDays, formatDay } from "../domain/dates";
 import type { PlannedRecipe, MealPlan } from "../domain/planning";
 import { translator, mealLabel, errorMessage } from "../lib/i18n";
-import { useOfflineAccount } from "../lib/use-offline";
+import { useOfflineAccount, useShoppingTime } from "../lib/use-offline";
+import { shoppingNeedsRefresh } from "../domain/shopping";
 import { enqueueCheck, dismissDiscarded } from "../lib/offline-store";
 import { ShoppingChecklist } from "../components/shopping-list";
 import { SignOutDialog } from "../components/sign-out";
@@ -54,6 +55,7 @@ export function OfflineShell({
   const lang = data?.language ?? language,
     t = translator(lang),
     shopping = data?.shopping;
+  const shoppingNow = useShoppingTime(shopping?.valid_until);
   const name = (n: { en: string; es: string }) => n[lang] || n.en || n.es;
   const check = async (id: string, checked: boolean) => {
     try {
@@ -156,6 +158,14 @@ export function OfflineShell({
                   {t(
                     "Menu updates were available at the last load. Reconnect to review them.",
                     "Había actualizaciones del menú en la última carga. Vuelve a conectarte para revisarlas.",
+                  )}
+                </p>
+              )}
+              {shoppingNeedsRefresh(shopping, shoppingNow) && (
+                <p className="note warning" role="status">
+                  {t(
+                    "Saved quantities may include expired meals. Reconnect to refresh them; your pending checks are kept.",
+                    "Las cantidades guardadas pueden incluir comidas pasadas. Vuelve a conectarte para actualizarlas; se conservan tus marcas pendientes.",
                   )}
                 </p>
               )}

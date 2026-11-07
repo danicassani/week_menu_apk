@@ -44,7 +44,6 @@ import type {
   DailyEntry,
   HouseholdState,
   Language,
-  MealType,
   Proposal,
   Repository,
   Tab,
@@ -448,9 +447,12 @@ function Workspace({
     [tab, setTab] = useState<Tab>("dashboard"),
     [selected, setSelected] = useState(""),
     [busy, setBusy] = useState(false),
-    [message, setMessage] = useState<{ text: string; error: boolean } | null>(
-      null,
-    ),
+    [message, setMessage] = useState<{
+      text: string;
+      error: boolean;
+      refresh?: boolean;
+      scope?: "budget";
+    } | null>(null),
     [dialog, setDialog] = useState<Dialog | null>(null),
     [inviteEmail, setInviteEmail] = useState(""),
     [exitOpen, setExitOpen] = useState(false),
@@ -519,6 +521,7 @@ function Workspace({
       }
       if (!mounted.current || n !== sequence.current) return next;
       setS(next);
+      setMessage((current) => (current?.refresh ? null : current));
       setHouseholdAccess(null);
       setFatal("");
       setSelected((id) =>
@@ -561,10 +564,22 @@ function Workspace({
         refresh().catch((e) => {
           if (e instanceof Error && e.message.includes("request_superseded"))
             return;
-          setMessage({
-            text: errorMessage(e, languageRef.current),
-            error: true,
-          });
+          if (busyRef.current) return;
+          setMessage(
+            (current) =>
+              current ?? {
+                text: errorMessage(
+                  e,
+                  languageRef.current,
+                  translator(languageRef.current)(
+                    "The latest view could not be loaded. Refresh to update it.",
+                    "No se ha podido cargar la vista actualizada. Actualiza para verla.",
+                  ),
+                ),
+                error: true,
+                refresh: true,
+              },
+          );
         });
     };
     document.addEventListener("visibilitychange", onVisible);
@@ -630,7 +645,7 @@ function Workspace({
     if (preference) setLanguage(preference);
   }, [s, setLanguage]);
   useEffect(() => {
-    if (!message || message.error) return;
+    if (!message || message.error || message.refresh) return;
     const timeout = setTimeout(() => setMessage(null), 5000);
     return () => clearTimeout(timeout);
   }, [message]);
@@ -645,17 +660,58 @@ function Workspace({
     setBusy(true);
     try {
       await task();
-      if (load) await refresh();
+      if (load) {
+        try {
+          await refresh();
+        } catch (error) {
+          if (
+            error instanceof Error &&
+            error.message.includes("request_superseded")
+          ) {
+            if (success) setMessage({ text: success, error: false });
+            return true;
+          }
+          setMessage({
+            text: t(
+              "Changes saved. The latest view could not be loaded. Refresh to update it.",
+              "Cambios guardados. No se ha podido cargar la vista actualizada. Actualiza para verla.",
+            ),
+            error: false,
+            refresh: true,
+          });
+          return true;
+        }
+      }
       if (success) setMessage({ text: success, error: false });
       return true;
     } catch (e) {
-      setMessage({ text: errorMessage(e, language, failure), error: true });
+      setMessage({
+        text: errorMessage(e, language, failure),
+        error: true,
+        scope: dialog?.kind === "budget" ? "budget" : undefined,
+        refresh:
+          e instanceof Error && e.message.includes("mutation_outcome_unknown"),
+      });
       if (
         e instanceof Error &&
         /stale_profile|stale_content|stale_plan/.test(e.message)
       )
         await refresh().catch(() => {});
       return false;
+    } finally {
+      busyRef.current = false;
+      if (mounted.current) setBusy(false);
+    }
+  };
+  const refreshOnly = async () => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setBusy(true);
+    try {
+      await refresh();
+      setMessage(null);
+    } catch {
+      /* Preserve the outcome and offer refresh again. */
     } finally {
       busyRef.current = false;
       if (mounted.current) setBusy(false);
@@ -780,7 +836,10 @@ function Workspace({
     },
     openTarget,
     openBudget: (date = day) => {
-      if (own) setDialog({ kind: "budget", day: date });
+      if (own) {
+        setMessage((current) => (current?.scope === "budget" ? null : current));
+        setDialog({ kind: "budget", day: date });
+      }
     },
     openRecipe: (recipe) => setDialog({ kind: "recipe", recipe }),
     deleteEntry: (e) =>
@@ -1109,22 +1168,40 @@ function Workspace({
           </button>
         ))}
       </nav>
-      {message && (
-        <div
-          className={`toast ${message.error ? "error" : ""}`}
-          role={message.error ? "alert" : "status"}
-        >
-          {message.error ? <CircleHelp size={18} /> : <Check size={18} />}
-          <span>{message.text}</span>
-          <button
-            className="icon-button"
-            aria-label={t("Dismiss notification", "Cerrar aviso")}
-            onClick={() => setMessage(null)}
+      {message &&
+        !(
+          dialog?.kind === "budget" &&
+          message.error &&
+          message.scope === "budget"
+        ) && (
+          <div
+            className={`toast ${message.error ? "error" : ""}`}
+            role={message.error ? "alert" : "status"}
           >
-            <X size={16} />
-          </button>
-        </div>
-      )}
+            {message.error ? <CircleHelp size={18} /> : <Check size={18} />}
+            <span>{message.text}</span>
+            {message.refresh && (
+              <button
+                className="text-link"
+                disabled={busy}
+                aria-label={t(
+                  "Refresh saved changes",
+                  "Actualizar cambios guardados",
+                )}
+                onClick={refreshOnly}
+              >
+                {t("Refresh", "Actualizar")}
+              </button>
+            )}
+            <button
+              className="icon-button"
+              aria-label={t("Dismiss notification", "Cerrar aviso")}
+              onClick={() => setMessage(null)}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
       {dialog && (
         <Modal
           title={modalTitle}
@@ -1240,21 +1317,26 @@ function Workspace({
           )}
           {dialog.kind === "budget" && (
             <BudgetForm
+              failureMessage={
+                message?.error && message.scope === "budget"
+                  ? message.text
+                  : undefined
+              }
+              onRefresh={
+                message?.error && message.scope === "budget" && message.refresh
+                  ? refreshOnly
+                  : undefined
+              }
               initialDay={dialog.day}
               member={me}
               state={s}
               language={language}
               busy={busy}
-              onSave={async (day, changes) => {
+              onSave={async (day, changes, operation) => {
                 if (
                   await operate(
                     async () => {
-                      for (const [meal, kcal] of Object.entries(changes))
-                        await repo.saveBudgetOverride(
-                          day,
-                          meal as MealType,
-                          kcal,
-                        );
+                      await repo.saveBudgetOverrides(day, changes, operation);
                     },
                     t(
                       "Meal budgets updated. Review existing portions manually.",

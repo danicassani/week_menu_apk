@@ -2,7 +2,7 @@
 
 Status: proposed design accompanying the [product specification](specification.md). D1–D3 are confirmed. API names below describe intended responsibilities; they are not deployed endpoints or a promised migration numbering scheme.
 
-## 1. Baseline findings from the current code
+## 1. Findings from the version-two baseline
 
 | Area                 | Existing implementation                                                                                                                                                               | Consequence for version 3                                                                                                                      |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |

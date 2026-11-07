@@ -13,6 +13,8 @@ import {
   shoppingChanges,
   shoppingFingerprint,
   applyShoppingPreview,
+  eligibleShoppingPlans,
+  shoppingValidUntil,
   type ShoppingState,
   type ShoppingPreview,
   type CheckOperation,
@@ -83,6 +85,7 @@ export class SupabaseRepository implements Repository {
     name: string,
     args?: Record<string, unknown>,
     scoped = true,
+    uncertainMutation = false,
   ): Promise<T> {
     const context = this.context;
     if (scoped && !context) throw new DomainError("household_required");
@@ -93,17 +96,28 @@ export class SupabaseRepository implements Repository {
     if (authError) throw authError;
     if (!session || session.user.id !== this.accountId)
       throw new DomainError("account_changed");
-    const { data, error } = await this.client
-      .rpc(name, {
-        ...args,
-        ...(scoped
-          ? {
-              p_household_id: context!.household_id,
-              p_membership_id: context!.membership_id,
-            }
-          : {}),
-      })
-      .setHeader("Authorization", `Bearer ${session.access_token}`);
+    let response;
+    try {
+      response = await this.client
+        .rpc(name, {
+          ...args,
+          ...(scoped
+            ? {
+                p_household_id: context!.household_id,
+                p_membership_id: context!.membership_id,
+              }
+            : {}),
+        })
+        .setHeader("Authorization", `Bearer ${session.access_token}`);
+    } catch (error) {
+      if (uncertainMutation) throw new DomainError("mutation_outcome_unknown");
+      throw error;
+    }
+    const { data, error } = response;
+    if (error && uncertainMutation && !error.code)
+      throw new DomainError("mutation_outcome_unknown");
+    if (error && uncertainMutation && error.code === "PGRST202")
+      throw new DomainError("budget_update_unavailable");
     if (error) throw new DomainError(error.message);
     return data as T;
   }
@@ -270,6 +284,25 @@ export class SupabaseRepository implements Repository {
       p_kcal: kcal,
     });
   }
+  async saveBudgetOverrides(
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+    operation: string,
+  ) {
+    const ack = await this.rpc<{
+      operation_id: string;
+      day: string;
+      revision: number;
+    }>(
+      "save_my_meal_budgets",
+      { p_day: day, p_changes: changes, p_operation: operation },
+      true,
+      true,
+    );
+    if (ack?.operation_id !== operation || ack?.day !== day)
+      throw new DomainError("mutation_outcome_unknown");
+    return ack;
+  }
   invite(email: string) {
     return this.rpc("invite_member", { p_email: email });
   }
@@ -298,6 +331,13 @@ export class SupabaseRepository implements Repository {
 
 // Ephemeral, explicitly labelled preview. It never authenticates or accesses Supabase.
 export class PreviewRepository implements Repository {
+  private budgetCommits = new Map<
+    string,
+    {
+      request: string;
+      ack: { operation_id: string; day: string; revision: number };
+    }
+  >();
   mode = "preview" as const;
   readonly accountId = "preview";
   private shopping = emptyShopping();
@@ -450,14 +490,22 @@ export class PreviewRepository implements Repository {
   }
   async getShopping() {
     this.me();
+    this.autoShopping();
     const s = structuredClone(this.shopping);
+    s.observed_at = new Date().toISOString();
+    s.valid_until = shoppingValidUntil(
+      this.library.plans,
+      this.s,
+      s.start_date,
+      s.end_date,
+    );
     s.observation_revision = this.serial;
     s.changes_available =
       !!s.start_date &&
       s.applied_fingerprint !==
         shoppingFingerprint(
           shoppingRequirements(
-            this.library.plans,
+            eligibleShoppingPlans(this.library.plans, this.s),
             s.start_date,
             s.end_date!,
             this.library.ingredients,
@@ -476,7 +524,7 @@ export class PreviewRepository implements Repository {
     )
       throw new DomainError("invalid_shopping_range");
     const rows = shoppingRequirements(
-      this.library.plans,
+      eligibleShoppingPlans(this.library.plans, this.s),
       start,
       end,
       this.library.ingredients,
@@ -622,7 +670,7 @@ export class PreviewRepository implements Repository {
     const start = this.shopping.start_date ?? days[0],
       end = this.shopping.end_date ?? days[6];
     const rows = shoppingRequirements(
-      this.library.plans,
+      eligibleShoppingPlans(this.library.plans, this.s),
       start,
       end,
       this.library.ingredients,
@@ -966,6 +1014,60 @@ export class PreviewRepository implements Repository {
         meal_type: meal,
         kcal,
       });
+  }
+  async saveBudgetOverrides(
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+    operation: string,
+  ) {
+    const member = this.me(),
+      request = JSON.stringify([day, Object.entries(changes).sort()]);
+    const key = member.id + "/" + operation,
+      old = this.budgetCommits.get(key);
+    if (old) {
+      if (old.request !== request) throw new DomainError("operation_mismatch");
+      return structuredClone(old.ack);
+    }
+    const entries = Object.entries(changes);
+    if (
+      !operation ||
+      !entries.length ||
+      entries.length > 3 ||
+      entries.some(
+        ([type, kcal]) =>
+          !["breakfast", "lunch", "dinner"].includes(type) ||
+          (kcal !== null && (!Number.isFinite(kcal) || !(kcal! > 0))),
+      )
+    )
+      throw new DomainError("invalid_budgets");
+    this.unlocked(day);
+    if (day < this.today()) throw new DomainError("day_closed");
+    this.s.budget_overrides = this.s.budget_overrides
+      .filter(
+        (b) =>
+          !(
+            b.member_id === member.id &&
+            b.day === day &&
+            Object.hasOwn(changes, b.meal_type)
+          ),
+      )
+      .concat(
+        entries.flatMap(([meal, kcal]) =>
+          kcal === null
+            ? []
+            : [
+                {
+                  member_id: member.id,
+                  day,
+                  meal_type: meal as MealType,
+                  kcal: kcal!,
+                },
+              ],
+        ),
+      );
+    const ack = { operation_id: operation, day, revision: ++this.serial };
+    this.budgetCommits.set(key, { request, ack });
+    return structuredClone(ack);
   }
   async invite(email: string) {
     this.owner();

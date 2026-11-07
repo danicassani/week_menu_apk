@@ -295,7 +295,10 @@ describe.each([false, true])(
       expect(after.start_date).toBe(start);
       expect(after.end_date).toBe(end);
       expect(after.items).toEqual(manual);
-      expect((await snapshot()).shopping).toEqual(after);
+      expect((await snapshot()).shopping).toEqual({
+        ...after,
+        ...(after.observed_at ? { observed_at: expect.any(String) } : {}),
+      });
       await setRange(start, end);
       expect((await rpc<ShoppingState>("get_shopping_state")).items).toEqual(
         manual,
@@ -335,9 +338,10 @@ describe.each([false, true])(
             end,
           ]),
         ).rejects.toThrow("membership_changed");
-        expect(await rpc<ShoppingState>("get_shopping_state")).toEqual(
-          original,
-        );
+        expect(await rpc<ShoppingState>("get_shopping_state")).toEqual({
+          ...original,
+          observed_at: expect.any(String),
+        });
         await actor("40000000-0000-0000-0000-000000000099");
         await expect(
           db.query("select public.set_shopping_date_range($1,$2,$3,$4)", [

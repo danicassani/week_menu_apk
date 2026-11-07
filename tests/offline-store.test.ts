@@ -432,3 +432,69 @@ it("refuses a late snapshot belonging to another household and clears every acco
   expect(await readOfflineAccount(offlineKey(contextA))).toBeNull();
   expect(await activeOfflineAccount()).toBeNull();
 });
+
+it("a requested refresh is not lost behind an earlier in-flight sync", async () => {
+  await rememberAccount("alice", "en");
+  await cacheShopping("alice", state());
+  let release!: () => void, started!: () => void;
+  const gate = new Promise<void>((r) => (release = r)),
+    sending = new Promise<void>((r) => (started = r));
+  let reads = 0;
+  const repo = {
+    accountId: "alice",
+    checkShopping: vi.fn(),
+    getShopping: async () => {
+      reads++;
+      if (reads === 1) {
+        started();
+        await gate;
+      }
+      return { ...state(), observation_revision: reads };
+    },
+  };
+  const first = syncShopping(repo, () => true, true);
+  await sending;
+  const second = syncShopping(repo, () => true, true);
+  release();
+  await Promise.all([first, second]);
+  expect(reads).toBe(2);
+  expect(
+    (await readOfflineAccount("alice"))?.shopping?.observation_revision,
+  ).toBe(2);
+});
+
+it("a confirmed checkbox remains checked if the post-ack read fails, and an older read cannot erase it", async () => {
+  await ready();
+  const op = await enqueueCheck("alice", "item-1", true);
+  const repo = {
+    accountId: "alice",
+    checkShopping: async () => ({
+      operation_id: op.id,
+      item_id: op.item_id,
+      status: "applied" as const,
+      checked: true,
+      item_revision: 1,
+    }),
+    getShopping: async () => {
+      throw new Error("offline");
+    },
+  };
+  await expect(syncShopping(repo, () => true)).rejects.toThrow("offline");
+  let cached = await readOfflineAccount("alice");
+  expect(cached?.pending).toEqual([]);
+  expect(cached?.shopping?.items[0].checked).toBe(true);
+  expect(cached?.needs_refresh).toBe(true);
+  await cacheShopping("alice", { ...state(), observation_revision: 1 });
+  cached = await readOfflineAccount("alice");
+  expect(cached?.shopping?.items[0]).toMatchObject({
+    checked: true,
+    checked_revision: 1,
+  });
+  const fresh = state();
+  fresh.observation_revision = 2;
+  fresh.items[0].checked_revision = 2;
+  await cacheShopping("alice", fresh);
+  expect((await readOfflineAccount("alice"))?.shopping?.items[0].checked).toBe(
+    false,
+  );
+});

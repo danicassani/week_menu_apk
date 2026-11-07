@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Plus, ShoppingBasket, RefreshCw, Info, WifiOff } from "lucide-react";
 import type { ViewProps } from "./views";
 import type { ShoppingItem } from "../domain/shopping";
+import { shoppingNeedsRefresh } from "../domain/shopping";
 import { addDays } from "../domain/dates";
 import { translator, errorMessage } from "../lib/i18n";
 import { useShoppingQueue } from "../lib/use-offline";
@@ -151,6 +152,14 @@ export function ShoppingPage(v: ViewProps) {
               )}
         </p>
       </section>
+      {shoppingNeedsRefresh(shopping, queue.now) && (
+        <p className="note warning" role="status">
+          {t(
+            "Saved quantities may include expired meals. Reconnect or synchronize to refresh them; your pending checks are kept.",
+            "Las cantidades guardadas pueden incluir comidas pasadas. Vuelve a conectarte o sincroniza para actualizarlas; se conservan tus marcas pendientes.",
+          )}
+        </p>
+      )}
       {shopping.changes_available && (
         <div className="note warning">
           <Info size={18} />
