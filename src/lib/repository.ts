@@ -129,12 +129,52 @@ export class SupabaseRepository implements Repository {
       (uncertainMutation || name === "preview_meal_transfer")
     )
       throw new DomainError(
-        name === "save_my_meal_budgets"
-          ? "budget_update_unavailable"
-          : "planning_update_unavailable",
+        name.includes("historical_correction")
+          ? "correction_unavailable"
+          : name === "save_my_meal_budgets"
+            ? "budget_update_unavailable"
+            : "planning_update_unavailable",
       );
+    if (
+      error &&
+      error.code === "PGRST202" &&
+      /historical_correction/.test(name)
+    )
+      throw new DomainError("correction_unavailable");
     if (error) throw new DomainError(error.message);
     return data as T;
+  }
+  beginCorrection(day: string, revision: number) {
+    return this.rpc<import("../domain/history").CorrectionSession>(
+      "begin_historical_correction",
+      { p_day: day, p_revision: revision },
+    );
+  }
+  applyCorrection(
+    session: import("../domain/history").CorrectionSession,
+    action: "save" | "erase",
+    plans: MealPlan[],
+  ) {
+    return this.rpc<import("../domain/history").CorrectionAck>(
+      "apply_historical_correction",
+      {
+        p_token: session.token,
+        p_day: session.day,
+        p_action: action,
+        p_plans: plans,
+      },
+      true,
+      true,
+    );
+  }
+  cancelCorrection(token: string) {
+    return this.rpc("cancel_historical_correction", { p_token: token });
+  }
+  correctionHistory(day: string) {
+    return this.rpc<import("../domain/history").CorrectionEvent[]>(
+      "get_historical_corrections",
+      { p_day: day },
+    );
   }
   getPlanningLibrary() {
     return this.rpc<PlanningState>("get_planning_library");

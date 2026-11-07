@@ -131,6 +131,26 @@ const messages: Record<string, [string, string]> = {
     "No hay una receta adecuada. Añade más recetas o revisa el catálogo.",
   ],
 
+  correction_expired: [
+    "This historical editing session ended. Reload the day and review it again.",
+    "La sesión del historial ha terminado. Recarga el día y revísalo de nuevo.",
+  ],
+  historical_day_required: [
+    "Only a closed day can be corrected here.",
+    "Aquí solo se puede corregir un día cerrado.",
+  ],
+  historical_context_missing: [
+    "Historical calorie context is missing. Review existing quantities manually; this meal cannot be scaled automatically.",
+    "Falta el contexto calórico histórico. Revisa las cantidades existentes manualmente; no se puede escalar esta comida automáticamente.",
+  ],
+  correction_unavailable: [
+    "Historical editing is not available on the server yet. Apply migration 16 before using this client.",
+    "La edición del historial aún no está disponible en el servidor. Aplica la migración 16 antes de usar este cliente.",
+  ],
+  correction_unchanged: [
+    "No meal changes to save.",
+    "No hay cambios en las comidas para guardar.",
+  ],
   invalid_profile: [
     "Enter a name, adult age, sex, and positive metric measurements.",
     "Introduce nombre, edad adulta, sexo y medidas métricas positivas.",

@@ -144,6 +144,19 @@ export interface Repository {
   householdAccess?(): Promise<HouseholdAccess>;
   createHousehold?(name: string, timezone: string): Promise<void>;
   joinHousehold?(invitation: string, timezone: string): Promise<void>;
+  beginCorrection(
+    day: string,
+    revision: number,
+  ): Promise<import("./history").CorrectionSession>;
+  applyCorrection(
+    session: import("./history").CorrectionSession,
+    action: "save" | "erase",
+    plans: MealPlan[],
+  ): Promise<import("./history").CorrectionAck>;
+  cancelCorrection(token: string): Promise<void>;
+  correctionHistory(
+    day: string,
+  ): Promise<import("./history").CorrectionEvent[]>;
   getPlanningLibrary(): Promise<import("./planning").PlanningState>;
   cataloguePage(
     query: import("./catalogue").CatalogueQuery,

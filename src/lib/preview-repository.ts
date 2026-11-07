@@ -1,3 +1,9 @@
+import {
+  historicalQuantities,
+  type CorrectionSession,
+  type CorrectionAck,
+  type CorrectionEvent,
+} from "../domain/history";
 import type {
   CatalogueKind,
   CatalogueQuery,
@@ -63,6 +69,128 @@ import type {
 
 // Ephemeral, explicitly labelled preview. It never authenticates or accesses Supabase.
 export class PreviewRepository implements Repository {
+  private correctionSessions = new Map<string, CorrectionSession>();
+  private corrections: CorrectionEvent[] = [];
+  private correctionReceipts = new Map<
+    string,
+    { request: string; ack: CorrectionAck }
+  >();
+  private closedDay(day: string) {
+    return (
+      this.s.meal_locks.some((l) => l.day === day && l.closed) ||
+      Date.now() >=
+        Math.min(
+          ...this.s.members
+            .filter((m) => m.status === "active")
+            .map((m) => Date.parse(dayCutoff(day, m.time_zone))),
+        )
+    );
+  }
+  async beginCorrection(day: string, revision: number) {
+    if (!this.closedDay(day)) throw new DomainError("historical_day_required");
+    if (revision !== this.serial) throw new DomainError("stale_plan");
+    this.correctionSessions.clear();
+    const session: CorrectionSession = {
+      token: crypto.randomUUID(),
+      day,
+      revision,
+      expires_at: new Date(Date.now() + 600000).toISOString(),
+      plans: structuredClone(this.library.plans.filter((p) => p.day === day)),
+    };
+    this.correctionSessions.set(session.token, session);
+    return structuredClone(session);
+  }
+  async cancelCorrection(token: string) {
+    this.correctionSessions.delete(token);
+  }
+  async correctionHistory(day: string) {
+    return structuredClone(this.corrections.filter((e) => e.day === day));
+  }
+  async applyCorrection(
+    session: CorrectionSession,
+    action: "save" | "erase",
+    plans: MealPlan[],
+  ) {
+    const request = JSON.stringify({ day: session.day, action, plans }),
+      receipt = this.correctionReceipts.get(session.token);
+    if (receipt) {
+      if (receipt.request !== request)
+        throw new DomainError("operation_mismatch");
+      return structuredClone(receipt.ack);
+    }
+    const current = this.correctionSessions.get(session.token);
+    if (
+      !current ||
+      current.day !== session.day ||
+      Date.parse(current.expires_at) <= Date.now()
+    )
+      throw new DomainError("correction_expired");
+    if (current.revision !== this.serial) throw new DomainError("stale_plan");
+    if (!this.closedDay(session.day))
+      throw new DomainError("historical_day_required");
+    if (
+      plans.length > 3 ||
+      new Set(plans.map((p) => p.type)).size !== plans.length ||
+      (action === "erase" && plans.length)
+    )
+      throw new DomainError("invalid_recipe");
+    const corrected = plans.map((plan) => {
+      if (plan.day !== session.day) throw new DomainError("invalid_recipe");
+      const previous = current.plans.find((p) => p.type === plan.type);
+      return {
+        ...plan,
+        revision: (previous?.revision ?? 0) + 1,
+        portions: plan.portions.map((p) => {
+          const old = previous?.portions.find(
+            (o) => o.member_id === p.member_id,
+          );
+          if (
+            !old &&
+            !this.s.days.some(
+              (d) =>
+                d.day === session.day &&
+                d.member_id === p.member_id &&
+                d.closed,
+            )
+          )
+            throw new DomainError("invalid_member");
+          return JSON.stringify(old) === JSON.stringify(p)
+            ? structuredClone(old!)
+            : historicalQuantities(
+                { ...p, budget: old?.budget ?? p.budget },
+                old,
+                this.library.ingredients,
+              );
+        }),
+      };
+    });
+    this.library.plans = [
+      ...this.library.plans.filter((p) => p.day !== session.day),
+      ...corrected,
+    ];
+    this.s.meals = this.s.meals.filter((p) => p.day !== session.day);
+    this.serial++;
+    this.syncPlans();
+    this.autoShopping();
+    this.persistDemo();
+    const ack: CorrectionAck = {
+      day: session.day,
+      action,
+      revision: this.serial,
+    };
+    this.corrections.push({
+      id: crypto.randomUUID(),
+      day: session.day,
+      member_id: this.s.viewer_id,
+      action,
+      created_at: new Date().toISOString(),
+      before_meals: structuredClone(current.plans),
+      after_meals: structuredClone(corrected),
+    });
+    this.correctionReceipts.set(session.token, { request, ack });
+    this.correctionSessions.delete(session.token);
+    return structuredClone(ack);
+  }
   private budgetCommits = new Map<
     string,
     {
@@ -692,6 +820,46 @@ export class PreviewRepository implements Repository {
   }
   async load(zone: string) {
     this.s.server_now = new Date().toISOString();
+    for (const plan of this.library.plans)
+      if (this.closedDay(plan.day)) {
+        if (!this.s.meal_locks.some((l) => l.day === plan.day))
+          this.s.meal_locks.push({
+            day: plan.day,
+            cutoff: dayCutoff(plan.day, zone),
+            closed: true,
+          });
+        for (const p of plan.portions)
+          if (
+            !this.s.days.some(
+              (d) => d.day === plan.day && d.member_id === p.member_id,
+            )
+          ) {
+            const member = this.s.members.find((m) => m.id === p.member_id)!;
+            const target =
+              this.s.targets
+                .filter(
+                  (t) =>
+                    t.member_id === p.member_id && t.effective_date <= plan.day,
+                )
+                .sort((a, b) => b.created_at.localeCompare(a.created_at))[0] ??
+              null;
+            this.s.days.push({
+              member_id: p.member_id,
+              day: plan.day,
+              cutoff: dayCutoff(plan.day, zone),
+              closed: true,
+              snapshot: {
+                profile: structuredClone(member.profile!),
+                target: structuredClone(target),
+                entries: structuredClone(
+                  this.s.entries.filter(
+                    (e) => e.member_id === p.member_id && e.day === plan.day,
+                  ),
+                ),
+              },
+            });
+          }
+      }
     this.syncPlans();
     this.me().time_zone = zone;
     this.autoShopping();
