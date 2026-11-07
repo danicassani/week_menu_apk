@@ -4,6 +4,8 @@ Version-one milestones 1–3 are implemented. For the current v2 release, see th
 
 For version 3 milestone 1, apply [migration 13](../supabase/migrations/202611070013_budget_commits_and_shopping_expiry.sql) after 1–12 and before deploying the matching client. See [the milestone report](version-3/milestone-1.md) for budget acknowledgements, shopping expiry and offline behavior.
 
+For version 3 milestone 2, apply [migration 14](../supabase/migrations/202611070014_meal_transfers.sql) after 1–13 and before deploying the matching client. See [the transfer review](version-3/milestone-2.md) for swaps, recipe copy/paste, permissions and rollout. Existing API signatures and household records are preserved.
+
 ## Local development
 
 Use Node.js 24 LTS and npm. From the repository root:

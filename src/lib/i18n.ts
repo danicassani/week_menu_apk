@@ -2,6 +2,14 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  planning_update_unavailable: [
+    "Meal transfers are temporarily unavailable. Update the app setup and try again.",
+    "Los intercambios y pegados no están disponibles temporalmente. Actualiza la configuración de la aplicación e inténtalo de nuevo.",
+  ],
+  locked_suggestion: [
+    "Unlock this suggestion before changing it.",
+    "Desbloquea esta sugerencia antes de cambiarla.",
+  ],
   mutation_outcome_unknown: [
     "We could not confirm whether the change was saved. Refresh to check before trying again.",
     "No se ha podido confirmar si el cambio se guardó. Actualiza para comprobarlo antes de intentarlo de nuevo.",

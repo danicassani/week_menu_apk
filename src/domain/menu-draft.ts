@@ -1,11 +1,7 @@
+import { buildTransfer } from "./planning-transfer";
 import type { HouseholdState, MealType } from "./types";
 import { targetOn } from "./state";
-import {
-  makePortion,
-  varietyConflict,
-  type MealPlan,
-  type PlanningState,
-} from "./planning";
+import { makePortion, type MealPlan, type PlanningState } from "./planning";
 export const slotKey = (m: Pick<MealPlan, "day" | "type">) =>
   `${m.day}/${m.type}`;
 export const lockKey = (m: Pick<MealPlan, "day" | "type">, member?: string) =>
@@ -89,72 +85,29 @@ export function swapDraft(
   lib: PlanningState,
   locks: string[],
   breakfastMember = state.viewer_id,
+  targetMember = breakfastMember,
 ) {
-  if (a === b || (a.type === "breakfast") !== (b.type === "breakfast"))
-    throw Error("invalid_recipe");
-  const selectedMember = breakfastMember;
-  if (
-    a.type === "breakfast" &&
-    !state.members.some(
-      (m) => m.id === selectedMember && m.status === "active" && m.onboarded,
-    )
-  )
-    throw Error("invalid_member");
-  if (
-    locks.includes(lockKey(a, selectedMember)) ||
-    locks.includes(lockKey(b, selectedMember))
-  )
-    throw Error("locked_suggestion");
-  const first = replan(
-      b,
-      a.day,
-      a.type,
-      state,
-      lib,
-      a.type === "breakfast" ? selectedMember : undefined,
-    ),
-    second = replan(
-      a,
-      b.day,
-      b.type,
-      state,
-      lib,
-      a.type === "breakfast" ? selectedMember : undefined,
-    );
-  if (first.gaps.length || second.gaps.length)
-    throw Error("no_suitable_recipe");
-  const replace = (original: MealPlan, next: MealPlan) =>
-    a.type !== "breakfast"
-      ? next
-      : {
-          ...original,
-          portions: original.portions.map((p) =>
-            p.member_id === selectedMember
-              ? next.portions.find((q) => q.member_id === selectedMember)!
-              : p,
-          ),
-        };
-  if (
-    a.type === "breakfast" &&
-    (!first.plan.portions.some((p) => p.member_id === selectedMember) ||
-      !second.plan.portions.some((p) => p.member_id === selectedMember))
-  )
-    throw Error("no_suitable_recipe");
-  const result = plans.map((p) =>
-    p === a ? replace(a, first.plan) : p === b ? replace(b, second.plan) : p,
+  const source = {
+    day: a.day,
+    type: a.type,
+    ...(a.type === "breakfast" ? { member_id: breakfastMember } : {}),
+  };
+  const target = {
+    day: b.day,
+    type: b.type,
+    ...(b.type === "breakfast" ? { member_id: targetMember } : {}),
+  };
+  const result = buildTransfer(
+    state,
+    lib,
+    { mode: "swap", source, target },
+    plans,
+    locks,
   );
-  const retained = lib.plans.filter(
-    (p) => !result.some((r) => slotKey(r) === slotKey(p)),
+  const keys = new Set(result.plans.map(slotKey));
+  return plans.map((p) =>
+    keys.has(slotKey(p))
+      ? result.plans.find((q) => slotKey(q) === slotKey(p))!
+      : p,
   );
-  if (
-    result.some((p) =>
-      varietyConflict(
-        p,
-        [...retained, ...result.filter((x) => x !== p)],
-        state.household.variety_days,
-      ),
-    )
-  )
-    throw Error("variety_conflict");
-  return result;
 }

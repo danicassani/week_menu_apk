@@ -583,8 +583,8 @@ for (const lang of ["en", "es"] as const) {
       })
       .first();
     const portions = breakfast.locator(".preview-portion");
-    await expect(portions.nth(0).locator(".preview-action")).toHaveCount(3);
-    await expect(portions.nth(1).locator(".preview-action")).toHaveCount(3);
+    await expect(portions.nth(0).locator(".preview-action")).toHaveCount(4);
+    await expect(portions.nth(1).locator(".preview-action")).toHaveCount(4);
     const lock = portions.first().getByRole("button", {
       name: t("Lock breakfast", "Bloquear desayuno"),
       exact: true,
@@ -705,7 +705,7 @@ test("another member's breakfast can be re-rolled and swapped without changing t
     .click();
   await expect(
     second.getByRole("button", { name: "Swap here", exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await second
     .getByRole("button", { name: "Swap breakfast here for Noa", exact: true })
     .click();

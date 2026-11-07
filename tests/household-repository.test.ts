@@ -154,3 +154,76 @@ it("ignores an older no-membership response after a newer load has bound the hou
     p_membership_id: "member-a",
   });
 });
+it("binds transfer review and apply to the current membership and sends no client nutrition", async () => {
+  const { repo, request } = setup();
+  await repo.load("UTC");
+  const transfer = {
+    mode: "paste" as const,
+    target: {
+      day: "2026-11-09",
+      type: "breakfast" as const,
+      member_id: "member-a",
+    },
+    choice: { recipe_id: "b01", revision: 1, desserts: {} },
+  };
+  await repo.previewTransfer(transfer);
+  expect(request).toHaveBeenLastCalledWith("preview_meal_transfer", {
+    p_household_id: "home-a",
+    p_membership_id: "member-a",
+    p_request: transfer,
+  });
+  await repo.applyTransfer(
+    transfer,
+    { revision: 2, fingerprint: "review", plans: [], occupied: true },
+    true,
+  );
+  expect(request).toHaveBeenLastCalledWith("apply_meal_transfer", {
+    p_household_id: "home-a",
+    p_membership_id: "member-a",
+    p_request: transfer,
+    p_revision: 2,
+    p_fingerprint: "review",
+    p_overwrite: true,
+  });
+});
+it("transfer transport failures are uncertain and missing migrations have an actionable error", async () => {
+  const { repo, request } = setup();
+  await repo.load("UTC");
+  const transfer = {
+    mode: "paste" as const,
+    target: { day: "2026-11-09", type: "lunch" as const },
+    choice: { recipe_id: "m18", revision: 1, desserts: {} },
+  };
+  request.mockImplementationOnce(
+    () =>
+      ({
+        setHeader: async () => ({
+          data: undefined,
+          error: { message: "Failed to fetch" },
+        }),
+      }) as any,
+  );
+  await expect(
+    repo.applyTransfer(
+      transfer,
+      { revision: 1, fingerprint: "review", plans: [], occupied: false },
+      false,
+    ),
+  ).rejects.toThrow("mutation_outcome_unknown");
+  request.mockImplementationOnce(
+    () =>
+      ({
+        setHeader: async () => ({
+          data: undefined,
+          error: { message: "missing", code: "PGRST202" },
+        }),
+      }) as any,
+  );
+  await expect(
+    repo.applyTransfer(
+      transfer,
+      { revision: 1, fingerprint: "review", plans: [], occupied: false },
+      false,
+    ),
+  ).rejects.toThrow("planning_update_unavailable");
+});

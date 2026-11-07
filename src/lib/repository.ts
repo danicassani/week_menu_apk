@@ -1,4 +1,9 @@
 import { EMOJIS } from "../domain/presentation";
+import {
+  buildTransfer,
+  type TransferRequest,
+  type TransferPreview,
+} from "../domain/planning-transfer";
 import { authStorage, AUTH_STORAGE_KEY, clearLocalAuth } from "./auth-storage";
 import { requireDiscardOrSynced, purgeOfflineAccount } from "./offline-store";
 import {
@@ -116,8 +121,16 @@ export class SupabaseRepository implements Repository {
     const { data, error } = response;
     if (error && uncertainMutation && !error.code)
       throw new DomainError("mutation_outcome_unknown");
-    if (error && uncertainMutation && error.code === "PGRST202")
-      throw new DomainError("budget_update_unavailable");
+    if (
+      error &&
+      error.code === "PGRST202" &&
+      (uncertainMutation || name === "preview_meal_transfer")
+    )
+      throw new DomainError(
+        name === "save_my_meal_budgets"
+          ? "budget_update_unavailable"
+          : "planning_update_unavailable",
+      );
     if (error) throw new DomainError(error.message);
     return data as T;
   }
@@ -126,6 +139,28 @@ export class SupabaseRepository implements Repository {
   }
   setShoppingRange(start: string, end: string) {
     return this.rpc("set_shopping_date_range", { p_start: start, p_end: end });
+  }
+  previewTransfer(request: TransferRequest) {
+    return this.rpc<TransferPreview>("preview_meal_transfer", {
+      p_request: request,
+    });
+  }
+  applyTransfer(
+    request: TransferRequest,
+    preview: TransferPreview,
+    overwrite: boolean,
+  ) {
+    return this.rpc(
+      "apply_meal_transfer",
+      {
+        p_request: request,
+        p_revision: preview.revision,
+        p_fingerprint: preview.fingerprint,
+        p_overwrite: overwrite,
+      },
+      true,
+      true,
+    );
   }
   previewShopping(start: string, end: string) {
     return this.rpc<ShoppingPreview>("preview_shopping_list", {
@@ -551,6 +586,36 @@ export class PreviewRepository implements Repository {
   async setShoppingRange(start: string, end: string) {
     await this.applyShopping(await this.previewShopping(start, end));
   }
+  async previewTransfer(request: TransferRequest) {
+    this.me();
+    this.s.server_now = new Date().toISOString();
+    return buildTransfer(
+      this.s,
+      { ...this.library, revision: this.serial },
+      request,
+    );
+  }
+  async applyTransfer(
+    request: TransferRequest,
+    preview: TransferPreview,
+    overwrite: boolean,
+  ) {
+    if (preview.revision !== this.serial) throw new DomainError("stale_plan");
+    const fresh = await this.previewTransfer(request);
+    if (fresh.fingerprint !== preview.fingerprint)
+      throw new DomainError("stale_plan");
+    if (request.mode === "paste" && fresh.occupied && !overwrite)
+      throw new DomainError("existing_meal");
+    const keys = new Set(fresh.plans.map((p) => p.day + "/" + p.type));
+    this.library.plans = this.library.plans
+      .filter((p) => !keys.has(p.day + "/" + p.type))
+      .concat(fresh.plans.filter((p) => p.portions.length));
+    this.s.meals = this.s.meals.filter((p) => !keys.has(p.day + "/" + p.type));
+    this.serial++;
+    this.syncPlans();
+    this.autoShopping();
+    this.persistDemo();
+  }
   async saveManualItem(
     id: string,
     label: string,
@@ -816,11 +881,18 @@ export class PreviewRepository implements Repository {
       if (varietyConflict(m, plans, this.s.household.variety_days))
         throw new DomainError("variety_conflict");
       const i = plans.findIndex((x) => x.day === m.day && x.type === m.type);
+      if (!m.portions.length) {
+        if (i >= 0) plans.splice(i, 1);
+        continue;
+      }
       const saved = { ...m, revision: (old?.revision ?? 0) + 1 };
       if (i < 0) plans.push(saved);
       else plans[i] = saved;
     }
     this.library.plans = plans;
+    this.s.meals = this.s.meals.filter(
+      (p) => !batch.some((m) => m.day === p.day && m.type === p.type),
+    );
     this.serial++;
     this.syncPlans();
     this.autoShopping();
