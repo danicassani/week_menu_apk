@@ -83,6 +83,22 @@ Render **Sync now / Sincronizar ahora** as an obvious button, consistent with th
 
 Preserve its synchronization purpose, pending-change feedback, offline/busy behavior and safe retry semantics. It must remain keyboard accessible, visibly focused and touch friendly. Automatic synchronization and shopping generation must continue independently of this manual action.
 
+## V4-09 — meal-card actions as icons
+
+In the weekly Menu, replace **Review meal / Revisar comida** with a pencil icon and **Preview another recipe / Probar otra receta** with the matching dice icon.
+
+Group the five meal actions at the bottom of each card in this order:
+
+1. Pencil — review/edit the meal.
+2. Dice — suggest another recipe.
+3. Copy — copy the meal or individual breakfast; use the existing Paste state when a source is copied.
+4. Eraser — remove the meal, preserving the existing confirmation and date permissions.
+5. Up/down arrows — swap/move the meal or individual breakfast.
+
+Replace **View recipe / Ver receta** with an eye icon. This is a separate read-only recipe action, not a sixth action in the five-icon bottom group. Its exact position can be settled during layout implementation.
+
+Use the existing matching outline icon style, translated accessible names/tooltips, visible focus and touch-friendly targets. Preserve per-person breakfast behavior, overwrite review, ordinary closed-day restrictions and the version-three historical-correction boundary. The eraser applies only to its meal; it must not silently become Delete week or Erase day.
+
 ## Delivery boundary
 
-These eight requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. Detailed technical design, migration requirements and milestone ordering will be established when version-four implementation is scheduled. The working defaults above are explicitly distinguished from the user's requests.
+These nine requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. Detailed technical design, migration requirements and milestone ordering will be established when version-four implementation is scheduled. The working defaults above are explicitly distinguished from the user's requests.
