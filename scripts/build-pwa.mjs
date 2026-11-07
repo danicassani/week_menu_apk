@@ -15,7 +15,9 @@ const files = (await walk(root))
   .filter(
     (f) =>
       !["_headers", "_redirects", "sw.js"].includes(path.basename(f)) &&
-      !f.endsWith(".map"),
+      !f.endsWith(".map") &&
+      (process.env.VITE_ENABLE_PREVIEW === "true" ||
+        !/^(preview-repository|nutrition-content)-/.test(path.basename(f))),
   )
   .sort();
 const worker = await readFile("src/sw.js", "utf8"),

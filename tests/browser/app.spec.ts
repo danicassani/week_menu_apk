@@ -23,7 +23,8 @@ test("dashboard, profile acceptance, logs, and member permissions", async ({
   ).toBeVisible();
   await expect(page.getByText("1790 kcal known intake")).toBeVisible();
   await page.getByRole("button", { name: "Activity", exact: true }).click();
-  await page.getByLabel("Activity & pace or intensity").selectOption("17190");
+  await page.getByLabel("Activity type").selectOption("walking");
+  await page.getByLabel("Pace or intensity").selectOption("17190");
   await page.getByLabel("Duration · minutes").fill("30");
   await page.getByRole("button", { name: "Save entry", exact: true }).click();
   await expect(page.getByText("From logged activities today")).toBeVisible();

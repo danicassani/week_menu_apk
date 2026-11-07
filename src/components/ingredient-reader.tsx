@@ -12,7 +12,7 @@ export function IngredientReader({
   ingredient: Ingredient;
   language: Language;
   onClose: () => void;
-  onEdit: () => void;
+  onEdit?: () => void;
 }) {
   const t = translator(language);
   const states: Record<string, string> = {
@@ -34,11 +34,13 @@ export function IngredientReader({
       }
       onClose={onClose}
     >
-      <div className="button-row">
-        <Button onClick={onEdit}>
-          {t("Edit ingredient", "Editar ingrediente")}
-        </Button>
-      </div>
+      {onEdit && (
+        <div className="button-row">
+          <Button onClick={onEdit}>
+            {t("Edit ingredient", "Editar ingrediente")}
+          </Button>
+        </div>
+      )}
       {ingredient.archived && (
         <p className="note">
           {t("Archived ingredient", "Ingrediente archivado")}

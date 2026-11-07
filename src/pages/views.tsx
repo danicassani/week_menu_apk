@@ -1,3 +1,4 @@
+import { Popover } from "../components/popover";
 import { AvatarPicker } from "../components/avatar-picker";
 import { PlannerSettings } from "../components/planner-settings";
 import { MealSnapshotView } from "./planner";
@@ -34,11 +35,13 @@ import type {
 import { targetOn } from "../domain/state";
 import { daySummary } from "../domain/calories";
 import { addDays, formatDay, localDay, weekDays } from "../domain/dates";
-import { ingredients, recipes, type Recipe } from "../lib/content";
+import type { PlannedRecipe } from "../domain/planning";
 import { mealLabel, translator } from "../lib/i18n";
 import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
 
 export type ViewProps = {
+  allocationColors: Record<string, string>;
+  ensurePlanning: () => Promise<import("../domain/planning").PlanningState>;
   clipboard: import("../domain/planning-transfer").PlanningClipboard | null;
   setClipboard: (
     next: import("../domain/planning-transfer").PlanningClipboard | null,
@@ -62,7 +65,7 @@ export type ViewProps = {
   openProfile: () => void;
   openTarget: () => void;
   openBudget: (day?: string) => void;
-  openRecipe: (r: Recipe) => void;
+  openRecipe: (r: PlannedRecipe) => void;
   deleteEntry: (e: DailyEntry) => void;
   navigate: (tab: Tab) => void;
   busy: boolean;
@@ -96,7 +99,9 @@ export function MealCards({
               b.day === day &&
               b.meal_type === type,
           )?.kcal ?? targetOn(v.s, v.member.id, day)?.budgets[type];
-        const recipe = recipes.find((r) => r.id === meal?.recipe_id);
+        const recipe = v.s.planning?.recipes.find(
+          (r) => r.id === meal?.recipe_id,
+        );
         const plan = v.s.planning?.plans.find(
           (m) => m.day === day && m.type === type,
         );
@@ -414,18 +419,40 @@ export function Dashboard(v: ViewProps) {
                 ))}
               </div>
             </div>
-            {v.own && (
-              <button
-                className="icon-button"
-                aria-label={t(
-                  "Adjust meal budgets",
-                  "Ajustar presupuestos de las comidas",
+            <div className="budget-actions">
+              <Popover
+                label={t(
+                  "About planned calories",
+                  "Sobre las calorías planificadas",
                 )}
-                onClick={() => v.openBudget()}
+                trigger={<Info size={17} />}
               >
-                <Pencil size={17} />
-              </button>
-            )}
+                {t(
+                  "Planned meals count as assumed intake. Empty slots make the day incomplete; budgets are not consumed calories.",
+                  "Las comidas planificadas cuentan como ingesta asumida. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
+                )}
+                {v.preview && (
+                  <span>
+                    {t(
+                      " Sample meals illustrate the layout. Review and save your own menu in the Menu tab.",
+                      " Las comidas de ejemplo muestran el diseño. Revisa y guarda tu propio menú en la pestaña Menú.",
+                    )}
+                  </span>
+                )}
+              </Popover>
+              {v.own && (
+                <button
+                  className="icon-button"
+                  aria-label={t(
+                    "Adjust meal budgets",
+                    "Ajustar presupuestos de las comidas",
+                  )}
+                  onClick={() => v.openBudget()}
+                >
+                  <Pencil size={17} />
+                </button>
+              )}
+            </div>
           </div>
           {v.target && totalBudget > v.target.daily_kcal && (
             <div className="note warning">
@@ -438,20 +465,6 @@ export function Dashboard(v: ViewProps) {
               </span>
             </div>
           )}
-          <div className="planning-note">
-            <Info size={16} />
-            <span>
-              {v.preview
-                ? t(
-                    "Sample meals illustrate the layout. Review and save your own menu in the Menu tab.",
-                    "Las comidas de ejemplo muestran el diseño. Revisa y guarda tu propio menú en la pestaña Menú.",
-                  )
-                : t(
-                    "Planned meals count as assumed intake. Empty slots make the day incomplete; budgets are not consumed calories.",
-                    "Las comidas planificadas cuentan como ingesta asumida. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
-                  )}
-            </span>
-          </div>
           <SectionTitle
             title={t("A glance at your week", "Un vistazo a tu semana")}
             action={
@@ -644,330 +657,6 @@ export function EntryList({
     </div>
   );
 }
-export function Menu(v: ViewProps) {
-  const [anchor, setAnchor] = useState(v.day),
-    t = translator(v.language),
-    days = weekDays(anchor, v.s.household.week_start);
-  return (
-    <>
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">
-            {t("Room for a good week", "Una buena semana empieza aquí")}
-          </span>
-          <h1>{t("Your weekly menu", "Tu menú semanal")}</h1>
-          <p>
-            {t(
-              "Individual breakfasts. Lunch and dinner together.",
-              "Desayunos individuales. Comida y cena juntos.",
-            )}
-          </p>
-        </div>
-      </div>
-      <div className="week-toolbar">
-        <div className="button-row">
-          <button
-            className="icon-button bordered"
-            aria-label={t("Previous week", "Semana anterior")}
-            onClick={() => setAnchor(addDays(anchor, -7))}
-          >
-            <ArrowLeft size={18} />
-          </button>
-          <h2>
-            {formatDay(days[0], v.language, { day: "numeric", month: "short" })}{" "}
-            —{" "}
-            {formatDay(days[6], v.language, {
-              day: "numeric",
-              month: "short",
-              year: "numeric",
-            })}
-          </h2>
-          <button
-            className="icon-button bordered"
-            aria-label={t("Next week", "Semana siguiente")}
-            onClick={() => setAnchor(addDays(anchor, 7))}
-          >
-            <ArrowRight size={18} />
-          </button>
-        </div>
-        <button className="text-link" onClick={() => setAnchor(v.day)}>
-          {t("This week", "Esta semana")}
-        </button>
-      </div>
-      <div className="note">
-        <Info size={17} />
-        <span>
-          {t(
-            "Review the menu to plan meals and adjust personal meal-budget overrides.",
-            "Revisa el menú para planificar comidas y ajustar los presupuestos individuales.",
-          )}
-        </span>
-      </div>
-      <div className="day-list">
-        {days.map((day) => (
-          <section
-            className={`day-card ${day === v.day ? "current" : ""}`}
-            key={day}
-          >
-            <div className="day-card-heading">
-              <div>
-                <span>{formatDay(day, v.language, { weekday: "long" })}</span>
-                <b>
-                  {formatDay(day, v.language, {
-                    day: "numeric",
-                    month: "long",
-                  })}
-                </b>
-                {day === v.day && (
-                  <span className="pill inverse">{t("Today", "Hoy")}</span>
-                )}
-              </div>
-              {v.own && day >= v.day && (
-                <button className="text-link" onClick={() => v.openBudget(day)}>
-                  {t("Meal budget", "Presupuesto")}
-                  <Pencil size={14} />
-                </button>
-              )}
-            </div>
-            <MealCards v={v} day={day} compact />
-          </section>
-        ))}
-      </div>
-    </>
-  );
-}
-export function Recipes(v: ViewProps) {
-  const [query, setQuery] = useState(""),
-    [type, setType] = useState("all"),
-    [diet, setDiet] = useState("all"),
-    t = translator(v.language);
-  const result = recipes.filter(
-    (r) =>
-      r.name[v.language]
-        .toLocaleLowerCase()
-        .includes(query.toLocaleLowerCase()) &&
-      (type === "all" || r.meal_types.includes(type)) &&
-      (diet === "all" ||
-        r.dietary_patterns.without_optional_dessert.includes(diet)),
-  );
-  return (
-    <>
-      <div className="page-heading">
-        <div>
-          <span className="eyebrow">
-            {t("Everyday inspiration", "Inspiración para cada día")}
-          </span>
-          <h1>{t("A few good recipes", "Unas cuantas buenas recetas")}</h1>
-          <p>
-            {t(
-              "48 European and international meals to start with.",
-              "48 comidas europeas e internacionales para empezar.",
-            )}
-          </p>
-        </div>
-        <div className="collection-mark">
-          <CookingPot size={28} />
-          <b>48</b>
-          <span>{t("starter recipes", "recetas iniciales")}</span>
-        </div>
-      </div>
-      <div className="recipe-toolbar">
-        <label className="search-field">
-          <Search size={18} />
-          <input
-            aria-label={t("Search recipes", "Buscar recetas")}
-            type="search"
-            value={query}
-            placeholder={t("Find something good…", "Busca algo rico…")}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </label>
-        <select
-          aria-label={t("Filter by meal", "Filtrar por comida")}
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-        >
-          <option value="all">{t("All meals", "Todas las comidas")}</option>
-          <option value="breakfast">{t("Breakfast", "Desayuno")}</option>
-          <option value="lunch">{t("Lunch & dinner", "Comida y cena")}</option>
-        </select>
-        <select
-          aria-label={t("Filter by diet", "Filtrar por dieta")}
-          value={diet}
-          onChange={(e) => setDiet(e.target.value)}
-        >
-          <option value="all">{t("All diets", "Todas las dietas")}</option>
-          <option value="vegetarian">{t("Vegetarian", "Vegetariano")}</option>
-          <option value="vegan">{t("Vegan", "Vegano")}</option>
-          <option value="pescatarian">
-            {t("Pescatarian", "Pescetariano")}
-          </option>
-        </select>
-      </div>
-      <p className="result-count">
-        {result.length}{" "}
-        {t(
-          "recipes · reference portions, without optional dessert",
-          "recetas · porciones de referencia, sin postre opcional",
-        )}
-      </p>
-      <div className="recipe-grid">
-        {result.map((r, i) => (
-          <button
-            className="recipe-card"
-            key={r.id}
-            onClick={() => v.openRecipe(r)}
-          >
-            <div className="recipe-art">
-              <span className="recipe-index">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              {r.meal_types[0] === "breakfast" ? (
-                <Coffee strokeWidth={1} size={44} />
-              ) : (
-                <CookingPot strokeWidth={1} size={44} />
-              )}
-              <span className="pill">
-                {r.meal_types[0] === "breakfast"
-                  ? t("Breakfast", "Desayuno")
-                  : t("Lunch & dinner", "Comida y cena")}
-              </span>
-            </div>
-            <div className="recipe-card-content">
-              <h3>{r.name[v.language]}</h3>
-              <div>
-                <span>
-                  {Math.round(r.reference_energy_kcal.without_optional_dessert)}{" "}
-                  kcal
-                </span>
-                <span>
-                  {r.active_prep_minutes + r.finishing_cook_minutes} min{" "}
-                  <ChevronRight size={14} />
-                </span>
-              </div>
-              {r.ingredient_preparation.length > 0 && (
-                <p className="fine-print">
-                  {t(
-                    "Plus soaking / prerequisite cooking",
-                    "Más remojo / cocción previa",
-                  )}
-                </p>
-              )}
-            </div>
-          </button>
-        ))}
-      </div>
-      {!result.length && (
-        <Empty
-          icon={<Search />}
-          heading={t("No recipes found", "No se encontraron recetas")}
-        >
-          {t("Try another search or filter.", "Prueba otra búsqueda o filtro.")}
-        </Empty>
-      )}
-      <p className="fine-print content-credit">
-        {t(
-          "Original starter recipes · nutrition from UK CoFID 2021 (Open Government Licence v3.0).",
-          "Recetas originales · nutrición de UK CoFID 2021 (Open Government Licence v3.0).",
-        )}
-      </p>
-    </>
-  );
-}
-export function RecipeDetail({
-  recipe: r,
-  language,
-}: {
-  recipe: Recipe;
-  language: Language;
-}) {
-  const t = translator(language);
-  return (
-    <>
-      <div className="recipe-detail-summary">
-        <span>
-          {Math.round(r.reference_energy_kcal.without_optional_dessert)} kcal
-        </span>
-        <span>
-          {r.active_prep_minutes} {t("min prep", "min preparación")}
-        </span>
-        <span>
-          {r.finishing_cook_minutes} {t("min finishing", "min cocción final")}
-        </span>
-      </div>
-      <div className="note">
-        <Info size={17} />
-        <span>
-          {t(
-            "One reference serving. Weigh raw edible ingredients or dry staples; explicitly ready-to-use ingredients keep their stated basis. These are estimates.",
-            "Una porción de referencia. Pesa ingredientes crudos comestibles o secos; los ingredientes listos para usar conservan su referencia indicada. Son estimaciones.",
-          )}
-        </span>
-      </div>
-      {r.ingredient_preparation.map((p) => (
-        <div className="preparation" key={p.ingredient_id}>
-          <h3>
-            {t("Prepare in advance", "Preparar con antelación")} ·{" "}
-            {ingredients.find((i) => i.id === p.ingredient_id)?.name[language]}
-          </h3>
-          <p>{p.instructions[language]}</p>
-        </div>
-      ))}
-      {r.dietary_label_checks.without_optional_dessert.map((c) => (
-        <p className="note" key={c.ingredient_id}>
-          {ingredients.find((i) => i.id === c.ingredient_id)?.name[language]}:{" "}
-          {c.requirement[language]}
-        </p>
-      ))}
-      {r.components.map((c) => (
-        <section key={c.id} className="recipe-component">
-          <div className="section-title">
-            <h3>{c.name[language]}</h3>
-            {c.optional && (
-              <span className="pill">
-                {t("Optional dessert", "Postre opcional")} ·{" "}
-                {Math.round(c.reference_energy_kcal)} kcal
-              </span>
-            )}
-          </div>
-          <ul className="ingredient-list">
-            {c.ingredients.map((i) => (
-              <li key={i.ingredient_id}>
-                <span>
-                  {
-                    ingredients.find((item) => item.id === i.ingredient_id)
-                      ?.name[language]
-                  }
-                </span>
-                <b>
-                  {i.quantity} {i.unit}
-                </b>
-              </li>
-            ))}
-          </ul>
-          <ol className="instructions">
-            {c.instructions.map((step, i) => (
-              <li key={i}>{step[language]}</li>
-            ))}
-          </ol>
-        </section>
-      ))}
-      <p className="fine-print">
-        {t(
-          "Desk-validated starter recipe; not kitchen-tested. Nutrition: UK CoFID 2021, UK public sector information licensed under the Open Government Licence v3.0.",
-          "Receta inicial revisada documentalmente; no probada en cocina. Nutrición: UK CoFID 2021, información del sector público británico bajo Open Government Licence v3.0.",
-        )}{" "}
-        <a
-          href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          {t("Licence", "Licencia")}
-        </a>
-      </p>
-    </>
-  );
-}
 export function ProfileView(
   v: ViewProps & {
     openInvite: () => void;
@@ -1082,8 +771,9 @@ export function ProfileView(
                 {p.excluded_ingredients.map((id) => (
                   <span className="pill" key={id}>
                     {t("No ", "Sin ")}
-                    {ingredients.find((i) => i.id === id)?.name[v.language] ??
-                      id}
+                    {v.s.planning?.ingredients.find((i) => i.id === id)?.name[
+                      v.language
+                    ] ?? id}
                   </span>
                 ))}
               </div>

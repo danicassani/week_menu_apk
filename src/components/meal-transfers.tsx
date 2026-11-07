@@ -30,7 +30,7 @@ export function useMealTransfers(
   draft: MenuDraft | null,
   setDraft: (draft: MenuDraft | null) => void,
   locks: string[],
-  onRead: (recipe: PlannedRecipe) => void,
+  onRead: (recipe: PlannedRecipe, plan?: MealPlan) => void,
 ) {
   const t = translator(v.language),
     lib = v.s.planning;
@@ -391,7 +391,8 @@ export function useMealTransfers(
                       <button
                         className="text-link"
                         onClick={() => {
-                          if (p.recipe_snapshot) onRead(p.recipe_snapshot);
+                          if (p.recipe_snapshot)
+                            onRead(p.recipe_snapshot, plan);
                         }}
                       >
                         {text(p.name)}

@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { PreviewRepository } from "../src/lib/repository";
+import { PreviewRepository } from "../src/lib/preview-repository";
 import { addDays } from "../src/domain/dates";
 import { makePortion, type MealPlan } from "../src/domain/planning";
 import {

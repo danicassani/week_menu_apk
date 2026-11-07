@@ -225,6 +225,7 @@ test("explicitly creates a household, enters profile onboarding and binds the of
   ).toBeVisible();
   const snapshot = requests.find((r) => r.name === "get_household_snapshot")!;
   expect(snapshot.args).toEqual({
+    p_compact: true,
     p_household_id: context.household_id,
     p_membership_id: context.membership_id,
   });

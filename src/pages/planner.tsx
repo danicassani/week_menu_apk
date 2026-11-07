@@ -1,10 +1,17 @@
+import { PortionAllocation } from "../components/portion-allocation";
 import { useMealTransfers, type MenuDraft } from "../components/meal-transfers";
 import { CatalogueCard } from "../components/catalogue-card";
 import { choiceFromRecipe } from "../domain/planning-transfer";
 import { IconAction } from "../components/icon-action";
 import { RecipeStars } from "../components/recipe-stars";
 import { slotKey, lockKey, replan } from "../domain/menu-draft";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { CatalogueSummary, CataloguePage } from "../domain/catalogue";
+import {
+  cacheCataloguePage,
+  cacheCatalogueDetail,
+  cacheIdentity,
+} from "../lib/offline-store";
 import {
   Plus,
   Lock,
@@ -180,6 +187,7 @@ export function Planner(v: ViewProps) {
     [notice, setNotice] = useState(""),
     [previewNotice, setPreviewNotice] = useState(""),
     [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
+    [readingPlan, setReadingPlan] = useState<MealPlan | null>(null),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null);
@@ -188,7 +196,10 @@ export function Planner(v: ViewProps) {
     preview,
     setPreview,
     locks,
-    setReadingRecipe,
+    (recipe, plan) => {
+      setReadingRecipe(recipe);
+      setReadingPlan(plan ?? null);
+    },
   );
   const changeAnchor = (next: string) => {
     setAnchor(next);
@@ -456,50 +467,62 @@ export function Planner(v: ViewProps) {
         </div>
       </div>
       <div className="panel planner-controls">
-        <div className="button-row">
-          <Button
-            secondary
-            onClick={() => changeAnchor(addDays(anchor, -7))}
-            aria-label={t("Previous week", "Semana anterior")}
-          >
-            <ArrowLeft size={16} />
-          </Button>
-          <b>
-            {formatDay(days[0], v.language, { day: "numeric", month: "short" })}{" "}
-            —{" "}
-            {formatDay(days[6], v.language, { day: "numeric", month: "short" })}
-          </b>
-          <Button
-            secondary
-            onClick={() => changeAnchor(addDays(anchor, 7))}
-            aria-label={t("Next week", "Semana siguiente")}
-          >
-            <ArrowRight size={16} />
-          </Button>
-          <Button
-            busy={v.busy}
-            onClick={() =>
-              generate(
-                days.flatMap((day) => types.map((type) => ({ day, type }))),
-              )
-            }
-          >
-            {t("Suggest week", "Sugerir semana")}
-          </Button>
-          <IconAction
-            icon={Eraser}
-            label={t("Delete week", "Borrar semana")}
-            disabled={
-              v.busy ||
-              !lib.plans.some((p) => days.includes(p.day) && !closed(v, p.day))
-            }
-            onClick={() => setDeletingWeek(lib.revision)}
-          />
-          <IconAction
-            icon={Import}
-            label={t("Copy a week", "Copiar una semana")}
-            onClick={() => setCopyOpen(true)}
-          />
+        <div className="planner-toolbar">
+          <div className="week-navigation">
+            <Button
+              secondary
+              onClick={() => changeAnchor(addDays(anchor, -7))}
+              aria-label={t("Previous week", "Semana anterior")}
+            >
+              <ArrowLeft size={16} />
+            </Button>
+            <b>
+              {formatDay(days[0], v.language, {
+                day: "numeric",
+                month: "short",
+              })}{" "}
+              —{" "}
+              {formatDay(days[6], v.language, {
+                day: "numeric",
+                month: "short",
+              })}
+            </b>
+            <Button
+              secondary
+              onClick={() => changeAnchor(addDays(anchor, 7))}
+              aria-label={t("Next week", "Semana siguiente")}
+            >
+              <ArrowRight size={16} />
+            </Button>
+          </div>
+          <div className="week-actions">
+            <Button
+              busy={v.busy}
+              onClick={() =>
+                generate(
+                  days.flatMap((day) => types.map((type) => ({ day, type }))),
+                )
+              }
+            >
+              {t("Suggest week", "Sugerir semana")}
+            </Button>
+            <IconAction
+              icon={Eraser}
+              label={t("Delete week", "Borrar semana")}
+              disabled={
+                v.busy ||
+                !lib.plans.some(
+                  (p) => days.includes(p.day) && !closed(v, p.day),
+                )
+              }
+              onClick={() => setDeletingWeek(lib.revision)}
+            />
+            <IconAction
+              icon={Import}
+              label={t("Copy a week", "Copiar una semana")}
+              onClick={() => setCopyOpen(true)}
+            />
+          </div>
         </div>
         <label className="check-row">
           <input
@@ -839,12 +862,13 @@ export function Planner(v: ViewProps) {
                             !p.recipe_snapshot &&
                             !lib.recipes.some((r) => r.id === p.recipe_id)
                           }
-                          onClick={() =>
+                          onClick={() => {
+                            setReadingPlan(m);
                             setReadingRecipe(
                               p.recipe_snapshot ??
                                 lib.recipes.find((r) => r.id === p.recipe_id)!,
-                            )
-                          }
+                            );
+                          }}
                         >
                           {name(p.name, v.language)}
                         </button>{" "}
@@ -1035,6 +1059,16 @@ export function Planner(v: ViewProps) {
       {readingRecipe && (
         <RecipeReader
           recipe={readingRecipe}
+          actions={
+            readingPlan ? (
+              <PortionAllocation
+                plan={readingPlan}
+                members={v.s.members}
+                memberColors={v.allocationColors}
+                language={v.language}
+              />
+            ) : undefined
+          }
           ingredients={lib.ingredients}
           language={v.language}
           onClose={() => setReadingRecipe(null)}
@@ -1506,12 +1540,114 @@ export function ContentManager(v: ViewProps) {
     [readingIngredient, setReadingIngredient] = useState<Ingredient | null>(
       null,
     ),
+    [page, setPage] = useState<CataloguePage>({ items: [], next_cursor: null }),
+    [loading, setLoading] = useState(false),
+    [pageError, setPageError] = useState(""),
+    [detailFoods, setDetailFoods] = useState<Ingredient[]>([]),
     [query, setQuery] = useState(""),
     [archived, setArchived] = useState(false),
     [editor, setEditor] = useState<{
       kind: "ingredient" | "recipe";
       data: Ingredient | PlannedRecipe;
     } | null>(null);
+  const generation = useRef(0),
+    pageFlight = useRef(false);
+  const loadPage = async (
+    cursor: string | null,
+    append: boolean,
+    gen = generation.current,
+  ) => {
+    if (pageFlight.current && append) return;
+    pageFlight.current = true;
+    setLoading(true);
+    setPageError("");
+    try {
+      const identity = cacheIdentity(v.repository);
+      const result = await v.repository.cataloguePage({
+        kind: tab === "recipes" ? "recipe" : "ingredient",
+        query,
+        archived,
+        cursor,
+      });
+      if (
+        gen !== generation.current ||
+        identity !== cacheIdentity(v.repository)
+      )
+        return;
+      setPage((previous) => {
+        const items = append
+          ? [
+              ...previous.items,
+              ...result.items.filter(
+                (i) => !previous.items.some((p) => p.id === i.id),
+              ),
+            ]
+          : result.items;
+        void cacheCataloguePage(
+          cacheIdentity(v.repository),
+          tab,
+          items,
+          !!result.next_cursor,
+        ).catch(() => {});
+        return { ...result, items };
+      });
+    } catch (e) {
+      if (gen === generation.current) {
+        setPageError(errorMessage(e, v.language));
+        if (
+          e instanceof Error &&
+          /access_denied|membership_changed|account_changed/.test(e.message)
+        )
+          void v.operate(
+            async () => {
+              throw e;
+            },
+            undefined,
+            false,
+          );
+      }
+    } finally {
+      if (gen === generation.current) {
+        pageFlight.current = false;
+        setLoading(false);
+      }
+    }
+  };
+  useEffect(() => {
+    const gen = ++generation.current;
+    pageFlight.current = false;
+    setPage({ items: [], next_cursor: null });
+    setLoading(true);
+    setPageError("");
+    const timer = setTimeout(() => void loadPage(null, false, gen), 150);
+    return () => {
+      clearTimeout(timer);
+      generation.current++;
+    };
+  }, [tab, query, archived, lib?.revision, v.repository]);
+  const readItem = async (item: CatalogueSummary, context = false) => {
+    await v.operate(
+      async () => {
+        const identity = cacheIdentity(v.repository);
+        const detail = await v.repository.catalogueItem(
+          tab === "recipes" ? "recipe" : "ingredient",
+          item.id,
+        );
+        if (identity !== cacheIdentity(v.repository))
+          throw Error("membership_changed");
+        setDetailFoods(detail.ingredients);
+        void cacheCatalogueDetail(cacheIdentity(v.repository), detail).catch(
+          () => {},
+        );
+        if (tab === "recipes") {
+          if (context) setContextRecipe(detail.item as PlannedRecipe);
+          else setReadingRecipe(detail.item as PlannedRecipe);
+        } else setReadingIngredient(detail.item as Ingredient);
+      },
+      undefined,
+      false,
+    );
+  };
   if (!lib)
     return (
       <Empty
@@ -1524,16 +1660,10 @@ export function ContentManager(v: ViewProps) {
         )}
       </Empty>
     );
-  const items = (tab === "recipes" ? lib.recipes : lib.ingredients).filter(
-    (i) =>
-      (archived || !i.archived) &&
-      name(i.name, v.language)
-        .toLocaleLowerCase()
-        .includes(query.toLocaleLowerCase()),
-  );
+  const items = page.items;
   const copyToMenu = (recipe: PlannedRecipe) => {
-    const current = lib.recipes.find((r) => r.id === recipe.id);
-    if (!current || current.archived) return;
+    const current = recipe;
+    if (current.archived) return;
     v.setClipboard({ choice: choiceFromRecipe(current), name: current.name });
     setContextRecipe(null);
     setReadingRecipe(null);
@@ -1598,12 +1728,6 @@ export function ContentManager(v: ViewProps) {
             )}
           </p>
         </div>
-        <Button onClick={create}>
-          <Plus size={16} />
-          {tab === "recipes"
-            ? t("New recipe", "Nueva receta")
-            : t("New ingredient", "Nuevo ingrediente")}
-        </Button>
       </div>
       <div className="button-row">
         <Button secondary={tab !== "recipes"} onClick={() => setTab("recipes")}>
@@ -1622,6 +1746,7 @@ export function ContentManager(v: ViewProps) {
           <input
             type="search"
             aria-label={t("Search collection", "Buscar en la colección")}
+            maxLength={200}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("Search…", "Buscar…")}
@@ -1641,15 +1766,9 @@ export function ContentManager(v: ViewProps) {
           <CatalogueCard
             key={item.id}
             onContext={
-              tab === "recipes"
-                ? () => setContextRecipe(item as PlannedRecipe)
-                : undefined
+              tab === "recipes" ? () => void readItem(item, true) : undefined
             }
-            onOpen={() =>
-              tab === "recipes"
-                ? setReadingRecipe(structuredClone(item as PlannedRecipe))
-                : setReadingIngredient(structuredClone(item as Ingredient))
-            }
+            onOpen={() => void readItem(item)}
           >
             <div className="recipe-card-content">
               <h3>
@@ -1662,14 +1781,65 @@ export function ContentManager(v: ViewProps) {
                 {item.archived
                   ? t("Archived", "Archivado")
                   : tab === "ingredients"
-                    ? `${(item as Ingredient).nutrition_per_100g.energy_kcal ?? "—"} kcal / 100 g`
-                    : (item as PlannedRecipe).meal_types
+                    ? `${item.nutrition_per_100g?.energy_kcal ?? "—"} kcal / 100 g`
+                    : (item.meal_types ?? [])
                         .map((m) => mealLabel(m, v.language))
                         .join(" · ")}
               </p>
             </div>
           </CatalogueCard>
         ))}
+      </div>
+      {pageError && (
+        <p className="note warning" role="alert">
+          {pageError}
+          <Button
+            secondary
+            onClick={() => void loadPage(page.next_cursor, !!page.items.length)}
+          >
+            {t("Retry", "Reintentar")}
+          </Button>
+        </p>
+      )}
+      {loading && (
+        <p role="status">{t("Loading collection…", "Cargando colección…")}</p>
+      )}
+      <div className="catalogue-footer">
+        {page.next_cursor && (
+          <IconAction
+            icon={Plus}
+            label={
+              tab === "recipes"
+                ? t("Load 50 more recipes", "Cargar 50 recetas más")
+                : t("Load 50 more ingredients", "Cargar 50 ingredientes más")
+            }
+            busy={loading}
+            onClick={() => void loadPage(page.next_cursor, true)}
+          />
+        )}
+        {!loading && !page.next_cursor && items.length > 0 && (
+          <p className="fine-print">
+            {t("All matching items loaded", "Todos los resultados cargados")}
+          </p>
+        )}
+        <Button
+          disabled={v.busy}
+          onClick={() =>
+            void v.operate(
+              async () => {
+                await v.ensurePlanning();
+                create();
+              },
+              undefined,
+              false,
+            )
+          }
+        >
+          <Plus size={16} />
+          {tab === "recipes"
+            ? t("New recipe", "Nueva receta")
+            : t("New ingredient", "Nuevo ingrediente")}
+        </Button>
       </div>
       <p className="fine-print content-credit">
         {t(
@@ -1728,16 +1898,24 @@ export function ContentManager(v: ViewProps) {
               <RecipeStars v={v} recipeId={readingRecipe.id} />
             </>
           }
-          ingredients={lib.ingredients}
+          ingredients={detailFoods}
           language={v.language}
           onClose={() => setReadingRecipe(null)}
-          onEdit={() => {
-            const current =
-              lib.recipes.find((r) => r.id === readingRecipe.id) ??
-              readingRecipe;
-            setReadingRecipe(null);
-            setEditor({ kind: "recipe", data: structuredClone(current) });
-          }}
+          onEdit={() =>
+            void v.operate(
+              async () => {
+                const full = await v.ensurePlanning();
+                const current = full.recipes.find(
+                  (r) => r.id === readingRecipe.id,
+                );
+                if (!current) throw Error("catalogue_item_unavailable");
+                setReadingRecipe(null);
+                setEditor({ kind: "recipe", data: structuredClone(current) });
+              },
+              undefined,
+              false,
+            )
+          }
         />
       )}
       {readingIngredient && (
@@ -1745,13 +1923,24 @@ export function ContentManager(v: ViewProps) {
           ingredient={readingIngredient}
           language={v.language}
           onClose={() => setReadingIngredient(null)}
-          onEdit={() => {
-            const current =
-              lib.ingredients.find((i) => i.id === readingIngredient.id) ??
-              readingIngredient;
-            setReadingIngredient(null);
-            setEditor({ kind: "ingredient", data: structuredClone(current) });
-          }}
+          onEdit={() =>
+            void v.operate(
+              async () => {
+                const full = await v.ensurePlanning();
+                const current = full.ingredients.find(
+                  (r) => r.id === readingIngredient.id,
+                );
+                if (!current) throw Error("catalogue_item_unavailable");
+                setReadingIngredient(null);
+                setEditor({
+                  kind: "ingredient",
+                  data: structuredClone(current),
+                });
+              },
+              undefined,
+              false,
+            )
+          }
         />
       )}
       {editor && (
@@ -2493,6 +2682,12 @@ export function MealSnapshotView({
       wide
       onClose={onClose}
     >
+      <PortionAllocation
+        plan={plan}
+        members={v.s.members}
+        memberColors={v.allocationColors}
+        language={v.language}
+      />
       {plan.portions.map((p) => (
         <section key={p.member_id} className="portion-editor">
           <h3>

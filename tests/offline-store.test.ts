@@ -1,6 +1,8 @@
 import "fake-indexeddb/auto";
 import { beforeEach, afterAll, it, expect, vi } from "vitest";
 import {
+  cacheCataloguePage,
+  cacheCatalogueDetail,
   closeOfflineStore,
   rememberAccount,
   readOfflineAccount,
@@ -497,4 +499,38 @@ it("a confirmed checkbox remains checked if the post-ack read fails, and an olde
   expect((await readOfflineAccount("alice"))?.shopping?.items[0].checked).toBe(
     false,
   );
+});
+
+it("cached catalogue pages and detail references survive compact refreshes without disturbing pending shopping", async () => {
+  await ready();
+  await enqueueCheck("alice", "item-1", true);
+  const summary = {
+    id: "r",
+    name: { en: "Recipe", es: "Receta" },
+    revision: 1,
+    archived: false,
+    meal_types: ["lunch"],
+  };
+  await cacheCataloguePage("alice", "recipes", [summary], true);
+  await cacheCatalogueDetail("alice", {
+    item: { ...summary, reference_servings: 1, components: [] },
+    ingredients: [],
+  });
+  const compact = {
+    viewer_id: "a",
+    members: [],
+    planning: {
+      complete: false,
+      recipes: [],
+      ingredients: [],
+      plans: [],
+      substitutions: [],
+      revision: 1,
+    },
+  } as unknown as HouseholdState;
+  await cacheLoadedView("alice", compact, "recipes");
+  const cached = await readOfflineAccount("alice");
+  expect(cached?.catalogue?.recipes?.items[0].id).toBe("r");
+  expect(cached?.recipes?.recipes[0].id).toBe("r");
+  expect(cached?.pending).toHaveLength(1);
 });
