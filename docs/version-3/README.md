@@ -7,6 +7,7 @@ Status: product scope confirmed by the user, including D1–D3. Implementation p
 - [Product specification](specification.md): interactions, calculations, permissions, edge cases and acceptance criteria.
 - [Technical design](technical-design.md): current-code findings, data and API changes, local state, transactions and migration strategy.
 - [Milestones and verification](milestones.md): delivery order, review checkpoints and release gates.
+- [Milestone 2 implementation](milestone-2.md): cross-person breakfast swaps, recipe copy/paste, catalogue context actions and migration 14.
 - [Milestone 1 implementation](milestone-1.md): budget acknowledgements, automatic shopping expiry, migration 13 and verification.
 
 The baseline is the current version-two application, including [subsequent menu and shopping changes](../version-2/menu-controls.md). Earlier specifications describe earlier decisions; this package supersedes them only where explicitly stated. No production deployment, database migration or historical record is changed by this documentation.

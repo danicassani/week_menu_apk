@@ -20,6 +20,7 @@ import {
   clearLocalAuth,
 } from "./lib/auth-storage";
 import { DomainError } from "./domain/calories";
+import type { PlanningClipboard } from "./domain/planning-transfer";
 import { Planner, ContentManager } from "./pages/planner";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -443,6 +444,8 @@ function Workspace({
   onUseSaved: () => void;
 }) {
   const [s, setS] = useState<HouseholdState | null>(null),
+    [clipboard, setClipboard] = useState<PlanningClipboard | null>(null),
+    [menuAnchor, setMenuAnchor] = useState<string>(),
     [fatal, setFatal] = useState(""),
     [tab, setTab] = useState<Tab>("dashboard"),
     [selected, setSelected] = useState(""),
@@ -460,7 +463,13 @@ function Workspace({
     [householdAccess, setHouseholdAccess] = useState<HouseholdAccess | null>(
       null,
     );
+  const clipboardScope = useRef(""),
+    anchorScope = useRef("");
   const remembered = useRef<string | null>(null);
+  useEffect(() => {
+    setClipboard(null);
+    setMenuAnchor(undefined);
+  }, [s?.household.id, s?.context?.membership_id]);
   const mounted = useRef(true),
     sequence = useRef(0),
     languageRef = useRef(language),
@@ -819,7 +828,18 @@ function Workspace({
     setTab(next);
     window.scrollTo({ top: 0 });
   };
+  const planningScope = `${repo.accountId}/${s.household.id}/${s.context?.membership_id ?? s.viewer_id}`;
   const v: ViewProps = {
+    clipboard: clipboardScope.current === planningScope ? clipboard : null,
+    setClipboard: (next) => {
+      clipboardScope.current = planningScope;
+      setClipboard(next);
+    },
+    menuAnchor: anchorScope.current === planningScope ? menuAnchor : undefined,
+    setMenuAnchor: (next) => {
+      anchorScope.current = planningScope;
+      setMenuAnchor(next);
+    },
     repository: repo,
     operate,
     s,

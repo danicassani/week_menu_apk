@@ -1,6 +1,9 @@
+import { useMealTransfers, type MenuDraft } from "../components/meal-transfers";
+import { CatalogueCard } from "../components/catalogue-card";
+import { choiceFromRecipe } from "../domain/planning-transfer";
 import { IconAction } from "../components/icon-action";
 import { RecipeStars } from "../components/recipe-stars";
-import { slotKey, lockKey, replan, swapDraft } from "../domain/menu-draft";
+import { slotKey, lockKey, replan } from "../domain/menu-draft";
 import { useState } from "react";
 import {
   Plus,
@@ -10,7 +13,7 @@ import {
   Dices,
   Eraser,
   Import,
-  ArrowDownUp,
+  Copy,
   X,
   Check,
   ArrowLeft,
@@ -166,22 +169,13 @@ export function suggested(
 export function Planner(v: ViewProps) {
   const t = translator(v.language),
     lib = v.s.planning;
-  const [anchor, setAnchor] = useState(v.day),
+  const [anchor, setAnchor] = useState(v.menuAnchor ?? v.day),
     [replace, setReplace] = useState(false),
     [locks, setLocks] = useState<string[]>([]),
-    [swapFrom, setSwapFrom] = useState<{
-      meal: MealPlan;
-      memberId?: string;
-    } | null>(null),
     [calorieHelp, setCalorieHelp] = useState<PlannedPortion | null>(null),
     [copyOpen, setCopyOpen] = useState(false),
     [copyStart, setCopyStart] = useState(addDays(v.day, -7)),
-    [preview, setPreview] = useState<{
-      plans: MealPlan[];
-      revision: number;
-      replace: boolean;
-      gaps: string[];
-    } | null>(null),
+    [preview, setPreview] = useState<MenuDraft | null>(null),
     [editing, setEditing] = useState<MealPlan | null>(null),
     [notice, setNotice] = useState(""),
     [previewNotice, setPreviewNotice] = useState(""),
@@ -189,6 +183,17 @@ export function Planner(v: ViewProps) {
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null);
+  const transfer = useMealTransfers(
+    v,
+    preview,
+    setPreview,
+    locks,
+    setReadingRecipe,
+  );
+  const changeAnchor = (next: string) => {
+    setAnchor(next);
+    v.setMenuAnchor(next);
+  };
   if (!lib)
     return (
       <Empty
@@ -206,7 +211,7 @@ export function Planner(v: ViewProps) {
     setPreviewNotice("");
     setCalorieHelp(null);
     setLocks([]);
-    setSwapFrom(null);
+    transfer.clearSwap();
     const retained = lib.plans.filter(
         (m) =>
           !replace || !slots.some((s) => s.day === m.day && s.type === m.type),
@@ -230,7 +235,13 @@ export function Planner(v: ViewProps) {
           `${formatDay(slot.day, v.language, { day: "numeric", month: "short" })} · ${mealLabel(slot.type, v.language)}`,
         );
     }
-    setPreview({ plans, revision: lib.revision, replace, gaps });
+    setPreview({
+      id: crypto.randomUUID(),
+      plans,
+      revision: lib.revision,
+      replace,
+      gaps,
+    });
   };
   const reroll = (meal: MealPlan, memberId = v.s.viewer_id) => {
     if (
@@ -266,7 +277,7 @@ export function Planner(v: ViewProps) {
       return;
     }
     setPreviewNotice("");
-    setSwapFrom(null);
+    transfer.clearSwap();
     setPreview({
       ...preview,
       plans: preview.plans.map((p) => (p === meal ? next : p)),
@@ -329,7 +340,7 @@ export function Planner(v: ViewProps) {
           )
         : "",
     );
-    setSwapFrom(null);
+    transfer.clearSwap();
   };
   const copyWeek = () => {
     const sourceDays = weekDays(copyStart, v.s.household.week_start),
@@ -391,40 +402,40 @@ export function Planner(v: ViewProps) {
       }
     }
     setLocks([]);
-    setSwapFrom(null);
+    transfer.clearSwap();
     setPreviewNotice("");
     setCopyOpen(false);
     setCalorieHelp(null);
-    setPreview({ plans, gaps, replace, revision: lib.revision });
+    setPreview({
+      id: crypto.randomUUID(),
+      plans,
+      gaps,
+      replace,
+      revision: lib.revision,
+    });
   };
-  const swapTo = (meal: MealPlan, memberId?: string) => {
-    if (!preview || !swapFrom || preview.revision !== lib.revision) return;
-    try {
-      if (swapFrom.meal.type === "breakfast" && memberId !== swapFrom.memberId)
-        throw Error("invalid_member");
-      setPreview({
-        ...preview,
-        plans: swapDraft(
-          preview.plans,
-          swapFrom.meal,
-          meal,
-          v.s,
-          lib,
-          locks,
-          swapFrom.memberId,
-        ),
-      });
-      setSwapFrom(null);
-      setPreviewNotice("");
-    } catch {
-      setPreviewNotice(
-        t(
-          "Cannot swap these suggestions: review locks, meal types, recipes, budgets and variety. Your draft is unchanged.",
-          "No se pueden intercambiar: revisa bloqueos, tipos de comida, recetas, presupuestos y variedad. Se conserva el borrador.",
-        ),
-      );
-    }
-  };
+  const emptyDestinations = preview
+    ? days
+        .filter((day) => !closed(v, day))
+        .flatMap((day) =>
+          types.flatMap((type) => {
+            const plan = preview.plans.find(
+              (p) => p.day === day && p.type === type,
+            );
+            const recipients =
+              type === "breakfast" ? eligible(v).map((m) => m.id) : [undefined];
+            return recipients
+              .filter(
+                (id) =>
+                  !plan ||
+                  (type === "breakfast"
+                    ? !plan.portions.some((p) => p.member_id === id)
+                    : !plan.portions.length),
+              )
+              .map((id) => ({ day, type, ...(id ? { member_id: id } : {}) }));
+          }),
+        )
+    : [];
   return (
     <>
       <div className="page-heading">
@@ -448,7 +459,7 @@ export function Planner(v: ViewProps) {
         <div className="button-row">
           <Button
             secondary
-            onClick={() => setAnchor(addDays(anchor, -7))}
+            onClick={() => changeAnchor(addDays(anchor, -7))}
             aria-label={t("Previous week", "Semana anterior")}
           >
             <ArrowLeft size={16} />
@@ -460,7 +471,7 @@ export function Planner(v: ViewProps) {
           </b>
           <Button
             secondary
-            onClick={() => setAnchor(addDays(anchor, 7))}
+            onClick={() => changeAnchor(addDays(anchor, 7))}
             aria-label={t("Next week", "Semana siguiente")}
           >
             <ArrowRight size={16} />
@@ -504,6 +515,7 @@ export function Planner(v: ViewProps) {
           {notice}
         </div>
       )}
+      {!preview && transfer.banner()}
       <div className="day-list">
         {days.map((day) => (
           <section className="day-card" key={day}>
@@ -527,6 +539,19 @@ export function Planner(v: ViewProps) {
                   p = plan?.portions.find((p) => p.member_id === v.member.id);
                 return (
                   <article className="meal-card" key={type}>
+                    <div className="meal-transfer-actions">
+                      {transfer.actions(
+                        {
+                          day,
+                          type,
+                          ...(type === "breakfast"
+                            ? { member_id: v.member.id }
+                            : {}),
+                        },
+                        lib.plans,
+                        "saved",
+                      )}
+                    </div>
                     <span className="meal-type">
                       {mealLabel(type, v.language)}
                     </span>
@@ -614,6 +639,7 @@ export function Planner(v: ViewProps) {
                               if (next) {
                                 setPreviewNotice("");
                                 setPreview({
+                                  id: crypto.randomUUID(),
                                   plans: [next],
                                   revision: lib.revision,
                                   replace: true,
@@ -640,6 +666,7 @@ export function Planner(v: ViewProps) {
           </section>
         ))}
       </div>
+      {transfer.dialog}
       {copyOpen && (
         <Modal
           title={t("Copy a previous week", "Copiar una semana anterior")}
@@ -690,22 +717,8 @@ export function Planner(v: ViewProps) {
               disabled={v.busy || preview.revision !== lib.revision}
               onClick={regenerate}
             />
-            {swapFrom && (
-              <IconAction
-                label={t("Cancel swap", "Cancelar intercambio")}
-                icon={X}
-                onClick={() => setSwapFrom(null)}
-              />
-            )}
           </div>
-          {swapFrom && (
-            <p role="status">
-              {t(
-                "Choose a destination below. Breakfast swaps affect only the selected person's portion.",
-                "Elige un destino. Los intercambios de desayuno solo afectan a la persona seleccionada.",
-              )}
-            </p>
-          )}
+          {transfer.banner()}
           {previewNotice && (
             <p className="note warning" role="status">
               {previewNotice}
@@ -758,210 +771,196 @@ export function Planner(v: ViewProps) {
               )}
             </p>
           )}
-          {preview.plans.map((m) => {
-            const swapAction = (memberId?: string) => {
-              const selected =
-                swapFrom?.meal === m && swapFrom?.memberId === memberId;
-              const other = memberId && memberId !== v.s.viewer_id;
-              const person =
-                v.s.members.find((x) => x.id === memberId)?.name ?? "";
-              const label = selected
-                ? other
-                  ? t(
-                      `Cancel selected swap for ${person}`,
-                      `Cancelar intercambio de ${person}`,
-                    )
-                  : t(
-                      "Cancel selected swap",
-                      "Cancelar intercambio seleccionado",
-                    )
-                : swapFrom
-                  ? other
-                    ? t(
-                        `Swap breakfast here for ${person}`,
-                        `Intercambiar aquí el desayuno de ${person}`,
-                      )
-                    : t("Swap here", "Intercambiar aquí")
-                  : other
-                    ? t(
-                        `Swap breakfast for ${person}`,
-                        `Intercambiar desayuno de ${person}`,
-                      )
-                    : t("Swap suggestion", "Intercambiar sugerencia");
+          {preview.plans
+            .filter((m) => m.portions.length)
+            .map((m) => {
+              const swapAction = (memberId?: string) =>
+                transfer.actions(
+                  {
+                    day: m.day,
+                    type: m.type,
+                    ...(m.type === "breakfast" ? { member_id: memberId } : {}),
+                  },
+                  preview.plans,
+                  preview.id,
+                  preview.revision !== lib.revision,
+                );
               return (
-                <IconAction
-                  icon={ArrowDownUp}
-                  label={label}
-                  aria-pressed={selected}
-                  disabled={
-                    v.busy ||
-                    preview.revision !== lib.revision ||
-                    locks.includes(lockKey(m, memberId)) ||
-                    !!(
-                      swapFrom &&
-                      ((swapFrom.meal.type === "breakfast") !==
-                        (m.type === "breakfast") ||
-                        (m.type === "breakfast" &&
-                          swapFrom.memberId !== memberId))
-                    )
-                  }
-                  onClick={() =>
-                    selected
-                      ? setSwapFrom(null)
-                      : swapFrom
-                        ? swapTo(m, memberId)
-                        : setSwapFrom({ meal: m, memberId })
-                  }
-                />
-              );
-            };
-            return (
-              <div className="preview-meal" key={m.day + m.type}>
-                <div className="preview-meal-heading">
-                  <h3>
-                    {formatDay(m.day, v.language, { weekday: "long" })} ·{" "}
-                    {mealLabel(m.type, v.language)}
-                  </h3>
-                  {m.type !== "breakfast" && (
-                    <div className="preview-actions">
-                      {swapAction()}
-                      <IconAction
-                        icon={Dices}
-                        label={t("Re-roll meal", "Volver a sugerir comida")}
-                        disabled={
-                          v.busy ||
-                          closed(v, m.day) ||
-                          locks.includes(lockKey(m)) ||
-                          preview.revision !== lib.revision
-                        }
-                        onClick={() => reroll(m)}
-                      />
-                      <IconAction
-                        icon={locks.includes(lockKey(m)) ? Lock : LockOpen}
-                        label={
-                          locks.includes(lockKey(m))
-                            ? t("Unlock meal", "Desbloquear comida")
-                            : t("Lock meal", "Bloquear comida")
-                        }
-                        aria-pressed={locks.includes(lockKey(m))}
-                        disabled={v.busy}
-                        onClick={() => toggleLock(m)}
-                      />
-                    </div>
-                  )}
-                </div>
-                {m.portions.map((p) => (
-                  <div className="preview-portion" key={p.member_id}>
-                    <div className="preview-portion-summary">
-                      <b>
-                        <span aria-hidden="true">
-                          {
-                            v.s.members.find((x) => x.id === p.member_id)
-                              ?.presentation?.avatar
-                          }{" "}
-                        </span>
-                        {v.s.members.find((x) => x.id === p.member_id)?.name}
-                      </b>{" "}
-                      ·{" "}
-                      <button
-                        className="text-link suggested-recipe-link"
-                        disabled={
-                          !p.recipe_snapshot &&
-                          !lib.recipes.some((r) => r.id === p.recipe_id)
-                        }
-                        onClick={() =>
-                          setReadingRecipe(
-                            p.recipe_snapshot ??
-                              lib.recipes.find((r) => r.id === p.recipe_id)!,
-                          )
-                        }
-                      >
-                        {name(p.name, v.language)}
-                      </button>{" "}
-                      ·{" "}
-                      {p.kcal > p.budget ? (
-                        <button
-                          type="button"
-                          className="preview-calorie-warning"
-                          aria-label={t(
-                            `Calorie warning for ${v.s.members.find((x) => x.id === p.member_id)?.name}: ${Math.round(p.kcal)} kcal`,
-                            `Aviso de calorías para ${v.s.members.find((x) => x.id === p.member_id)?.name}: ${Math.round(p.kcal)} kcal`,
-                          )}
-                          aria-haspopup="dialog"
-                          onClick={() => setCalorieHelp(p)}
-                        >
-                          {Math.round(p.kcal)}
-                        </button>
-                      ) : (
-                        Math.round(p.kcal)
-                      )}{" "}
-                      / {p.budget} kcal{" "}
-                      {p.dessert && (
-                        <span className="pill">
-                          {t("With dessert", "Con postre")}
-                        </span>
-                      )}
-                    </div>
-                    {m.type === "breakfast" && (
+                <div className="preview-meal" key={m.day + m.type}>
+                  <div className="preview-meal-heading">
+                    <h3>
+                      {formatDay(m.day, v.language, { weekday: "long" })} ·{" "}
+                      {mealLabel(m.type, v.language)}
+                    </h3>
+                    {m.type !== "breakfast" && (
                       <div className="preview-actions">
-                        {swapAction(p.member_id)}
+                        {swapAction()}
                         <IconAction
                           icon={Dices}
-                          label={
-                            p.member_id === v.s.viewer_id
-                              ? t(
-                                  "Re-roll my breakfast",
-                                  "Volver a sugerir mi desayuno",
-                                )
-                              : t(
-                                  `Re-roll breakfast for ${v.s.members.find((x) => x.id === p.member_id)?.name}`,
-                                  `Volver a sugerir el desayuno de ${v.s.members.find((x) => x.id === p.member_id)?.name}`,
-                                )
-                          }
+                          label={t("Re-roll meal", "Volver a sugerir comida")}
                           disabled={
                             v.busy ||
                             closed(v, m.day) ||
-                            locks.includes(lockKey(m, p.member_id)) ||
+                            locks.includes(lockKey(m)) ||
                             preview.revision !== lib.revision
                           }
-                          onClick={() => reroll(m, p.member_id)}
+                          onClick={() => reroll(m)}
                         />
                         <IconAction
-                          icon={
-                            locks.includes(lockKey(m, p.member_id))
-                              ? Lock
-                              : LockOpen
-                          }
+                          icon={locks.includes(lockKey(m)) ? Lock : LockOpen}
                           label={
-                            locks.includes(lockKey(m, p.member_id))
-                              ? t("Unlock breakfast", "Desbloquear desayuno")
-                              : t("Lock breakfast", "Bloquear desayuno")
+                            locks.includes(lockKey(m))
+                              ? t("Unlock meal", "Desbloquear comida")
+                              : t("Lock meal", "Bloquear comida")
                           }
-                          aria-pressed={locks.includes(lockKey(m, p.member_id))}
+                          aria-pressed={locks.includes(lockKey(m))}
                           disabled={v.busy}
-                          onClick={() => toggleLock(m, p.member_id)}
+                          onClick={() => toggleLock(m)}
                         />
                       </div>
                     )}
-                    {p.substitutions.map((r, i) => (
-                      <p className="note" key={i}>
-                        {name(
-                          lib.ingredients.find((x) => x.id === r.from)!.name,
-                          v.language,
-                        )}{" "}
-                        →{" "}
-                        {name(
-                          lib.ingredients.find((x) => x.id === r.to)!.name,
-                          v.language,
-                        )}
-                        . {name(r.instructions, v.language)}
-                      </p>
-                    ))}
                   </div>
-                ))}
-              </div>
-            );
-          })}
+                  {m.portions.map((p) => (
+                    <div className="preview-portion" key={p.member_id}>
+                      <div className="preview-portion-summary">
+                        <b>
+                          <span aria-hidden="true">
+                            {
+                              v.s.members.find((x) => x.id === p.member_id)
+                                ?.presentation?.avatar
+                            }{" "}
+                          </span>
+                          {v.s.members.find((x) => x.id === p.member_id)?.name}
+                        </b>{" "}
+                        ·{" "}
+                        <button
+                          className="text-link suggested-recipe-link"
+                          disabled={
+                            !p.recipe_snapshot &&
+                            !lib.recipes.some((r) => r.id === p.recipe_id)
+                          }
+                          onClick={() =>
+                            setReadingRecipe(
+                              p.recipe_snapshot ??
+                                lib.recipes.find((r) => r.id === p.recipe_id)!,
+                            )
+                          }
+                        >
+                          {name(p.name, v.language)}
+                        </button>{" "}
+                        ·{" "}
+                        {p.kcal > p.budget ? (
+                          <button
+                            type="button"
+                            className="preview-calorie-warning"
+                            aria-label={t(
+                              `Calorie warning for ${v.s.members.find((x) => x.id === p.member_id)?.name}: ${Math.round(p.kcal)} kcal`,
+                              `Aviso de calorías para ${v.s.members.find((x) => x.id === p.member_id)?.name}: ${Math.round(p.kcal)} kcal`,
+                            )}
+                            aria-haspopup="dialog"
+                            onClick={() => setCalorieHelp(p)}
+                          >
+                            {Math.round(p.kcal)}
+                          </button>
+                        ) : (
+                          Math.round(p.kcal)
+                        )}{" "}
+                        / {p.budget} kcal{" "}
+                        {p.dessert && (
+                          <span className="pill">
+                            {t("With dessert", "Con postre")}
+                          </span>
+                        )}
+                      </div>
+                      {m.type === "breakfast" && (
+                        <div className="preview-actions">
+                          {swapAction(p.member_id)}
+                          <IconAction
+                            icon={Dices}
+                            label={
+                              p.member_id === v.s.viewer_id
+                                ? t(
+                                    "Re-roll my breakfast",
+                                    "Volver a sugerir mi desayuno",
+                                  )
+                                : t(
+                                    `Re-roll breakfast for ${v.s.members.find((x) => x.id === p.member_id)?.name}`,
+                                    `Volver a sugerir el desayuno de ${v.s.members.find((x) => x.id === p.member_id)?.name}`,
+                                  )
+                            }
+                            disabled={
+                              v.busy ||
+                              closed(v, m.day) ||
+                              locks.includes(lockKey(m, p.member_id)) ||
+                              preview.revision !== lib.revision
+                            }
+                            onClick={() => reroll(m, p.member_id)}
+                          />
+                          <IconAction
+                            icon={
+                              locks.includes(lockKey(m, p.member_id))
+                                ? Lock
+                                : LockOpen
+                            }
+                            label={
+                              locks.includes(lockKey(m, p.member_id))
+                                ? t("Unlock breakfast", "Desbloquear desayuno")
+                                : t("Lock breakfast", "Bloquear desayuno")
+                            }
+                            aria-pressed={locks.includes(
+                              lockKey(m, p.member_id),
+                            )}
+                            disabled={v.busy}
+                            onClick={() => toggleLock(m, p.member_id)}
+                          />
+                        </div>
+                      )}
+                      {p.substitutions.map((r, i) => (
+                        <p className="note" key={i}>
+                          {name(
+                            lib.ingredients.find((x) => x.id === r.from)!.name,
+                            v.language,
+                          )}{" "}
+                          →{" "}
+                          {name(
+                            lib.ingredients.find((x) => x.id === r.to)!.name,
+                            v.language,
+                          )}
+                          . {name(r.instructions, v.language)}
+                        </p>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          {transfer.active && emptyDestinations.length > 0 && (
+            <section className="transfer-empty-targets">
+              <h3>{t("Empty destinations", "Destinos vacíos")}</h3>
+              {emptyDestinations.map((ep) => (
+                <div
+                  className="transfer-empty-row"
+                  key={`${ep.day}/${ep.type}/${ep.member_id}`}
+                >
+                  <span>
+                    {formatDay(ep.day, v.language, { weekday: "long" })} ·{" "}
+                    {mealLabel(ep.type, v.language)}
+                    {ep.member_id
+                      ? ` · ${v.s.members.find((m) => m.id === ep.member_id)?.name}`
+                      : ""}
+                  </span>
+                  <div className="meal-transfer-actions">
+                    {transfer.actions(
+                      ep,
+                      preview.plans,
+                      preview.id,
+                      preview.revision !== lib.revision,
+                    )}
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
           <IconAction
             icon={Check}
             className="preview-confirm"
@@ -1503,6 +1502,7 @@ export function ContentManager(v: ViewProps) {
     lib = v.s.planning;
   const [tab, setTab] = useState<"recipes" | "ingredients">("recipes"),
     [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
+    [contextRecipe, setContextRecipe] = useState<PlannedRecipe | null>(null),
     [readingIngredient, setReadingIngredient] = useState<Ingredient | null>(
       null,
     ),
@@ -1531,6 +1531,14 @@ export function ContentManager(v: ViewProps) {
         .toLocaleLowerCase()
         .includes(query.toLocaleLowerCase()),
   );
+  const copyToMenu = (recipe: PlannedRecipe) => {
+    const current = lib.recipes.find((r) => r.id === recipe.id);
+    if (!current || current.archived) return;
+    v.setClipboard({ choice: choiceFromRecipe(current), name: current.name });
+    setContextRecipe(null);
+    setReadingRecipe(null);
+    v.navigate("menu");
+  };
   const create = () => {
     const id = crypto.randomUUID();
     setEditor(
@@ -1630,10 +1638,14 @@ export function ContentManager(v: ViewProps) {
       </div>
       <div className="recipe-grid">
         {items.map((item) => (
-          <button
-            className="recipe-card"
+          <CatalogueCard
             key={item.id}
-            onClick={() =>
+            onContext={
+              tab === "recipes"
+                ? () => setContextRecipe(item as PlannedRecipe)
+                : undefined
+            }
+            onOpen={() =>
               tab === "recipes"
                 ? setReadingRecipe(structuredClone(item as PlannedRecipe))
                 : setReadingIngredient(structuredClone(item as Ingredient))
@@ -1656,7 +1668,7 @@ export function ContentManager(v: ViewProps) {
                         .join(" · ")}
               </p>
             </div>
-          </button>
+          </CatalogueCard>
         ))}
       </div>
       <p className="fine-print content-credit">
@@ -1665,10 +1677,57 @@ export function ContentManager(v: ViewProps) {
           "Nutrición inicial: UK CoFID 2021. Contiene información del sector público británico bajo Open Government Licence v3.0. El contenido del hogar conserva su idioma, con traducciones manuales opcionales.",
         )}
       </p>
+      {contextRecipe && (
+        <Modal
+          title={name(contextRecipe.name, v.language)}
+          onClose={() => setContextRecipe(null)}
+        >
+          <div className="button-row">
+            <Button
+              disabled={!!contextRecipe.archived}
+              onClick={() => copyToMenu(contextRecipe)}
+            >
+              <Copy size={18} />
+              {t("Copy to menu", "Copiar al menú")}
+            </Button>
+            <Button
+              secondary
+              onClick={() => {
+                setReadingRecipe(contextRecipe);
+                setContextRecipe(null);
+              }}
+            >
+              {t("View recipe", "Ver receta")}
+            </Button>
+          </div>
+          {contextRecipe.archived && (
+            <p className="note">
+              {t(
+                "Archived recipes cannot be copied to a new meal.",
+                "Las recetas archivadas no se pueden copiar a una comida nueva.",
+              )}
+            </p>
+          )}
+        </Modal>
+      )}
       {readingRecipe && (
         <RecipeReader
           recipe={readingRecipe}
-          actions={<RecipeStars v={v} recipeId={readingRecipe.id} />}
+          actions={
+            <>
+              <div className="button-row">
+                <Button
+                  secondary
+                  disabled={!!readingRecipe.archived}
+                  onClick={() => copyToMenu(readingRecipe)}
+                >
+                  <Copy size={18} />
+                  {t("Copy to menu", "Copiar al menú")}
+                </Button>
+              </div>
+              <RecipeStars v={v} recipeId={readingRecipe.id} />
+            </>
+          }
           ingredients={lib.ingredients}
           language={v.language}
           onClose={() => setReadingRecipe(null)}
