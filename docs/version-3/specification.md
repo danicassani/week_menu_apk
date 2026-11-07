@@ -1,6 +1,6 @@
 # Version 3 — product specification
 
-Status: draft for review. See [D1–D3](README.md#decisions-awaiting-an-answer) before treating the conditional sections as final. This document specifies behavior; it does not claim these features already exist.
+Status: product scope confirmed, including [D1–D3](README.md#confirmed-decisions). This document specifies behavior; it does not claim these features already exist.
 
 ## 1. Product direction
 
@@ -19,7 +19,7 @@ Expose the up/down swap icon on individual breakfasts in the saved weekly menu a
 
 Select a source, highlight it, and change compatible destinations to a clear swap-target state. An occupied destination exchanges choices; an empty destination moves the choice and leaves the source empty. Activating the selected source again or the cancel action exits swap mode. Copy and swap modes are mutually exclusive; changing modes must not apply a pending operation.
 
-Under proposed D1, an endpoint is `(date, meal type, recipient)` for breakfast. The recipient can differ between endpoints, including two people on the same day. Only those individuals' breakfasts change. Other breakfast portions in either day's breakfast plan remain unchanged. If D1 is declined, destinations are limited to the selected member's other breakfast dates.
+Under confirmed D1, an endpoint is `(date, meal type, recipient)` for breakfast. The recipient can differ between endpoints, including two people on the same day. Only those individuals' breakfasts change. Other breakfast portions in either day's breakfast plan remain unchanged.
 
 Rebuild each moved choice for its new recipient and date: accepted budget/override, dietary pattern, ingredient exclusions, compatible reviewed substitutions, optional components and practical quantity rounding. Exchange recipe choices rather than gram quantities, old calorie budgets, personal settings or eating-out descriptions. Never swap a breakfast wholesale with a shared meal; recipe-based copy/paste is a separate operation.
 
@@ -68,7 +68,7 @@ The generic catalogue recipe has no date, participants or budgets. It must not p
 
 Activating an avatar in the allocation legend opens a small popover identifying the full member name, meal/date, percentage and that person's indicated portion/calories. Duplicate emojis remain separate entries keyed by membership ID. The avatar action identifies the person; it does not unexpectedly navigate away to Profile. Show an accessible name containing the person's name, even when the visual legend uses only an emoji.
 
-### D3 proposal: serving allocation
+### Confirmed D3: serving allocation
 
 A percentage describes a share of a common preparation, not automatically a share of all calories or all food mass in a multi-component meal. Show separate allocation groups when people use different recipes, substitutions or optional components. For example, a tofu preparation and chicken preparation cannot be combined into a single serving pie; dessert has its own group and excludes people skipping it.
 
@@ -77,10 +77,6 @@ For an identical preparation, derive an estimated serving allocation from its pl
 Show actual ingredient quantities alongside the guide. Independent ingredient/unit rounding can prevent one exact percentage from describing every ingredient. If quantities are not sufficiently proportional to represent one shared batch, show component/ingredient-specific allocations rather than an exact-looking combined pie. The implementation must define and test its proportionality/rounding tolerance, document the basis and label estimated shares. Do not infer cooked grams or cooking yield from raw ingredient weights.
 
 A person eating out has no home-cooked ingredient allocation. Show their eating-out description/calories separately; do not assign them a fictitious share of the prepared batch. An unplanned person is not a zero-calorie serving. A group with one participant may show 100%; a group without positive quantities has no pie.
-
-### D3 alternative: calorie shares
-
-If the user selects calorie shares instead, use each included portion's recorded/planned `kcal` divided by the sum of those portions' `kcal`, and label the chart Calorie share. Never call that percentage a serving/weight split. Clearly state whether eating-out portions are excluded from the preparation chart; their calories remain in daily totals.
 
 ### Shared presentation rules
 
@@ -110,7 +106,7 @@ Five consecutive activations on the same check offer Edit this recorded day. Eac
 
 The fifth activation opens an offer; it does not itself change records. Accepting opens a clearly marked historical edit session for that date. Cancelling resets the counter/color and leaves the day untouched. The Easter egg is a discovery interaction, not an authorization credential.
 
-### Proposed D2 boundary: recorded meals only
+### Confirmed D2 boundary: recorded meals only
 
 Allow authorized household meal editors to correct the selected date's breakfasts, lunch and dinner, including per-person portions, recipe choices, optional components and recorded eating-out descriptions/calorie estimates. Any active household meal editor may invoke this workflow, consistent with existing shared-meal permissions. Personal profiles, accepted targets/budgets and outside-food/weight/activity logs remain under their existing self-only rules and outside this exception.
 
@@ -121,8 +117,6 @@ Use the historical accepted target/budget context to explain the recorded day, n
 Editing is online and explicitly scoped to one household, date and editor. The normal historical lock remains closed for every other operation. A working session duration is ten minutes, ending on save/erase, cancellation, expiry, sign-out, membership loss or reload. Another editor's change requires a fresh review before saving. Show that the edited day is historical and return to the normal closed state afterward. A day erased through this workflow must not regenerate its deleted historical meals on the next snapshot.
 
 Ordinary week deletion remains limited to editable dates. Unlocking one past day does not authorize erasing other historical dates. Do not automatically adjust future meals or re-add expired shopping contributions. Cross-date swaps involving history are outside this limited correction workflow; users can read/copy a historical recipe into a new future meal through the ordinary clipboard.
-
-If D2 includes personal logs instead, a separate design revision is required for personal-day snapshots, self-only log correction, MET/weight context, recalculation and eraser scope. Do not infer that selecting an historical shared day authorizes editing another person's health logs.
 
 ## 8. Activity selection and local recency — V3-06
 
@@ -166,18 +160,18 @@ A rejected mutation keeps the draft and reports why it was not applied. A timeou
 
 ## 12. Acceptance overview
 
-| ID    | Minimum user-visible acceptance                                                                                                |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------ |
-| V3-01 | Swap/move breakfasts in saved and draft menus; recompute destination portions; preserve uninvolved people; resolve D1.         |
-| V3-02 | Copy changes destination icons to paste; occupied targets require acceptance; cancelling/conflicts preserve data.              |
-| V3-03 | Correctly labeled percentages, pie and avatar legend; duplicate emojis identify the right person; resolve D3.                  |
-| V3-04 | Midnight/cutoff removes checked and unchecked expired gram contributions, preserving future/manual requirements.               |
-| V3-05 | Five deliberate check activations progress red, offer editing and enable a scoped confirmed eraser; resolve D2.                |
-| V3-06 | Two relevant selectors, valid source codes and a recent successfully saved local-only preference.                              |
-| V3-07 | Long press/right click/keyboard Copy to menu navigates and exposes compatible paste targets without accidental recipe opening. |
-| V3-08 | Footer creation actions; 50 actual initial results; plus appends; whole-collection search and stable ordering.                 |
-| V3-09 | Week controls remain grouped and usable on narrow phones, large text and both languages.                                       |
-| V3-10 | Saved budgets never receive a false rollback message merely because subsequent refresh failed.                                 |
-| V3-11 | The information icon beside the pencil reveals the complete assumed-intake explanation on touch and keyboard.                  |
+| ID    | Minimum user-visible acceptance                                                                                                 |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------- |
+| V3-01 | Swap/move breakfasts in saved and draft menus; recompute destination portions; preserve uninvolved people; follow confirmed D1. |
+| V3-02 | Copy changes destination icons to paste; occupied targets require acceptance; cancelling/conflicts preserve data.               |
+| V3-03 | Correctly labeled percentages, pie and avatar legend; duplicate emojis identify the right person; follow confirmed D3.          |
+| V3-04 | Midnight/cutoff removes checked and unchecked expired gram contributions, preserving future/manual requirements.                |
+| V3-05 | Five deliberate check activations progress red, offer editing and enable a scoped confirmed eraser; follow confirmed D2.        |
+| V3-06 | Two relevant selectors, valid source codes and a recent successfully saved local-only preference.                               |
+| V3-07 | Long press/right click/keyboard Copy to menu navigates and exposes compatible paste targets without accidental recipe opening.  |
+| V3-08 | Footer creation actions; 50 actual initial results; plus appends; whole-collection search and stable ordering.                  |
+| V3-09 | Week controls remain grouped and usable on narrow phones, large text and both languages.                                        |
+| V3-10 | Saved budgets never receive a false rollback message merely because subsequent refresh failed.                                  |
+| V3-11 | The information icon beside the pencil reveals the complete assumed-intake explanation on touch and keyboard.                   |
 
-Detailed verification and rollout checkpoints are in [the milestone plan](milestones.md). Implementation of conditional behavior waits for D1–D3; independent documentation and design can continue.
+Detailed verification and rollout checkpoints are in [the milestone plan](milestones.md). D1–D3 are confirmed; implementation proceeds in milestone order with a review after each milestone.

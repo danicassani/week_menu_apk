@@ -1,12 +1,12 @@
 # Version 3 — technical design
 
-Status: proposed design accompanying the [product specification](specification.md). D1–D3 remain pending. API names below describe intended responsibilities; they are not deployed endpoints or a promised migration numbering scheme.
+Status: proposed design accompanying the [product specification](specification.md). D1–D3 are confirmed. API names below describe intended responsibilities; they are not deployed endpoints or a promised migration numbering scheme.
 
 ## 1. Baseline findings from the current code
 
 | Area                 | Existing implementation                                                                                                                                                               | Consequence for version 3                                                                                                                      |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Draft swaps          | `src/domain/menu-draft.ts` accepts one `breakfastMember` and rebuilds that member at both endpoints. `Planner` keeps selection inside preview state.                                  | Saved-menu swaps and, if D1 is accepted, two distinct breakfast recipients need explicit endpoints and matching server validation.             |
+| Draft swaps          | `src/domain/menu-draft.ts` accepts one `breakfastMember` and rebuilds that member at both endpoints. `Planner` keeps selection inside preview state.                                  | Saved-menu swaps and two distinct breakfast recipients under D1 need explicit endpoints and matching server validation.                        |
 | Meal planning        | `replan` and `makePortion` use destination targets, ingredient resolution and unit-aware rounding. Shared breakfast plans contain multiple personal portions.                         | Reuse the arithmetic; never replace a whole breakfast plan when changing one participant.                                                      |
 | Recipe readers       | `RecipeReader` receives a catalogue recipe and reference ingredients. `MealSnapshotView` receives the actual planned portions.                                                        | Allocation needs explicit meal context rather than adding fabricated household shares to the generic catalogue reader.                         |
 | Shopping             | `shopping_required` aggregates saved meal lines in an inclusive date range. Migration 8 adds reconciliation on menu writes/reads; migration 12 applies date-range changes atomically. | Add expiration to the authoritative contribution filter and fingerprint, not just DOM filtering.                                               |
@@ -85,7 +85,7 @@ Offline time is an estimate from the last server observation; reconcile against 
 
 ## 5. Historical correction boundary
 
-Keep the ordinary closed-day checks in place. Add a dedicated correction-session API and apply/erase operation after D2 is resolved. The five-activation UI requests a session only after the person accepts the offer. The server independently checks active household meal-edit rights and the selected closed date; it cannot verify or rely on a browser tap counter as an authorization boundary.
+Keep the ordinary closed-day checks in place. Add a dedicated correction-session API and apply/erase operation under confirmed D2. The five-activation UI requests a session only after the person accepts the offer. The server independently checks active household meal-edit rights and the selected closed date; it cannot verify or rely on a browser tap counter as an authorization boundary.
 
 Recommended session properties:
 
@@ -98,20 +98,17 @@ The storage can be a small private session table with bounded cleanup, or an equ
 
 Record a minimal correction audit: household/date, actor membership, operation identity, correction/erase time and before/after meal data or immutable references sufficient to review what changed. Keep it household-scoped with no anonymous or cross-household access. Repeated acknowledgement retries do not create duplicate audit events.
 
-Under proposed D2, preserve personal-day profile/target/activity/weight context and update only recorded meal plans and their derived assumed-intake views. Trace all current summary readers before coding: a changed meal must not leave one historical screen using a stale derived total while another uses the new plan. Unchanged lines retain their recorded reference versions; changed lines receive trusted correction-time references. Erasure removes recorded meals while preserving the correction evidence and the normal closed-date state.
+Under confirmed D2, preserve personal-day profile/target/activity/weight context and update only recorded meal plans and their derived assumed-intake views. Trace all current summary readers before coding: a changed meal must not leave one historical screen using a stale derived total while another uses the new plan. Unchanged lines retain their recorded reference versions; changed lines receive trusted correction-time references. Erasure removes recorded meals while preserving the correction evidence and the normal closed-date state.
 
 Historical accepted calorie budgets are for interpreting that day. The exception must not rewrite a person's current target or silently use current weight to recalculate an old activity. If the required old context is unavailable, require explicit manual portion review rather than silently substituting today's target.
-
-If D2 extends to logs, this design is incomplete until self-only personal-log authorization, historical activity expenditure, weight context and eraser boundaries are reviewed. A household-wide meal-edit session cannot implicitly grant cross-person health-log writes.
 
 ## 6. Allocation calculations and identity
 
 Implement allocation as pure derived data over a selected planned/draft meal. Do not store pie percentages as a second nutritional source of truth. Use immutable membership IDs as keys; display emojis are non-unique presentation data. Avatar popovers resolve the name and portion for the selected membership, not the first person matching an emoji.
 
-Conditional on D3:
+Under confirmed D3:
 
 - **Serving mode:** group recipe components by effective preparation: recipe/component identity, included ingredients, reference states/bases and substitution/preparation instructions. Establish the proportionality rule using planned lines and the actual unit-rounding steps. Common proportional preparations can show normalized serving factors. Materially different preparations/ingredient ratios need separate groups or ingredient-level allocation. Raw weights do not supply cooked yield.
-- **Calorie mode:** use authoritative portion calories, a strictly positive group total and an explicit calorie-share label. Do not repurpose the resulting value as a gram-serving instruction.
 
 For a simple normalized group, `share_i = positive_basis_i / sum(positive_basis)`. Keep full-precision shares for calculation. Use a largest-remainder display allocation at a documented precision so visible percentages total 100 without altering the source food quantities. Handle zero participants, a single participant, absent data and all-eating-out meals explicitly.
 

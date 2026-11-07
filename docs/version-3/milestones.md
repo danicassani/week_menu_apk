@@ -1,6 +1,6 @@
 # Version 3 — milestones and verification
 
-Status: proposed sequence. Each milestone ends with a reviewable PR, applicable migration files, verification evidence and a user review. D1–D3 must be settled before their dependent behavior is implemented. Do not treat this documentation PR as authorization to publish unresolved product choices.
+Status: confirmed delivery sequence. Each milestone ends with a reviewable PR, applicable migration files, verification evidence and a user review. D1–D3 are confirmed in the decision register.
 
 ## Milestone 1 — trustworthy saves and current shopping
 
@@ -20,11 +20,11 @@ Review the budget error/refresh interaction and an example shopping list before 
 
 ## Milestone 2 — swaps and the planning clipboard
 
-Deliver V3-01, V3-02 and V3-07, after D1. Share endpoint/replanning helpers between suggestion drafts and saved menus, add copy/paste mode across tabs/weeks, and add recipe-card context actions. Preserve the review boundary and automatic shopping reconciliation.
+Deliver V3-01, V3-02 and V3-07, following confirmed D1. Share endpoint/replanning helpers between suggestion drafts and saved menus, add copy/paste mode across tabs/weeks, and add recipe-card context actions. Preserve the review boundary and automatic shopping reconciliation.
 
 Required checks:
 
-- A breakfast swap between two dates affects exactly the intended recipients; if accepted, test cross-member and same-day cross-member swaps with different budgets/diets.
+- A breakfast swap between two dates affects exactly the intended recipients; test cross-member and same-day cross-member swaps with different budgets/diets.
 - Swapping into an empty destination moves the source; swapping occupied targets changes both atomically. Other breakfast portions remain byte-for-byte unchanged where no recalculation is required.
 - Both swap results satisfy recipe-type, participant, substitution, source-reference and full final-menu variety validation. A failure changes neither side.
 - Copy never edits its source. Successful paste can be repeated; cancellation and rejected/conflicting pastes preserve the clipboard and existing menu.
@@ -37,7 +37,7 @@ Review icon states, destination review and overwrite warning on a phone. Include
 
 ## Milestone 3 — clearer portions, activity selection and lighter browsing
 
-Deliver V3-03, V3-06, V3-08, V3-09 and V3-11, after D3. Add allocation charts in real meal context, two-stage activity selection with local recency, paged catalogue browsing/footer creation actions, grouped week controls and the calorie help popover.
+Deliver V3-03, V3-06, V3-08, V3-09 and V3-11, following confirmed D3. Add allocation charts in real meal context, two-stage activity selection with local recency, paged catalogue browsing/footer creation actions, grouped week controls and the calorie help popover.
 
 Required checks:
 
@@ -56,7 +56,7 @@ Review screenshots of a real allocation with substitutions, both activity select
 
 ## Milestone 4 — historical corrections and release acceptance
 
-Deliver V3-05 after D2, then complete integrated regression and release review. Add the closed-day check/progressive-red interaction, a server-scoped correction session, reviewable historical edits and confirmed day erasure.
+Deliver V3-05 following confirmed D2, then complete integrated regression and release review. Add the closed-day check/progressive-red interaction, a server-scoped correction session, reviewable historical edits and confirmed day erasure.
 
 Required checks:
 
@@ -74,7 +74,7 @@ Hosted acceptance still needs real Google accounts, two isolated households, an 
 
 ## Release checklist
 
-1. Resolve D1–D3 and update this package so no recommended branch is mistaken for a confirmed choice.
+1. Keep the confirmed D1–D3 decisions reflected in implementation and acceptance evidence.
 2. For each implementation PR, list actual migrations and compatibility order; apply only pending scripts, preserving successful existing migrations and household data.
 3. Verify additive backend changes with both the matching new client and the supported previous installed client where compatibility is promised.
 4. Before client release, review the agreed UI captures and the failure tests relevant to that milestone.
