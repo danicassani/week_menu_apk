@@ -387,7 +387,7 @@ test("saved future recipes can be read and closed days hide portion prompts and 
   await page.clock.setFixedTime(new Date("2026-11-06T12:00:00Z"));
   await page.reload();
   await menu();
-  await expect(day.getByText("Locked", { exact: true })).toBeVisible();
+  await expect(day.getByRole("button", { name: /^Closed day/ })).toBeVisible();
   await expect(
     day.getByText("Review portions / substitutions", { exact: true }),
   ).toHaveCount(0);

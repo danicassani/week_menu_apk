@@ -3704,3 +3704,42 @@ html[data-text-size="large"] {
   min-width: 0;
   flex: 1;
 }
+
+.closed-day-check {
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.historical-fields {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.historical-meal {
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+.historical-quantities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+.historical-quantities label {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 400px) {
+  .historical-quantities {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.historical-notice {
+  display: block;
+}
+.historical-notice > p {
+  margin-top: 0.5rem;
+}

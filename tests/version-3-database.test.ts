@@ -438,3 +438,325 @@ it("an archived private starter override hides the common recipe before paging",
     created_at: null,
   });
 });
+it("historical correction credentials are scoped, expire and leave ordinary historical guards intact", async () => {
+  const lib = await rpc<PlanningState>("get_planning_library"),
+    d = addDays(day, 35),
+    future = addDays(d, 1);
+  const plan = {
+    day: d,
+    type: "breakfast",
+    revision: 0,
+    shared_recipe_id: null,
+    portions: [
+      makePortion(
+        lib.recipes.find((r) => r.id === "b02")!,
+        a,
+        profile,
+        400,
+        false,
+        lib.ingredients,
+        lib.substitutions,
+      ),
+    ],
+  };
+  await rpc("apply_meal_plans", [
+    [plan, { ...plan, day: future }],
+    lib.revision,
+    false,
+  ]);
+  await db.exec("reset role");
+  await db.query(
+    "update public.meal_date_locks set closed=true where household_id=$1 and day=$2",
+    [home.household_id, d],
+  );
+  await db.query(
+    "insert into public.personal_days(household_id,member_id,day,cutoff,closed,snapshot) values($1,$2,$3,clock_timestamp(),true,app_private.context($2,$3))",
+    [home.household_id, a, d],
+  );
+  await actor();
+  const current = await rpc<PlanningState>("get_planning_library");
+  await expect(
+    rpc("apply_meal_plans", [[plan], current.revision, true]),
+  ).rejects.toThrow("day_closed");
+  await expect(
+    rpc("delete_planned_meal", [d, "breakfast", current.revision]),
+  ).rejects.toThrow("day_closed");
+  await expect(
+    rpc("begin_historical_correction", [future, current.revision]),
+  ).rejects.toThrow("historical_day_required");
+  const session = await rpc<any>("begin_historical_correction", [
+    d,
+    current.revision,
+  ]);
+  await expect(
+    rpc("apply_historical_correction", [crypto.randomUUID(), d, "erase", []]),
+  ).rejects.toThrow("correction_expired");
+  await expect(
+    rpc("apply_historical_correction", [session.token, future, "erase", []]),
+  ).rejects.toThrow("correction_expired");
+  await expect(
+    rpc("apply_historical_correction", [
+      session.token,
+      d,
+      "save",
+      [{ ...plan, day: future }],
+    ]),
+  ).rejects.toThrow("invalid_recipe");
+  await actor(b);
+  await expect(
+    rpc("apply_historical_correction", [session.token, d, "erase", []]),
+  ).rejects.toThrow("membership_changed");
+  await expect(
+    call("apply_historical_correction", [
+      other.household_id,
+      other.membership_id,
+      session.token,
+      d,
+      "erase",
+      [],
+    ]),
+  ).rejects.toThrow("correction_expired");
+  await actor();
+  await db.exec("reset role");
+  await db.query(
+    "update app_private.correction_sessions set expires_at=clock_timestamp()-interval '1 second' where token=$1",
+    [session.token],
+  );
+  await actor();
+  await expect(
+    rpc("apply_historical_correction", [session.token, d, "erase", []]),
+  ).rejects.toThrow("correction_expired");
+  for (const table of ["correction_sessions", "meal_corrections"])
+    await expect(db.exec(`select * from app_private.${table}`)).rejects.toThrow(
+      "permission denied",
+    );
+});
+it("normalizes corrections from recorded references, preserves personal context, audits once and erases only one day", async () => {
+  const d = addDays(day, 35),
+    future = addDays(d, 1),
+    before = await snapshot(),
+    lib = before.planning!;
+  const recorded = structuredClone(lib.plans.find((m) => m.day === d)!);
+  const food = lib.ingredients.find(
+    (i) => i.id === recorded.portions[0].lines[0].ingredient_id,
+  )!;
+  // A later nutrition edit cannot rewrite existing recorded quantities/reference versions.
+  await rpc("save_household_content", [
+    "ingredient",
+    { ...food, nutrition_per_100g: { energy_kcal: 999 } },
+    food.revision,
+    false,
+  ]);
+  const now = await snapshot(),
+    session = await rpc<any>("begin_historical_correction", [
+      d,
+      now.planning!.revision,
+    ]);
+  await expect(
+    rpc("apply_historical_correction", [
+      session.token,
+      d,
+      "save",
+      session.plans,
+    ]),
+  ).rejects.toThrow("correction_unchanged");
+  const changed = structuredClone(session.plans);
+  changed[0].portions[0].lines[0].quantity *= 2;
+  changed[0].portions[0].lines[0].grams_per_unit = 999;
+  changed[0].portions[0].lines[0].energy_per_100g = 999;
+  changed[0].portions[0].lines[0].kcal = 999999;
+  changed[0].portions[0].budget = 1;
+  const ack = await rpc<any>("apply_historical_correction", [
+    session.token,
+    d,
+    "save",
+    changed,
+  ]);
+  const after = await snapshot(),
+    actual = after.planning!.plans.find((m) => m.day === d)!;
+  expect(actual.portions[0].budget).toBe(recorded.portions[0].budget);
+  expect(actual.portions[0].lines[0]).toMatchObject({
+    grams: recorded.portions[0].lines[0].grams * 2,
+    kcal: recorded.portions[0].lines[0].kcal * 2,
+    energy_per_100g: recorded.portions[0].lines[0].energy_per_100g,
+    nutrition_revision: recorded.portions[0].lines[0].nutrition_revision,
+  });
+  expect(actual.portions[0].lines.slice(1)).toEqual(
+    recorded.portions[0].lines.slice(1),
+  );
+  expect(after.days).toEqual(now.days);
+  expect(after.targets).toEqual(now.targets);
+  expect(after.entries).toEqual(now.entries);
+  expect(after.members).toEqual(now.members);
+  expect(after.planning!.plans.find((m) => m.day === future)).toEqual(
+    now.planning!.plans.find((m) => m.day === future),
+  );
+  expect(after.meals.find((m) => m.day === d)!.kcal).toBe(
+    actual.portions[0].kcal,
+  );
+  const history = await rpc<any[]>("get_historical_corrections", [d]);
+  expect(history).toHaveLength(1);
+  expect(history[0]).toMatchObject({
+    member_id: a,
+    day: d,
+    action: "save",
+    before_meals: session.plans,
+  });
+  expect(history[0]).not.toHaveProperty("token");
+  expect(
+    await rpc("apply_historical_correction", [
+      session.token,
+      d,
+      "save",
+      changed,
+    ]),
+  ).toEqual(ack);
+  await expect(
+    rpc("apply_historical_correction", [session.token, d, "erase", []]),
+  ).rejects.toThrow("operation_mismatch");
+  expect(await rpc("get_historical_corrections", [d])).toHaveLength(1);
+  const stale = await rpc<any>("begin_historical_correction", [
+    d,
+    after.planning!.revision,
+  ]);
+  await rpc("save_planner_settings", [1, 4]);
+  await expect(
+    rpc("apply_historical_correction", [stale.token, d, "erase", []]),
+  ).rejects.toThrow("stale_plan");
+  const refreshed = await snapshot(),
+    erase = await rpc<any>("begin_historical_correction", [
+      d,
+      refreshed.planning!.revision,
+    ]);
+  await rpc("cancel_historical_correction", [erase.token]);
+  await expect(
+    rpc("apply_historical_correction", [erase.token, d, "erase", []]),
+  ).rejects.toThrow("correction_expired");
+  const finalSession = await rpc<any>("begin_historical_correction", [
+    d,
+    refreshed.planning!.revision,
+  ]);
+  await rpc("apply_historical_correction", [
+    finalSession.token,
+    d,
+    "erase",
+    [],
+  ]);
+  const final = await snapshot();
+  expect(final.planning!.plans.some((m) => m.day === d)).toBe(false);
+  expect(final.meals.some((m) => m.day === d)).toBe(false);
+  expect(final.days).toEqual(refreshed.days);
+  expect(final.entries).toEqual(refreshed.entries);
+  expect(final.targets).toEqual(refreshed.targets);
+  expect((await snapshot()).planning!.plans.some((m) => m.day === d)).toBe(
+    false,
+  );
+  await rpc("set_shopping_date_range", [d, d]);
+  expect((await shopping()).items.every((i) => i.source === "manual")).toBe(
+    true,
+  );
+  expect(await rpc("get_historical_corrections", [d])).toHaveLength(2);
+});
+it("a revoked editor cannot reuse a correction credential or read its receipt", async () => {
+  const d = addDays(day, 35),
+    s = await snapshot(),
+    session = await rpc<any>("begin_historical_correction", [
+      d,
+      s.planning!.revision,
+    ]);
+  await db.exec("reset role");
+  await db.query(
+    "update public.members set status='removed' where household_id=$1 and id=$2",
+    [home.household_id, a],
+  );
+  await actor();
+  await expect(
+    rpc("apply_historical_correction", [session.token, d, "erase", []]),
+  ).rejects.toThrow("access_denied");
+  await expect(rpc("get_historical_corrections", [d])).rejects.toThrow(
+    "access_denied",
+  );
+  await db.exec("reset role");
+  await db.query(
+    "update public.members set status='active' where household_id=$1 and id=$2",
+    [home.household_id, a],
+  );
+  await db.query(
+    "update public.approved_emails set revoked=false where household_id=$1 and email='a@example.com'",
+    [home.household_id],
+  );
+  await actor();
+});
+it("historical recipe replacements and restaurant portions use trusted references and keep frozen budgets", async () => {
+  const d = addDays(day, 35),
+    s = await snapshot(),
+    lib = s.planning!;
+  // Today's different diet/weight must not replace the frozen historical profile.
+  await rpc("save_my_profile", [
+    { ...profile, diet: "vegan", weight_kg: 75 },
+    s.members.find((m) => m.id === a)!.revision,
+  ]);
+  const session = await rpc<any>("begin_historical_correction", [
+    d,
+    (await snapshot()).planning!.revision,
+  ]);
+  const portion = makePortion(
+    lib.recipes.find((r) => r.id === "b03")!,
+    a,
+    profile,
+    400,
+    false,
+    lib.ingredients,
+    lib.substitutions,
+  );
+  const plan = {
+    day: d,
+    type: "breakfast",
+    revision: 0,
+    shared_recipe_id: null,
+    portions: [{ ...portion, budget: 99999 }],
+  };
+  await rpc("apply_historical_correction", [session.token, d, "save", [plan]]);
+  const saved = await snapshot(),
+    actual = saved.planning!.plans.find((m) => m.day === d)!;
+  expect(actual.portions[0].budget).toBe(400);
+  expect(actual.portions[0].recipe_snapshot!.id).toBe("b03");
+  expect(actual.portions[0].kcal).toBeCloseTo(portion.kcal, 8);
+  const restaurant = await rpc<any>("begin_historical_correction", [
+      d,
+      saved.planning!.revision,
+    ]),
+    out = structuredClone(actual);
+  out.portions[0] = {
+    ...out.portions[0],
+    eating_out: true,
+    description: "Lunch at the bar",
+    kcal: -1,
+  };
+  await expect(
+    rpc("apply_historical_correction", [restaurant.token, d, "save", [out]]),
+  ).rejects.toThrow("invalid_entry");
+  out.portions[0].kcal = 580;
+  await rpc("apply_historical_correction", [
+    restaurant.token,
+    d,
+    "save",
+    [out],
+  ]);
+  const final = await snapshot(),
+    p = final.planning!.plans.find((m) => m.day === d)!.portions[0];
+  expect(p).toMatchObject({
+    eating_out: true,
+    description: "Lunch at the bar",
+    kcal: 580,
+    budget: 400,
+    lines: [],
+  });
+  expect(final.days).toEqual(s.days);
+  expect(final.targets).toEqual(s.targets);
+  expect(final.entries).toEqual(s.entries);
+  await rpc("set_shopping_date_range", [d, d]);
+  expect((await shopping()).items.every((i) => i.source === "manual")).toBe(
+    true,
+  );
+});

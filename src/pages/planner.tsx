@@ -1,3 +1,5 @@
+import { HistoricalCorrection } from "../components/historical-correction";
+import { useClosedDayCheck } from "../components/closed-day-check";
 import { PortionAllocation } from "../components/portion-allocation";
 import { useMealTransfers, type MenuDraft } from "../components/meal-transfers";
 import { CatalogueCard } from "../components/catalogue-card";
@@ -190,7 +192,9 @@ export function Planner(v: ViewProps) {
     [readingPlan, setReadingPlan] = useState<MealPlan | null>(null),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
+    [correctionDay, setCorrectionDay] = useState<string | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null);
+  const closedCheck = useClosedDayCheck(anchor, v.language, setCorrectionDay);
   const transfer = useMealTransfers(
     v,
     preview,
@@ -550,9 +554,7 @@ export function Planner(v: ViewProps) {
                   month: "long",
                 })}
               </h2>
-              {closed(v, day) && (
-                <span className="pill">{t("Locked", "Cerrado")}</span>
-              )}
+              {closed(v, day) && closedCheck.button(day)}
             </div>
             <div className="meal-cards">
               {types.map((type) => {
@@ -1090,6 +1092,16 @@ export function Planner(v: ViewProps) {
             )}
           </p>
         </Modal>
+      )}
+      {correctionDay && (
+        <HistoricalCorrection
+          v={v}
+          day={correctionDay}
+          onClose={() => {
+            setCorrectionDay(null);
+            closedCheck.reset();
+          }}
+        />
       )}
       {inspection && (
         <MealSnapshotView

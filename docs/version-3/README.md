@@ -1,12 +1,13 @@
 # Version 3 — planning package
 
-Status: product scope confirmed by the user, including D1–D3. Implementation proceeds through the four review milestones. Everything in this package is written in English. The application continues to support English and Spanish.
+Status: product scope confirmed by the user, including D1–D3. All four implementation milestones are prepared for review; hosted release acceptance remains pending. Everything in this package is written in English. The application continues to support English and Spanish.
 
 ## Documents
 
 - [Product specification](specification.md): interactions, calculations, permissions, edge cases and acceptance criteria.
 - [Technical design](technical-design.md): current-code findings, data and API changes, local state, transactions and migration strategy.
 - [Milestones and verification](milestones.md): delivery order, review checkpoints and release gates.
+- [Milestone 4 implementation](milestone-4.md): scoped historical corrections, day erasure, audit evidence, migration 16 and release verification.
 - [Milestone 3 implementation](milestone-3.md): preparation allocation, activity selectors/recency, catalogue pages, layout/help and migration 15.
 - [Milestone 2 implementation](milestone-2.md): cross-person breakfast swaps, recipe copy/paste, catalogue context actions and migration 14.
 - [Milestone 1 implementation](milestone-1.md): budget acknowledgements, automatic shopping expiry, migration 13 and verification.
