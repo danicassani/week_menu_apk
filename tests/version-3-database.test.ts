@@ -1,10 +1,11 @@
 import { beforeAll, afterAll, it, expect } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
-import { readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
 import { addDays, dayCutoff } from "../src/domain/dates";
 import { makePortion, type PlanningState } from "../src/domain/planning";
 import type { HouseholdState, Profile } from "../src/domain/types";
 import type { ShoppingState } from "../src/domain/shopping";
+const measurements: Record<string, unknown> = {};
 let db: PGlite, day: string, home: any, other: any;
 const a = "90000000-0000-0000-0000-000000000001",
   b = "90000000-0000-0000-0000-000000000002";
@@ -80,7 +81,14 @@ beforeAll(async () => {
   other = (await call("get_household_access")).active;
   await actor();
 }, 60000);
-afterAll(async () => db?.close());
+afterAll(async () => {
+  mkdirSync("test-results", { recursive: true });
+  writeFileSync(
+    "test-results/catalogue-measurements.json",
+    JSON.stringify(measurements, null, 2),
+  );
+  await db?.close();
+});
 it("atomically commits changed budgets and an old acknowledgement never replays over a newer save", async () => {
   const d = addDays(day, 10),
     op = crypto.randomUUID(),
@@ -270,4 +278,163 @@ it("the returned cutoff honors member timezones including DST and keeps sticky c
   expect((await shopping()).items.every((i) => i.source === "manual")).toBe(
     true,
   );
+});
+it("compact snapshots retain saved references without downloading the entire catalogue; old clients keep the full graph", async () => {
+  const full = await snapshot(),
+    small = await rpc<HouseholdState>("get_household_snapshot", [true]);
+  measurements.snapshot = {
+    compact_bytes: Buffer.byteLength(JSON.stringify(small)),
+    full_bytes: Buffer.byteLength(JSON.stringify(full)),
+    compact_recipes: small.planning!.recipes.length,
+    full_recipes: full.planning!.recipes.length,
+  };
+  expect(full.planning!.recipes.length).toBeGreaterThan(40);
+  expect(small.planning!.complete).toBe(false);
+  expect(small.planning!.recipes.length).toBeLessThan(10);
+  expect(small.planning!.plans).toEqual(full.planning!.plans);
+  expect(JSON.stringify(small).length).toBeLessThan(
+    JSON.stringify(full).length / 2,
+  );
+  expect((await snapshot()).planning!.recipes).toHaveLength(
+    full.planning!.recipes.length,
+  );
+  const detail = await rpc<any>("get_catalogue_item", ["recipe", "b01"]);
+  expect(detail.item.components.length).toBeGreaterThan(0);
+  expect(detail.ingredients.length).toBeGreaterThan(0);
+});
+it("pages resolved catalogue summaries in stable groups of 50, searches the whole collection and excludes inserts newer than its cursor", async () => {
+  const lib = await rpc<PlanningState>("get_planning_library"),
+    base = lib.recipes.find((r) => r.id === "b01")!;
+  await db.exec("reset role");
+  for (let i = 0; i < 110; i++) {
+    const id = `page_${String(i).padStart(3, "0")}`;
+    await db.query(
+      "insert into public.saved_recipes(household_id,id,data) values($1,$2,$3)",
+      [
+        home.household_id,
+        id,
+        { ...base, id, name: { en: `Page fixture ${i}`, es: `Receta ${i}` } },
+      ],
+    );
+  }
+  await db.query(
+    "update app_private.catalogue_chronology set created_at=clock_timestamp()-interval '1 day' where household_id=$1 and item_id like 'page_%'",
+    [home.household_id],
+  );
+  // Equal creation timestamps use an immutable ID tie-breaker.
+  await db.query(
+    "update app_private.catalogue_chronology set created_at='2026-01-01T00:00:00Z' where household_id=$1 and item_id like 'page_%'",
+    [home.household_id],
+  );
+  await actor();
+  const first = await rpc<any>("get_catalogue_page", [
+    "recipe",
+    "",
+    false,
+    null,
+  ]);
+  measurements.first_page = {
+    items: first.items.length,
+    bytes: Buffer.byteLength(JSON.stringify(first)),
+  };
+  expect(first.items).toHaveLength(50);
+  expect(first.items.every((r: any) => !r.components)).toBe(true);
+  await rpc("save_household_content", [
+    "recipe",
+    {
+      ...base,
+      id: "page_new",
+      name: { en: "New insertion", es: "Nueva receta" },
+    },
+    0,
+    false,
+  ]);
+  const all = [...first.items];
+  let cursor = first.next_cursor;
+  while (cursor) {
+    const next = await rpc<any>("get_catalogue_page", [
+      "recipe",
+      "",
+      false,
+      cursor,
+    ]);
+    expect(next.items.length).toBeLessThanOrEqual(50);
+    all.push(...next.items);
+    cursor = next.next_cursor;
+  }
+  expect(new Set(all.map((r) => r.id)).size).toBe(all.length);
+  expect(all.filter((r) => r.id.startsWith("page_")).length).toBe(110);
+  expect(all.some((r) => r.id === "page_new")).toBe(false);
+  const search = await rpc<any>("get_catalogue_page", [
+    "recipe",
+    "Page fixture 109",
+    false,
+    null,
+  ]);
+  expect(search.items.map((r: any) => r.id)).toEqual(["page_109"]);
+  await expect(
+    rpc("get_catalogue_page", ["ingredient", "", false, first.next_cursor]),
+  ).rejects.toThrow("invalid_catalogue_cursor");
+  await expect(
+    rpc("get_catalogue_page", ["recipe", "changed", false, first.next_cursor]),
+  ).rejects.toThrow("invalid_catalogue_cursor");
+  const newer = await rpc<any>("get_catalogue_page", [
+    "recipe",
+    "",
+    false,
+    null,
+  ]);
+  expect(newer.items[0].id).toBe("page_new");
+  const created = newer.items[0].created_at,
+    updated = {
+      ...base,
+      id: "page_new",
+      name: { en: "Renamed insertion", es: "Receta cambiada" },
+    };
+  await rpc("save_household_content", ["recipe", updated, 1, false]);
+  expect(
+    (
+      await rpc<any>("get_catalogue_page", [
+        "recipe",
+        "Renamed insertion",
+        false,
+        null,
+      ])
+    ).items[0].created_at,
+  ).toBe(created);
+  await actor(b);
+  await expect(
+    rpc("get_catalogue_page", ["recipe", "", false, null]),
+  ).rejects.toThrow("membership_changed");
+  await expect(
+    rpc("get_catalogue_item", ["recipe", "page_new"]),
+  ).rejects.toThrow("membership_changed");
+  await actor();
+  await expect(
+    db.exec("select * from app_private.catalogue_chronology"),
+  ).rejects.toThrow("permission denied");
+});
+it("an archived private starter override hides the common recipe before paging", async () => {
+  const lib = await rpc<PlanningState>("get_planning_library"),
+    r = lib.recipes.find((r) => r.id === "b01")!;
+  await rpc("save_household_content", ["recipe", r, r.revision, true]);
+  const hidden = await rpc<any>("get_catalogue_page", [
+    "recipe",
+    r.name.en,
+    false,
+    null,
+  ]);
+  expect(hidden.items).toHaveLength(0);
+  const shown = await rpc<any>("get_catalogue_page", [
+    "recipe",
+    r.name.en,
+    true,
+    null,
+  ]);
+  expect(shown.items).toHaveLength(1);
+  expect(shown.items[0]).toMatchObject({
+    id: "b01",
+    archived: true,
+    created_at: null,
+  });
 });

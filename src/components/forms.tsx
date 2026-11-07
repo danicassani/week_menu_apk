@@ -1,3 +1,4 @@
+import { activityType, recentActivity } from "../lib/activity-recent";
 import { useRef, useState } from "react";
 import { ArrowRight, Info, Check } from "lucide-react";
 import type {
@@ -11,7 +12,6 @@ import type {
   Profile,
   Proposal,
 } from "../domain/types";
-import { ingredients } from "../lib/content";
 import { mealLabel, translator } from "../lib/i18n";
 import { dayAt, localDay } from "../domain/dates";
 import { targetOn } from "../domain/state";
@@ -210,7 +210,7 @@ export function ProfileForm({
         />
       </label>
       <div className="ingredient-picker">
-        {(catalogue ?? ingredients)
+        {(catalogue ?? [])
           .filter((i) =>
             (i.name[language] || i.name.en || i.name.es)
               .toLocaleLowerCase()
@@ -385,6 +385,7 @@ export function TargetReview({
 }
 
 export function LogForm({
+  recentScope,
   kind,
   entry,
   member,
@@ -393,6 +394,7 @@ export function LogForm({
   busy,
   onSave,
 }: {
+  recentScope?: string;
   kind: DailyEntry["kind"];
   entry?: DailyEntry;
   member: Member;
@@ -400,17 +402,41 @@ export function LogForm({
   onSave: (e: EntryInput) => void;
 } & Base) {
   const t = translator(language),
+    allowed = state.activity_catalogue.filter(
+      (a) =>
+        member.profile &&
+        member.profile.age >= a.age_min &&
+        member.profile.age <= a.age_max,
+    ),
+    recent = recentScope
+      ? recentActivity(recentScope, allowed, member.profile?.age)
+      : undefined,
+    initial = entry
+      ? allowed.find((a) => a.code === entry.activity_code)
+      : recent,
     [description, setDescription] = useState(entry?.description ?? ""),
     [value, setValue] = useState<number | "">(entry?.value ?? ""),
-    [code, setCode] = useState(entry?.activity_code ?? "");
-  const allowed = state.activity_catalogue.filter(
-    (a) =>
-      member.profile &&
-      member.profile.age >= a.age_min &&
-      member.profile.age <= a.age_max,
+    [code, setCode] = useState(initial?.code ?? ""),
+    [type, setType] = useState(initial ? activityType(initial) : "");
+  const groupList = [
+    ...new Map(allowed.map((a) => [activityType(a), a.group])).entries(),
+  ].sort((a, b) => a[1][language].localeCompare(b[1][language], language));
+  if (recent)
+    groupList.sort(
+      (a, b) =>
+        Number(b[0] === activityType(recent)) -
+        Number(a[0] === activityType(recent)),
+    );
+  const intensities = allowed
+    .filter((a) => activityType(a) === type)
+    .sort((a, b) => a.name[language].localeCompare(b.name[language], language));
+  if (recent)
+    intensities.sort(
+      (a, b) => Number(b.code === recent.code) - Number(a.code === recent.code),
+    );
+  const chosen = allowed.find(
+    (a) => a.code === code && activityType(a) === type,
   );
-  const groups = [...new Set(allowed.map((a) => a.group[language]))],
-    chosen = allowed.find((a) => a.code === code);
   return (
     <form
       onSubmit={(e) => {
@@ -458,32 +484,67 @@ export function LogForm({
         <>
           {allowed.length ? (
             <>
-              <label>
-                {t(
-                  "Activity & pace or intensity",
-                  "Actividad y ritmo o intensidad",
-                )}
-                <select
-                  required
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                >
-                  <option value="">
-                    {t("Choose an activity", "Elige una actividad")}
-                  </option>
-                  {groups.map((group) => (
-                    <optgroup key={group} label={group}>
-                      {allowed
-                        .filter((a) => a.group[language] === group)
-                        .map((a) => (
-                          <option key={a.code} value={a.code}>
-                            {a.name[language]}
-                          </option>
-                        ))}
-                    </optgroup>
-                  ))}
-                </select>
-              </label>
+              <div className="form-grid activity-selectors">
+                <label>
+                  {t("Activity type", "Tipo de actividad")}
+                  <select
+                    required
+                    value={type}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      setType(next);
+                      const choices = allowed.filter(
+                        (a) => activityType(a) === next,
+                      );
+                      setCode(choices.length === 1 ? choices[0].code : "");
+                    }}
+                  >
+                    <option value="">
+                      {t("Choose an activity", "Elige una actividad")}
+                    </option>
+                    {groupList.map(([id, label]) => (
+                      <option key={id} value={id}>
+                        {label[language]}
+                        {recent && id === activityType(recent)
+                          ? t(" · Recent", " · Reciente")
+                          : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  {t("Pace or intensity", "Ritmo o intensidad")}
+                  <select
+                    required
+                    disabled={!type}
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                  >
+                    <option value="">
+                      {t(
+                        "Choose pace or intensity",
+                        "Elige ritmo o intensidad",
+                      )}
+                    </option>
+                    {intensities.map((a) => (
+                      <option key={a.code} value={a.code}>
+                        {a.name[language]}
+                        {recent?.code === a.code
+                          ? t(" · Recent", " · Reciente")
+                          : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {entry?.activity_code && !initial && (
+                <p className="note warning">
+                  {t(
+                    "The saved activity code is no longer eligible. Choose a supported activity before saving.",
+                    "El código guardado ya no es válido. Elige una actividad disponible antes de guardar.",
+                  )}
+                </p>
+              )}
               {chosen && (
                 <p className="fine-print">
                   {chosen.met} MET ·{" "}
@@ -545,7 +606,7 @@ export function LogForm({
       )}
       <Button
         busy={busy}
-        disabled={kind === "activity" && !allowed.length}
+        disabled={kind === "activity" && !chosen}
         type="submit"
       >
         {t("Save entry", "Guardar registro")}

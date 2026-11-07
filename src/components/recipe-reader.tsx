@@ -28,6 +28,28 @@ export function RecipeReader({
         </div>
       )}
       {actions}
+      <RecipeContent
+        recipe={recipe}
+        ingredients={ingredients}
+        language={language}
+      />
+    </Modal>
+  );
+}
+
+export function RecipeContent({
+  recipe,
+  ingredients,
+  language,
+}: {
+  recipe: PlannedRecipe;
+  ingredients: Ingredient[];
+  language: Language;
+}) {
+  const t = translator(language),
+    text = (n: { en: string; es: string }) => n[language] || n.en || n.es;
+  return (
+    <>
       <p className="muted">
         {t(
           "Ingredients for reference servings:",
@@ -75,6 +97,6 @@ export function RecipeReader({
           </ol>
         </section>
       ))}
-    </Modal>
+    </>
   );
 }

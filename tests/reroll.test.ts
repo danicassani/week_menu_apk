@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { PreviewRepository } from "../src/lib/repository";
+import { PreviewRepository } from "../src/lib/preview-repository";
 import { suggested } from "../src/pages/planner";
 import type { ViewProps } from "../src/pages/views";
 

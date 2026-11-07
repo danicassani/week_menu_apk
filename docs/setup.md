@@ -6,6 +6,8 @@ For version 3 milestone 1, apply [migration 13](../supabase/migrations/202611070
 
 For version 3 milestone 2, apply [migration 14](../supabase/migrations/202611070014_meal_transfers.sql) after 1–13 and before deploying the matching client. See [the transfer review](version-3/milestone-2.md) for swaps, recipe copy/paste, permissions and rollout. Existing API signatures and household records are preserved.
 
+For version 3 milestone 3, apply [migration 15](../supabase/migrations/202611070015_catalogue_pages.sql) after 1–14 and before deploying the matching client. See [the milestone report](version-3/milestone-3.md) for compact household snapshots, catalogue paging, local activity preferences and serving allocation.
+
 ## Local development
 
 Use Node.js 24 LTS and npm. From the repository root:

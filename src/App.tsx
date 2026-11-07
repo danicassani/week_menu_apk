@@ -1,3 +1,6 @@
+import { allocationColor } from "./components/portion-allocation";
+import { PlanningGate } from "./components/planning-gate";
+import { clearRecentActivity, rememberActivity } from "./lib/activity-recent";
 import { ShoppingPage } from "./pages/shopping";
 import { OfflineShell } from "./pages/offline";
 import { SignOutDialog } from "./components/sign-out";
@@ -53,12 +56,12 @@ import { dayAt, deviceZone, formatDay, localDay } from "./domain/dates";
 import { targetOn } from "./domain/state";
 import { errorMessage, translator } from "./lib/i18n";
 import {
-  PreviewRepository,
   previewAvailable,
   supabase,
   SupabaseRepository,
 } from "./lib/repository";
-import type { Recipe } from "./lib/content";
+import type { PlannedRecipe as Recipe } from "./domain/planning";
+import { RecipeContent as RecipeDetail } from "./components/recipe-reader";
 import { Button, Modal } from "./components/ui";
 import {
   BudgetForm,
@@ -66,14 +69,7 @@ import {
   ProfileForm,
   TargetReview,
 } from "./components/forms";
-import {
-  Dashboard,
-  Menu,
-  ProfileView,
-  RecipeDetail,
-  Recipes,
-  type ViewProps,
-} from "./pages/views";
+import { Dashboard, ProfileView, type ViewProps } from "./pages/views";
 
 type Dialog =
   | { kind: "maintenance" }
@@ -198,13 +194,35 @@ export default function App() {
     });
     if (error) setAuthError(errorMessage(error, language));
   };
+  const previousAccount = useRef<string | null>(null);
+  useEffect(() => {
+    if (previousAccount.current && previousAccount.current !== session?.user.id)
+      clearRecentActivity(previousAccount.current, true);
+    previousAccount.current = session?.user.id ?? null;
+  }, [session?.user.id]);
+  const [previewRepo, setPreviewRepo] = useState<Repository | null>(null);
+  useEffect(() => {
+    let active = true;
+    if (preview)
+      void import("./lib/preview-repository").then((module) => {
+        if (active) setPreviewRepo(new module.PreviewRepository(deviceZone()));
+      });
+    else setPreviewRepo(null);
+    return () => {
+      active = false;
+    };
+  }, [preview]);
   const repoRef = useRef<{ key: string; repo: Repository } | null>(null),
     identity = preview ? "preview" : session?.user.id;
-  if (identity && repoRef.current?.key !== identity)
+  if (
+    identity &&
+    (!preview || previewRepo) &&
+    repoRef.current?.key !== identity
+  )
     repoRef.current = {
       key: identity,
       repo: preview
-        ? new PreviewRepository(deviceZone())
+        ? previewRepo!
         : new SupabaseRepository(supabase!, identity),
     };
   if (!identity) repoRef.current = null;
@@ -233,6 +251,7 @@ export default function App() {
   // previous account's active cache must never flash during session discovery.
   if (
     checking ||
+    (preview && !previewRepo) ||
     ((!online || forceSaved) && identity && offlineOwner !== identity)
   )
     return (
@@ -463,6 +482,10 @@ function Workspace({
     [householdAccess, setHouseholdAccess] = useState<HouseholdAccess | null>(
       null,
     );
+  const allocationPalette = useRef<{
+    scope: string;
+    colors: Record<string, string>;
+  }>({ scope: "", colors: {} });
   const clipboardScope = useRef(""),
     anchorScope = useRef("");
   const remembered = useRef<string | null>(null);
@@ -498,7 +521,7 @@ function Workspace({
       }
       if (
         e instanceof Error &&
-        /access_denied|google_identity_required|membership_changed/.test(
+        /access_denied|google_identity_required|membership_changed|account_changed/.test(
           e.message,
         )
       ) {
@@ -529,7 +552,16 @@ function Workspace({
         }
       }
       if (!mounted.current || n !== sequence.current) return next;
-      setS(next);
+      setS((current) =>
+        current?.planning?.complete === true &&
+        current.planning.revision === next.planning?.revision &&
+        current.household.id === next.household.id
+          ? {
+              ...next,
+              planning: { ...current.planning, plans: next.planning.plans },
+            }
+          : next,
+      );
       setMessage((current) => (current?.refresh ? null : current));
       setHouseholdAccess(null);
       setFatal("");
@@ -703,7 +735,9 @@ function Workspace({
       });
       if (
         e instanceof Error &&
-        /stale_profile|stale_content|stale_plan/.test(e.message)
+        /stale_profile|stale_content|stale_plan|access_denied|google_identity_required|membership_changed|account_changed/.test(
+          e.message,
+        )
       )
         await refresh().catch(() => {});
       return false;
@@ -828,8 +862,35 @@ function Workspace({
     setTab(next);
     window.scrollTo({ top: 0 });
   };
+  const ensurePlanning = async () => {
+    if (s.planning && s.planning.complete !== false) return s.planning;
+    const identity = cacheIdentity(repo),
+      lib = await repo.getPlanningLibrary();
+    if (identity !== cacheIdentity(repo))
+      throw new DomainError("membership_changed");
+    const latest = lib.revision === s.planning?.revision ? s : await refresh();
+    if (lib.revision !== latest.planning?.revision)
+      throw new DomainError("stale_plan");
+    setS((current) =>
+      current &&
+      cacheIdentity(repo) === identity &&
+      current.planning?.revision === lib.revision
+        ? { ...current, planning: lib }
+        : current,
+    );
+    return lib;
+  };
   const planningScope = `${repo.accountId}/${s.household.id}/${s.context?.membership_id ?? s.viewer_id}`;
+  if (allocationPalette.current.scope !== planningScope)
+    allocationPalette.current = { scope: planningScope, colors: {} };
+  for (const id of s.members.map((m) => m.id).sort())
+    if (!allocationPalette.current.colors[id])
+      allocationPalette.current.colors[id] = allocationColor(
+        Object.keys(allocationPalette.current.colors).length,
+      );
   const v: ViewProps = {
+    allocationColors: allocationPalette.current.colors,
+    ensurePlanning,
     clipboard: clipboardScope.current === planningScope ? clipboard : null,
     setClipboard: (next) => {
       clipboardScope.current = planningScope;
@@ -852,7 +913,15 @@ function Workspace({
       if (own) setDialog({ kind: "log", entryKind, entry });
     },
     openProfile: () => {
-      if (own) setDialog({ kind: "profile" });
+      if (own)
+        void operate(
+          async () => {
+            await ensurePlanning();
+            setDialog({ kind: "profile" });
+          },
+          undefined,
+          false,
+        );
     },
     openTarget,
     openBudget: (date = day) => {
@@ -1108,7 +1177,9 @@ function Workspace({
           {tab === "dashboard" ? (
             <Dashboard {...v} />
           ) : tab === "menu" ? (
-            <Planner {...v} />
+            <PlanningGate v={v}>
+              <Planner {...v} />
+            </PlanningGate>
           ) : tab === "shopping" ? (
             <ShoppingPage {...v} />
           ) : tab === "recipes" ? (
@@ -1316,6 +1387,7 @@ function Workspace({
           )}
           {dialog.kind === "log" && (
             <LogForm
+              recentScope={cacheIdentity(repo)}
               member={me}
               state={s}
               kind={dialog.entryKind}
@@ -1325,7 +1397,16 @@ function Workspace({
               onSave={async (e) => {
                 if (
                   await operate(
-                    () => repo.saveEntry(e),
+                    async () => {
+                      await repo.saveEntry(e);
+                      if (e.kind === "activity") {
+                        const activity = s.activity_catalogue.find(
+                          (a) => a.code === e.activity_code,
+                        );
+                        if (activity)
+                          rememberActivity(cacheIdentity(repo), activity);
+                      }
+                    },
                     t("Entry saved.", "Registro guardado."),
                   )
                 ) {
@@ -1369,7 +1450,11 @@ function Workspace({
             />
           )}
           {dialog.kind === "recipe" && (
-            <RecipeDetail recipe={dialog.recipe} language={language} />
+            <RecipeDetail
+              recipe={dialog.recipe}
+              ingredients={s.planning?.ingredients ?? []}
+              language={language}
+            />
           )}
           {dialog.kind === "confirm" && (
             <>

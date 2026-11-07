@@ -1,3 +1,5 @@
+import { IngredientReader } from "../components/ingredient-reader";
+import type { Ingredient } from "../domain/planning";
 import { foodEmoji } from "../domain/presentation";
 import { useEffect, useState } from "react";
 import {
@@ -40,6 +42,10 @@ export function OfflineShell({
     [tab, setTab] = useState<"menu" | "recipes" | "shopping">("shopping"),
     [anchor, setAnchor] = useState(localDay()),
     [member, setMember] = useState(""),
+    [collection, setCollection] = useState<"recipes" | "ingredients">(
+      "recipes",
+    ),
+    [ingredient, setIngredient] = useState<Ingredient | null>(null),
     [recipe, setRecipe] = useState<PlannedRecipe | null>(null),
     [meal, setMeal] = useState<MealPlan | null>(null),
     [query, setQuery] = useState(""),
@@ -325,6 +331,26 @@ export function OfflineShell({
         {tab === "recipes" &&
           (data?.recipes ? (
             <>
+              <div className="button-row">
+                <Button
+                  secondary={collection !== "recipes"}
+                  onClick={() => setCollection("recipes")}
+                >
+                  {t("Recipes", "Recetas")}
+                </Button>
+                <Button
+                  secondary={collection !== "ingredients"}
+                  onClick={() => setCollection("ingredients")}
+                >
+                  {t("Ingredients", "Ingredientes")}
+                </Button>
+              </div>
+              <p className="note">
+                {t(
+                  "Only saved pages are available offline. Reconnect to load more items or uncached details.",
+                  "Sin conexión solo están disponibles las páginas guardadas. Conéctate para cargar más productos o detalles no guardados.",
+                )}
+              </p>
               <label className="search-field">
                 <input
                   type="search"
@@ -341,7 +367,12 @@ export function OfflineShell({
                 />
               </label>
               <div className="recipe-grid">
-                {data.recipes.recipes
+                {(
+                  data.catalogue?.[collection]?.items ??
+                  (collection === "recipes"
+                    ? data.recipes.recipes
+                    : data.recipes.ingredients)
+                )
                   .filter(
                     (r) =>
                       !r.archived &&
@@ -353,7 +384,37 @@ export function OfflineShell({
                     <button
                       className="recipe-card"
                       key={r.id}
-                      onClick={() => setRecipe(r)}
+                      onClick={() => {
+                        if (collection === "recipes") {
+                          const full = data.recipes?.recipes.find(
+                            (f) =>
+                              f.id === r.id &&
+                              (f.revision ?? 1) === (r.revision ?? 1),
+                          );
+                          if (full) setRecipe(full);
+                          else
+                            setNotice(
+                              t(
+                                "Reconnect to load this recipe's details.",
+                                "Conéctate para cargar los detalles de esta receta.",
+                              ),
+                            );
+                        } else {
+                          const full = data.recipes?.ingredients.find(
+                            (f) =>
+                              f.id === r.id &&
+                              (f.revision ?? 1) === (r.revision ?? 1),
+                          );
+                          if (full) setIngredient(full);
+                          else
+                            setNotice(
+                              t(
+                                "Reconnect to load this ingredient's details.",
+                                "Conéctate para cargar los detalles de este ingrediente.",
+                              ),
+                            );
+                        }
+                      }}
                     >
                       <div className="recipe-card-content">
                         <h3>
@@ -361,7 +422,10 @@ export function OfflineShell({
                           {name(r.name)}
                         </h3>
                         <p className="muted">
-                          {r.meal_types
+                          {("meal_types" in r
+                            ? ((r.meal_types as string[]) ?? [])
+                            : []
+                          )
                             .map((m) => mealLabel(m, lang))
                             .join(" · ")}
                         </p>
@@ -388,6 +452,13 @@ export function OfflineShell({
           )}
         </p>
       </main>
+      {ingredient && (
+        <IngredientReader
+          ingredient={ingredient}
+          language={lang}
+          onClose={() => setIngredient(null)}
+        />
+      )}
       {recipe && (
         <Modal title={name(recipe.name)} wide onClose={() => setRecipe(null)}>
           {recipe.ingredient_preparation?.map((p) => (

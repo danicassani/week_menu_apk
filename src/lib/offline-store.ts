@@ -1,3 +1,4 @@
+import { clearRecentActivity } from "./activity-recent";
 import { DomainError } from "../domain/calories";
 import type { HouseholdState, Language, Tab } from "../domain/types";
 import type { MealPlan, PlannedRecipe, Ingredient } from "../domain/planning";
@@ -17,6 +18,16 @@ export const cacheIdentity = (repo: {
   offlineId?: string;
 }) => repo.offlineId ?? repo.accountId;
 export interface OfflineAccount {
+  catalogue?: Partial<
+    Record<
+      "recipes" | "ingredients",
+      {
+        items: import("../domain/catalogue").CatalogueSummary[];
+        more: boolean;
+        saved_at: string;
+      }
+    >
+  >;
   presentation?: import("../domain/presentation").Presentation;
   account_id: string;
   language: Language;
@@ -217,6 +228,7 @@ export async function bindOfflineHousehold(
             old?.account_id === context.account_id)
         ) {
           if (row !== source) next.discarded += row.pending?.length ?? 0;
+          clearRecentActivity(row.account_id);
           store.delete(row.account_id);
           store.put({ account_id: "blocked:" + row.account_id, blocked: true });
         }
@@ -231,6 +243,53 @@ export async function bindOfflineHousehold(
     };
     tx.onabort = tx.onerror = () =>
       reject(new DomainError("offline_storage_unavailable"));
+  });
+}
+export async function cacheCataloguePage(
+  id: string,
+  kind: "recipes" | "ingredients",
+  items: import("../domain/catalogue").CatalogueSummary[],
+  more: boolean,
+) {
+  const saved_at = new Date().toISOString();
+  return mutate(id, (current) => ({
+    ...current,
+    saved_at,
+    recipes: current.recipes ?? { saved_at, recipes: [], ingredients: [] },
+    catalogue: {
+      ...current.catalogue,
+      [kind]: { items: structuredClone(items), more, saved_at },
+    },
+  }));
+}
+export async function cacheCatalogueDetail(
+  id: string,
+  detail: import("../domain/catalogue").CatalogueDetail,
+) {
+  const saved_at = new Date().toISOString();
+  return mutate(id, (current) => {
+    const old = current.recipes ?? { saved_at, recipes: [], ingredients: [] };
+    const recipe =
+      "components" in detail.item ? (detail.item as PlannedRecipe) : null;
+    const ingredients = recipe
+      ? detail.ingredients
+      : [detail.item as Ingredient];
+    return {
+      ...current,
+      saved_at,
+      recipes: {
+        saved_at,
+        recipes: recipe
+          ? [...old.recipes.filter((r) => r.id !== recipe.id), recipe]
+          : old.recipes,
+        ingredients: [
+          ...old.ingredients.filter(
+            (f) => !ingredients.some((i) => i.id === f.id),
+          ),
+          ...ingredients,
+        ],
+      },
+    };
   });
 }
 export async function cacheLoadedView(
@@ -273,8 +332,18 @@ export async function cacheLoadedView(
     if (tab === "recipes" && state.planning)
       next.recipes = {
         saved_at,
-        recipes: structuredClone(state.planning.recipes),
-        ingredients: structuredClone(state.planning.ingredients),
+        recipes: structuredClone([
+          ...(current.recipes?.recipes ?? []).filter(
+            (r) => !state.planning!.recipes.some((i) => i.id === r.id),
+          ),
+          ...state.planning.recipes,
+        ]),
+        ingredients: structuredClone([
+          ...(current.recipes?.ingredients ?? []).filter(
+            (r) => !state.planning!.ingredients.some((i) => i.id === r.id),
+          ),
+          ...state.planning.ingredients,
+        ]),
       };
     if (tab === "shopping" && state.shopping) {
       if (
@@ -399,6 +468,7 @@ export async function dismissDiscarded(id: string) {
   return mutate(id, (current) => ({ ...current, discarded: 0 }));
 }
 export async function purgeOfflineAccount(id: string) {
+  clearRecentActivity(id);
   const db = await openDB();
   return new Promise<void>((resolve, reject) => {
     const tx = db.transaction(STORE, "readwrite"),
@@ -446,6 +516,7 @@ export async function requireDiscardOrSynced(id: string, discard: boolean) {
       };
     };
     tx.oncomplete = () => {
+      clearRecentActivity(id, true);
       emit(id);
       resolve();
     };

@@ -2,6 +2,18 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  catalogue_item_unavailable: [
+    "This item is no longer available. Refresh the collection.",
+    "Este elemento ya no está disponible. Actualiza la colección.",
+  ],
+  invalid_catalogue_cursor: [
+    "The collection changed. Refresh the collection to continue.",
+    "La colección ha cambiado. Actualízala para continuar.",
+  ],
+  invalid_catalogue_query: [
+    "Choose a valid collection and search up to 200 characters.",
+    "Elige una colección válida y busca con un máximo de 200 caracteres.",
+  ],
   planning_update_unavailable: [
     "Meal transfers are temporarily unavailable. Update the app setup and try again.",
     "Los intercambios y pegados no están disponibles temporalmente. Actualiza la configuración de la aplicación e inténtalo de nuevo.",

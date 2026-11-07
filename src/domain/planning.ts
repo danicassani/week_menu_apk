@@ -98,6 +98,7 @@ export interface MealPlan {
   portions: PlannedPortion[];
 }
 export interface PlanningState {
+  complete?: boolean;
   ratings?: {
     recipe_id: string;
     member_id: string;

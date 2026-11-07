@@ -3570,3 +3570,137 @@ html[data-text-size="large"] {
 .recipe-card {
   -webkit-touch-callout: none;
 }
+
+.planner-toolbar,
+.week-navigation,
+.week-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.week-navigation {
+  flex-wrap: nowrap;
+}
+.week-navigation b {
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.week-actions {
+  flex-wrap: nowrap;
+}
+.week-actions .button {
+  min-width: 0;
+  white-space: normal;
+}
+.planner-controls > .check-row {
+  margin-top: 16px;
+}
+.popover-anchor {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+.information-popover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 25;
+  width: min(300px, 70vw);
+  max-height: 50vh;
+  overflow: auto;
+  display: block;
+  padding: 16px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px #0003;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.information-popover > span {
+  display: block;
+}
+.portion-allocation {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.allocation-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-block: 12px;
+}
+.allocation-group > div {
+  max-width: 280px;
+}
+.allocation-pie {
+  width: 100px;
+  height: 100px;
+  display: block;
+}
+.allocation-pie path,
+.allocation-pie circle {
+  stroke: var(--surface);
+  stroke-width: 1;
+}
+.allocation-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.allocation-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.allocation-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+}
+.allocation-legend .information-popover {
+  position: fixed;
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  top: auto;
+  bottom: 24px;
+}
+@media (max-width: 600px) {
+  .activity-selectors {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .planner-toolbar {
+    align-items: flex-start;
+  }
+  .week-navigation {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+}
+.catalogue-footer {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.budget-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.budget-strip > div:first-child {
+  min-width: 0;
+  flex: 1;
+}

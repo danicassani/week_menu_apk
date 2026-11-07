@@ -426,7 +426,13 @@ describe.each([false, true])(
         const views = await db.query<{ relname: string; reloptions: string[] }>(
           "select relname,reloptions from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='app_private' and c.relkind='v'",
         );
-        expect(views.rows).toHaveLength(4);
+        expect(views.rows.map((v) => v.relname).sort()).toEqual([
+          "catalogue_rows",
+          "resolved_food_items",
+          "resolved_food_references",
+          "resolved_saved_recipes",
+          "resolved_substitution_rules",
+        ]);
         for (const view of views.rows)
           expect(view.reloptions).toContain("security_invoker=true");
         const unsafe = await db.query(

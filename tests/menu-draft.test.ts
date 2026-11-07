@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { PreviewRepository } from "../src/lib/repository";
+import { PreviewRepository } from "../src/lib/preview-repository";
 import { suggested } from "../src/pages/planner";
 import { replan, swapDraft, lockKey } from "../src/domain/menu-draft";
 import { addDays } from "../src/domain/dates";

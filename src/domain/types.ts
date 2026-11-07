@@ -144,6 +144,14 @@ export interface Repository {
   householdAccess?(): Promise<HouseholdAccess>;
   createHousehold?(name: string, timezone: string): Promise<void>;
   joinHousehold?(invitation: string, timezone: string): Promise<void>;
+  getPlanningLibrary(): Promise<import("./planning").PlanningState>;
+  cataloguePage(
+    query: import("./catalogue").CatalogueQuery,
+  ): Promise<import("./catalogue").CataloguePage>;
+  catalogueItem(
+    kind: import("./catalogue").CatalogueKind,
+    id: string,
+  ): Promise<import("./catalogue").CatalogueDetail>;
   getShopping(): Promise<ShoppingState>;
   previewShopping(start: string, end: string): Promise<ShoppingPreview>;
   applyShopping(preview: ShoppingPreview): Promise<void>;

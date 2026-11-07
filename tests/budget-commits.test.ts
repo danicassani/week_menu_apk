@@ -1,5 +1,5 @@
 import { it, expect, vi, afterEach } from "vitest";
-import { PreviewRepository } from "../src/lib/repository";
+import { PreviewRepository } from "../src/lib/preview-repository";
 afterEach(() => vi.useRealTimers());
 it("the simulator validates a batch before changing anything and retries retain their original acknowledgement", async () => {
   vi.useFakeTimers();
