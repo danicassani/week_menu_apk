@@ -187,6 +187,11 @@ export interface Repository {
     meal: MealType,
     kcal: number | null,
   ): Promise<void>;
+  saveBudgetOverrides(
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+    operation: string,
+  ): Promise<{ operation_id: string; day: string; revision: number }>;
   leave(): Promise<void>;
   invite(email: string): Promise<void>;
   remove(memberId: string): Promise<void>;

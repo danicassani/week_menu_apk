@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowRight, Info, Check } from "lucide-react";
 import type {
   Budgets,
@@ -561,13 +561,18 @@ export function BudgetForm({
   busy,
   initialDay,
   onSave,
+  failureMessage,
+  onRefresh,
 }: {
   state: HouseholdState;
   member: Member;
   initialDay: string;
+  failureMessage?: string;
+  onRefresh?: () => void;
   onSave: (
     day: string,
     changes: Partial<Record<MealType, number | null>>,
+    operation: string,
   ) => void;
 } & Base) {
   const t = translator(language);
@@ -587,6 +592,13 @@ export function BudgetForm({
     [budgets, setBudgets] = useState(() => valuesFor(initialDay)),
     [original, setOriginal] = useState(() => valuesFor(initialDay));
   const changed = meals.some((meal) => budgets[meal] !== original[meal]);
+  const attempt = useRef<{ key: string; operation: string } | null>(null);
+  const submit = (changes: Partial<Record<MealType, number | null>>) => {
+    const key = JSON.stringify([day, changes]);
+    if (attempt.current?.key !== key)
+      attempt.current = { key, operation: crypto.randomUUID() };
+    onSave(day, changes, attempt.current.operation);
+  };
   const existing = state.budget_overrides.filter(
     (b) => b.member_id === member.id && b.day === day,
   );
@@ -595,8 +607,7 @@ export function BudgetForm({
       onSubmit={(e) => {
         e.preventDefault();
         if (changed)
-          onSave(
-            day,
+          submit(
             Object.fromEntries(
               meals
                 .filter((meal) => budgets[meal] !== original[meal])
@@ -663,6 +674,21 @@ export function BudgetForm({
           "Calorías en kcal. Deja un campo vacío para usar tu valor habitual.",
         )}
       </p>
+      {failureMessage && (
+        <div className="note warning budget-save-error" role="alert">
+          <span>{failureMessage}</span>
+          {onRefresh && (
+            <button
+              type="button"
+              className="text-link"
+              disabled={busy}
+              onClick={onRefresh}
+            >
+              {t("Check latest data", "Comprobar datos actuales")}
+            </button>
+          )}
+        </div>
+      )}
       <div className="button-row">
         <Button busy={busy} disabled={!changed} type="submit">
           {t("Save overrides", "Guardar ajustes")}
@@ -673,8 +699,7 @@ export function BudgetForm({
             busy={busy}
             type="button"
             onClick={() =>
-              onSave(
-                day,
+              submit(
                 Object.fromEntries(existing.map((b) => [b.meal_type, null])),
               )
             }

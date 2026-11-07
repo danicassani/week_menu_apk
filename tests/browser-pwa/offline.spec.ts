@@ -584,3 +584,42 @@ test("public deployment auditor accepts the entire built shell including canonic
     report.checks.some((c: { path: string }) => c.path.endsWith(".woff2")),
   ).toBe(true);
 });
+
+test("offline expiry warns about stale quantities and preserves pending checks across reload", async ({
+  page,
+  context,
+}) => {
+  await page.clock.install({ time: new Date("2026-11-04T23:55:00Z") });
+  await enter(page);
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Menu", exact: true }).click();
+  await page.getByRole("button", { name: "Suggest week", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Approve suggestions & save", exact: true })
+    .click();
+  await nav.getByRole("button", { name: "Shopping", exact: true }).click();
+  await expect(page.getByRole("checkbox").first()).toBeEnabled();
+  await context.setOffline(true);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Your household, offline", exact: true }),
+  ).toBeVisible();
+  const manual = page.getByRole("checkbox", {
+    name: "Coffee for the household · 2 packs",
+    exact: true,
+  });
+  await manual.click();
+  await expect(manual).toBeChecked();
+  await page.clock.fastForward(6 * 60_000);
+  await expect(
+    page.getByText(
+      "Saved quantities may include expired meals. Reconnect to refresh them; your pending checks are kept.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await page.reload();
+  await expect(manual).toBeChecked();
+  await expect(
+    page.getByText("Saved on this device · pending sync", { exact: true }),
+  ).toBeVisible();
+});

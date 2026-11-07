@@ -15,11 +15,15 @@ export function syncShopping(
     "accountId" | "offlineId" | "checkShopping" | "getShopping"
   >,
   online = () => typeof navigator === "undefined" || navigator.onLine,
+  forceRefresh = false,
 ): Promise<void> {
   const id = cacheIdentity(repo),
     scope = offlineContext(id);
   const existing = running.get(id);
-  if (existing) return existing;
+  if (existing)
+    return forceRefresh
+      ? existing.then(() => syncShopping(repo, online, true))
+      : existing;
   const task = (async () => {
     if (!online()) return;
     for (;;) {
@@ -31,7 +35,8 @@ export function syncShopping(
         (a, b) => a.sequence - b.sequence,
       )[0];
       if (!op) {
-        if (current.needs_refresh) {
+        if (current.needs_refresh || forceRefresh) {
+          forceRefresh = false;
           await cacheShopping(
             id,
             await repo.getShopping(),
@@ -54,7 +59,7 @@ export function syncShopping(
         const ack = await repo.checkShopping(op);
         if (ack.operation_id !== op.id || ack.item_id !== op.item_id)
           throw new DomainError("invalid_sync_receipt");
-        await acknowledgeCheck(id, op.id, ack.status === "removed");
+        await acknowledgeCheck(id, op.id, ack.status === "removed", ack);
       } catch (e) {
         if (
           e instanceof Error &&

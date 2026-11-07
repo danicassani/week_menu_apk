@@ -7,6 +7,7 @@ Status: product scope confirmed by the user, including D1–D3. Implementation p
 - [Product specification](specification.md): interactions, calculations, permissions, edge cases and acceptance criteria.
 - [Technical design](technical-design.md): current-code findings, data and API changes, local state, transactions and migration strategy.
 - [Milestones and verification](milestones.md): delivery order, review checkpoints and release gates.
+- [Milestone 1 implementation](milestone-1.md): budget acknowledgements, automatic shopping expiry, migration 13 and verification.
 
 The baseline is the current version-two application, including [subsequent menu and shopping changes](../version-2/menu-controls.md). Earlier specifications describe earlier decisions; this package supersedes them only where explicitly stated. No production deployment, database migration or historical record is changed by this documentation.
 
@@ -23,7 +24,7 @@ The baseline is the current version-two application, including [subsequent menu 
 | V3-07 | Recipe-card long press/right click to copy into Menu and activate paste destinations                 | Requested                                                             |
 | V3-08 | Catalogue creation actions at the bottom, newest 50 entries initially and centered plus to load more | Confirmed; chronological ordering uses the documented working default |
 | V3-09 | Repair responsive layout of the weekly suggestion controls                                           | Requested                                                             |
-| V3-10 | Fix false failure messages after personal budget changes were saved                                  | Reported bug; cause requires reproduction                             |
+| V3-10 | Fix false failure messages after personal budget changes were saved                                  | Reproduced save/refresh path; milestone 1 implemented for review      |
 | V3-11 | Move the assumed-intake explanation into an information control beside the budget pencil             | Requested                                                             |
 
 ## Confirmed decisions

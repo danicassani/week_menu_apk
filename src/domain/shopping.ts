@@ -1,6 +1,55 @@
 import Decimal from "decimal.js";
 import { DomainError } from "./calories";
 import type { Ingredient, MealPlan, Names } from "./planning";
+import type { HouseholdState } from "./types";
+import { dayCutoff } from "./dates";
+export function shoppingCutoff(
+  state: Pick<HouseholdState, "members" | "meal_locks">,
+  day: string,
+) {
+  const lock = state.meal_locks.find((l) => l.day === day);
+  if (lock?.closed) return -Infinity;
+  return Math.min(
+    lock ? Date.parse(lock.cutoff) : Infinity,
+    ...state.members
+      .filter((m) => m.status === "active")
+      .map((m) => Date.parse(dayCutoff(day, m.time_zone))),
+  );
+}
+export function eligibleShoppingPlans(
+  plans: MealPlan[],
+  state: Pick<HouseholdState, "members" | "meal_locks">,
+  now = Date.now(),
+) {
+  return plans.filter((p) => shoppingCutoff(state, p.day) > now);
+}
+export function shoppingValidUntil(
+  plans: MealPlan[],
+  state: Pick<HouseholdState, "members" | "meal_locks">,
+  start: string | null,
+  end: string | null,
+  now = Date.now(),
+) {
+  const next = Math.min(
+    ...plans
+      .filter((p) => start && end && p.day >= start && p.day <= end)
+      .map((p) => shoppingCutoff(state, p.day))
+      .filter((c) => c > now),
+  );
+  return Number.isFinite(next) ? new Date(next).toISOString() : null;
+}
+export function shoppingNeedsRefresh(
+  shopping: ShoppingState,
+  now = Date.now(),
+) {
+  return (
+    shopping.items.some((i) => i.source === "generated") &&
+    (shopping.valid_until === undefined ||
+      (shopping.valid_until !== null &&
+        (!Number.isFinite(Date.parse(shopping.valid_until)) ||
+          Date.parse(shopping.valid_until) <= now)))
+  );
+}
 export interface ShoppingItem {
   id: string;
   source: "generated" | "manual";
@@ -27,6 +76,8 @@ export interface ShoppingRequirement {
   quantity_basis: string;
 }
 export interface ShoppingState {
+  observed_at?: string;
+  valid_until?: string | null;
   observation_revision: number;
   start_date: string | null;
   end_date: string | null;

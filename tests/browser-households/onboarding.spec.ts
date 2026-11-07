@@ -7,7 +7,17 @@ const context = {
   membership_id: "70000000-0000-0000-0000-000000000003",
   legacy_binding: false,
 };
-async function signedIn(page: Page, revoked = false, offlineStartup = false) {
+async function signedIn(
+  page: Page,
+  revoked = false,
+  offlineStartup = false,
+  budget?: {
+    committed: boolean;
+    failReads: boolean;
+    reject?: boolean;
+    loseAck?: boolean;
+  },
+) {
   const user = {
     id: context.account_id,
     email: "test@example.com",
@@ -60,6 +70,36 @@ async function signedIn(page: Page, revoked = false, offlineStartup = false) {
     const args = request.postDataJSON() ?? {};
     requests.push({ name: rpc, args });
     let data: unknown = null;
+    if (budget && rpc === "save_my_meal_budgets") {
+      if (budget.reject) {
+        await route.fulfill({
+          status: 400,
+          json: { code: "P0001", message: "invalid_budgets" },
+        });
+        return;
+      }
+      budget.committed = true;
+      if (budget.loseAck) {
+        budget.loseAck = false;
+        await route.abort("failed");
+        return;
+      }
+      await route.fulfill({
+        json: { operation_id: args.p_operation, day: args.p_day, revision: 1 },
+      });
+      return;
+    }
+    if (
+      budget?.committed &&
+      budget.failReads &&
+      rpc === "get_household_snapshot"
+    ) {
+      await route.fulfill({
+        status: 500,
+        json: { code: "XX000", message: "snapshot temporarily unavailable" },
+      });
+      return;
+    }
     if (rpc === "get_household_access")
       data = {
         active: active ? context : null,
@@ -119,6 +159,49 @@ async function signedIn(page: Page, revoked = false, offlineStartup = false) {
         },
         shopping: emptyShopping(),
       };
+    if (budget && rpc === "get_household_snapshot") {
+      const s = data as any;
+      const profile = {
+        name: "Test person",
+        age: 32,
+        sex: "male",
+        height_cm: 178,
+        weight_kg: 80,
+        activity_level: "light",
+        goal: "maintain",
+        target_weight_kg: null,
+        target_date: null,
+        diet: "omnivore",
+        excluded_ingredients: [],
+        language: "en",
+      };
+      s.members[0] = { ...s.members[0], onboarded: true, profile };
+      s.targets = [
+        {
+          id: "target",
+          member_id: context.membership_id,
+          effective_date: "2026-01-01",
+          created_at: "2026-01-01T00:00:00Z",
+          inputs: profile,
+          resting_kcal: 1800,
+          usual_kcal: 2200,
+          daily_kcal: 2200,
+          deficit_kcal: 0,
+          budgets: { breakfast: 400, lunch: 650, dinner: 650 },
+        },
+      ];
+      s.budget_overrides = budget.committed
+        ? [
+            {
+              member_id: context.membership_id,
+              day: "2026-11-04",
+              meal_type: "breakfast",
+              kcal: 410,
+            },
+          ]
+        : [];
+    }
+    if (rpc === "get_shopping_state") data = emptyShopping();
     await route.fulfill({ json: data });
   });
   await page.goto("/");
@@ -235,6 +318,55 @@ test("shopping range failures name the action and keep specific server guidance"
   );
 });
 
+test("a committed budget survives a failed refresh and Refresh does not repeat the write", async ({
+  page,
+}, testInfo) => {
+  await page.clock.setFixedTime(new Date("2026-11-04T12:00:00Z"));
+  const scenario = { committed: false, failReads: true };
+  const requests = await signedIn(page, false, false, scenario);
+  await page
+    .getByRole("button", { name: "Join Invited home", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Adjust meal budgets", exact: true })
+    .click();
+  await page
+    .getByRole("spinbutton", { name: "Breakfast kcal", exact: true })
+    .fill("410");
+  await page
+    .getByRole("button", { name: "Save overrides", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(
+    page.getByText(
+      "Changes saved. The latest view could not be loaded. Refresh to update it.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: `test-results/v3-budget-refresh-${testInfo.project.name}.png`,
+  });
+  expect(scenario.committed).toBe(true);
+  scenario.failReads = false;
+  await page
+    .getByRole("button", { name: "Refresh saved changes", exact: true })
+    .click();
+  expect(
+    requests.filter((r) => r.name === "save_my_meal_budgets"),
+  ).toHaveLength(1);
+  await page
+    .getByRole("button", { name: "Adjust meal budgets", exact: true })
+    .click();
+  await expect(
+    page.getByRole("spinbutton", { name: "Breakfast kcal", exact: true }),
+  ).toHaveValue("410");
+});
+
 test("offline startup never displays another account's previously active shopping cache", async ({
   page,
 }) => {
@@ -316,4 +448,54 @@ test("offline startup never displays another account's previously active shoppin
     false,
   );
   expect(requests).toEqual([]);
+});
+
+test("a rejected budget keeps the draft, while a lost acknowledgement retries the same operation", async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date("2026-11-04T12:00:00Z"));
+  const scenario = {
+    committed: false,
+    failReads: false,
+    reject: true,
+    loseAck: false,
+  };
+  const requests = await signedIn(page, false, false, scenario);
+  await page
+    .getByRole("button", { name: "Join Invited home", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Adjust meal budgets", exact: true })
+    .click();
+  const breakfast = page.getByRole("spinbutton", {
+    name: "Breakfast kcal",
+    exact: true,
+  });
+  await breakfast.fill("410");
+  const save = page.getByRole("button", {
+    name: "Save overrides",
+    exact: true,
+  });
+  await save.click();
+  await expect(page.getByRole("alert")).toContainText(
+    "positive calorie budget",
+  );
+  await expect(breakfast).toHaveValue("410");
+  expect(scenario.committed).toBe(false);
+  scenario.reject = false;
+  scenario.loseAck = true;
+  await save.click();
+  await expect(page.getByRole("alert")).toContainText(
+    "could not confirm whether",
+  );
+  await expect(breakfast).toHaveValue("410");
+  expect(scenario.committed).toBe(true);
+  await page
+    .getByRole("button", { name: "Check latest data", exact: true })
+    .click();
+  await save.click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const writes = requests.filter((r) => r.name === "save_my_meal_budgets");
+  expect(writes).toHaveLength(3);
+  expect(new Set(writes.map((r) => r.args.p_operation)).size).toBe(1);
 });

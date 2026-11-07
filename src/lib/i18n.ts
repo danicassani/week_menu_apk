@@ -2,6 +2,14 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  mutation_outcome_unknown: [
+    "We could not confirm whether the change was saved. Refresh to check before trying again.",
+    "No se ha podido confirmar si el cambio se guardó. Actualiza para comprobarlo antes de intentarlo de nuevo.",
+  ],
+  budget_update_unavailable: [
+    "Daily budget updates are temporarily unavailable. Try again after the app is updated.",
+    "Los cambios de presupuesto no están disponibles temporalmente. Inténtalo tras actualizar la aplicación.",
+  ],
   invalid_shopping_range: [
     "Choose a valid shopping date range.",
     "Elige un intervalo de fechas válido.",

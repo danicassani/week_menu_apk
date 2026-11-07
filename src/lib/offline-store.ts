@@ -1,7 +1,11 @@
 import { DomainError } from "../domain/calories";
 import type { HouseholdState, Language, Tab } from "../domain/types";
 import type { MealPlan, PlannedRecipe, Ingredient } from "../domain/planning";
-import type { ShoppingState, CheckOperation } from "../domain/shopping";
+import type {
+  ShoppingState,
+  CheckOperation,
+  CheckReceipt,
+} from "../domain/shopping";
 import {
   offlineContext,
   offlineKey,
@@ -278,11 +282,34 @@ export async function cacheLoadedView(
         (state.shopping.observation_revision ?? 0) >=
           (current.shopping.observation_revision ?? 0)
       )
-        next.shopping = structuredClone(state.shopping);
+        next.shopping = mergeShopping(current.shopping, state.shopping);
       next.shopping_saved_at = saved_at;
     }
     return next;
   });
+}
+function mergeShopping(
+  current: ShoppingState | undefined,
+  incoming: ShoppingState,
+): ShoppingState {
+  if (
+    current &&
+    (current.observation_revision ?? 0) > (incoming.observation_revision ?? 0)
+  )
+    return current;
+  const next = structuredClone(incoming);
+  next.items = next.items.map((item) => {
+    const old = current?.items.find((i) => i.id === item.id);
+    return old && old.checked_revision > item.checked_revision
+      ? {
+          ...item,
+          checked: old.checked,
+          increased: old.increased,
+          checked_revision: old.checked_revision,
+        }
+      : item;
+  });
+  return next;
 }
 export async function cacheShopping(
   id: string,
@@ -291,12 +318,7 @@ export async function cacheShopping(
 ) {
   return mutate(id, (current) => ({
     ...current,
-    shopping:
-      !current.shopping ||
-      (shopping.observation_revision ?? 0) >=
-        (current.shopping.observation_revision ?? 0)
-        ? structuredClone(shopping)
-        : current.shopping,
+    shopping: mergeShopping(current.shopping, shopping),
     shopping_saved_at: new Date().toISOString(),
     needs_refresh:
       generation === current.ack_generation ? false : current.needs_refresh,
@@ -336,11 +358,36 @@ export async function acknowledgeCheck(
   id: string,
   operation_id: string,
   removed: boolean,
+  receipt?: CheckReceipt,
 ) {
   return mutate(id, (current) => {
     const exists = current.pending.some((op) => op.id === operation_id);
+    const shopping =
+      current.shopping && receipt && exists
+        ? {
+            ...current.shopping,
+            items: current.shopping.items.flatMap((item) => {
+              if (item.id !== receipt.item_id) return [item];
+              if (removed) return [];
+              if (
+                receipt.item_revision === null ||
+                receipt.item_revision < item.checked_revision
+              )
+                return [item];
+              return [
+                {
+                  ...item,
+                  checked: receipt.checked,
+                  increased: receipt.checked ? false : item.increased,
+                  checked_revision: receipt.item_revision,
+                },
+              ];
+            }),
+          }
+        : current.shopping;
     return {
       ...current,
+      shopping,
       pending: current.pending.filter((op) => op.id !== operation_id),
       discarded: current.discarded + (exists && removed ? 1 : 0),
       ack_generation: (current.ack_generation ?? 0) + (exists ? 1 : 0),

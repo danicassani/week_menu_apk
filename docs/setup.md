@@ -2,6 +2,8 @@
 
 Version-one milestones 1–3 are implemented. For the current v2 release, see the [v2 release verification report](version-2/milestone-4.md) and its ordered migration prerequisites through migration 11, including the corrected migration 10. The shopping date-range button additionally requires [migration 12](../supabase/migrations/202611060012_shopping_date_range.sql), applied before deploying that client update. Existing projects should apply only pending migrations; do not repeat successful scripts. For an existing deployment, follow the incremental [planning rollout](milestone-2.md#database-rollout), then the [shopping/PWA rollout](milestone-3.md#existing-project-rollout). Read [the review notes](milestone-1.md) before connecting real household data.
 
+For version 3 milestone 1, apply [migration 13](../supabase/migrations/202611070013_budget_commits_and_shopping_expiry.sql) after 1–12 and before deploying the matching client. See [the milestone report](version-3/milestone-1.md) for budget acknowledgements, shopping expiry and offline behavior.
+
 ## Local development
 
 Use Node.js 24 LTS and npm. From the repository root:

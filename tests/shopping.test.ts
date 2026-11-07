@@ -5,6 +5,9 @@ import {
   applyShoppingPreview,
   emptyShopping,
   overlayPending,
+  eligibleShoppingPlans,
+  shoppingValidUntil,
+  shoppingNeedsRefresh,
   type ShoppingItem,
 } from "../src/domain/shopping";
 import {
@@ -17,6 +20,8 @@ import type { Profile } from "../src/domain/types";
 import food from "../content/starter/ingredients.json";
 import book from "../content/starter/recipes.json";
 import substitutions from "../content/starter/substitutions.json";
+import { dayCutoff, addDays } from "../src/domain/dates";
+import type { HouseholdState } from "../src/domain/types";
 const ingredients = food.ingredients as unknown as Ingredient[],
   r = book.recipes.find((r) => r.id === "m01")! as unknown as PlannedRecipe;
 const profile: Profile = {
@@ -61,6 +66,56 @@ const manual: ShoppingItem = {
   content_revision: 1,
   checked_revision: 1,
 };
+it("expires at the first member's exact midnight and marks unprovable offline quantities for refresh", () => {
+  const scope = {
+    members: [
+      { status: "active", time_zone: "UTC" },
+      { status: "active", time_zone: "Pacific/Auckland" },
+    ],
+    meal_locks: [],
+  } as unknown as HouseholdState;
+  const cutoff = Date.parse(dayCutoff(meal.day, "Pacific/Auckland"));
+  const future = { ...meal, day: addDays(meal.day, 1) };
+  expect(eligibleShoppingPlans([meal, future], scope, cutoff - 1)).toHaveLength(
+    2,
+  );
+  expect(eligibleShoppingPlans([meal, future], scope, cutoff)).toEqual([
+    future,
+  ]);
+  expect(
+    shoppingValidUntil([meal, future], scope, meal.day, future.day, cutoff),
+  ).toBe(dayCutoff(future.day, "Pacific/Auckland").replace("Z", ".000Z"));
+  const populated = applyShoppingPreview(emptyShopping(), {
+    start_date: meal.day,
+    end_date: meal.day,
+    content_revision: 0,
+    source_fingerprint: "test",
+    changes: shoppingChanges(emptyShopping(), required()),
+  });
+  expect(
+    shoppingNeedsRefresh(
+      { ...populated, valid_until: new Date(cutoff).toISOString() },
+      cutoff - 1,
+    ),
+  ).toBe(false);
+  expect(
+    shoppingNeedsRefresh(
+      { ...populated, valid_until: new Date(cutoff).toISOString() },
+      cutoff,
+    ),
+  ).toBe(true);
+  expect(shoppingNeedsRefresh(populated, cutoff)).toBe(true);
+  expect(
+    shoppingNeedsRefresh({ ...populated, valid_until: "invalid" }, cutoff),
+  ).toBe(true);
+  expect(
+    shoppingNeedsRefresh({ ...emptyShopping(), items: [manual] }, cutoff),
+  ).toBe(false);
+  scope.meal_locks = [
+    { day: future.day, cutoff: dayCutoff(future.day, "UTC"), closed: true },
+  ];
+  expect(eligibleShoppingPlans([future], scope, cutoff)).toEqual([]);
+});
 it("aggregates personal final portions, selected dessert and side quantities once", () => {
   const rows = required();
   const total = meal.portions
