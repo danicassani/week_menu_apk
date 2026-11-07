@@ -39,6 +39,12 @@ import { mealLabel, translator } from "../lib/i18n";
 import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
 
 export type ViewProps = {
+  clipboard: import("../domain/planning-transfer").PlanningClipboard | null;
+  setClipboard: (
+    next: import("../domain/planning-transfer").PlanningClipboard | null,
+  ) => void;
+  menuAnchor: string | undefined;
+  setMenuAnchor: (day: string) => void;
   repository: import("../domain/types").Repository;
   operate: (
     task: () => Promise<void>,

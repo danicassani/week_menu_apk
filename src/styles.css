@@ -3521,3 +3521,52 @@ html[data-text-size="large"] {
   display: block;
   margin-top: 8px;
 }
+
+/* Planning transfers keep labels available to assistive technology while using
+   the same outline icon controls as the suggestion preview. */
+.meal-transfer-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.meal-transfer-actions:empty {
+  display: none;
+}
+.planning-clipboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin: 16px 0;
+}
+.planning-clipboard > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.planning-clipboard > button {
+  flex-shrink: 0;
+}
+.transfer-review-meal {
+  padding-block: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.transfer-review-meal details {
+  margin-block: 8px;
+}
+.transfer-review-meal summary {
+  cursor: pointer;
+}
+.transfer-empty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 8px;
+}
+.recipe-card {
+  -webkit-touch-callout: none;
+}

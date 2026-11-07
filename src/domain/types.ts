@@ -148,6 +148,14 @@ export interface Repository {
   previewShopping(start: string, end: string): Promise<ShoppingPreview>;
   applyShopping(preview: ShoppingPreview): Promise<void>;
   setShoppingRange(start: string, end: string): Promise<void>;
+  previewTransfer(
+    request: import("./planning-transfer").TransferRequest,
+  ): Promise<import("./planning-transfer").TransferPreview>;
+  applyTransfer(
+    request: import("./planning-transfer").TransferRequest,
+    preview: import("./planning-transfer").TransferPreview,
+    overwrite: boolean,
+  ): Promise<void>;
   saveManualItem(
     id: string,
     label: string,
