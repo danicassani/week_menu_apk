@@ -7,6 +7,7 @@ export interface CatalogueQuery {
   cursor?: string | null;
 }
 export interface CatalogueSummary {
+  banned?: boolean;
   id: string;
   name: Names;
   emoji?: string;

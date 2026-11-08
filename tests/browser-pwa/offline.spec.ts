@@ -746,3 +746,38 @@ test("V4 cached recipe readers and ingredient searches use the same clear labels
     page.getByRole("dialog", { name: "Eggs", exact: true }),
   ).toBeVisible();
 });
+test("vetoed recipes remain readable and dimmed in the saved offline catalogue", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Recipes", exact: true }).click();
+  await page
+    .getByRole("searchbox", { name: "Search collection" })
+    .fill("Apple and ginger porridge");
+  await page.locator(".recipe-card").click();
+  await page.getByRole("button", { name: "Veto recipe", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Remove veto", exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".recipe-card")).toHaveClass(/is-vetoed/);
+  await context.setOffline(true);
+  await page.reload();
+  await page
+    .getByRole("navigation", { name: "Offline navigation" })
+    .getByRole("button", { name: "Recipes", exact: true })
+    .click();
+  await page
+    .getByRole("searchbox", { name: "Search saved recipes" })
+    .fill("Apple and ginger porridge");
+  await expect(page.locator(".recipe-card")).toHaveClass(/is-vetoed/);
+  await page.locator(".recipe-card").click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Vetoed for household suggestions",
+  );
+  await expect(
+    page.getByRole("button", { name: "Remove veto", exact: true }),
+  ).toHaveCount(0);
+});

@@ -187,6 +187,18 @@ export class SupabaseRepository implements Repository {
       p_cursor: q.cursor ?? null,
     });
   }
+  setRecipeVeto(recipe: PlannedRecipe, banned: boolean) {
+    return this.rpc<PlannedRecipe>(
+      "set_recipe_veto",
+      {
+        p_recipe_id: recipe.id,
+        p_banned: banned,
+        p_revision: recipe.veto_revision ?? 0,
+      },
+      true,
+      true,
+    );
+  }
   catalogueItem(kind: CatalogueKind, id: string) {
     return this.rpc<CatalogueDetail>("get_catalogue_item", {
       p_kind: kind,

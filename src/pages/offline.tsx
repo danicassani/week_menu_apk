@@ -402,7 +402,7 @@ export function OfflineShell({
                   )
                   .map((r) => (
                     <button
-                      className="recipe-card"
+                      className={`recipe-card${collection === "recipes" && "banned" in r && r.banned ? " is-vetoed" : ""}`}
                       key={r.id}
                       onClick={() => {
                         if (collection === "recipes") {
@@ -442,6 +442,13 @@ export function OfflineShell({
                           {collection === "ingredients"
                             ? ingredientText(r, lang)
                             : name(r.name)}
+                          {collection === "recipes" &&
+                            "banned" in r &&
+                            r.banned && (
+                              <span className="pill">
+                                {t("Vetoed", "Vetada")}
+                              </span>
+                            )}
                         </h3>
                         <p className="muted">
                           {("meal_types" in r

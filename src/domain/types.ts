@@ -161,6 +161,10 @@ export interface Repository {
   cataloguePage(
     query: import("./catalogue").CatalogueQuery,
   ): Promise<import("./catalogue").CataloguePage>;
+  setRecipeVeto(
+    recipe: import("./planning").PlannedRecipe,
+    banned: boolean,
+  ): Promise<import("./planning").PlannedRecipe>;
   catalogueItem(
     kind: import("./catalogue").CatalogueKind,
     id: string,

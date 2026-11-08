@@ -59,6 +59,14 @@ export function RecipeContent({
       <p className="muted">
         {recipeServingCaption(recipe.reference_servings, language)}
       </p>
+      {recipe.banned && (
+        <p className="note">
+          {t(
+            "Vetoed for household suggestions. Saved meals are kept.",
+            "Vetada para las sugerencias del hogar. Se conservan las comidas guardadas.",
+          )}
+        </p>
+      )}
       {recipe.archived && (
         <p className="note">{t("Archived recipe", "Receta archivada")}</p>
       )}

@@ -2,6 +2,7 @@
 
 Household meal-planning PWA: individual breakfasts, shared lunches/dinners with personal portions, calorie budgets, and one shared shopping list. English and Spanish; minimalistic design with seven device-local colour families and light/dark modes.
 
+- [Household recipe vetoes](docs/recipe-vetoes.md)
 - [Version 4 milestone 4: themes and release review](docs/version-4/milestone-4.md)
 - [Version 4 requested backlog](docs/version-4/README.md)
 - [Product specification](docs/specification.md)

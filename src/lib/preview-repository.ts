@@ -479,6 +479,24 @@ export class PreviewRepository implements Repository {
       revision: this.serial,
     });
   }
+  async setRecipeVeto(recipe: PlannedRecipe, banned: boolean) {
+    this.me();
+    const current = this.library.recipes.find((r) => r.id === recipe.id);
+    if (!current) throw new DomainError("catalogue_item_unavailable");
+    if ((current.veto_revision ?? 0) !== (recipe.veto_revision ?? 0)) {
+      if (
+        current.veto_revision === (recipe.veto_revision ?? 0) + 1 &&
+        current.banned === banned
+      )
+        return structuredClone(current);
+      throw new DomainError("stale_content");
+    }
+    current.banned = banned;
+    current.veto_revision = (current.veto_revision ?? 0) + 1;
+    this.serial++;
+    this.persistDemo();
+    return structuredClone(current);
+  }
   async catalogueItem(
     kind: CatalogueKind,
     id: string,
@@ -534,6 +552,7 @@ export class PreviewRepository implements Repository {
         emoji: i.emoji,
         revision: i.revision ?? 1,
         archived: !!i.archived,
+        banned: (i as PlannedRecipe).banned === true,
         meal_types: (i as PlannedRecipe).meal_types,
         nutrition_per_100g: (i as Ingredient).nutrition_per_100g,
       })),

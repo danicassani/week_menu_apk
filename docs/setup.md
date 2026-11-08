@@ -1,6 +1,6 @@
 # Run, configure and verify the app
 
-All four version-four implementation milestones are ready for review; see the [V4 release report](version-4/milestone-4.md). The current frontend requires successful migrations 1–18; milestone 4 adds no SQL or environment variable. Existing projects should apply only pending migrations and must not repeat successful scripts. Earlier milestone reports below retain the incremental rollout details.
+All four version-four implementation milestones are ready for review; see the [V4 release report](version-4/milestone-4.md). The current frontend requires successful migrations 1–19, including the household recipe-veto extension; milestone 4 itself added no SQL or environment variable. Existing projects should apply only pending migrations and must not repeat successful scripts. Earlier milestone reports below retain the incremental rollout details.
 
 For version 3 milestone 1, apply [migration 13](../supabase/migrations/202611070013_budget_commits_and_shopping_expiry.sql) after 1–12 and before deploying the matching client. See [the milestone report](version-3/milestone-1.md) for budget acknowledgements, shopping expiry and offline behavior.
 
@@ -13,6 +13,8 @@ For version 3 milestone 3, apply [migration 15](../supabase/migrations/202611070
 For version 4 milestone 2, apply [migration 17](../supabase/migrations/202611080017_upcoming_shopping.sql) after 1–16 and before deploying the matching client. It makes all upcoming meals authoritative for shopping, including calls from older date-range clients, and adds household egg purchasing estimates. See [the rollout and offline compatibility report](version-4/milestone-2.md). Only apply pending migrations as the project administrator; no new environment variable is needed.
 
 For version 4 milestone 3, apply [migration 18](../supabase/migrations/202611080018_display_name_search.sql) after 1–17 and before deploying the matching frontend. It adds shorter ingredient names as catalogue search aliases while preserving original/private content. See [the presentation and compatibility report](version-4/milestone-3.md). No starter release or environment change is required.
+
+For household recipe vetoes, apply [migration 19](../supabase/migrations/202611080019_recipe_vetoes.sql) after 1–18 and before deploying the matching frontend. It adds an isolated household preference while preserving starter content and saved meals. See [the behavior and rollout report](recipe-vetoes.md).
 
 ## Local development
 
