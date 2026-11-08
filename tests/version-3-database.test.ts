@@ -652,9 +652,10 @@ it("normalizes corrections from recorded references, preserves personal context,
     false,
   );
   await rpc("set_shopping_date_range", [d, d]);
-  expect((await shopping()).items.every((i) => i.source === "manual")).toBe(
-    true,
-  );
+  const remaining = await shopping();
+  expect(remaining.scope).toBe("upcoming");
+  expect(remaining.contributions!.some((c) => c.day === d)).toBe(false);
+  expect(remaining.items.some((i) => i.source === "generated")).toBe(true); // the other future date remains
   expect(await rpc("get_historical_corrections", [d])).toHaveLength(2);
 });
 it("a revoked editor cannot reuse a correction credential or read its receipt", async () => {
@@ -759,4 +760,183 @@ it("historical recipe replacements and restaurant portions use trusted reference
   expect((await shopping()).items.every((i) => i.source === "manual")).toBe(
     true,
   );
+});
+it("V4 shopping includes multiple future weeks and legacy ranges cannot narrow it; egg settings are scoped and preserve nutrition", async () => {
+  const current = await snapshot();
+  await rpc("save_my_profile", [
+    profile,
+    current.members.find((m) => m.id === a)!.revision,
+  ]);
+  const lib = await rpc<PlanningState>("get_planning_library"),
+    r = lib.recipes.find(
+      (r) =>
+        r.meal_types.includes("breakfast") &&
+        !r.archived &&
+        r.components.some((c) =>
+          c.ingredients.some((i) => i.ingredient_id === "egg"),
+        ),
+    )!;
+  const d = addDays(day, 80),
+    later = addDays(d, 21),
+    portion = makePortion(
+      r,
+      a,
+      profile,
+      400,
+      false,
+      lib.ingredients,
+      lib.substitutions,
+    );
+  const plans = [d, later].map((day) => ({
+    day,
+    type: "breakfast",
+    revision: 0,
+    shared_recipe_id: null,
+    portions: [portion],
+  }));
+  await rpc("apply_meal_plans", [plans, lib.revision, false]);
+  const initial = await shopping();
+  expect(initial.scope).toBe("upcoming");
+  expect(initial.contributions_complete).toBe(true);
+  measurements.upcoming = {
+    bytes: Buffer.byteLength(JSON.stringify(initial)),
+    days: initial.contributions!.length,
+    rows: initial.items.length,
+  };
+  expect(initial.contributions!.map((c) => c.day)).toEqual(
+    expect.arrayContaining([d, later]),
+  );
+  const eggs = initial.items.find((i) => i.ingredient_id === "egg")!;
+  expect(eggs.quantity).toBe(
+    portion.lines.find((l) => l.ingredient_id === "egg")!.grams * 2,
+  );
+  expect(eggs.purchasing_unit).toMatchObject({
+    unit: "egg",
+    grams_per_unit: 50,
+    estimated: true,
+  });
+  const manual = crypto.randomUUID();
+  await rpc("save_manual_shopping_item", [manual, "Soap", "1", 0]);
+  await rpc("set_shopping_checked", [crypto.randomUUID(), manual, true]);
+  await rpc("set_shopping_date_range", [d, d]);
+  expect((await shopping()).items.find((i) => i.id === eggs.id)!.quantity).toBe(
+    eggs.quantity,
+  );
+  const preview = await rpc<any>("preview_shopping_list", [
+    addDays(later, 30),
+    addDays(later, 31),
+  ]);
+  expect(
+    preview.changes.some((c: any) => c.after?.ingredient_id === "egg"),
+  ).toBe(true);
+  await rpc("apply_shopping_list", [
+    preview.start_date,
+    preview.end_date,
+    preview.content_revision,
+    preview.source_fingerprint,
+  ]);
+  const stable = await shopping();
+  expect(stable.items.find((i) => i.id === manual)!.checked).toBe(true);
+  expect((await shopping()).observation_revision).toBe(
+    stable.observation_revision,
+  );
+  const beforePlans = (await snapshot()).planning!.plans;
+  await rpc("save_egg_purchasing_unit", [60, 0]);
+  await rpc("save_egg_purchasing_unit", [60, 0]); // lost-ack retry
+  const configured = await shopping();
+  expect(
+    configured.items.find((i) => i.id === eggs.id)!.purchasing_unit,
+  ).toMatchObject({
+    grams_per_unit: 60,
+    revision: 1,
+    origin: "household_estimate",
+  });
+  expect(configured.items.find((i) => i.id === eggs.id)!.quantity).toBe(
+    eggs.quantity,
+  );
+  expect((await snapshot()).planning!.plans).toEqual(beforePlans);
+  await expect(rpc("save_egg_purchasing_unit", [70, 0])).rejects.toThrow(
+    "stale_content",
+  );
+  await expect(rpc("save_egg_purchasing_unit", [-1, 1])).rejects.toThrow(
+    "invalid_purchasing_unit",
+  );
+  await actor(b);
+  await expect(rpc("save_egg_purchasing_unit", [80, 1])).rejects.toThrow(
+    "membership_changed",
+  );
+  const otherList = await call<ShoppingState>("get_shopping_state", [
+    other.household_id,
+    other.membership_id,
+  ]);
+  expect(otherList.purchasing![0]).toMatchObject({
+    grams_per_unit: 50,
+    revision: 0,
+  });
+  await actor();
+  await expect(
+    db.exec("select * from app_private.purchasing_units"),
+  ).rejects.toThrow("permission denied");
+  await rpc("save_egg_purchasing_unit", [null, 1]);
+  expect((await shopping()).purchasing![0]).toMatchObject({
+    grams_per_unit: 50,
+    revision: 2,
+    origin: "starter_estimate",
+  });
+  // An increase still unchecks even when the whole-egg purchasing count is unchanged.
+  let editable = await rpc<PlanningState>("get_planning_library");
+  const more = structuredClone(editable.plans.find((m) => m.day === later)!);
+  more.portions[0].lines.find((l) => l.ingredient_id === "egg")!.quantity += 1;
+  await rpc("apply_meal_plans", [[more], editable.revision, true]);
+  const firstIncrease = (await shopping()).items.find((i) => i.id === eggs.id)!;
+  await rpc("set_shopping_checked", [crypto.randomUUID(), eggs.id, true]);
+  editable = await rpc<PlanningState>("get_planning_library");
+  more.portions[0].lines.find((l) => l.ingredient_id === "egg")!.quantity += 1;
+  await rpc("apply_meal_plans", [[more], editable.revision, true]);
+  const secondIncrease = (await shopping()).items.find(
+    (i) => i.id === eggs.id,
+  )!;
+  expect(secondIncrease.quantity!).toBeGreaterThan(firstIncrease.quantity!);
+  expect(Math.ceil(secondIncrease.quantity! / 50)).toBe(
+    Math.ceil(firstIncrease.quantity! / 50),
+  );
+  expect(secondIncrease.checked).toBe(false);
+  await db.exec("reset role");
+  await db.exec("begin;select app_private.actor()");
+  const explained = (
+    await db.query<any>(
+      "explain (analyze,format json) select * from app_private.upcoming_contributions()",
+    )
+  ).rows[0]["QUERY PLAN"][0];
+  measurements.upcoming_query = {
+    execution_ms: explained["Execution Time"],
+    rows: explained.Plan["Actual Rows"],
+  };
+  expect(explained.Plan["Actual Rows"]).toBeGreaterThan(0);
+  await db.exec("rollback");
+  await actor();
+  // Closing one date subtracts only its contribution and never regenerates it.
+  await db.exec("reset role");
+  await db.query(
+    "update public.meal_date_locks set closed=true where household_id=$1 and day=$2",
+    [home.household_id, d],
+  );
+  await actor();
+  const expired = await shopping();
+  expect(expired.contributions!.some((c) => c.day === d)).toBe(false);
+  expect(expired.items.find((i) => i.id === eggs.id)!.quantity).toBe(
+    eggs.quantity! / 2 + 2,
+  );
+  expect(expired.items.find((i) => i.id === manual)!.checked).toBe(true);
+  const finalLib = await rpc<PlanningState>("get_planning_library");
+  await rpc("delete_planned_meal", [later, "breakfast", finalLib.revision]);
+  const empty = await shopping();
+  expect(empty.items.every((i) => i.source === "manual")).toBe(true);
+  expect((await shopping()).observation_revision).toBe(
+    empty.observation_revision,
+  );
+  expect(
+    (await rpc("set_shopping_checked", [crypto.randomUUID(), eggs.id, true]))
+      .status,
+  ).toBe("removed");
 });

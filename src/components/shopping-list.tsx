@@ -91,6 +91,15 @@ export function ShoppingChecklist({
                             ? ` · ${referenceLabels[item.reference_state] ?? item.reference_state}`
                             : ""}
                         </small>
+                        {item.purchasing_unit && (
+                          <small>
+                            {item.quantity} g ·{" "}
+                            {t(
+                              "estimated purchasing units",
+                              "unidades de compra estimadas",
+                            )}
+                          </small>
+                        )}
                         {pending.some((op) => op.item_id === item.id) && (
                           <span className="fine-print">
                             {t(

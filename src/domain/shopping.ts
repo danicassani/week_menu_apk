@@ -42,6 +42,12 @@ export function shoppingNeedsRefresh(
   shopping: ShoppingState,
   now = Date.now(),
 ) {
+  if (
+    shopping.scope !== "upcoming" ||
+    !shopping.contributions_complete ||
+    !Array.isArray(shopping.contributions)
+  )
+    return true;
   return (
     shopping.items.some((i) => i.source === "generated") &&
     (shopping.valid_until === undefined ||
@@ -51,6 +57,7 @@ export function shoppingNeedsRefresh(
   );
 }
 export interface ShoppingItem {
+  purchasing_unit?: PurchasingUnit;
   id: string;
   source: "generated" | "manual";
   key: string | null;
@@ -76,6 +83,10 @@ export interface ShoppingRequirement {
   quantity_basis: string;
 }
 export interface ShoppingState {
+  scope?: "upcoming";
+  contributions_complete?: boolean;
+  contributions?: ShoppingContribution[];
+  purchasing?: PurchasingUnit[];
   observed_at?: string;
   valid_until?: string | null;
   observation_revision: number;
@@ -251,11 +262,127 @@ export function overlayPending(
   );
 }
 export function formatShoppingQuantity(
-  item: Pick<ShoppingItem, "source" | "quantity" | "amount" | "unit">,
+  item: Pick<ShoppingItem, "source" | "quantity" | "amount" | "unit"> &
+    Partial<
+      Pick<
+        ShoppingItem,
+        | "purchasing_unit"
+        | "ingredient_id"
+        | "reference_state"
+        | "quantity_basis"
+      >
+    >,
   language: "en" | "es",
 ) {
   if (item.source === "manual") return item.amount;
+  const conversion = item.purchasing_unit;
+  if (
+    conversion?.unit === "egg" &&
+    item.unit === "g" &&
+    item.ingredient_id === conversion.ingredient_id &&
+    item.reference_state === conversion.reference_state &&
+    item.quantity_basis === conversion.quantity_basis &&
+    Number.isFinite(conversion.grams_per_unit) &&
+    conversion.grams_per_unit > 0 &&
+    Number.isFinite(item.quantity) &&
+    (item.quantity ?? 0) > 0
+  ) {
+    const count = new Decimal(item.quantity!)
+      .div(conversion.grams_per_unit)
+      .ceil()
+      .toNumber();
+    return `${count} ${language === "es" ? (count === 1 ? "huevo" : "huevos") : count === 1 ? "egg" : "eggs"}`;
+  }
   const quantity = item.quantity ?? 0,
     kg = item.unit === "g" && quantity >= 1000;
   return `${new Intl.NumberFormat(language === "es" ? "es-ES" : "en-GB", { maximumFractionDigits: 6 }).format(kg ? quantity / 1000 : quantity)} ${kg ? "kg" : item.unit}`;
+}
+
+export interface PurchasingUnit {
+  ingredient_id: string;
+  unit: "egg";
+  grams_per_unit: number;
+  estimated: true;
+  origin: "starter_estimate" | "household_estimate";
+  revision: number;
+  reference_state: string;
+  quantity_basis: string;
+}
+export interface ShoppingContribution {
+  day: string;
+  cutoff: string;
+  items: ShoppingRequirement[];
+}
+/** Project expiry only from a complete, verified upcoming observation. Never write the queue here. */
+export function projectUpcomingShopping(
+  shopping: ShoppingState,
+  now = Date.now(),
+): ShoppingState {
+  if (shopping.scope !== "upcoming" || !shopping.contributions_complete)
+    return shopping;
+  const invalid = () => ({ ...shopping, contributions_complete: false });
+  if (!Array.isArray(shopping.contributions)) return invalid();
+  const all = new Map<string, Decimal>(),
+    remaining = new Map<string, Decimal>();
+  for (const contribution of shopping.contributions) {
+    if (
+      !Array.isArray(contribution.items) ||
+      !Number.isFinite(Date.parse(contribution.cutoff))
+    )
+      return invalid();
+    for (const row of contribution.items) {
+      const item = shopping.items.find(
+        (i) => i.source === "generated" && i.key === row.key,
+      );
+      if (
+        !item ||
+        row.unit !== "g" ||
+        row.ingredient_id !== item.ingredient_id ||
+        row.reference_state !== item.reference_state ||
+        row.quantity_basis !== item.quantity_basis ||
+        !Number.isFinite(row.quantity) ||
+        row.quantity <= 0
+      )
+        return invalid();
+      all.set(row.key, (all.get(row.key) ?? new Decimal(0)).plus(row.quantity));
+      if (Date.parse(contribution.cutoff) > now)
+        remaining.set(
+          row.key,
+          (remaining.get(row.key) ?? new Decimal(0)).plus(row.quantity),
+        );
+    }
+  }
+  if (
+    shopping.items.some(
+      (i) =>
+        i.source === "generated" &&
+        (!Number.isFinite(i.quantity) ||
+          new Decimal(i.quantity ?? 0)
+            .minus(all.get(i.key ?? "") ?? 0)
+            .abs()
+            .gt("0.000001")),
+    )
+  )
+    return invalid();
+  const contributions = shopping.contributions.filter(
+    (c) => Date.parse(c.cutoff) > now,
+  );
+  const items = shopping.items.flatMap((i) => {
+    if (i.source === "manual") return [i];
+    const quantity = Math.min(
+      remaining.get(i.key ?? "")?.toNumber() ?? 0,
+      i.quantity ?? 0,
+    );
+    return quantity > 0 ? [{ ...i, quantity }] : [];
+  });
+  return {
+    ...shopping,
+    items,
+    contributions,
+    valid_until: contributions.length
+      ? new Date(
+          Math.min(...contributions.map((c) => Date.parse(c.cutoff))),
+        ).toISOString()
+      : null,
+  };
 }

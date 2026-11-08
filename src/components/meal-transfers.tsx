@@ -98,9 +98,17 @@ export function useMealTransfers(
     await v.operate(
       async () => {
         try {
-          if (context === "saved")
+          if (context === "saved") {
             result = await v.repository.previewTransfer(request);
-          else
+            // A shopping check can advance the shared revision before Realtime
+            // refreshes this view. Hydrate before presenting the first review;
+            // changes made after that review still invalidate its revision.
+            if (result.revision !== lib.revision) {
+              const current = await v.ensurePlanning(true);
+              if (current.revision !== result.revision)
+                throw new Error("stale_plan");
+            }
+          } else
             result = buildTransfer(
               v.s,
               { ...lib, revision: draft!.revision },
@@ -109,6 +117,7 @@ export function useMealTransfers(
               locks,
             );
         } catch (error) {
+          result = undefined;
           if (generation === flight.current)
             setSelectionError(errorMessage(error, v.language));
           throw error;

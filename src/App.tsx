@@ -866,8 +866,9 @@ function Workspace({
     setTab(next);
     window.scrollTo({ top: 0 });
   };
-  const ensurePlanning = async () => {
-    if (s.planning && s.planning.complete !== false) return s.planning;
+  const ensurePlanning = async (force = false) => {
+    if (!force && s.planning && s.planning.complete !== false)
+      return s.planning;
     const identity = cacheIdentity(repo),
       lib = await repo.getPlanningLibrary();
     if (identity !== cacheIdentity(repo))

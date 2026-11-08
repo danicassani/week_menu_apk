@@ -193,6 +193,17 @@ export class SupabaseRepository implements Repository {
       p_id: id,
     });
   }
+  saveEggPurchasingUnit(grams: number | null, revision: number) {
+    return this.rpc(
+      "save_egg_purchasing_unit",
+      {
+        p_grams_per_egg: grams,
+        p_revision: revision,
+      },
+      true,
+      true,
+    );
+  }
   getShopping() {
     return this.rpc<ShoppingState>("get_shopping_state");
   }

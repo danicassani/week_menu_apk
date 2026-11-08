@@ -151,6 +151,10 @@ const messages: Record<string, [string, string]> = {
     "No meal changes to save.",
     "No hay cambios en las comidas para guardar.",
   ],
+  invalid_purchasing_unit: [
+    "Enter a positive, finite edible weight per egg.",
+    "Introduce un peso comestible positivo y finito por huevo.",
+  ],
   invalid_profile: [
     "Enter a name, adult age, sex, and positive metric measurements.",
     "Introduce nombre, edad adulta, sexo y medidas métricas positivas.",

@@ -94,13 +94,25 @@ it("expires at the first member's exact midnight and marks unprovable offline qu
   });
   expect(
     shoppingNeedsRefresh(
-      { ...populated, valid_until: new Date(cutoff).toISOString() },
+      {
+        ...populated,
+        scope: "upcoming",
+        contributions_complete: true,
+        contributions: [],
+        valid_until: new Date(cutoff).toISOString(),
+      },
       cutoff - 1,
     ),
   ).toBe(false);
   expect(
     shoppingNeedsRefresh(
-      { ...populated, valid_until: new Date(cutoff).toISOString() },
+      {
+        ...populated,
+        scope: "upcoming",
+        contributions_complete: true,
+        contributions: [],
+        valid_until: new Date(cutoff).toISOString(),
+      },
       cutoff,
     ),
   ).toBe(true);
@@ -109,7 +121,16 @@ it("expires at the first member's exact midnight and marks unprovable offline qu
     shoppingNeedsRefresh({ ...populated, valid_until: "invalid" }, cutoff),
   ).toBe(true);
   expect(
-    shoppingNeedsRefresh({ ...emptyShopping(), items: [manual] }, cutoff),
+    shoppingNeedsRefresh(
+      {
+        ...emptyShopping(),
+        scope: "upcoming",
+        contributions_complete: true,
+        contributions: [],
+        items: [manual],
+      },
+      cutoff,
+    ),
   ).toBe(false);
   scope.meal_locks = [
     { day: future.day, cutoff: dayCutoff(future.day, "UTC"), closed: true },

@@ -8,13 +8,24 @@ import {
 } from "./offline-store";
 import { syncAfterEnqueue, syncShopping } from "./shopping-sync";
 import type { Repository } from "../domain/types";
-export function useShoppingTime(validUntil: string | null | undefined) {
+export function useShoppingTime(
+  validUntil: string | null | undefined,
+  contributions?: import("../domain/shopping").ShoppingContribution[],
+) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const update = () => setNow(Date.now());
     window.addEventListener("focus", update);
     document.addEventListener("visibilitychange", update);
-    const deadline = validUntil ? Date.parse(validUntil) : NaN;
+    const deadline = contributions
+      ? Math.min(
+          ...contributions
+            .map((c) => Date.parse(c.cutoff))
+            .filter((c) => c > now),
+        )
+      : validUntil
+        ? Date.parse(validUntil)
+        : NaN;
     const timer =
       deadline > now
         ? setTimeout(update, Math.min(deadline - now + 50, 2147483647))
@@ -24,7 +35,7 @@ export function useShoppingTime(validUntil: string | null | undefined) {
       window.removeEventListener("focus", update);
       document.removeEventListener("visibilitychange", update);
     };
-  }, [validUntil, now]);
+  }, [validUntil, now, contributions]);
   return now;
 }
 export function useConnection() {
@@ -107,7 +118,12 @@ export function useShoppingQueue(
       }
     }
   }, [repo, reload]);
-  const now = useShoppingTime(data?.shopping?.valid_until);
+  const now = useShoppingTime(
+    data?.shopping?.valid_until,
+    data?.shopping?.contributions_complete
+      ? data.shopping.contributions
+      : undefined,
+  );
   useEffect(() => {
     const until = data?.shopping?.valid_until;
     if (online && until && Date.parse(until) <= now) void sync();

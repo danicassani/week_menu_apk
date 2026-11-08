@@ -40,7 +40,9 @@ import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
 
 export type ViewProps = {
   allocationColors: Record<string, string>;
-  ensurePlanning: () => Promise<import("../domain/planning").PlanningState>;
+  ensurePlanning: (
+    force?: boolean,
+  ) => Promise<import("../domain/planning").PlanningState>;
   clipboard: import("../domain/planning-transfer").PlanningClipboard | null;
   setClipboard: (
     next: import("../domain/planning-transfer").PlanningClipboard | null,

@@ -292,16 +292,21 @@ describe.each([false, true])(
             );
       await setRange(start, end);
       const after = await rpc<ShoppingState>("get_shopping_state");
-      expect(after.start_date).toBe(start);
-      expect(after.end_date).toBe(end);
-      expect(after.items).toEqual(manual);
+      if (v2) {
+        expect(after.scope).toBe("upcoming");
+        expect(after.items).toEqual(before.items);
+      } else {
+        expect(after.start_date).toBe(start);
+        expect(after.end_date).toBe(end);
+        expect(after.items).toEqual(manual);
+      }
       expect((await snapshot()).shopping).toEqual({
         ...after,
         ...(after.observed_at ? { observed_at: expect.any(String) } : {}),
       });
       await setRange(start, end);
       expect((await rpc<ShoppingState>("get_shopping_state")).items).toEqual(
-        manual,
+        v2 ? before.items : manual,
       );
       await setRange(day, day);
       expect(

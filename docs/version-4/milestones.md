@@ -1,6 +1,6 @@
 # Version 4 — implementation milestones
 
-Status: proposed delivery order for the confirmed backlog and [design](design.md). Each milestone ends with a reviewable PR, applicable migration links and verification evidence.
+Status: milestones 1 and 2 are implemented; milestone 2 is ready for review. Delivery order for the confirmed backlog and [design](design.md). Each milestone ends with a reviewable PR, applicable migration links and verification evidence.
 
 ## 1. Quieter navigation and working target review
 
