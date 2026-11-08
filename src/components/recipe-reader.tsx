@@ -1,3 +1,5 @@
+import { RecipeSourceDetails } from "./recipe-source";
+import { recipeSource } from "../domain/recipe-source";
 import {
   ingredientText,
   recipePresentation,
@@ -54,10 +56,13 @@ export function RecipeContent({
   recipe = recipePresentation(recipe);
   const t = translator(language),
     text = (n: { en: string; es: string }) => n[language] || n.en || n.es;
+  const source = recipeSource(recipe.source_recipe);
   return (
     <>
       <p className="muted">
-        {recipeServingCaption(recipe.reference_servings, language)}
+        {source?.reference_caption
+          ? text(source.reference_caption)
+          : recipeServingCaption(recipe.reference_servings, language)}
       </p>
       {recipe.banned && (
         <p className="note">
@@ -75,6 +80,11 @@ export function RecipeContent({
           {text(p.instructions)}
         </p>
       ))}
+      <RecipeSourceDetails
+        source={recipe.source_recipe}
+        ingredients={ingredients}
+        language={language}
+      />
       {recipe.components.map((c) => (
         <section className="recipe-component" key={c.id}>
           <h3>

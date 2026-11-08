@@ -150,3 +150,12 @@ export function roundQuantity(quantity: number, unitStep?: number): number {
   if (rounded.eq(0)) throw new DomainError("quantity_needs_review");
   return rounded.toNumber();
 }
+
+/** Mass/volume only: keep tiny seasoning shares instead of rounding them away. */
+export function roundWeight(quantity: number): number {
+  if (!Number.isFinite(quantity) || quantity <= 0)
+    throw new DomainError("invalid_quantity");
+  return quantity < 1
+    ? roundQuantity(Math.max(quantity, 0.1), 0.1)
+    : roundQuantity(quantity);
+}

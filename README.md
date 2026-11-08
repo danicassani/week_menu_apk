@@ -1,3 +1,4 @@
+- [Requested source-backed recipes and import rollout](content/expansions/README.md)
 - [Current planning rules: ingredient repetition is allowed](docs/remove-repetition-rules.md)
 - [Recipe Tinder, personal review progress and fast recipe vetoes](docs/recipe-review.md)
 
