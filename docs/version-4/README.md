@@ -1,6 +1,6 @@
 # Version 4 — requested backlog
 
-Status: recorded for version 4. These are product requests, not implemented changes or a completed technical design. Version 3 continues through its existing [milestones](../version-3/milestones.md). All project documentation remains in English; the application continues supporting English and Spanish.
+Status: version-four planning started after all four version-three implementation milestones were merged. The requests below are not yet implemented. See the [design and confirmed decisions](design.md) and [delivery milestones](milestones.md). All project documentation remains in English; the application continues supporting English and Spanish.
 
 ## V4-01 — show eggs as units in shopping
 
@@ -101,4 +101,4 @@ Use the existing matching outline icon style, translated accessible names/toolti
 
 ## Delivery boundary
 
-These nine requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. Detailed technical design, migration requirements and milestone ordering will be established when version-four implementation is scheduled. The working defaults above are explicitly distinguished from the user's requests.
+These nine requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
