@@ -1,3 +1,5 @@
+import { useDeviceTheme } from "./lib/device-theme";
+import type { ThemeMode } from "./domain/themes";
 import { allocationColor } from "./components/portion-allocation";
 import { PlanningGate } from "./components/planning-gate";
 import { clearRecentActivity, rememberActivity } from "./lib/activity-recent";
@@ -138,27 +140,8 @@ export default function App() {
   useEffect(() => {
     if (online) setForceSaved(false);
   }, [online]);
-  const [language, setLanguage] = useState<Language>("en"),
-    [theme, setTheme] = useState(() => {
-      try {
-        return (
-          localStorage.getItem("week-menu-theme") ??
-          (matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light")
-        );
-      } catch {
-        return "light";
-      }
-    });
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    try {
-      localStorage.setItem("week-menu-theme", theme);
-    } catch {
-      /* Theme still applies for this session. */
-    }
-  }, [theme]);
+  const [language, setLanguage] = useState<Language>("en");
+  const { mode: theme, setMode: setTheme } = useDeviceTheme();
   useEffect(() => {
     document.documentElement.lang = language;
   }, [language]);
@@ -457,8 +440,8 @@ function Workspace({
   repository: Repository;
   language: Language;
   setLanguage: (l: Language) => void;
-  theme: string;
-  setTheme: (t: string) => void;
+  theme: ThemeMode;
+  setTheme: (t: ThemeMode) => void;
   onExit: () => void;
   onUseSaved: () => void;
 }) {

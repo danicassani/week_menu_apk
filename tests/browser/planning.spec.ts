@@ -770,7 +770,7 @@ test("calorie warnings are explained on demand and return focus to the yellow nu
   const explanation =
     "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.";
   await expect(preview.getByText(explanation, { exact: true })).toHaveCount(0);
-  await expect(warning).toHaveCSS("color", "rgb(250, 204, 21)");
+  await expect(warning).toHaveCSS("color", "rgb(245, 214, 106)");
   await page.screenshot({ path: "test-results/menu-suggestions-es.png" });
   await warning.scrollIntoViewIfNeeded();
   await page.screenshot({

@@ -18,8 +18,8 @@
 :root {
   font-family: "DM Sans Variable", sans-serif;
   font-synthesis: none;
-  color: #252525;
-  background: #f7f7f5;
+  color: var(--ink);
+  background: var(--bg);
   font-size: 16px;
   --bg: #f7f7f5;
   --surface: #fff;
@@ -87,7 +87,7 @@ button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--focus, var(--ink));
   outline-offset: 4px;
 }
 h1,
@@ -3492,14 +3492,14 @@ html[data-text-size="large"] {
   min-width: 44px;
   min-height: 44px;
   padding: 0 2px;
-  color: #896100;
+  color: var(--warning, #795500);
   font: inherit;
   font-weight: 650;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 :root[data-theme="dark"] .preview-calorie-warning {
-  color: #facc15;
+  color: var(--warning, #f5d66a);
 }
 
 .budget-save-error {
@@ -3753,7 +3753,7 @@ html[data-text-size="large"] {
   transform: none;
 }
 .closed-day-check:focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--focus, var(--ink));
   outline-offset: 2px;
 }
 .allocation-bar {
@@ -3824,4 +3824,112 @@ html[data-text-size="large"] {
   display: inline-flex;
   flex: 0 0 44px;
   min-width: 44px;
+}
+
+/* Device-local palette tokens are applied by DeviceTheme, including offline pages. */
+.theme-settings {
+  margin: 24px 0;
+  padding: 18px;
+  min-width: 0;
+}
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.theme-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 4px;
+  margin: 0;
+  border: 1px solid var(--control-line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.theme-option:has(input:checked) {
+  border-color: var(--focus);
+  outline: 1px solid var(--focus);
+}
+.theme-option input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+  opacity: 0;
+}
+.theme-option:focus-within {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+.theme-swatch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--control-line);
+}
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea,
+.button.secondary {
+  border-color: var(--control-line, var(--line));
+}
+textarea {
+  background: var(--surface);
+  color: var(--ink);
+}
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 1;
+  color: var(--muted);
+  background: var(--subtle);
+  border-color: var(--line);
+}
+button:disabled svg {
+  opacity: 0.65;
+}
+@media (max-width: 480px) {
+  .theme-options {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.target-card-heading .eyebrow,
+.target-number > span,
+.target-card > p,
+.target-footer,
+.target-proposal .eyebrow,
+.target-proposal small,
+.target-proposal > span:last-child {
+  opacity: 1;
+  color: var(--inverse-muted, var(--inverse));
+}
+.allocation-bar {
+  outline: 1px solid var(--control-line);
+}
+textarea:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+
+.button:disabled {
+  color: var(--muted);
+  background: var(--subtle);
+  border-color: var(--line);
 }

@@ -1,6 +1,6 @@
-# Run and connect the foundation
+# Run, configure and verify the app
 
-Version-one milestones 1–3 are implemented. For the current v2 release, see the [v2 release verification report](version-2/milestone-4.md) and its ordered migration prerequisites through migration 11, including the corrected migration 10. The shopping date-range button additionally requires [migration 12](../supabase/migrations/202611060012_shopping_date_range.sql), applied before deploying that client update. Existing projects should apply only pending migrations; do not repeat successful scripts. For an existing deployment, follow the incremental [planning rollout](milestone-2.md#database-rollout), then the [shopping/PWA rollout](milestone-3.md#existing-project-rollout). Read [the review notes](milestone-1.md) before connecting real household data.
+All four version-four implementation milestones are ready for review; see the [V4 release report](version-4/milestone-4.md). The current frontend requires successful migrations 1–18; milestone 4 adds no SQL or environment variable. Existing projects should apply only pending migrations and must not repeat successful scripts. Earlier milestone reports below retain the incremental rollout details.
 
 For version 3 milestone 1, apply [migration 13](../supabase/migrations/202611070013_budget_commits_and_shopping_expiry.sql) after 1–12 and before deploying the matching client. See [the milestone report](version-3/milestone-1.md) for budget acknowledgements, shopping expiry and offline behavior.
 
@@ -34,17 +34,21 @@ npm run test:pwa
 npm run test:release
 ```
 
-The [release verification report](milestone-4.md) separates executed checks from pending real-device/Google-session acceptance. `npm run check:deployment -- https://week-menu-apk.pages.dev` audits only public hosting files and headers.
+The [current release verification report](version-4/milestone-4.md) separates executed checks from pending real-device/Google-session acceptance. `npm run check:deployment -- https://week-menu-apk.pages.dev` audits only public hosting files and headers.
 
 Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Chromium. Set `CHROMIUM_PATH` to override. Unit/integration tests run PostgreSQL through PGlite, including the actual migrations, role grants and row-level policies. They do not substitute for testing the hosted OAuth flow.
 
 ## Supabase setup
 
-**Version 2 branch:** the first multi-household checkpoint requires the additional migration and matching client described in the [v2 milestone 1 review](version-2/milestone-1.md). The original v1 setup below remains the prerequisite for initializing an empty project; it is not the complete setup for the v2 client. Do not reapply migrations 1–5 to an existing database.
+**Current V4:** one Supabase project serves multiple isolated households, with one household per person. Any verified Google account can create its own household or accept an invitation. Keep `public` as the exposed Data API schema; do not expose `app_private`. Apply pending migrations through 18 as the project administrator before deploying the current client.
+
+**Fresh-install foundation prerequisite:** migration 6 deliberately requires an initialized original household. Follow the [v2 migration rollout](version-2/milestone-1.md#review-and-rollout) after the original foundation procedure below. The numbered procedure describes the legacy single-household stage and its owner bootstrap, not the current V4 access policy. Do not replay migrations 1–5 on an existing database.
+
+### Legacy foundation stage: migrations 1–5
 
 If the v2 client reports `42501: permission denied for schema auth` on `get_household_snapshot`, use the additive [auth-permission repair](version-2/auth-permission-repair.md) after migration 6. It preserves the existing household and does not require replaying earlier migrations.
 
-1. Create the intended household's Supabase project. One project currently serves **one** household. Keep `public` as the exposed Data API schema; **do not expose `app_private`**.
+1. Create the intended household's Supabase project. At this legacy stage the project serves **one** household. Keep `public` as the exposed Data API schema; **do not expose `app_private`**.
 2. Apply these migrations, in order, using the Supabase SQL editor as the project administrator (or a linked Supabase CLI migration workflow):
    - `supabase/migrations/202611030001_foundation.sql`
    - `supabase/migrations/202611030002_activities.sql`
@@ -75,7 +79,7 @@ If the v2 client reports `42501: permission denied for schema auth` on `get_hous
 
 The revision table is added to `supabase_realtime` when that publication exists. Only a non-sensitive revision counter is published; clients fetch a fresh authorized snapshot. Foreground refresh and a once-per-minute visible-page refresh also pick up changes and date rollovers. Verify Realtime in the hosted project, particularly after member removal.
 
-## Cloudflare Pages settings for the later deployment milestone
+## Cloudflare Pages deployment settings
 
 Build command: `npm run build`. Output directory: `dist`. Use Node 24 and the two public Supabase environment values above. Preview is off unless explicitly enabled. `_redirects` provides the SPA fallback; `_headers` provides security headers and self-hosted-asset caching. The current content security policy permits the standard `*.supabase.co` API and WebSocket domains. Adjust that allowlist if a custom Supabase domain is used.
 
@@ -83,8 +87,8 @@ The production build registers a public-shell service worker. Menu, recipes and 
 
 ## Hosted acceptance checks still required
 
-- Confirm a non-approved Google account cannot read household data, including direct REST requests; only the approved owner can initialize.
-- Sign in with two approved real accounts on Android Chrome and iPhone Safari; verify profile ownership, shared reads, invitations, transfer, removal and fresh-token access revocation.
+- Confirm an unrelated Google account can create its own household but cannot read another household through UI or direct REST calls. Verify invitations grant access only to their household.
+- Sign in with real owners in two households and an invited member on Android Chrome and iPhone Safari; verify profile ownership, shared reads, invitations, transfer, removal and fresh-token access revocation.
 - Confirm PKCE redirects, refresh, sign-out and browser storage clearing on the final HTTPS origin.
 - Confirm revision notifications and foreground date rollover with users in different IANA timezones. Database tests cover the two lock models, but hosted-browser integration still needs verification.
 - Review project backup, retention and actual provider/free-plan limits before entering real household history. No live service configuration or hosted end-to-end result is claimed by the local test suite.

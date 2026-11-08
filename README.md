@@ -1,7 +1,8 @@
 # Week Menu App
 
-Household meal-planning PWA: individual breakfasts, shared lunches/dinners with personal portions, calorie budgets, and one shared shopping list. English and Spanish; minimalistic light/dark design.
+Household meal-planning PWA: individual breakfasts, shared lunches/dinners with personal portions, calorie budgets, and one shared shopping list. English and Spanish; minimalistic design with seven device-local colour families and light/dark modes.
 
+- [Version 4 milestone 4: themes and release review](docs/version-4/milestone-4.md)
 - [Version 4 requested backlog](docs/version-4/README.md)
 - [Product specification](docs/specification.md)
 - [Version 2 specification draft](docs/version-2/specification.md)
@@ -23,7 +24,7 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Bilingual starter recipe book](content/starter/recipes.md)
 - [Starter food pack, source notice and rebuild instructions](content/starter/README.md)
 
-Milestones 1–3 are implemented: responsive bilingual light/dark interface, Supabase Google-auth/household permissions, adult profiles, calorie-target review, three meal budgets, food/activity/weight logs, editable household content reviewed menu planning, shared shopping, installation and offline viewing/checklists. The household has an initial deployment; the new planning migrations and frontend rollout are documented separately. The agreed four milestones each end with a user review.
+Version 4's four implementation milestones are complete for review, including quieter meal controls, upcoming shopping/egg units, clearer recipe content and local themes. The existing deployment uses Supabase Google auth, isolated households, personal calorie profiles, shared planning and offline shopping checks. See the release report for migration prerequisites and the remaining hosted/physical-device acceptance.
 
 ```sh
 npm ci
