@@ -31,6 +31,7 @@ import {
   applyShoppingPreview,
   eligibleShoppingPlans,
   shoppingValidUntil,
+  shoppingCutoff,
   type ShoppingState,
   type ShoppingPreview,
   type CheckOperation,
@@ -201,6 +202,35 @@ export class PreviewRepository implements Repository {
   mode = "preview" as const;
   readonly accountId = "preview";
   private shopping = emptyShopping();
+  private eggPurchasing = { grams: 50, revision: 0, custom: false };
+  async saveEggPurchasingUnit(grams: number | null, revision: number) {
+    this.me();
+    if (grams !== null && (!Number.isFinite(grams) || grams <= 0))
+      throw new DomainError("invalid_purchasing_unit");
+    if (revision !== this.eggPurchasing.revision) {
+      if (
+        this.eggPurchasing.revision === revision + 1 &&
+        this.eggPurchasing.grams === (grams ?? 50) &&
+        this.eggPurchasing.custom === (grams !== null)
+      )
+        return;
+      throw new DomainError("stale_content");
+    }
+    this.eggPurchasing = {
+      grams: grams ?? 50,
+      revision: revision + 1,
+      custom: grams !== null,
+    };
+    this.serial++;
+    this.persistDemo();
+  }
+  private upcomingBounds() {
+    const days = eligibleShoppingPlans(this.library.plans, this.s)
+      .map((p) => p.day)
+      .sort();
+    const start = days[0] ?? this.shopping.start_date ?? this.today();
+    return [start, days.at(-1) ?? start] as const;
+  }
   private receipts = new Map<string, CheckReceipt>();
   private s: HouseholdState;
   private serial = 0;
@@ -278,6 +308,7 @@ export class PreviewRepository implements Repository {
         const data = JSON.parse(saved);
         this.library = data.library;
         this.shopping = data.shopping;
+        if (data.eggPurchasing) this.eggPurchasing = data.eggPurchasing;
         this.serial = data.serial;
         this.receipts = new Map(data.receipts ?? []);
         if (data.language === "en" || data.language === "es")
@@ -339,6 +370,7 @@ export class PreviewRepository implements Repository {
         JSON.stringify({
           library: this.library,
           shopping: this.shopping,
+          eggPurchasing: this.eggPurchasing,
           serial: this.serial,
           receipts: [...this.receipts],
           language: this.me().profile?.language ?? "en",
@@ -360,19 +392,44 @@ export class PreviewRepository implements Repository {
       s.end_date,
     );
     s.observation_revision = this.serial;
-    s.changes_available =
-      !!s.start_date &&
-      s.applied_fingerprint !==
-        shoppingFingerprint(
-          shoppingRequirements(
-            eligibleShoppingPlans(this.library.plans, this.s),
-            s.start_date,
-            s.end_date!,
-            this.library.ingredients,
-          ),
-          s.start_date,
-          s.end_date!,
-        );
+    s.changes_available = false;
+    s.scope = "upcoming";
+    s.contributions_complete = true;
+    const eligible = eligibleShoppingPlans(this.library.plans, this.s);
+    s.contributions = [...new Set(eligible.map((p) => p.day))]
+      .sort()
+      .map((day) => ({
+        day,
+        cutoff: new Date(shoppingCutoff(this.s, day)).toISOString(),
+        items: shoppingRequirements(
+          eligible,
+          day,
+          day,
+          this.library.ingredients,
+        ),
+      }));
+    s.purchasing = [
+      {
+        ingredient_id: "egg",
+        unit: "egg",
+        grams_per_unit: this.eggPurchasing.grams,
+        estimated: true,
+        origin: this.eggPurchasing.custom
+          ? "household_estimate"
+          : "starter_estimate",
+        revision: this.eggPurchasing.revision,
+        reference_state: "raw_edible",
+        quantity_basis: "edible_reference_weight",
+      },
+    ];
+    s.items = s.items.map((i) =>
+      i.source === "generated" &&
+      i.ingredient_id === "egg" &&
+      i.reference_state === "raw_edible" &&
+      i.quantity_basis === "edible_reference_weight"
+        ? { ...i, purchasing_unit: s.purchasing![0] }
+        : i,
+    );
     return s;
   }
   async previewShopping(start: string, end: string) {
@@ -383,6 +440,7 @@ export class PreviewRepository implements Repository {
       start > end
     )
       throw new DomainError("invalid_shopping_range");
+    [start, end] = this.upcomingBounds();
     const rows = shoppingRequirements(
       eligibleShoppingPlans(this.library.plans, this.s),
       start,
@@ -413,6 +471,7 @@ export class PreviewRepository implements Repository {
   }
   async getPlanningLibrary() {
     this.me();
+    this.autoShopping();
     return structuredClone({
       ...this.library,
       complete: true,
@@ -568,6 +627,7 @@ export class PreviewRepository implements Repository {
   }
   async checkShopping(op: CheckOperation) {
     this.me();
+    this.autoShopping();
     const old = this.receipts.get(op.id);
     if (old) {
       if (old.item_id !== op.item_id || old.checked !== op.checked)
@@ -621,14 +681,7 @@ export class PreviewRepository implements Repository {
     }
   }
   private autoShopping() {
-    const first = this.library.plans
-      .map((p) => p.day)
-      .filter((d) => d >= this.today())
-      .sort()[0];
-    if (!this.shopping.start_date && !first) return;
-    const days = weekDays(first ?? this.today(), this.s.household.week_start);
-    const start = this.shopping.start_date ?? days[0],
-      end = this.shopping.end_date ?? days[6];
+    const [start, end] = this.upcomingBounds();
     const rows = shoppingRequirements(
       eligibleShoppingPlans(this.library.plans, this.s),
       start,

@@ -585,7 +585,7 @@ test("public deployment auditor accepts the entire built shell including canonic
   ).toBe(true);
 });
 
-test("offline expiry warns about stale quantities and preserves pending checks across reload", async ({
+test("complete offline expiry subtracts quantities and preserves pending checks across reload", async ({
   page,
   context,
 }) => {
@@ -610,16 +610,82 @@ test("offline expiry warns about stale quantities and preserves pending checks a
   });
   await manual.click();
   await expect(manual).toBeChecked();
+  const quantities = await page
+    .locator(".shopping-checklist label")
+    .allTextContents();
   await page.clock.fastForward(6 * 60_000);
+  await expect
+    .poll(() => page.locator(".shopping-checklist label").allTextContents())
+    .not.toEqual(quantities);
   await expect(
     page.getByText(
       "Saved quantities may include expired meals. Reconnect to refresh them; your pending checks are kept.",
       { exact: true },
     ),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await page.reload();
   await expect(manual).toBeChecked();
   await expect(
     page.getByText("Saved on this device · pending sync", { exact: true }),
   ).toBeVisible();
+});
+test("legacy range caches request refresh while retaining queued checks", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  await context.setOffline(true);
+  await page.reload();
+  await page.getByRole("checkbox").click();
+  await expect(page.getByRole("checkbox")).toBeChecked();
+  const before = await page.evaluate(
+    async () =>
+      await new Promise<any>((resolve, reject) => {
+        const open = indexedDB.open("week-menu-offline-v1");
+        open.onerror = () => reject(open.error);
+        open.onsuccess = () => {
+          const db = open.result,
+            tx = db.transaction("accounts", "readwrite"),
+            store = tx.objectStore("accounts"),
+            get = store.get("preview");
+          let pending: any;
+          get.onsuccess = () => {
+            const account = get.result;
+            pending = account.pending;
+            delete account.shopping.scope;
+            delete account.shopping.contributions_complete;
+            delete account.shopping.contributions;
+            store.put(account);
+          };
+          tx.oncomplete = () => {
+            db.close();
+            resolve(pending);
+          };
+          tx.onerror = () => reject(tx.error);
+        };
+      }),
+  );
+  await page.reload();
+  await expect(
+    page.getByText("Saved list needs refresh for upcoming meals", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(page.getByRole("checkbox")).toBeChecked();
+  expect(before).toHaveLength(1);
+  await expect(
+    page.getByText("Saved on this device · pending sync", { exact: true }),
+  ).toBeVisible();
+  await context.setOffline(false);
+  await expect(
+    page.getByRole("heading", { name: "Good to see you, Alex.", exact: true }),
+  ).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Shopping", exact: true })
+    .click();
+  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByText("Saved on this device · pending sync", { exact: true }),
+  ).toHaveCount(0);
 });

@@ -1,3 +1,4 @@
+import { projectUpcomingShopping } from "../domain/shopping";
 import { IngredientReader } from "../components/ingredient-reader";
 import type { Ingredient } from "../domain/planning";
 import { foodEmoji } from "../domain/presentation";
@@ -60,8 +61,16 @@ export function OfflineShell({
   }, [data?.presentation?.text_size]);
   const lang = data?.language ?? language,
     t = translator(lang),
-    shopping = data?.shopping;
-  const shoppingNow = useShoppingTime(shopping?.valid_until);
+    savedShopping = data?.shopping;
+  const shoppingNow = useShoppingTime(
+    savedShopping?.valid_until,
+    savedShopping?.contributions_complete
+      ? savedShopping.contributions
+      : undefined,
+  );
+  const shopping = savedShopping
+    ? projectUpcomingShopping(savedShopping, shoppingNow)
+    : undefined;
   const name = (n: { en: string; es: string }) => n[lang] || n.en || n.es;
   const check = async (id: string, checked: boolean) => {
     try {
@@ -154,9 +163,12 @@ export function OfflineShell({
           (shopping ? (
             <>
               <p className="muted">
-                {shopping.start_date
-                  ? `${shopping.start_date} — ${shopping.end_date}`
-                  : t("Manual items", "Productos manuales")}
+                {shopping.scope === "upcoming"
+                  ? t("All upcoming meals", "Todas las comidas próximas")
+                  : t(
+                      "Saved list needs refresh for upcoming meals",
+                      "Actualiza la lista guardada para incluir todas las comidas próximas",
+                    )}
               </p>
               {shopping.changes_available && (
                 <p className="note">

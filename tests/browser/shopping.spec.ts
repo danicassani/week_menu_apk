@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("saved portions automatically generate a list; range changes retain manual checked items", async ({
+test("saved portions automatically generate an upcoming list and retain manual checked items", async ({
   page,
 }) => {
   await page.clock.setFixedTime(new Date("2026-11-03T12:00:00Z"));
@@ -26,14 +26,9 @@ test("saved portions automatically generate a list; range changes retain manual 
   await manual.click();
   await expect(manual).toBeChecked();
   await expect(page.locator(".sync-status")).toContainText("Connected");
-  await page.getByLabel("From", { exact: true }).fill("2026-11-09");
-  await page.getByLabel("Through", { exact: true }).fill("2026-11-09");
-  await page.getByRole("button", { name: "Apply date range" }).click();
-  await expect(page.getByRole("checkbox")).toHaveCount(1);
+  await expect(page.getByLabel("From", { exact: true })).toHaveCount(0);
   await expect(
-    page.getByText("Date range applied. Shopping list updated.", {
-      exact: true,
-    }),
+    page.getByText("All upcoming meals", { exact: true }),
   ).toBeVisible();
   await expect(manual).toBeChecked();
   await page.setViewportSize({ width: 390, height: 844 });
@@ -64,38 +59,20 @@ test("an empty week clears the generated shopping list and stays empty after rel
     .click();
   await nav().getByRole("button", { name: "Shopping", exact: true }).click();
   await expect(page.getByRole("checkbox").first()).toBeEnabled();
-  await page.getByLabel("From", { exact: true }).fill("2026-11-09");
-  await page.getByLabel("Through", { exact: true }).fill("2026-11-15");
+  await nav().getByRole("button", { name: "Menu", exact: true }).click();
+  await page.getByRole("button", { name: "Delete week", exact: true }).click();
   await page
-    .getByRole("button", { name: "Apply date range", exact: true })
+    .getByRole("button", { name: "Delete editable meals", exact: true })
     .click();
+  await nav().getByRole("button", { name: "Shopping", exact: true }).click();
   await expect(page.getByRole("checkbox")).toHaveCount(0);
-  await expect(
-    page.getByRole("heading", { name: "Your list starts here", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByText("Date range applied. Shopping list updated.", {
-      exact: true,
-    }),
-  ).toBeVisible();
   await page.reload();
   await nav().getByRole("button", { name: "Shopping", exact: true }).click();
   await expect(page.getByRole("checkbox")).toHaveCount(0);
-  await expect(page.getByLabel("From", { exact: true })).toHaveValue(
-    "2026-11-09",
-  );
-  await expect(page.getByLabel("Through", { exact: true })).toHaveValue(
-    "2026-11-15",
-  );
-  await page.getByLabel("From", { exact: true }).fill("2026-11-02");
-  await page.getByLabel("Through", { exact: true }).fill("2026-11-08");
-  await page
-    .getByRole("button", { name: "Apply date range", exact: true })
-    .click();
-  await expect(page.getByRole("checkbox").first()).toBeVisible();
+  await expect(page.getByLabel("From", { exact: true })).toHaveCount(0);
 });
 
-test("the visible shopping list drops expired quantities at midnight without applying the range again", async ({
+test("the visible shopping list drops expired quantities at midnight", async ({
   page,
 }) => {
   await page.clock.install({ time: new Date("2026-11-03T23:59:00Z") });
@@ -120,5 +97,5 @@ test("the visible shopping list drops expired quantities at midnight without app
     .not.toEqual(before);
   await expect(
     page.getByRole("button", { name: "Apply date range", exact: true }),
-  ).toBeVisible();
+  ).toHaveCount(0);
 });

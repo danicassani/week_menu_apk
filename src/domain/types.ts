@@ -166,6 +166,7 @@ export interface Repository {
     id: string,
   ): Promise<import("./catalogue").CatalogueDetail>;
   getShopping(): Promise<ShoppingState>;
+  saveEggPurchasingUnit(grams: number | null, revision: number): Promise<void>;
   previewShopping(start: string, end: string): Promise<ShoppingPreview>;
   applyShopping(preview: ShoppingPreview): Promise<void>;
   setShoppingRange(start: string, end: string): Promise<void>;

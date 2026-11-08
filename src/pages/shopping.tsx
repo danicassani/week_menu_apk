@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Plus, ShoppingBasket, RefreshCw, Info, WifiOff } from "lucide-react";
+import { Plus, ShoppingBasket, WifiOff } from "lucide-react";
 import type { ViewProps } from "./views";
 import type { ShoppingItem } from "../domain/shopping";
-import { shoppingNeedsRefresh } from "../domain/shopping";
-import { addDays } from "../domain/dates";
+import {
+  shoppingNeedsRefresh,
+  projectUpcomingShopping,
+} from "../domain/shopping";
 import { translator, errorMessage } from "../lib/i18n";
 import { useShoppingQueue } from "../lib/use-offline";
 import {
@@ -17,8 +19,9 @@ export function ShoppingPage(v: ViewProps) {
   const t = translator(v.language),
     queue = useShoppingQueue(v.repository),
     server = v.s.shopping;
-  const [start, setStart] = useState(server?.start_date ?? v.day),
-    [end, setEnd] = useState(server?.end_date ?? addDays(v.day, 6)),
+  const [eggEditor, setEggEditor] = useState(false),
+    [eggRevision, setEggRevision] = useState(0),
+    [eggGrams, setEggGrams] = useState("50"),
     [manual, setManual] = useState<{
       id: string;
       label: string;
@@ -53,25 +56,15 @@ export function ShoppingPage(v: ViewProps) {
       </Empty>
     );
   const cached = queue.data?.shopping,
-    shopping =
+    observedShopping =
       cached &&
       (cached.observation_revision ?? 0) >= (server.observation_revision ?? 0)
         ? cached
         : server;
-  const applyRange = async () => {
-    await v.operate(
-      () => v.repository.setShoppingRange(start, end),
-      t(
-        "Date range applied. Shopping list updated.",
-        "Intervalo aplicado. Lista de la compra actualizada.",
-      ),
-      true,
-      t(
-        "Could not update the shopping list for this date range. Try again.",
-        "No se ha podido actualizar la lista para este intervalo. Inténtalo de nuevo.",
-      ),
-    );
-  };
+  const shopping = projectUpcomingShopping(observedShopping, queue.now);
+  const eggSetting = shopping.purchasing?.find(
+    (p) => p.ingredient_id === "egg",
+  );
   const edit = (item: ShoppingItem) =>
     setManual({
       id: item.id,
@@ -110,75 +103,121 @@ export function ShoppingPage(v: ViewProps) {
           {t("Add item", "Añadir producto")}
         </Button>
       </div>
-      <section className="panel shopping-range">
-        <div className="form-grid">
-          <label>
-            {t("From", "Desde")}
-            <input
-              type="date"
-              required
-              value={start}
-              onChange={(e) => setStart(e.target.value)}
-            />
-          </label>
-          <label>
-            {t("Through", "Hasta")}
-            <input
-              type="date"
-              required
-              min={start}
-              value={end}
-              onChange={(e) => setEnd(e.target.value)}
-            />
-          </label>
-        </div>
-        <Button
-          busy={v.busy}
-          disabled={!queue.online || !start || !end || start > end}
-          onClick={() => void applyRange()}
+      <div className="shopping-scope button-row">
+        <p>{t("All upcoming meals", "Todas las comidas próximas")}</p>
+        {eggSetting && (
+          <Button
+            secondary
+            disabled={!queue.online}
+            onClick={() => {
+              setEggRevision(eggSetting.revision);
+              setEggGrams(String(eggSetting.grams_per_unit));
+              setEggEditor(true);
+            }}
+          >
+            {t("Egg size estimate", "Tamaño estimado del huevo")}
+          </Button>
+        )}
+      </div>
+      {eggEditor && eggSetting && (
+        <Modal
+          title={t(
+            "Egg purchasing estimate",
+            "Estimación de huevos para la compra",
+          )}
+          onClose={() => setEggEditor(false)}
         >
-          <RefreshCw size={16} />
-          {t("Apply date range", "Aplicar intervalo de fechas")}
-        </Button>
-        <p className="fine-print">
-          {shopping.start_date
-            ? t(
-                `Current list: ${shopping.start_date} — ${shopping.end_date}`,
-                `Lista actual: ${shopping.start_date} — ${shopping.end_date}`,
-              )
-            : t(
-                "Save a menu to fill the household list automatically.",
-                "Guarda un menú para llenar la lista del hogar automáticamente.",
-              )}
-        </p>
-      </section>
+          <p>
+            {t(
+              "Estimated edible grams per egg, without shell. This only changes shopping units; recipe quantities and calories stay unchanged.",
+              "Gramos comestibles estimados por huevo, sin cáscara. Solo cambia las unidades de compra; las cantidades de las recetas y sus calorías se mantienen.",
+            )}
+          </p>
+          {eggRevision !== eggSetting.revision && (
+            <div className="note warning">
+              <p>
+                {t(
+                  "The household estimate changed. Reload and review it before saving.",
+                  "La estimación del hogar ha cambiado. Recárgala y revísala antes de guardar.",
+                )}
+              </p>
+              <Button
+                secondary
+                onClick={() => {
+                  setEggGrams(String(eggSetting.grams_per_unit));
+                  setEggRevision(eggSetting.revision);
+                }}
+              >
+                {t("Reload for review", "Volver a cargar para revisar")}
+              </Button>
+            </div>
+          )}
+          <label>
+            {t("Edible grams per egg", "Gramos comestibles por huevo")}
+            <input
+              type="number"
+              min="0.001"
+              step="any"
+              value={eggGrams}
+              onChange={(e) => setEggGrams(e.target.value)}
+            />
+          </label>
+          <div className="button-row">
+            <Button
+              busy={v.busy}
+              disabled={
+                !queue.online ||
+                eggRevision !== eggSetting.revision ||
+                !Number.isFinite(Number(eggGrams)) ||
+                Number(eggGrams) <= 0
+              }
+              onClick={async () => {
+                if (
+                  await v.operate(() =>
+                    v.repository.saveEggPurchasingUnit(
+                      Number(eggGrams),
+                      eggRevision,
+                    ),
+                  )
+                )
+                  setEggEditor(false);
+              }}
+            >
+              {t("Save estimate", "Guardar estimación")}
+            </Button>
+            <Button
+              secondary
+              busy={v.busy}
+              disabled={!queue.online || eggRevision !== eggSetting.revision}
+              onClick={async () => {
+                if (
+                  await v.operate(() =>
+                    v.repository.saveEggPurchasingUnit(null, eggRevision),
+                  )
+                )
+                  setEggEditor(false);
+              }}
+            >
+              {t("Reset to starter estimate", "Restablecer estimación inicial")}
+            </Button>
+          </div>
+        </Modal>
+      )}
       {shoppingNeedsRefresh(shopping, queue.now) && (
         <p className="note warning" role="status">
           {t(
-            "Saved quantities may include expired meals. Reconnect or synchronize to refresh them; your pending checks are kept.",
-            "Las cantidades guardadas pueden incluir comidas pasadas. Vuelve a conectarte o sincroniza para actualizarlas; se conservan tus marcas pendientes.",
+            "This saved list may not cover all upcoming meals or may include expired quantities. Reconnect or synchronize; your pending checks are kept.",
+            "La lista guardada puede no incluir todas las comidas próximas o contener cantidades pasadas. Reconecta o sincroniza; se conservan tus marcas pendientes.",
           )}
         </p>
       )}
       {shopping.changes_available && (
-        <div className="note warning">
-          <Info size={18} />
-          <span>
-            {t(
-              "The list needs synchronizing with the menu. Apply the current date range to retry.",
-              "La lista necesita sincronizarse con el menú. Aplica el intervalo actual para reintentarlo.",
-            )}
-          </span>
-          <button
-            className="text-link"
-            onClick={() => {
-              setStart(shopping.start_date!);
-              setEnd(shopping.end_date!);
-            }}
-          >
-            {t("Use current range", "Usar intervalo actual")}
-          </button>
-        </div>
+        <p className="note warning">
+          {t(
+            "Synchronize to refresh the upcoming list.",
+            "Sincroniza para actualizar la lista de comidas próximas.",
+          )}
+        </p>
       )}
       <div className="sync-status" role="status">
         {!queue.online ? (

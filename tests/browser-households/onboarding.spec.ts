@@ -305,10 +305,10 @@ test("a revoked invitation leaves the user in onboarding with a useful error", a
   expect(requests.some((r) => r.name === "get_household_snapshot")).toBe(false);
 });
 
-test("shopping range failures name the action and keep specific server guidance", async ({
+test("shopping does not expose legacy range controls or call its range RPC", async ({
   page,
 }) => {
-  await signedIn(page);
+  const requests = await signedIn(page);
   await page.getByRole("button", { name: "Español", exact: true }).click();
   await page
     .getByRole("button", { name: "Unirse a Invited home", exact: true })
@@ -318,24 +318,14 @@ test("shopping range failures name the action and keep specific server guidance"
     .first()
     .getByRole("button", { name: "Compra", exact: true })
     .click();
-  let failure = "unexpected database failure";
-  await page.route(
-    "https://household-tests.supabase.co/rest/v1/rpc/set_shopping_date_range",
-    (route) =>
-      route.fulfill({ status: 500, json: { code: "XX000", message: failure } }),
-  );
-  const apply = page.getByRole("button", {
-    name: "Aplicar intervalo de fechas",
-    exact: true,
-  });
-  await apply.click();
-  await expect(page.getByRole("alert")).toHaveText(
-    "No se ha podido actualizar la lista para este intervalo. Inténtalo de nuevo.",
-  );
-  failure = "stale_shopping";
-  await apply.click();
-  await expect(page.getByRole("alert")).toHaveText(
-    "El menú o la lista cambiaron. Vuelve a aplicar el intervalo de fechas.",
+  await expect(
+    page.getByRole("button", {
+      name: "Aplicar intervalo de fechas",
+      exact: true,
+    }),
+  ).toHaveCount(0);
+  expect(requests.some((r) => r.name === "set_shopping_date_range")).toBe(
+    false,
   );
 });
 
