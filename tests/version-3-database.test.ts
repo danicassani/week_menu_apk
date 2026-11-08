@@ -1021,3 +1021,75 @@ it("V4 short ingredient aliases search the complete catalogue without rewriting 
   ).rejects.toThrow("membership_changed");
   await actor();
 });
+it("household recipe vetoes survive edits, preserve meals and starter data, and enforce context/CAS", async () => {
+  await actor();
+  const initial = await rpc<PlanningState>("get_planning_library");
+  const recipe = initial.recipes.find((r) => r.id === "m02")!;
+  const savedPlans = JSON.stringify(initial.plans),
+    savedShopping = JSON.stringify((await shopping()).items);
+  const beforeDetail = await rpc<any>("get_catalogue_item", [
+    "recipe",
+    recipe.id,
+  ]);
+  const veto = await rpc<any>("set_recipe_veto", [recipe.id, true, 0]);
+  expect(veto).toMatchObject({
+    banned: true,
+    veto_revision: 1,
+    revision: recipe.revision,
+  });
+  await rpc("set_recipe_veto", [recipe.id, true, 0]); // safe retry after a lost acknowledgement
+  await expect(rpc("set_recipe_veto", [recipe.id, false, 0])).rejects.toThrow(
+    "stale_content",
+  );
+  const page = await rpc<any>("get_catalogue_page", [
+    "recipe",
+    recipe.name.en,
+    false,
+    null,
+  ]);
+  expect(page.items.find((r: any) => r.id === recipe.id).banned).toBe(true);
+  const library = await rpc<PlanningState>("get_planning_library");
+  expect(library.recipes.find((r) => r.id === recipe.id)?.banned).toBe(true);
+  expect(JSON.stringify(library.plans)).toBe(savedPlans);
+  expect(JSON.stringify((await shopping()).items)).toBe(savedShopping);
+  const afterDetail = await rpc<any>("get_catalogue_item", [
+    "recipe",
+    recipe.id,
+  ]);
+  expect(afterDetail.item.components).toEqual(beforeDetail.item.components);
+  await rpc("save_household_content", [
+    "recipe",
+    {
+      ...afterDetail.item,
+      banned: false,
+      name: { ...recipe.name, en: "Private dal" },
+    },
+    recipe.revision,
+    false,
+  ]);
+  expect(
+    (await rpc<any>("get_catalogue_item", ["recipe", recipe.id])).item.banned,
+  ).toBe(true);
+  await actor(b);
+  await expect(rpc("set_recipe_veto", [recipe.id, false, 1])).rejects.toThrow(
+    "membership_changed",
+  );
+  const otherDetail = await call<any>("get_catalogue_item", [
+    other.household_id,
+    other.membership_id,
+    "recipe",
+    recipe.id,
+  ]);
+  expect(otherDetail.item.banned).toBe(false);
+  expect(otherDetail.item.name).toEqual(recipe.name);
+  await actor();
+  await expect(
+    db.exec("select * from app_private.recipe_vetoes"),
+  ).rejects.toThrow("permission denied");
+  const restored = await rpc<any>("set_recipe_veto", [recipe.id, false, 1]);
+  expect(restored).toMatchObject({ banned: false, veto_revision: 2 });
+  expect(restored.name.en).toBe("Private dal");
+  await expect(
+    rpc("set_recipe_veto", ["missing-recipe", true, 0]),
+  ).rejects.toThrow("catalogue_item_unavailable");
+});

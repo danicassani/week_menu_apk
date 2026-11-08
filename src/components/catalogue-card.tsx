@@ -5,8 +5,10 @@ export function CatalogueCard({
   children,
   onOpen,
   onContext,
+  banned = false,
 }: {
   children: ReactNode;
+  banned?: boolean;
   onOpen: () => void;
   onContext?: () => void;
 }) {
@@ -26,7 +28,7 @@ export function CatalogueCard({
   }, []);
   return (
     <button
-      className="recipe-card"
+      className={`recipe-card${banned ? " is-vetoed" : ""}`}
       aria-haspopup={onContext ? "dialog" : undefined}
       onClick={() => {
         if (suppressClick.current) {

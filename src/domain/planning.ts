@@ -39,6 +39,8 @@ export interface RecipeComponent {
   reference_energy_kcal?: number;
 }
 export interface PlannedRecipe {
+  banned?: boolean;
+  veto_revision?: number;
   emoji?: string;
   id: string;
   name: Names;

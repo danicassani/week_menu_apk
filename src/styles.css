@@ -3933,3 +3933,19 @@ textarea:focus-visible {
   background: var(--subtle);
   border-color: var(--line);
 }
+
+.recipe-card.is-vetoed {
+  background: transparent;
+  border-style: dashed;
+  color: var(--muted);
+}
+.recipe-card.is-vetoed h3 {
+  color: var(--muted);
+}
+.recipe-card.is-vetoed h3 > span[aria-hidden] {
+  opacity: 0.4;
+}
+
+.recipe-actions {
+  margin: 12px 0;
+}

@@ -101,6 +101,7 @@ export function suggested(
   const candidates = lib.recipes.filter(
     (r) =>
       !r.archived &&
+      !r.banned &&
       r.meal_types.includes(type) &&
       (type === "breakfast" || r.id !== previous?.shared_recipe_id) &&
       (!recipeId || r.id === recipeId),
@@ -1851,6 +1852,7 @@ export function ContentManager(v: ViewProps) {
         {items.map((item) => (
           <CatalogueCard
             key={item.id}
+            banned={tab === "recipes" && item.banned === true}
             onContext={
               tab === "recipes" ? () => void readItem(item, true) : undefined
             }
@@ -1865,6 +1867,9 @@ export function ContentManager(v: ViewProps) {
                   ? ingredientText(item, v.language)
                   : name(item.name, v.language)}
               </h3>
+              {tab === "recipes" && item.banned && (
+                <span className="pill">{t("Vetoed", "Vetada")}</span>
+              )}
               <p className="muted">
                 {item.archived
                   ? t("Archived", "Archivado")
@@ -1973,7 +1978,7 @@ export function ContentManager(v: ViewProps) {
           recipe={readingRecipe}
           actions={
             <>
-              <div className="button-row">
+              <div className="button-row recipe-actions">
                 <Button
                   secondary
                   disabled={!!readingRecipe.archived}
@@ -1981,6 +1986,59 @@ export function ContentManager(v: ViewProps) {
                 >
                   <Copy size={18} />
                   {t("Copy to menu", "Copiar al menú")}
+                </Button>
+                <Button
+                  secondary
+                  busy={v.busy}
+                  onClick={() =>
+                    void v.operate(
+                      async () => {
+                        const identity = cacheIdentity(v.repository);
+                        let next: PlannedRecipe;
+                        try {
+                          next = await v.repository.setRecipeVeto(
+                            readingRecipe,
+                            !readingRecipe.banned,
+                          );
+                        } catch (error) {
+                          if (
+                            error instanceof Error &&
+                            error.message.includes("stale_content")
+                          ) {
+                            const detail = await v.repository.catalogueItem(
+                              "recipe",
+                              readingRecipe.id,
+                            );
+                            setReadingRecipe(detail.item as PlannedRecipe);
+                          }
+                          throw error;
+                        }
+                        if (identity !== cacheIdentity(v.repository))
+                          throw Error("membership_changed");
+                        setReadingRecipe(next);
+                        setPage((current) => ({
+                          ...current,
+                          items: current.items.map((item) =>
+                            item.id === next.id
+                              ? { ...item, banned: next.banned }
+                              : item,
+                          ),
+                        }));
+                        void cacheCatalogueDetail(identity, {
+                          item: next,
+                          ingredients: detailFoods,
+                        }).catch(() => {});
+                      },
+                      t(
+                        "Recipe veto updated.",
+                        "Veto de la receta actualizado.",
+                      ),
+                    )
+                  }
+                >
+                  {readingRecipe.banned
+                    ? t("Remove veto", "Quitar veto")
+                    : t("Veto recipe", "Vetar receta")}
                 </Button>
               </div>
               <RecipeStars v={v} recipeId={readingRecipe.id} />
