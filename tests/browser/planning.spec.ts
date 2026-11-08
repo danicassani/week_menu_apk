@@ -207,7 +207,15 @@ test("create a recipe on a phone", async ({ page }) => {
     page.getByLabel("Spanish translation", { exact: true }).first(),
   ).not.toBeVisible();
   await page.getByLabel("Name", { exact: true }).fill("Household porridge");
-  await page.getByLabel("Component name", { exact: true }).fill("Porridge");
+  await expect(page.getByLabel("Component type", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(page.getByLabel("Component name", { exact: true })).toHaveCount(
+    0,
+  );
+  await expect(
+    page.getByRole("region", { name: "Dish", exact: true }),
+  ).toBeVisible();
   await page
     .getByLabel("Instructions", { exact: true })
     .fill("Cook the oats.\nServe warm.");
