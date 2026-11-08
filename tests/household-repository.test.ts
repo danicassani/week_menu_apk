@@ -227,3 +227,32 @@ it("transfer transport failures are uncertain and missing migrations have an act
     ),
   ).rejects.toThrow("planning_update_unavailable");
 });
+
+it("distinguishes a PostgreSQL statement timeout from connectivity failures without retrying the write", async () => {
+  const { repo, request } = setup();
+  await repo.load("UTC");
+  const before = request.mock.calls.length;
+  request.mockImplementationOnce(
+    () =>
+      ({
+        setHeader: async () => ({
+          data: undefined,
+          error: {
+            code: "57014",
+            message: "canceling statement due to statement timeout",
+          },
+        }),
+      }) as any,
+  );
+  await expect(repo.applyPlans([], 1, false)).rejects.toThrow(
+    "database_timeout",
+  );
+  expect(request.mock.calls.length - before).toBe(1);
+  const { errorMessage } = await import("../src/lib/i18n");
+  expect(errorMessage(new Error("database_timeout"), "es")).toContain(
+    "La base de datos ha tardado demasiado",
+  );
+  expect(errorMessage(new Error("database_timeout"), "en")).toContain(
+    "The database took too long",
+  );
+});

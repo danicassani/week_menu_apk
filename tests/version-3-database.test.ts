@@ -2,7 +2,11 @@ import { beforeAll, afterAll, it, expect } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { readFileSync, readdirSync, mkdirSync, writeFileSync } from "node:fs";
 import { addDays, dayCutoff } from "../src/domain/dates";
-import { makePortion, type PlanningState } from "../src/domain/planning";
+import {
+  makePortion,
+  type PlanningState,
+  type MealPlan,
+} from "../src/domain/planning";
 import type { HouseholdState, Profile } from "../src/domain/types";
 import type { ShoppingState } from "../src/domain/shopping";
 const measurements: Record<string, unknown> = {};
@@ -1330,4 +1334,31 @@ it("new global recipes work in existing and new households and private edits sta
     (await rpc<any>("get_catalogue_item", ["recipe", original.id])).item.name
       .en,
   ).toBe("Our private toast");
+});
+it("saves a generated full week with shared meals and source-backed individual breakfasts", async () => {
+  await actor();
+  const { suggested } = await import("../src/pages/planner");
+  const state = await snapshot(),
+    lib = await rpc<PlanningState>("get_planning_library");
+  const batch: MealPlan[] = [];
+  for (let offset = 0; offset < 7; offset++)
+    for (const type of ["breakfast", "lunch", "dinner"] as const) {
+      const plan = suggested(
+        { s: state } as any,
+        lib,
+        addDays(day, 300 + offset),
+        type,
+        batch,
+      );
+      expect(plan, `${offset}/${type}`).not.toBeNull();
+      if (plan) batch.push(plan);
+    }
+  expect(batch).toHaveLength(21);
+  await rpc("apply_meal_plans", [batch, lib.revision, false]);
+  const saved = await rpc<PlanningState>("get_planning_library");
+  expect(
+    saved.plans.filter((p) =>
+      batch.some((b) => b.day === p.day && b.type === p.type),
+    ),
+  ).toHaveLength(21);
 });

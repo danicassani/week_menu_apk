@@ -140,6 +140,8 @@ export class SupabaseRepository implements Repository {
       /historical_correction/.test(name)
     )
       throw new DomainError("correction_unavailable");
+    if (error?.code === "57014" && /statement timeout/i.test(error.message))
+      throw new DomainError("database_timeout");
     if (error) throw new DomainError(error.message);
     return data as T;
   }
