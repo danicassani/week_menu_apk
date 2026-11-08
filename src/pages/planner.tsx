@@ -1900,7 +1900,7 @@ export function ContentManager(v: ViewProps) {
                 {
                   id: "main",
                   kind: "main",
-                  name: { en: "Main", es: "Principal" },
+                  name: { en: "Dish", es: "Plato" },
                   optional: false,
                   default_included: true,
                   ingredients: [],
@@ -2265,6 +2265,17 @@ function ContentEditor({
         i === j ? { ...c, ...patch } : c,
       ),
     });
+  const recipeGroups =
+    kind === "recipe"
+      ? [false, true]
+          .map((dessert) => ({
+            dessert,
+            entries: recipe.components
+              .map((c, ci) => ({ c, ci }))
+              .filter(({ c }) => (c.kind === "dessert") === dessert),
+          }))
+          .filter((group) => group.entries.length > 0)
+      : [];
   const referenceEnergy = (dessert: boolean): number | null => {
     if (kind !== "recipe") return null;
     try {
@@ -2320,6 +2331,9 @@ function ContentEditor({
           throw new Error("invalid_recipe");
         const components = recipe.components.map((c) => ({
           ...c,
+          ...(initial.revision === 0 && c.kind !== "dessert"
+            ? { name: recipe.name }
+            : {}),
           reference_energy_kcal: c.ingredients.reduce((sum, l) => {
             const f = lib.ingredients.find((f) => f.id === l.ingredient_id);
             if (!f || f.nutrition_per_100g.energy_kcal === null)
@@ -2374,7 +2388,7 @@ function ContentEditor({
       title={
         kind === "ingredient"
           ? t("Ingredient & conversions", "Ingrediente y conversiones")
-          : t("Recipe & components", "Receta y componentes")
+          : t("Recipe", "Receta")
       }
       wide
       onClose={onClose}
@@ -2677,196 +2691,207 @@ function ContentEditor({
                 }
               />
             </label>
-            {recipe.components.map((c, ci) => (
-              <section className="recipe-component" key={c.id}>
-                <div className="button-row">
-                  <h3>{name(c.name, v.language)}</h3>
-                  <button
-                    type="button"
-                    className="icon-button"
-                    aria-label={t("Remove component", "Eliminar componente")}
-                    onClick={() =>
-                      update({
-                        components: recipe.components.filter(
-                          (_, i) => i !== ci,
-                        ),
-                      })
-                    }
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                </div>
-                <ContentTextField
-                  key={`name-${revision}`}
-                  label={t("Component name", "Nombre del componente")}
-                  value={c.name}
-                  language={v.language}
-                  onChange={(name) => component(ci, { name })}
-                />
-
-                <label>
-                  {t("Component type", "Tipo de componente")}
-                  <select
-                    value={c.kind}
-                    onChange={(e) =>
-                      component(ci, {
-                        kind: e.target.value,
-                        optional: e.target.value === "dessert",
-                        default_included: e.target.value !== "dessert",
-                      })
-                    }
-                  >
-                    <option value="main">{t("Main", "Principal")}</option>
-                    <option value="side">{t("Side", "Guarnición")}</option>
-                    <option value="dessert">
-                      {t("Optional dessert", "Postre opcional")}
-                    </option>
-                  </select>
-                </label>
-                {c.ingredients.map((l, li) => {
-                  const f = lib.ingredients.find(
-                    (f) => f.id === l.ingredient_id,
-                  );
-                  const line = (patch: Partial<typeof l>) =>
-                    component(ci, {
-                      ingredients: c.ingredients.map((x, j) =>
-                        j === li ? { ...x, ...patch } : x,
-                      ),
-                    });
-                  return (
-                    <div className="recipe-line-editor" key={li}>
-                      <label>
-                        {t("Ingredient", "Ingrediente")}
-                        <select
-                          aria-label={t("Ingredient", "Ingrediente")}
-                          required
-                          value={l.ingredient_id}
-                          onChange={(e) =>
-                            line({ ingredient_id: e.target.value, unit: "g" })
-                          }
-                        >
-                          <option value="">
-                            {t("Choose ingredient", "Elige ingrediente")}
-                          </option>
-                          {sortedIngredients(lib.ingredients, v.language)
-                            .filter(
-                              (f) => !f.archived || f.id === l.ingredient_id,
-                            )
-                            .map((f) => (
-                              <option key={f.id} value={f.id}>
-                                {ingredientText(f, v.language)}
-                              </option>
-                            ))}
-                        </select>
-                      </label>
-                      <div className="form-grid">
-                        <label>
-                          {t("Quantity", "Cantidad")}
-                          <input
-                            required
-                            type="number"
-                            min="0.001"
-                            step="any"
-                            value={l.quantity}
-                            onChange={(e) =>
-                              line({ quantity: e.target.valueAsNumber })
-                            }
-                          />
-                        </label>
-                        <label>
-                          {t("Unit", "Unidad")}
-                          <select
-                            value={l.unit}
-                            onChange={(e) => line({ unit: e.target.value })}
-                          >
-                            {(f?.conversions ?? [{ unit: "g" }]).map((c) => (
-                              <option key={c.unit} value={c.unit}>
-                                {c.unit}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      </div>
+            {recipeGroups.map((group) => {
+              const first = group.entries[0];
+              const last = group.entries[group.entries.length - 1];
+              const instructions = group.entries.flatMap(
+                ({ c }) => c.instructions,
+              );
+              return (
+                <section
+                  className="recipe-component"
+                  key={group.dessert ? "dessert" : "dish"}
+                  aria-label={
+                    group.dessert
+                      ? t("Optional dessert", "Postre opcional")
+                      : t("Dish", "Plato")
+                  }
+                >
+                  <div className="button-row">
+                    <h3>
+                      {group.dessert
+                        ? t("Optional dessert", "Postre opcional")
+                        : t("Dish", "Plato")}
+                    </h3>
+                    {group.dessert && (
                       <button
                         type="button"
-                        className="text-link"
+                        className="icon-button"
+                        aria-label={t("Remove dessert", "Eliminar postre")}
                         onClick={() =>
-                          component(ci, {
-                            ingredients: c.ingredients.filter(
-                              (_, j) => j !== li,
+                          update({
+                            components: recipe.components.filter(
+                              (c) => c.kind !== "dessert",
                             ),
                           })
                         }
                       >
-                        {t("Remove ingredient", "Eliminar ingrediente")}
+                        <Trash2 size={15} />
                       </button>
-                    </div>
-                  );
-                })}
-                <Button
-                  secondary
-                  type="button"
-                  onClick={() =>
-                    component(ci, {
-                      ingredients: [
-                        ...c.ingredients,
-                        {
-                          ingredient_id: "",
-                          quantity: 100,
-                          unit: "g",
-                        },
-                      ],
-                    })
-                  }
-                >
-                  <Plus size={14} />
-                  {t("Add ingredient", "Añadir ingrediente")}
-                </Button>
-                <ContentTextField
-                  key={`instructions-${revision}`}
-                  label={t("Instructions", "Instrucciones")}
-                  value={{
-                    en: c.instructions.map((s) => s.en).join("\n"),
-                    es: c.instructions.map((s) => s.es).join("\n"),
-                  }}
-                  language={v.language}
-                  multiline
-                  onChange={(value) => {
-                    const en = value.en.split("\n"),
-                      es = value.es.split("\n");
-                    component(ci, {
-                      instructions: Array.from(
+                    )}
+                  </div>
+                  {group.entries.flatMap(({ c, ci }) =>
+                    c.ingredients.map((l, li) => {
+                      const f = lib.ingredients.find(
+                        (f) => f.id === l.ingredient_id,
+                      );
+                      const line = (patch: Partial<typeof l>) =>
+                        component(ci, {
+                          ingredients: c.ingredients.map((x, j) =>
+                            j === li ? { ...x, ...patch } : x,
+                          ),
+                        });
+                      return (
+                        <div
+                          className="recipe-line-editor"
+                          key={`${c.id}-${li}`}
+                        >
+                          <label>
+                            {t("Ingredient", "Ingrediente")}
+                            <select
+                              aria-label={t("Ingredient", "Ingrediente")}
+                              required
+                              value={l.ingredient_id}
+                              onChange={(e) =>
+                                line({
+                                  ingredient_id: e.target.value,
+                                  unit: "g",
+                                })
+                              }
+                            >
+                              <option value="">
+                                {t("Choose ingredient", "Elige ingrediente")}
+                              </option>
+                              {sortedIngredients(lib.ingredients, v.language)
+                                .filter(
+                                  (f) =>
+                                    !f.archived || f.id === l.ingredient_id,
+                                )
+                                .map((f) => (
+                                  <option key={f.id} value={f.id}>
+                                    {ingredientText(f, v.language)}
+                                  </option>
+                                ))}
+                            </select>
+                          </label>
+                          <div className="form-grid">
+                            <label>
+                              {t("Quantity", "Cantidad")}
+                              <input
+                                required
+                                type="number"
+                                min="0.001"
+                                step="any"
+                                value={l.quantity}
+                                onChange={(e) =>
+                                  line({ quantity: e.target.valueAsNumber })
+                                }
+                              />
+                            </label>
+                            <label>
+                              {t("Unit", "Unidad")}
+                              <select
+                                value={l.unit}
+                                onChange={(e) => line({ unit: e.target.value })}
+                              >
+                                {(f?.conversions ?? [{ unit: "g" }]).map(
+                                  (c) => (
+                                    <option key={c.unit} value={c.unit}>
+                                      {c.unit}
+                                    </option>
+                                  ),
+                                )}
+                              </select>
+                            </label>
+                          </div>
+                          <button
+                            type="button"
+                            className="text-link"
+                            onClick={() =>
+                              component(ci, {
+                                ingredients: c.ingredients.filter(
+                                  (_, j) => j !== li,
+                                ),
+                              })
+                            }
+                          >
+                            {t("Remove ingredient", "Eliminar ingrediente")}
+                          </button>
+                        </div>
+                      );
+                    }),
+                  )}
+                  <Button
+                    secondary
+                    type="button"
+                    onClick={() =>
+                      component(last.ci, {
+                        ingredients: [
+                          ...last.c.ingredients,
+                          { ingredient_id: "", quantity: 100, unit: "g" },
+                        ],
+                      })
+                    }
+                  >
+                    <Plus size={14} />
+                    {t("Add ingredient", "Añadir ingrediente")}
+                  </Button>
+                  <ContentTextField
+                    key={`instructions-${revision}`}
+                    label={t("Instructions", "Instrucciones")}
+                    value={{
+                      en: instructions.map((s) => s.en).join("\n"),
+                      es: instructions.map((s) => s.es).join("\n"),
+                    }}
+                    language={v.language}
+                    multiline
+                    onChange={(value) => {
+                      const en = value.en.split("\n"),
+                        es = value.es.split("\n");
+                      const steps = Array.from(
                         { length: Math.max(en.length, es.length) },
                         (_, i) => ({ en: en[i] ?? "", es: es[i] ?? "" }),
-                      ),
-                    });
-                  }}
-                />
-              </section>
-            ))}
-            <Button
-              secondary
-              type="button"
-              onClick={() =>
-                update({
-                  components: [
-                    ...recipe.components,
-                    {
-                      id: crypto.randomUUID(),
-                      kind: "side",
-                      name: { en: "", es: "" },
-                      optional: false,
-                      default_included: true,
-                      ingredients: [],
-                      instructions: [],
-                    },
-                  ],
-                })
-              }
-            >
-              <Plus size={14} />
-              {t("Add side / dessert", "Añadir guarnición / postre")}
-            </Button>
+                      );
+                      update({
+                        components: recipe.components.map((c, ci) =>
+                          group.entries.some((entry) => entry.ci === ci)
+                            ? {
+                                ...c,
+                                instructions: ci === first.ci ? steps : [],
+                              }
+                            : c,
+                        ),
+                      });
+                    }}
+                  />
+                </section>
+              );
+            })}
+            {!recipe.components.some((c) => c.kind === "dessert") && (
+              <Button
+                secondary
+                type="button"
+                onClick={() =>
+                  update({
+                    components: [
+                      ...recipe.components,
+                      {
+                        id: crypto.randomUUID(),
+                        kind: "dessert",
+                        name: { en: "Dessert", es: "Postre" },
+                        optional: true,
+                        default_included: false,
+                        ingredients: [],
+                        instructions: [],
+                      },
+                    ],
+                  })
+                }
+              >
+                <Plus size={14} />
+                {t("Add optional dessert", "Añadir postre opcional")}
+              </Button>
+            )}
           </>
         )}
         {error && (
