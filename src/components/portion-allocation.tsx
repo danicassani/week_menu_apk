@@ -1,3 +1,4 @@
+import { ingredientText } from "../domain/content-presentation";
 import { mealAllocation } from "../domain/allocation";
 import type { MealPlan } from "../domain/planning";
 import type { Language, Member } from "../domain/types";
@@ -123,7 +124,7 @@ export function PortionAllocation({
                       </span>
                       {s.lines.map((l, i) => (
                         <span key={i}>
-                          {text(l.name)}: {l.quantity} {l.unit}
+                          {ingredientText(l, language)}: {l.quantity} {l.unit}
                         </span>
                       ))}
                     </Popover>

@@ -1,3 +1,4 @@
+import { ingredientText } from "../domain/content-presentation";
 import { Pencil, Trash2 } from "lucide-react";
 import type { ShoppingItem, CheckOperation } from "../domain/shopping";
 import { formatShoppingQuantity, overlayPending } from "../domain/shopping";
@@ -56,8 +57,13 @@ export function ShoppingChecklist({
           .sort(
             (a, b) =>
               Number(a.checked) - Number(b.checked) ||
-              (a.name[language] || a.name.en || a.name.es).localeCompare(
-                b.name[language] || b.name.en || b.name.es,
+              (a.source === "generated"
+                ? ingredientText(a, language)
+                : a.name[language] || a.name.en || a.name.es
+              ).localeCompare(
+                b.source === "generated"
+                  ? ingredientText(b, language)
+                  : b.name[language] || b.name.en || b.name.es,
               ),
           );
         if (!rows.length) return null;
@@ -71,7 +77,9 @@ export function ShoppingChecklist({
             <ul className="shopping-checklist">
               {rows.map((item) => {
                 const label =
-                    item.name[language] || item.name.en || item.name.es,
+                    item.source === "generated"
+                      ? ingredientText(item, language)
+                      : item.name[language] || item.name.en || item.name.es,
                   quantity = formatShoppingQuantity(item, language);
                 return (
                   <li key={item.id} className={item.checked ? "checked" : ""}>
@@ -87,7 +95,15 @@ export function ShoppingChecklist({
                         <b>{label}</b>
                         <small>
                           {quantity}
-                          {item.reference_state
+                          {item.reference_state &&
+                          visible.some(
+                            (other) =>
+                              other.id !== item.id &&
+                              other.source === "generated" &&
+                              ingredientText(other, language) === label &&
+                              (other.reference_state !== item.reference_state ||
+                                other.quantity_basis !== item.quantity_basis),
+                          )
                             ? ` · ${referenceLabels[item.reference_state] ?? item.reference_state}`
                             : ""}
                         </small>

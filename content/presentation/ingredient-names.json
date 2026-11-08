@@ -1,0 +1,672 @@
+{
+  "rice_white": {
+    "source_name": {
+      "en": "Basmati rice, dry",
+      "es": "Arroz basmati seco"
+    },
+    "name": {
+      "en": "Basmati rice",
+      "es": "Arroz basmati"
+    }
+  },
+  "rice_brown": {
+    "source_name": {
+      "en": "Wholegrain brown rice, dry",
+      "es": "Arroz integral seco"
+    },
+    "name": {
+      "en": "Wholegrain brown rice",
+      "es": "Arroz integral"
+    }
+  },
+  "rice_risotto": {
+    "source_name": {
+      "en": "Arborio rice, dry",
+      "es": "Arroz arborio seco"
+    },
+    "name": {
+      "en": "Arborio rice",
+      "es": "Arroz arborio"
+    }
+  },
+  "pasta": {
+    "source_name": {
+      "en": "White dried pasta",
+      "es": "Pasta blanca seca"
+    },
+    "name": {
+      "en": "White pasta",
+      "es": "Pasta blanca"
+    }
+  },
+  "pasta_wholewheat": {
+    "source_name": {
+      "en": "Wholewheat dried spaghetti",
+      "es": "Espaguetis integrales secos"
+    },
+    "name": {
+      "en": "Wholewheat spaghetti",
+      "es": "Espaguetis integrales"
+    }
+  },
+  "couscous": {
+    "source_name": {
+      "en": "Plain couscous, dry",
+      "es": "Cuscús seco"
+    },
+    "name": {
+      "en": "Couscous",
+      "es": "Cuscús"
+    }
+  },
+  "bulgur": {
+    "source_name": {
+      "en": "Bulgur wheat, dry",
+      "es": "Bulgur seco"
+    },
+    "name": {
+      "en": "Bulgur wheat",
+      "es": "Bulgur"
+    }
+  },
+  "quinoa": {
+    "source_name": {
+      "en": "Quinoa, dry",
+      "es": "Quinoa seca"
+    },
+    "name": {
+      "en": "Quinoa",
+      "es": "Quinoa"
+    }
+  },
+  "barley": {
+    "source_name": {
+      "en": "Pearl barley, dry",
+      "es": "Cebada perlada seca"
+    },
+    "name": {
+      "en": "Pearl barley",
+      "es": "Cebada perlada"
+    }
+  },
+  "egg": {
+    "source_name": {
+      "en": "Whole chicken egg, raw, without shell",
+      "es": "Huevo de gallina crudo, sin cáscara"
+    },
+    "name": {
+      "en": "Eggs",
+      "es": "Huevos"
+    }
+  },
+  "chicken": {
+    "source_name": {
+      "en": "Chicken light meat, raw, boneless and skinless",
+      "es": "Carne blanca de pollo cruda, sin piel ni hueso"
+    },
+    "name": {
+      "en": "Chicken light meat",
+      "es": "Carne blanca de pollo"
+    }
+  },
+  "turkey": {
+    "source_name": {
+      "en": "Turkey light meat, raw, boneless and skinless",
+      "es": "Carne blanca de pavo cruda, sin piel ni hueso"
+    },
+    "name": {
+      "en": "Turkey light meat",
+      "es": "Carne blanca de pavo"
+    }
+  },
+  "beef": {
+    "source_name": {
+      "en": "Extra-lean beef mince, raw",
+      "es": "Carne picada de ternera extramagra, cruda"
+    },
+    "name": {
+      "en": "Extra-lean beef mince",
+      "es": "Carne picada de ternera extramagra"
+    }
+  },
+  "pork": {
+    "source_name": {
+      "en": "Lean pork fillet medallions, raw",
+      "es": "Medallones magros de solomillo de cerdo, crudos"
+    },
+    "name": {
+      "en": "Lean pork fillet medallions",
+      "es": "Medallones magros de solomillo de cerdo"
+    }
+  },
+  "salmon": {
+    "source_name": {
+      "en": "Farmed salmon flesh, raw, boneless",
+      "es": "Salmón de acuicultura crudo, sin espinas"
+    },
+    "name": {
+      "en": "Farmed salmon",
+      "es": "Salmón de acuicultura"
+    }
+  },
+  "cod": {
+    "source_name": {
+      "en": "Cod flesh, raw, boneless",
+      "es": "Bacalao crudo sin espinas"
+    },
+    "name": {
+      "en": "Cod",
+      "es": "Bacalao"
+    }
+  },
+  "prawns": {
+    "source_name": {
+      "en": "Raw king prawns, edible portion",
+      "es": "Langostinos crudos, parte comestible"
+    },
+    "name": {
+      "en": "King prawns",
+      "es": "Langostinos"
+    }
+  },
+  "tuna": {
+    "source_name": {
+      "en": "Tuna canned in brine, drained",
+      "es": "Atún en salmuera, escurrido"
+    },
+    "name": {
+      "en": "Tuna in brine",
+      "es": "Atún en salmuera"
+    }
+  },
+  "sardines": {
+    "source_name": {
+      "en": "Sardines canned in olive oil, drained",
+      "es": "Sardinas en aceite de oliva, escurridas"
+    },
+    "name": {
+      "en": "Sardines in olive oil",
+      "es": "Sardinas en aceite de oliva"
+    }
+  },
+  "lentils_red": {
+    "source_name": {
+      "en": "Red split lentils, dry",
+      "es": "Lentejas rojas partidas, secas"
+    },
+    "name": {
+      "en": "Red split lentils",
+      "es": "Lentejas rojas partidas"
+    }
+  },
+  "lentils_green": {
+    "source_name": {
+      "en": "Green/brown lentils, dry",
+      "es": "Lentejas verdes o pardinas, secas"
+    },
+    "name": {
+      "en": "Green/brown lentils",
+      "es": "Lentejas verdes o pardinas"
+    }
+  },
+  "chickpeas": {
+    "source_name": {
+      "en": "Whole chickpeas, dry",
+      "es": "Garbanzos enteros secos"
+    },
+    "name": {
+      "en": "Chickpeas",
+      "es": "Garbanzos"
+    }
+  },
+  "beans_white": {
+    "source_name": {
+      "en": "Haricot beans, dry",
+      "es": "Alubias blancas secas"
+    },
+    "name": {
+      "en": "Haricot beans",
+      "es": "Alubias blancas"
+    }
+  },
+  "beans_kidney": {
+    "source_name": {
+      "en": "Red kidney beans, dry",
+      "es": "Alubias rojas secas"
+    },
+    "name": {
+      "en": "Red kidney beans",
+      "es": "Alubias rojas"
+    }
+  },
+  "beans_blackeye": {
+    "source_name": {
+      "en": "Black-eyed beans, dry",
+      "es": "Alubias carillas secas"
+    },
+    "name": {
+      "en": "Black-eyed beans",
+      "es": "Alubias carillas"
+    }
+  },
+  "tofu": {
+    "source_name": {
+      "en": "Plain steamed tofu (source-specific)",
+      "es": "Tofu natural al vapor (referencia específica)"
+    },
+    "name": {
+      "en": "Plain steamed tofu",
+      "es": "Tofu natural al vapor"
+    }
+  },
+  "tomato": {
+    "source_name": {
+      "en": "Raw tomato",
+      "es": "Tomate crudo"
+    },
+    "name": {
+      "en": "Tomatoes",
+      "es": "Tomates"
+    }
+  },
+  "tomato_canned": {
+    "source_name": {
+      "en": "Canned tomatoes, whole contents",
+      "es": "Tomate en conserva con su líquido"
+    },
+    "name": {
+      "en": "Canned tomatoes",
+      "es": "Tomate en conserva"
+    }
+  },
+  "pepper_red": {
+    "source_name": {
+      "en": "Raw red pepper",
+      "es": "Pimiento rojo crudo"
+    },
+    "name": {
+      "en": "Red pepper",
+      "es": "Pimiento rojo"
+    }
+  },
+  "pepper_green": {
+    "source_name": {
+      "en": "Raw green pepper",
+      "es": "Pimiento verde crudo"
+    },
+    "name": {
+      "en": "Green pepper",
+      "es": "Pimiento verde"
+    }
+  },
+  "onion": {
+    "source_name": {
+      "en": "Raw onion",
+      "es": "Cebolla cruda"
+    },
+    "name": {
+      "en": "Onion",
+      "es": "Cebolla"
+    }
+  },
+  "spring_onion": {
+    "source_name": {
+      "en": "Raw spring onion, bulb and tops",
+      "es": "Cebolleta cruda, bulbo y hojas"
+    },
+    "name": {
+      "en": "Spring onion",
+      "es": "Cebolleta"
+    }
+  },
+  "garlic": {
+    "source_name": {
+      "en": "Raw garlic",
+      "es": "Ajo crudo"
+    },
+    "name": {
+      "en": "Garlic",
+      "es": "Ajo"
+    }
+  },
+  "carrot": {
+    "source_name": {
+      "en": "Raw carrot",
+      "es": "Zanahoria cruda"
+    },
+    "name": {
+      "en": "Carrots",
+      "es": "Zanahorias"
+    }
+  },
+  "courgette": {
+    "source_name": {
+      "en": "Raw courgette",
+      "es": "Calabacín crudo"
+    },
+    "name": {
+      "en": "Courgette",
+      "es": "Calabacín"
+    }
+  },
+  "aubergine": {
+    "source_name": {
+      "en": "Raw aubergine",
+      "es": "Berenjena cruda"
+    },
+    "name": {
+      "en": "Aubergine",
+      "es": "Berenjena"
+    }
+  },
+  "broccoli": {
+    "source_name": {
+      "en": "Raw broccoli",
+      "es": "Brócoli crudo"
+    },
+    "name": {
+      "en": "Broccoli",
+      "es": "Brócoli"
+    }
+  },
+  "cauliflower": {
+    "source_name": {
+      "en": "Raw cauliflower",
+      "es": "Coliflor cruda"
+    },
+    "name": {
+      "en": "Cauliflower",
+      "es": "Coliflor"
+    }
+  },
+  "mushroom": {
+    "source_name": {
+      "en": "Raw white mushrooms",
+      "es": "Champiñones crudos"
+    },
+    "name": {
+      "en": "White mushrooms",
+      "es": "Champiñones"
+    }
+  },
+  "spinach": {
+    "source_name": {
+      "en": "Raw baby spinach",
+      "es": "Espinacas baby crudas"
+    },
+    "name": {
+      "en": "Baby spinach",
+      "es": "Espinacas baby"
+    }
+  },
+  "potato": {
+    "source_name": {
+      "en": "Raw peeled potato",
+      "es": "Patata cruda pelada"
+    },
+    "name": {
+      "en": "Potatoes",
+      "es": "Patatas"
+    }
+  },
+  "sweet_potato": {
+    "source_name": {
+      "en": "Raw sweet potato flesh",
+      "es": "Boniato crudo pelado"
+    },
+    "name": {
+      "en": "Sweet potato",
+      "es": "Boniato"
+    }
+  },
+  "squash": {
+    "source_name": {
+      "en": "Raw butternut squash flesh",
+      "es": "Calabaza cacahuete cruda pelada"
+    },
+    "name": {
+      "en": "Butternut squash",
+      "es": "Calabaza cacahuete"
+    }
+  },
+  "green_beans": {
+    "source_name": {
+      "en": "Raw green beans",
+      "es": "Judías verdes crudas"
+    },
+    "name": {
+      "en": "Green beans",
+      "es": "Judías verdes"
+    }
+  },
+  "peas": {
+    "source_name": {
+      "en": "Frozen peas, uncooked",
+      "es": "Guisantes congelados sin cocinar"
+    },
+    "name": {
+      "en": "Frozen peas",
+      "es": "Guisantes congelados"
+    }
+  },
+  "cucumber": {
+    "source_name": {
+      "en": "Raw cucumber with skin",
+      "es": "Pepino crudo con piel"
+    },
+    "name": {
+      "en": "Cucumber",
+      "es": "Pepino"
+    }
+  },
+  "lettuce": {
+    "source_name": {
+      "en": "Raw lettuce",
+      "es": "Lechuga cruda"
+    },
+    "name": {
+      "en": "Lettuce",
+      "es": "Lechuga"
+    }
+  },
+  "rocket": {
+    "source_name": {
+      "en": "Raw rocket",
+      "es": "Rúcula cruda"
+    },
+    "name": {
+      "en": "Rocket",
+      "es": "Rúcula"
+    }
+  },
+  "leek": {
+    "source_name": {
+      "en": "Raw leek",
+      "es": "Puerro crudo"
+    },
+    "name": {
+      "en": "Leek",
+      "es": "Puerro"
+    }
+  },
+  "celery": {
+    "source_name": {
+      "en": "Raw celery",
+      "es": "Apio crudo"
+    },
+    "name": {
+      "en": "Celery",
+      "es": "Apio"
+    }
+  },
+  "avocado": {
+    "source_name": {
+      "en": "Hass avocado flesh",
+      "es": "Pulpa de aguacate Hass"
+    },
+    "name": {
+      "en": "Hass avocado",
+      "es": "Aguacate Hass"
+    }
+  },
+  "apple": {
+    "source_name": {
+      "en": "Raw eating apple, skin on, core removed",
+      "es": "Manzana cruda con piel, sin corazón"
+    },
+    "name": {
+      "en": "Eating apples",
+      "es": "Manzanas"
+    }
+  },
+  "banana": {
+    "source_name": {
+      "en": "Banana flesh",
+      "es": "Plátano pelado"
+    },
+    "name": {
+      "en": "Bananas",
+      "es": "Plátanos"
+    }
+  },
+  "pear": {
+    "source_name": {
+      "en": "Raw pear, skin on, core removed",
+      "es": "Pera cruda con piel, sin corazón"
+    },
+    "name": {
+      "en": "Pears",
+      "es": "Peras"
+    }
+  },
+  "orange": {
+    "source_name": {
+      "en": "Orange flesh",
+      "es": "Naranja pelada"
+    },
+    "name": {
+      "en": "Oranges",
+      "es": "Naranjas"
+    }
+  },
+  "kiwi": {
+    "source_name": {
+      "en": "Raw kiwi flesh",
+      "es": "Kiwi crudo pelado"
+    },
+    "name": {
+      "en": "Kiwi",
+      "es": "Kiwi"
+    }
+  },
+  "strawberry": {
+    "source_name": {
+      "en": "Raw strawberries",
+      "es": "Fresas crudas"
+    },
+    "name": {
+      "en": "Strawberries",
+      "es": "Fresas"
+    }
+  },
+  "raspberry": {
+    "source_name": {
+      "en": "Raw raspberries",
+      "es": "Frambuesas crudas"
+    },
+    "name": {
+      "en": "Raspberries",
+      "es": "Frambuesas"
+    }
+  },
+  "grapes": {
+    "source_name": {
+      "en": "Grapes, average",
+      "es": "Uvas, valor medio"
+    },
+    "name": {
+      "en": "Grapes",
+      "es": "Uvas"
+    }
+  },
+  "mango": {
+    "source_name": {
+      "en": "Ripe mango flesh",
+      "es": "Mango maduro pelado"
+    },
+    "name": {
+      "en": "Ripe mango",
+      "es": "Mango maduro"
+    }
+  },
+  "melon": {
+    "source_name": {
+      "en": "Melon flesh, average",
+      "es": "Melón pelado, valor medio"
+    },
+    "name": {
+      "en": "Melon",
+      "es": "Melón"
+    }
+  },
+  "water": {
+    "source_name": {
+      "en": "Water (distilled-water energy reference)",
+      "es": "Agua (referencia energética: agua destilada)"
+    },
+    "name": {
+      "en": "Water",
+      "es": "Agua"
+    }
+  },
+  "almond": {
+    "source_name": {
+      "en": "Whole almond kernels",
+      "es": "Almendras sin cáscara"
+    },
+    "name": {
+      "en": "Almonds",
+      "es": "Almendras"
+    }
+  },
+  "walnut": {
+    "source_name": {
+      "en": "Walnut kernels",
+      "es": "Nueces sin cáscara"
+    },
+    "name": {
+      "en": "Walnuts",
+      "es": "Nueces"
+    }
+  },
+  "basil_dried": {
+    "source_name": {
+      "en": "Dried ground basil",
+      "es": "Albahaca seca molida"
+    },
+    "name": {
+      "en": "Dried basil",
+      "es": "Albahaca seca"
+    }
+  },
+  "chilli": {
+    "source_name": {
+      "en": "Raw red chilli",
+      "es": "Guindilla roja cruda"
+    },
+    "name": {
+      "en": "Red chilli",
+      "es": "Guindilla roja"
+    }
+  },
+  "coconut_milk": {
+    "source_name": {
+      "en": "Coconut milk, retail",
+      "es": "Leche de coco comercial"
+    },
+    "name": {
+      "en": "Coconut milk",
+      "es": "Leche de coco"
+    }
+  }
+}

@@ -1,3 +1,4 @@
+import { ingredientMatches } from "../domain/content-presentation";
 import {
   historicalQuantities,
   type CorrectionSession,
@@ -508,8 +509,10 @@ export class PreviewRepository implements Repository {
         .filter(
           (i) =>
             (q.archived || !i.archived) &&
-            (i.name.en.toLowerCase().includes(query) ||
-              i.name.es.toLowerCase().includes(query)),
+            (q.kind === "ingredient"
+              ? ingredientMatches(i, query)
+              : i.name.en.toLowerCase().includes(query) ||
+                i.name.es.toLowerCase().includes(query)),
         )
         .sort((a, b) => {
           const at = String((a as any).created_at ?? ""),

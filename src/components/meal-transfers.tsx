@@ -1,3 +1,4 @@
+import { ingredientText } from "../domain/content-presentation";
 import { useEffect, useRef, useState } from "react";
 import { Copy, ClipboardPaste, ArrowDownUp, X } from "lucide-react";
 import { IconAction } from "./icon-action";
@@ -422,7 +423,7 @@ export function useMealTransfers(
                       <ul className="ingredient-list">
                         {p.lines.map((l, i) => (
                           <li key={i}>
-                            <span>{text(l.name)}</span>
+                            <span>{ingredientText(l, v.language)}</span>
                             <b>
                               {l.quantity} {l.unit}
                             </b>

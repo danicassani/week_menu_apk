@@ -1,3 +1,4 @@
+import { ingredientText } from "../domain/content-presentation";
 import type { Ingredient } from "../domain/planning";
 import type { Language } from "../domain/types";
 import { translator } from "../lib/i18n";
@@ -28,12 +29,7 @@ export function IngredientReader({
     pescatarian: t("Pescatarian", "Pescetariano"),
   };
   return (
-    <Modal
-      title={
-        ingredient.name[language] || ingredient.name.en || ingredient.name.es
-      }
-      onClose={onClose}
-    >
+    <Modal title={ingredientText(ingredient, language)} onClose={onClose}>
       {onEdit && (
         <div className="button-row">
           <Button onClick={onEdit}>
