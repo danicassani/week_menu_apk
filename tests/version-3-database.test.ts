@@ -940,3 +940,84 @@ it("V4 shopping includes multiple future weeks and legacy ranges cannot narrow i
       .status,
   ).toBe("removed");
 });
+it("V4 short ingredient aliases search the complete catalogue without rewriting source names or leaking household overrides", async () => {
+  await actor();
+  const labels = JSON.parse(
+    readFileSync("content/presentation/ingredient-names.json", "utf8"),
+  );
+  const lib = await rpc<PlanningState>("get_planning_library");
+  await db.exec("reset role");
+  for (const [id, entry] of Object.entries(labels) as [string, any][]) {
+    const projected = await db.query<{ names: any }>(
+      "select app_private.ingredient_display_names($1,$2) names",
+      [id, entry.source_name],
+    );
+    expect(projected.rows[0].names).toEqual(entry.name);
+  }
+  await actor();
+  await expect(
+    db.query("select app_private.ingredient_display_names('egg','{}')"),
+  ).rejects.toThrow("permission denied");
+  for (const [query, id] of [
+    ["Eggs", "egg"],
+    ["Almonds", "almond"],
+    ["Carrots", "carrot"],
+    ["Huevos", "egg"],
+  ]) {
+    const page = await rpc<any>("get_catalogue_page", [
+      "ingredient",
+      query,
+      false,
+      null,
+    ]);
+    expect(page.items.map((i: any) => i.id)).toContain(id);
+    const item = page.items.find((i: any) => i.id === id);
+    expect(item.name).toEqual(lib.ingredients.find((i) => i.id === id)!.name);
+  }
+  const source = lib.ingredients.find((i) => i.id === "egg")!;
+  const privateEgg = {
+    ...source,
+    name: { en: "Our own raw egg", es: source.name.es },
+  };
+  await rpc("save_household_content", [
+    "ingredient",
+    privateEgg,
+    source.revision,
+    false,
+  ]);
+  expect(
+    (
+      await rpc<any>("get_catalogue_page", ["ingredient", "Eggs", false, null])
+    ).items.some((i: any) => i.id === "egg"),
+  ).toBe(false);
+  expect(
+    (
+      await rpc<any>("get_catalogue_page", [
+        "ingredient",
+        "Huevos",
+        false,
+        null,
+      ])
+    ).items.find((i: any) => i.id === "egg").name.en,
+  ).toBe("Our own raw egg");
+  const own = await rpc<any>("get_catalogue_item", ["ingredient", "egg"]);
+  expect(own.item.nutrition_per_100g).toEqual(source.nutrition_per_100g);
+  expect(own.item.conversions).toEqual(source.conversions);
+  expect(own.item.state).toBe(source.state);
+  await actor(b);
+  const otherEggs = await call<any>("get_catalogue_page", [
+    other.household_id,
+    other.membership_id,
+    "ingredient",
+    "Eggs",
+    false,
+    null,
+  ]);
+  expect(otherEggs.items.find((i: any) => i.id === "egg").name).toEqual(
+    source.name,
+  );
+  await expect(
+    rpc("get_catalogue_page", ["ingredient", "Eggs", false, null]),
+  ).rejects.toThrow("membership_changed");
+  await actor();
+});

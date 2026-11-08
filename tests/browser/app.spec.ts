@@ -88,7 +88,7 @@ test("owner invitations, recipe preparation, and all five tabs", async ({
     .fill("Chickpea and tomato toast");
   await page.getByRole("button", { name: /Chickpea and tomato toast/ }).click();
   await expect(
-    page.getByText(/Weigh dry, then soak at least 12 hours/),
+    page.getByText(/Soak the pulses for at least 12 hours/),
   ).toBeVisible();
   await page.keyboard.press("Escape");
   await nav.getByRole("button", { name: "Menu", exact: true }).click();

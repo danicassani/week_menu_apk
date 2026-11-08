@@ -1,3 +1,4 @@
+import { ingredientText } from "../domain/content-presentation";
 import { Popover } from "../components/popover";
 import { AvatarPicker } from "../components/avatar-picker";
 import { PlannerSettings } from "../components/planner-settings";
@@ -712,9 +713,14 @@ export function ProfileView(
                 {p.excluded_ingredients.map((id) => (
                   <span className="pill" key={id}>
                     {t("No ", "Sin ")}
-                    {v.s.planning?.ingredients.find((i) => i.id === id)?.name[
-                      v.language
-                    ] ?? id}
+                    {(() => {
+                      const ingredient = v.s.planning?.ingredients.find(
+                        (i) => i.id === id,
+                      );
+                      return ingredient
+                        ? ingredientText(ingredient, v.language)
+                        : id;
+                    })()}
                   </span>
                 ))}
               </div>

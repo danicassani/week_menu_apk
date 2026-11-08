@@ -1,0 +1,386 @@
+{
+  "recipe_ids": [
+    "b01",
+    "b02",
+    "b03",
+    "b04",
+    "b05",
+    "b06",
+    "b07",
+    "b08",
+    "b09",
+    "b10",
+    "b11",
+    "b12",
+    "m01",
+    "m02",
+    "m03",
+    "m04",
+    "m05",
+    "m06",
+    "m07",
+    "m08",
+    "m09",
+    "m10",
+    "m11",
+    "m12",
+    "m13",
+    "m14",
+    "m15",
+    "m16",
+    "m17",
+    "m18",
+    "m19",
+    "m20",
+    "m21",
+    "m22",
+    "m23",
+    "m24",
+    "m25",
+    "m26",
+    "m27",
+    "m28",
+    "m29",
+    "m30",
+    "m31",
+    "m32",
+    "m33",
+    "m34",
+    "m35",
+    "m36"
+  ],
+  "notes": [
+    {
+      "ingredient_id": "chickpeas",
+      "instructions": {
+        "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+        "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+      }
+    },
+    {
+      "ingredient_id": "rice_brown",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "lentils_red",
+      "instructions": {
+        "en": "Weigh dry and rinse. Cook in plenty of water until fully tender, following the packet; red split lentils usually soften sooner than whole lentils. No cooked-weight conversion is assumed.",
+        "es": "Pesa en seco y enjuaga. Cuece en abundante agua hasta que estén completamente tiernas, siguiendo el envase; las lentejas rojas partidas suelen ablandarse antes que las enteras. No se presupone ninguna conversión de peso cocido."
+      }
+    },
+    {
+      "ingredient_id": "rice_white",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "beans_white",
+      "instructions": {
+        "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+        "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+      }
+    },
+    {
+      "ingredient_id": "beans_kidney",
+      "instructions": {
+        "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+        "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+      }
+    },
+    {
+      "ingredient_id": "quinoa",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "pasta_wholewheat",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "barley",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "couscous",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "lentils_green",
+      "instructions": {
+        "en": "Weigh dry and rinse. Cook in plenty of water until fully tender, following the packet; red split lentils usually soften sooner than whole lentils. No cooked-weight conversion is assumed.",
+        "es": "Pesa en seco y enjuaga. Cuece en abundante agua hasta que estén completamente tiernas, siguiendo el envase; las lentejas rojas partidas suelen ablandarse antes que las enteras. No se presupone ninguna conversión de peso cocido."
+      }
+    },
+    {
+      "ingredient_id": "bulgur",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "pasta",
+      "instructions": {
+        "en": "Weigh dry, then cook with water according to the packet until tender; rinse quinoa first. Drain only if the packet method requires it. Count the original dry quantity for calories. Serve rice promptly; cool leftovers quickly, ideally within one hour, refrigerate, use within 24 hours and reheat only once.",
+        "es": "Pesa en seco y cocina con agua según el envase hasta que esté tierno; lava antes la quinoa. Escurre solo si el método del envase lo requiere. Usa la cantidad seca inicial para calcular las calorías. Sirve el arroz enseguida; enfría las sobras rápidamente, idealmente en una hora, refrigera, consume en 24 horas y recalienta una sola vez."
+      }
+    },
+    {
+      "ingredient_id": "beans_blackeye",
+      "instructions": {
+        "en": "Weigh dry, then soak at least 12 hours. Discard soaking water, rinse, and use plenty of fresh water. Boil vigorously for at least 10 minutes, then continue cooking until fully tender, following the packet if it requires longer. Never cook raw kidney beans only in a slow cooker. The dry weight, not the hydrated weight, is the calorie reference.",
+        "es": "Pesa en seco y remoja al menos 12 horas. Desecha el agua de remojo, enjuaga y usa abundante agua nueva. Hierve enérgicamente al menos 10 minutos y continúa la cocción hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Nunca cocines alubias rojas crudas solo en una olla de cocción lenta. La referencia calórica es el peso seco, no el hidratado."
+      }
+    }
+  ],
+  "steps": [
+    {
+      "source": {
+        "en": "Prepare the chickpeas from their weighed dry amount using the separate soaking and boiling instructions.",
+        "es": "Prepara los garbanzos a partir de su peso en seco siguiendo las instrucciones separadas de remojo y cocción."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo."
+      },
+      "targets": [
+        {
+          "recipe_id": "b12",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare the dry chickpeas separately. Soften the chopped onion and garlic in the measured oil.",
+        "es": "Prepara aparte los garbanzos secos. Rehoga la cebolla y el ajo picados con el aceite medido."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Soften the chopped onion and garlic in the measured oil.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Rehoga la cebolla y el ajo picados con el aceite medido."
+      },
+      "targets": [
+        {
+          "recipe_id": "m01",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+        "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+      },
+      "display": {
+        "en": "Cook the grain in water according to the packet until tender; serve with the main dish.",
+        "es": "Cocina el cereal con agua según el envase hasta que esté tierno y sírvelo con el plato principal."
+      },
+      "targets": [
+        {
+          "recipe_id": "m01",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m02",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m04",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m05",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m08",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m09",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m15",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m16",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m18",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m19",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m22",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m23",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m25",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m26",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m27",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m28",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m29",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m32",
+          "component_id": "side"
+        },
+        {
+          "recipe_id": "m34",
+          "component_id": "side"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare the dry beans separately. Dice the vegetables and soften them in the measured oil.",
+        "es": "Prepara aparte las alubias secas. Corta las verduras y rehógalas con el aceite medido."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Dice the vegetables and soften them in the measured oil.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Corta las verduras y rehógalas con el aceite medido."
+      },
+      "targets": [
+        {
+          "recipe_id": "m03",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Soak and vigorously boil the dry kidney beans using their full preparation instructions before using them here.",
+        "es": "Remoja y hierve enérgicamente las alubias rojas secas siguiendo todas sus instrucciones de preparación antes de usarlas aquí."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo."
+      },
+      "targets": [
+        {
+          "recipe_id": "m04",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare the dry chickpeas separately. Dice aubergine and cook in measured oil, adding splashes of water rather than extra oil.",
+        "es": "Prepara aparte los garbanzos secos. Corta la berenjena y cocínala con el aceite medido, añadiendo pequeñas cantidades de agua en vez de más aceite."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Dice aubergine and cook in measured oil, adding splashes of water rather than extra oil.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Corta la berenjena y cocínala con el aceite medido, añadiendo pequeñas cantidades de agua en vez de más aceite."
+      },
+      "targets": [
+        {
+          "recipe_id": "m09",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare the dry beans separately. Roast pepper strips with measured oil at 200°C until tender.",
+        "es": "Prepara aparte las alubias secas. Asa el pimiento en tiras con el aceite medido a 200 °C hasta que esté tierno."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Roast pepper strips with measured oil at 200°C until tender.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Asa el pimiento en tiras con el aceite medido a 200 °C hasta que esté tierno."
+      },
+      "targets": [
+        {
+          "recipe_id": "m13",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare the dry chickpeas separately. Soften onion and garlic in measured oil, add tomatoes and simmer 10 minutes.",
+        "es": "Prepara aparte los garbanzos secos. Rehoga cebolla y ajo con el aceite medido, añade el tomate y cuece 10 minutos."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Soften onion and garlic in measured oil, add tomatoes and simmer 10 minutes.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Rehoga cebolla y ajo con el aceite medido, añade el tomate y cuece 10 minutos."
+      },
+      "targets": [
+        {
+          "recipe_id": "m21",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare the dry beans separately. Dice the raw peeled sweet potato and simmer with onion, garlic, tomatoes and measured oil, adding water as needed.",
+        "es": "Prepara aparte las alubias secas. Corta el boniato crudo pelado y cuécelo con la cebolla, el ajo, el tomate y el aceite medido, añadiendo agua si hace falta."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Dice the raw peeled sweet potato and simmer with onion, garlic, tomatoes and measured oil, adding water as needed.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Corta el boniato crudo pelado y cuécelo con la cebolla, el ajo, el tomate y el aceite medido, añadiendo agua si hace falta."
+      },
+      "targets": [
+        {
+          "recipe_id": "m33",
+          "component_id": "main"
+        }
+      ]
+    },
+    {
+      "source": {
+        "en": "Prepare dry chickpeas and couscous separately. Halve and deseed the peppers; soften them at 200°C for 15 minutes.",
+        "es": "Prepara por separado los garbanzos secos y el cuscús. Parte los pimientos y retira las semillas; ablanda en el horno a 200 °C durante 15 minutos."
+      },
+      "display": {
+        "en": "Soak the pulses for at least 12 hours. Discard the soaking water, rinse and cover with fresh water. Boil vigorously for at least 10 minutes, then cook until fully tender, following any longer packet instructions. Prepare couscous according to the packet. Halve and deseed the peppers; soften them at 200°C for 15 minutes.",
+        "es": "Remoja las legumbres al menos 12 horas. Desecha el agua, enjuaga y cubre con agua nueva. Hierve enérgicamente al menos 10 minutos y continúa hasta que estén completamente tiernas, siguiendo el envase si exige más tiempo. Prepara el cuscús según el envase. Parte los pimientos y retira las semillas; ablanda en el horno a 200 °C durante 15 minutos."
+      },
+      "targets": [
+        {
+          "recipe_id": "m35",
+          "component_id": "main"
+        }
+      ]
+    }
+  ]
+}

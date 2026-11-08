@@ -1,3 +1,7 @@
+import {
+  ingredientText,
+  ingredientMatches,
+} from "../domain/content-presentation";
 import { activityType, recentActivity } from "../lib/activity-recent";
 import { useRef, useState } from "react";
 import { ArrowRight, Info, Check } from "lucide-react";
@@ -211,11 +215,7 @@ export function ProfileForm({
       </label>
       <div className="ingredient-picker">
         {(catalogue ?? [])
-          .filter((i) =>
-            (i.name[language] || i.name.en || i.name.es)
-              .toLocaleLowerCase()
-              .includes(query.toLocaleLowerCase()),
-          )
+          .filter((i) => ingredientMatches(i, query))
           .map((i) => (
             <label className="check-row" key={i.id}>
               <input
@@ -230,7 +230,7 @@ export function ProfileForm({
                   )
                 }
               />
-              {i.name[language] || i.name.en || i.name.es}
+              {ingredientText(i, language)}
             </label>
           ))}
       </div>

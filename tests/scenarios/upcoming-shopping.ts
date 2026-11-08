@@ -64,7 +64,7 @@ export async function upcomingShoppingScenario(
   const eggRow = () =>
     page
       .locator(".shopping-checklist li")
-      .filter({ hasText: t("Whole chicken egg", "Huevo de gallina") });
+      .filter({ hasText: t("Eggs", "Huevos") });
   await expect(eggRow()).toHaveCount(1);
   const before = await eggRow().innerText();
   await eggRow().getByRole("checkbox").click();

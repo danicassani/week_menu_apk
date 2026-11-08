@@ -1,3 +1,8 @@
+import {
+  ingredientNames,
+  ingredientText,
+  recipePresentation,
+} from "../domain/content-presentation";
 import { HistoricalCorrection } from "../components/historical-correction";
 import { useClosedDayCheck } from "../components/closed-day-check";
 import { PortionAllocation } from "../components/portion-allocation";
@@ -1009,13 +1014,13 @@ export function Planner(v: ViewProps) {
                       )}
                       {p.substitutions.map((r, i) => (
                         <p className="note" key={i}>
-                          {name(
-                            lib.ingredients.find((x) => x.id === r.from)!.name,
+                          {ingredientText(
+                            lib.ingredients.find((x) => x.id === r.from)!,
                             v.language,
                           )}{" "}
                           →{" "}
-                          {name(
-                            lib.ingredients.find((x) => x.id === r.to)!.name,
+                          {ingredientText(
+                            lib.ingredients.find((x) => x.id === r.to)!,
                             v.language,
                           )}
                           . {name(r.instructions, v.language)}
@@ -1211,7 +1216,7 @@ export function Planner(v: ViewProps) {
           <ul className="ingredient-list">
             {updateRecipe.lines.map((l, i) => (
               <li key={i}>
-                <span>{name(l.name, v.language)}</span>
+                <span>{ingredientText(l, v.language)}</span>
                 <b>
                   {l.quantity} {l.unit}
                 </b>
@@ -1489,10 +1494,10 @@ function MealEditor({
               <div className="portion-lines">
                 {p.lines.map((l, i) => (
                   <label key={l.component_id + l.ingredient_id + i}>
-                    {name(l.name, v.language)}
+                    {ingredientText(l, v.language)}
                     <div className="button-row">
                       <input
-                        aria-label={name(l.name, v.language)}
+                        aria-label={ingredientText(l, v.language)}
                         type="number"
                         min="0.01"
                         step="any"
@@ -1528,7 +1533,10 @@ function MealEditor({
                   ? ` · ${t("Above budget: adjust quantities manually.", "Supera el presupuesto: ajusta las cantidades manualmente.")}`
                   : ""}
               </p>
-              {p.recipe_snapshot?.ingredient_preparation?.map((s) => (
+              {(p.recipe_snapshot
+                ? recipePresentation(p.recipe_snapshot).ingredient_preparation
+                : undefined
+              )?.map((s) => (
                 <p className="note" key={s.ingredient_id}>
                   {name(s.instructions, v.language)}
                 </p>
@@ -1853,7 +1861,9 @@ export function ContentManager(v: ViewProps) {
                 <span aria-hidden="true">
                   {foodEmoji(item, tab === "recipes")}
                 </span>{" "}
-                {name(item.name, v.language)}
+                {tab === "ingredients"
+                  ? ingredientText(item, v.language)
+                  : name(item.name, v.language)}
               </h3>
               <p className="muted">
                 {item.archived
@@ -2210,10 +2220,22 @@ function ContentEditor({
         <ContentTextField
           key={revision}
           label={t("Name", "Nombre")}
-          value={data.name}
+          value={kind === "ingredient" ? ingredientNames(food) : data.name}
           language={v.language}
           required
-          onChange={(name) => update({ name })}
+          onChange={(next) => {
+            if (kind !== "ingredient") {
+              update({ name: next });
+              return;
+            }
+            const displayed = ingredientNames(food);
+            update({
+              name: {
+                en: next.en === displayed.en ? food.name.en : next.en,
+                es: next.es === displayed.es ? food.name.es : next.es,
+              },
+            });
+          }}
         />
         <label>
           {t("Food emoji", "Emoji del alimento")}
@@ -2448,7 +2470,7 @@ function ContentEditor({
                 </label>
               ))}
             </fieldset>
-            {recipe.ingredient_preparation?.map((s) => (
+            {recipePresentation(recipe).ingredient_preparation?.map((s) => (
               <p className="note" key={s.ingredient_id}>
                 {name(s.instructions, v.language)}
               </p>
@@ -2457,8 +2479,8 @@ function ContentEditor({
               <Info size={16} />
               <span>
                 {t(
-                  "Calculated energy per reference serving",
-                  "Energía calculada por porción de referencia",
+                  "Calculated energy per person",
+                  "Energía calculada por persona",
                 )}
                 :{" "}
                 {referenceEnergy(false) === null
@@ -2472,7 +2494,7 @@ function ContentEditor({
               </span>
             </div>
             <label>
-              {t("Reference servings", "Porciones de referencia")}
+              {t("Serves", "Personas")}
               <input
                 required
                 type="number"
@@ -2561,7 +2583,7 @@ function ContentEditor({
                             )
                             .map((f) => (
                               <option key={f.id} value={f.id}>
-                                {name(f.name, v.language)}
+                                {ingredientText(f, v.language)}
                               </option>
                             ))}
                         </select>
@@ -2785,7 +2807,7 @@ export function MealSnapshotView({
               <ul className="ingredient-list">
                 {p.lines.map((l, i) => (
                   <li key={i}>
-                    <span>{name(l.name, v.language)}</span>
+                    <span>{ingredientText(l, v.language)}</span>
                     <b>
                       {l.quantity} {l.unit}
                     </b>
@@ -2797,13 +2819,19 @@ export function MealSnapshotView({
                   {name(s.instructions, v.language)}
                 </p>
               ))}
-              {p.recipe_snapshot?.ingredient_preparation?.map((s) => (
+              {(p.recipe_snapshot
+                ? recipePresentation(p.recipe_snapshot).ingredient_preparation
+                : undefined
+              )?.map((s) => (
                 <p className="note" key={s.ingredient_id}>
                   {name(s.instructions, v.language)}
                 </p>
               ))}
-              {p.recipe_snapshot?.components
-                .filter((c) => p.lines.some((l) => l.component_id === c.id))
+              {(p.recipe_snapshot
+                ? recipePresentation(p.recipe_snapshot).components
+                : undefined
+              )
+                ?.filter((c) => p.lines.some((l) => l.component_id === c.id))
                 .map((c) => (
                   <div key={c.id}>
                     <h3>{name(c.name, v.language)}</h3>

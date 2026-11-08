@@ -1,3 +1,8 @@
+import {
+  ingredientText,
+  recipePresentation,
+  recipeServingCaption,
+} from "../domain/content-presentation";
 import type { Ingredient, PlannedRecipe } from "../domain/planning";
 import type { Language } from "../domain/types";
 import { translator } from "../lib/i18n";
@@ -46,16 +51,13 @@ export function RecipeContent({
   ingredients: Ingredient[];
   language: Language;
 }) {
+  recipe = recipePresentation(recipe);
   const t = translator(language),
     text = (n: { en: string; es: string }) => n[language] || n.en || n.es;
   return (
     <>
       <p className="muted">
-        {t(
-          "Ingredients for reference servings:",
-          "Ingredientes para porciones de referencia:",
-        )}{" "}
-        {recipe.reference_servings}
+        {recipeServingCaption(recipe.reference_servings, language)}
       </p>
       {recipe.archived && (
         <p className="note">{t("Archived recipe", "Receta archivada")}</p>
@@ -81,7 +83,9 @@ export function RecipeContent({
               return (
                 <li key={i}>
                   <span>
-                    {ingredient ? text(ingredient.name) : line.ingredient_id}
+                    {ingredient
+                      ? ingredientText(ingredient, language)
+                      : line.ingredient_id}
                   </span>
                   <b>
                     {line.quantity} {line.unit}

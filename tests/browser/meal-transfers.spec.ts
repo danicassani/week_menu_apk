@@ -173,7 +173,7 @@ test("catalogue right-click and keyboard actions copy to the selected week; ordi
   await nav(page).getByRole("button", { name: "Recipes", exact: true }).click();
   await card.click();
   await expect(
-    page.getByText("Ingredients for reference servings:", { exact: false }),
+    page.getByText("Ingredients for 1 person", { exact: false }),
   ).toBeVisible();
   await page.keyboard.press("Escape");
   await card.focus();

@@ -12,6 +12,8 @@ For version 3 milestone 3, apply [migration 15](../supabase/migrations/202611070
 
 For version 4 milestone 2, apply [migration 17](../supabase/migrations/202611080017_upcoming_shopping.sql) after 1–16 and before deploying the matching client. It makes all upcoming meals authoritative for shopping, including calls from older date-range clients, and adds household egg purchasing estimates. See [the rollout and offline compatibility report](version-4/milestone-2.md). Only apply pending migrations as the project administrator; no new environment variable is needed.
 
+For version 4 milestone 3, apply [migration 18](../supabase/migrations/202611080018_display_name_search.sql) after 1–17 and before deploying the matching frontend. It adds shorter ingredient names as catalogue search aliases while preserving original/private content. See [the presentation and compatibility report](version-4/milestone-3.md). No starter release or environment change is required.
+
 ## Local development
 
 Use Node.js 24 LTS and npm. From the repository root:

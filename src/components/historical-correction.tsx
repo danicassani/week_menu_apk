@@ -1,3 +1,4 @@
+import { ingredientText } from "../domain/content-presentation";
 import { useEffect, useRef, useState } from "react";
 import { Eraser, Trash2 } from "lucide-react";
 import { Modal, Button } from "./ui";
@@ -630,9 +631,10 @@ export function HistoricalCorrection({
                                           l.component_id + ":" + l.ingredient_id
                                         }
                                       >
-                                        {names(l.name)} · {l.unit}
+                                        {ingredientText(l, v.language)} ·{" "}
+                                        {l.unit}
                                         <input
-                                          aria-label={`${names(l.name)} · ${v.s.members.find((m) => m.id === p.member_id)?.name}`}
+                                          aria-label={`${ingredientText(l, v.language)} · ${v.s.members.find((m) => m.id === p.member_id)?.name}`}
                                           type="number"
                                           min="0.001"
                                           step="any"

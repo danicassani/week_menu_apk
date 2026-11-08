@@ -689,3 +689,53 @@ test("legacy range caches request refresh while retaining queued checks", async 
     page.getByText("Saved on this device · pending sync", { exact: true }),
   ).toHaveCount(0);
 });
+test("V4 cached recipe readers and ingredient searches use the same clear labels offline", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Recipes", exact: true }).click();
+  const search = page.getByRole("searchbox", { name: "Search collection" });
+  await search.fill("Lentil and courgette potato pie");
+  await page.locator(".recipe-card").click();
+  await expect(page.getByRole("dialog")).toContainText(
+    "Ingredients for 1 person",
+  );
+  await page.keyboard.press("Escape");
+  await page
+    .getByRole("button", { name: "Ingredients & units", exact: true })
+    .click();
+  await search.fill("Eggs");
+  await page.locator(".recipe-card").click();
+  await expect(
+    page.getByRole("dialog", { name: "Eggs", exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await context.setOffline(true);
+  await page.reload();
+  const offline = page.getByRole("navigation", { name: "Offline navigation" });
+  await offline.getByRole("button", { name: "Recipes", exact: true }).click();
+  const savedSearch = page.getByRole("searchbox", {
+    name: "Search saved recipes",
+  });
+  await savedSearch.fill("Lentil and courgette potato pie");
+  await page.locator(".recipe-card").click();
+  const reader = page.getByRole("dialog");
+  await expect(reader).toContainText("Ingredients for 1 person");
+  await expect(reader).toContainText("Green/brown lentils");
+  await expect(reader).not.toContainText(
+    "No cooked-weight conversion is assumed",
+  );
+  await expect(reader.locator(".instructions").first()).toContainText(
+    "Cook the weighed lentils",
+  );
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "Ingredients", exact: true }).click();
+  await savedSearch.fill("Eggs");
+  await expect(page.locator(".recipe-card")).toHaveCount(1);
+  await page.locator(".recipe-card").click();
+  await expect(
+    page.getByRole("dialog", { name: "Eggs", exact: true }),
+  ).toBeVisible();
+});

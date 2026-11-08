@@ -5,6 +5,7 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Version 4 requested backlog](docs/version-4/README.md)
 - [Product specification](docs/specification.md)
 - [Version 2 specification draft](docs/version-2/specification.md)
+- [Version 4 milestone 3: clear ingredient names and recipe readers](docs/version-4/milestone-3.md)
 - [Version 4 milestone 2: upcoming shopping and egg units](docs/version-4/milestone-2.md)
 - [Version 4 milestone 1: quieter controls and target review](docs/version-4/milestone-1.md)
 - [Version 3 milestone 4: historical corrections and release review](docs/version-3/milestone-4.md)

@@ -1,3 +1,9 @@
+import { RecipeContent } from "../components/recipe-reader";
+import {
+  ingredientText,
+  ingredientMatches,
+  recipePresentation,
+} from "../domain/content-presentation";
 import { projectUpcomingShopping } from "../domain/shopping";
 import { IngredientReader } from "../components/ingredient-reader";
 import type { Ingredient } from "../domain/planning";
@@ -388,9 +394,11 @@ export function OfflineShell({
                   .filter(
                     (r) =>
                       !r.archived &&
-                      name(r.name)
-                        .toLocaleLowerCase()
-                        .includes(query.toLocaleLowerCase()),
+                      (collection === "ingredients"
+                        ? ingredientMatches(r, query)
+                        : name(r.name)
+                            .toLocaleLowerCase()
+                            .includes(query.toLocaleLowerCase())),
                   )
                   .map((r) => (
                     <button
@@ -431,7 +439,9 @@ export function OfflineShell({
                       <div className="recipe-card-content">
                         <h3>
                           <span aria-hidden="true">{foodEmoji(r, true)}</span>{" "}
-                          {name(r.name)}
+                          {collection === "ingredients"
+                            ? ingredientText(r, lang)
+                            : name(r.name)}
                         </h3>
                         <p className="muted">
                           {("meal_types" in r
@@ -473,44 +483,11 @@ export function OfflineShell({
       )}
       {recipe && (
         <Modal title={name(recipe.name)} wide onClose={() => setRecipe(null)}>
-          {recipe.ingredient_preparation?.map((p) => (
-            <p className="note" key={p.ingredient_id}>
-              {name(p.instructions)}
-            </p>
-          ))}
-          {recipe.components.map((c) => (
-            <section className="recipe-component" key={c.id}>
-              <h3>{name(c.name)}</h3>
-              {c.optional && (
-                <span className="pill">{t("Optional", "Opcional")}</span>
-              )}
-              <ul className="ingredient-list">
-                {c.ingredients.map((l, i) => (
-                  <li key={i}>
-                    <span>
-                      {data?.recipes?.ingredients.find(
-                        (f) => f.id === l.ingredient_id,
-                      )
-                        ? name(
-                            data.recipes.ingredients.find(
-                              (f) => f.id === l.ingredient_id,
-                            )!.name,
-                          )
-                        : l.ingredient_id}
-                    </span>
-                    <b>
-                      {l.quantity} {l.unit}
-                    </b>
-                  </li>
-                ))}
-              </ul>
-              <ol className="instructions">
-                {c.instructions.map((s, i) => (
-                  <li key={i}>{name(s)}</li>
-                ))}
-              </ol>
-            </section>
-          ))}
+          <RecipeContent
+            recipe={recipe}
+            ingredients={data?.recipes?.ingredients ?? []}
+            language={lang}
+          />
         </Modal>
       )}
       {meal && (
@@ -532,7 +509,7 @@ export function OfflineShell({
                   <ul className="ingredient-list">
                     {p.lines.map((l, i) => (
                       <li key={i}>
-                        <span>{name(l.name)}</span>
+                        <span>{ingredientText(l, lang)}</span>
                         <b>
                           {l.quantity} {l.unit}
                         </b>
@@ -544,13 +521,22 @@ export function OfflineShell({
                       {name(s.instructions)}
                     </p>
                   ))}
-                  {p.recipe_snapshot?.ingredient_preparation?.map((s) => (
+                  {(p.recipe_snapshot
+                    ? recipePresentation(p.recipe_snapshot)
+                        .ingredient_preparation
+                    : undefined
+                  )?.map((s) => (
                     <p className="note" key={s.ingredient_id}>
                       {name(s.instructions)}
                     </p>
                   ))}
-                  {p.recipe_snapshot?.components
-                    .filter((c) => p.lines.some((l) => l.component_id === c.id))
+                  {(p.recipe_snapshot
+                    ? recipePresentation(p.recipe_snapshot).components
+                    : undefined
+                  )
+                    ?.filter((c) =>
+                      p.lines.some((l) => l.component_id === c.id),
+                    )
                     .map((c) => (
                       <ol className="instructions" key={c.id}>
                         {c.instructions.map((s, i) => (
