@@ -130,6 +130,7 @@ export function useMealTransfers(
     plans: MealPlan[],
     context: string,
     stale = false,
+    part: "both" | "copy" | "swap" = "both",
   ) => {
     if (!lib) return null;
     const plan = plans.find((p) => slotKey(p) === slotKey(ep));
@@ -197,72 +198,73 @@ export function useMealTransfers(
             : t("Swap suggestion", "Intercambiar sugerencia");
     return (
       <>
-        {(sourceSelected || (copied && !closed) || (!copied && occupied)) && (
-          <span
-            title={
-              choiceError ||
-              (!compatible
-                ? t(
-                    "This recipe cannot be pasted here. Review its meal types or copy it again after changes.",
-                    "Esta receta no se puede pegar aquí. Revisa sus tipos de comida o vuelve a copiarla tras los cambios.",
-                  )
-                : undefined)
-            }
-          >
-            <IconAction
-              icon={copied && !sourceSelected ? ClipboardPaste : Copy}
-              label={
-                sourceSelected
-                  ? t("Cancel copy", "Cancelar copia")
-                  : copied
-                    ? ep.type === "breakfast"
-                      ? t(
-                          `Paste breakfast for ${person}`,
-                          `Pegar desayuno de ${person}`,
-                        )
-                      : t("Paste meal", "Pegar comida")
-                    : ep.type === "breakfast"
-                      ? t(
-                          `Copy breakfast for ${person}`,
-                          `Copiar desayuno de ${person}`,
-                        )
-                      : t("Copy meal", "Copiar comida")
+        {part !== "swap" &&
+          (sourceSelected || (copied && !closed) || (!copied && occupied)) && (
+            <span
+              title={
+                choiceError ||
+                (!compatible
+                  ? t(
+                      "This recipe cannot be pasted here. Review its meal types or copy it again after changes.",
+                      "Esta receta no se puede pegar aquí. Revisa sus tipos de comida o vuelve a copiarla tras los cambios.",
+                    )
+                  : undefined)
               }
-              aria-pressed={sourceSelected}
-              disabled={
-                v.busy ||
-                stale ||
-                (!copied && !choice) ||
-                (!!copied && !sourceSelected && (!compatible || locked))
-              }
-              onClick={() => {
-                setSelectionError("");
-                if (sourceSelected) {
-                  v.setClipboard(null);
-                  return;
+            >
+              <IconAction
+                icon={copied && !sourceSelected ? ClipboardPaste : Copy}
+                label={
+                  sourceSelected
+                    ? t("Cancel copy", "Cancelar copia")
+                    : copied
+                      ? ep.type === "breakfast"
+                        ? t(
+                            `Paste breakfast for ${person}`,
+                            `Pegar desayuno de ${person}`,
+                          )
+                        : t("Paste meal", "Pegar comida")
+                      : ep.type === "breakfast"
+                        ? t(
+                            `Copy breakfast for ${person}`,
+                            `Copiar desayuno de ${person}`,
+                          )
+                        : t("Copy meal", "Copiar comida")
                 }
-                if (copied) {
-                  void requestReview(
-                    { mode: "paste", target: ep, choice: copied.choice },
-                    context,
-                    plans,
-                  );
-                  return;
+                aria-pressed={sourceSelected}
+                disabled={
+                  v.busy ||
+                  stale ||
+                  (!copied && !choice) ||
+                  (!!copied && !sourceSelected && (!compatible || locked))
                 }
-                if (choice) {
-                  v.setClipboard({
-                    choice,
-                    name: lib.recipes.find((r) => r.id === choice.recipe_id)!
-                      .name,
-                    origin: { endpoint: ep, context },
-                  });
-                  setSwap(null);
-                }
-              }}
-            />
-          </span>
-        )}
-        {!closed && (occupied || swap) && (
+                onClick={() => {
+                  setSelectionError("");
+                  if (sourceSelected) {
+                    v.setClipboard(null);
+                    return;
+                  }
+                  if (copied) {
+                    void requestReview(
+                      { mode: "paste", target: ep, choice: copied.choice },
+                      context,
+                      plans,
+                    );
+                    return;
+                  }
+                  if (choice) {
+                    v.setClipboard({
+                      choice,
+                      name: lib.recipes.find((r) => r.id === choice.recipe_id)!
+                        .name,
+                      origin: { endpoint: ep, context },
+                    });
+                    setSwap(null);
+                  }
+                }}
+              />
+            </span>
+          )}
+        {part !== "copy" && !closed && (occupied || swap) && (
           <IconAction
             icon={ArrowDownUp}
             label={swapLabel}

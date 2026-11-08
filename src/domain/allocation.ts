@@ -162,3 +162,50 @@ export function allocation(plan: MealPlan): {
     invalid,
   };
 }
+
+/** Overall ingredient-weight summary, never a common-preparation serving rule. */
+export function mealAllocation(plan: MealPlan): ReturnType<typeof allocation> {
+  const home = plan.portions.filter((p) => !p.eating_out);
+  const valid = home.filter(
+    (p) =>
+      p.lines.length > 0 &&
+      p.lines.every(
+        (l) =>
+          Number.isFinite(l.grams) &&
+          l.grams > 0 &&
+          Number.isFinite(l.quantity) &&
+          l.quantity > 0 &&
+          Number.isFinite(l.kcal) &&
+          l.kcal >= 0,
+      ),
+  );
+  const weights = valid.map((p) => p.lines.reduce((n, l) => n + l.grams, 0));
+  const display = percentages(weights);
+  const shares = valid.map((p, i) => ({
+    member_id: p.member_id,
+    grams: weights[i],
+    kcal: p.lines.reduce((n, l) => n + l.kcal, 0),
+    percent: display[i],
+    lines: p.lines,
+  }));
+  const invalid =
+    home.length - valid.length + (display.length !== valid.length ? 1 : 0);
+  return {
+    groups:
+      invalid || !shares.length
+        ? []
+        : [
+            {
+              id: "meal",
+              name: {
+                en: "Total planned ingredient weight",
+                es: "Peso total de ingredientes planificados",
+              },
+              ingredientLevel: false,
+              shares,
+            },
+          ],
+    invalid,
+    eatingOut: plan.portions.filter((p) => p.eating_out),
+  };
+}

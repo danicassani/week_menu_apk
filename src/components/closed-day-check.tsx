@@ -28,27 +28,12 @@ export function useClosedDayCheck(
   return {
     reset,
     button: (day: string) => {
-      const count = sequence?.day === day ? sequence.count : 0;
       return (
         <button
           type="button"
-          className="icon-button closed-day-check"
+          className="closed-day-check"
           aria-label={`${t("Closed day", "Día cerrado")} · ${formatDay(day, language)}`}
           title={t("Closed", "Cerrado")}
-          style={
-            count
-              ? {
-                  color: [
-                    "",
-                    "#a84b1a",
-                    "#bf4224",
-                    "#d7382e",
-                    "#e33136",
-                    "#ef4444",
-                  ][count],
-                }
-              : undefined
-          }
           onKeyDown={(e) => {
             if (e.repeat && (e.key === "Enter" || e.key === " "))
               e.preventDefault();

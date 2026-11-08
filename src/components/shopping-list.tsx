@@ -1,4 +1,4 @@
-import { Pencil, Trash2, ArrowUp } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import type { ShoppingItem, CheckOperation } from "../domain/shopping";
 import { formatShoppingQuantity, overlayPending } from "../domain/shopping";
 import type { Language } from "../domain/types";
@@ -74,10 +74,7 @@ export function ShoppingChecklist({
                     item.name[language] || item.name.en || item.name.es,
                   quantity = formatShoppingQuantity(item, language);
                 return (
-                  <li
-                    key={item.id}
-                    className={`${item.checked ? "checked " : ""}${item.increased ? "increased" : ""}`}
-                  >
+                  <li key={item.id} className={item.checked ? "checked" : ""}>
                     <label>
                       <input
                         type="checkbox"
@@ -94,15 +91,6 @@ export function ShoppingChecklist({
                             ? ` · ${referenceLabels[item.reference_state] ?? item.reference_state}`
                             : ""}
                         </small>
-                        {item.increased && (
-                          <span className="quantity-increased">
-                            <ArrowUp size={13} />
-                            {t(
-                              "Quantity increased · buy more",
-                              "Cantidad aumentada · compra más",
-                            )}
-                          </span>
-                        )}
                         {pending.some((op) => op.item_id === item.id) && (
                           <span className="fine-print">
                             {t(

@@ -843,15 +843,19 @@ function Workspace({
   const offerReview = async () => {
     let next: Dialog | undefined;
     if (
-      await operate(async () => {
-        try {
-          next = { kind: "target", proposal: await repo.proposal() };
-        } catch (e) {
-          if (e instanceof Error && e.message.includes("goal_reached"))
-            next = { kind: "maintenance" };
-          else throw e;
-        }
-      })
+      await operate(
+        async () => {
+          try {
+            next = { kind: "target", proposal: await repo.proposal() };
+          } catch (e) {
+            if (e instanceof Error && e.message.includes("goal_reached"))
+              next = { kind: "maintenance" };
+            else throw e;
+          }
+        },
+        undefined,
+        false,
+      )
     )
       setDialog(next!);
   };

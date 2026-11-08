@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { readFileSync, readdirSync } from "node:fs";
 import { makePortion, type PlannedRecipe } from "../src/domain/planning";
-import { addDays } from "../src/domain/dates";
+import { addDays, weekDays } from "../src/domain/dates";
 
 const alice = "60000000-0000-0000-0000-000000000001";
 const bob = "60000000-0000-0000-0000-000000000002";
@@ -637,7 +637,11 @@ it("updates shopping in the menu transaction and deletes only editable meals of 
   await as(alice);
   let s = await rpc("get_household_snapshot"),
     lib = s.planning;
-  const day = addDays(s.server_now.slice(0, 10), 14);
+  // Keep both fixtures inside the selected week, including Sunday test runs.
+  const day = addDays(
+    weekDays(addDays(s.server_now.slice(0, 10), 14), s.household.week_start)[0],
+    1,
+  );
   const recipe = lib.recipes.find((r: any) => r.id === "b01");
   const person = s.members.find((m: any) => m.id === alice);
   const portion = makePortion(

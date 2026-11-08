@@ -29,6 +29,7 @@ import {
   ArrowRight,
   Info,
   Pencil,
+  Eye,
   Trash2,
   Search,
   Utensils,
@@ -564,23 +565,10 @@ export function Planner(v: ViewProps) {
                   p = plan?.portions.find((p) => p.member_id === v.member.id);
                 return (
                   <article className="meal-card" key={type}>
-                    <div className="meal-transfer-actions">
-                      {transfer.actions(
-                        {
-                          day,
-                          type,
-                          ...(type === "breakfast"
-                            ? { member_id: v.member.id }
-                            : {}),
-                        },
-                        lib.plans,
-                        "saved",
-                      )}
-                    </div>
                     <span className="meal-type">
                       {mealLabel(type, v.language)}
                     </span>
-                    <h3>
+                    <h3 className={!p ? "empty-meal-title" : undefined}>
                       {p && plan && !p.eating_out ? (
                         <button
                           className="meal-recipe-link"
@@ -591,9 +579,39 @@ export function Planner(v: ViewProps) {
                       ) : p ? (
                         name(p.name, v.language)
                       ) : (
-                        t("Not planned", "Sin planificar")
+                        <span
+                          aria-label={t(
+                            "No planned meal",
+                            "Sin comida planificada",
+                          )}
+                        >
+                          — — —
+                        </span>
+                      )}
+                      {!plan && !closed(v, day) && (
+                        <button
+                          className="text-link"
+                          onClick={() => generate([{ day, type }])}
+                        >
+                          {t("Suggest", "Sugerir")}
+                        </button>
                       )}
                     </h3>
+                    {!plan && !closed(v, day) && (
+                      <div className="meal-transfer-actions">
+                        {transfer.actions(
+                          {
+                            day,
+                            type,
+                            ...(type === "breakfast"
+                              ? { member_id: v.member.id }
+                              : {}),
+                          },
+                          lib.plans,
+                          "saved",
+                        )}
+                      </div>
+                    )}
                     {p && (
                       <>
                         <p>
@@ -615,39 +633,38 @@ export function Planner(v: ViewProps) {
                       </>
                     )}
                     {plan && (
-                      <button
-                        className="text-link"
+                      <IconAction
+                        className="meal-eye"
+                        icon={Eye}
+                        label={
+                          closed(v, day)
+                            ? t("View recorded meal", "Ver comida registrada")
+                            : p && !p.eating_out
+                              ? t("View recipe", "Ver receta")
+                              : t("View meal", "Ver comida")
+                        }
                         onClick={() => setInspection(plan)}
-                      >
-                        {closed(v, day)
-                          ? t("View recorded meal", "Ver comida registrada")
-                          : p && !p.eating_out
-                            ? t("View recipe", "Ver receta")
-                            : t("View meal", "Ver comida")}
-                      </button>
+                      />
                     )}
-                    {!closed(v, day) && (
-                      <div className="button-row">
-                        {plan ? (
-                          <button
-                            className="text-link"
-                            onClick={() => setEditing(structuredClone(plan))}
-                          >
-                            <Pencil size={14} />
-                            {t("Review meal", "Revisar comida")}
-                          </button>
-                        ) : (
-                          <button
-                            className="text-link"
-                            onClick={() => generate([{ day, type }])}
-                          >
-                            <Plus size={14} />
-                            {t("Suggest meal", "Sugerir comida")}
-                          </button>
-                        )}
+                    {!closed(v, day) && plan && (
+                      <div className="button-row meal-bottom-actions">
+                        <IconAction
+                          icon={Pencil}
+                          label={t("Review meal", "Revisar comida")}
+                          disabled={v.busy}
+                          onClick={() => setEditing(structuredClone(plan))}
+                        />
                         {plan && (
                           <button
-                            className="text-link"
+                            className="icon-button preview-action"
+                            aria-label={t(
+                              "Preview another recipe",
+                              "Probar otra receta",
+                            )}
+                            title={t(
+                              "Preview another recipe",
+                              "Probar otra receta",
+                            )}
                             onClick={() => {
                               const next = suggested(
                                 v,
@@ -679,8 +696,57 @@ export function Planner(v: ViewProps) {
                                 );
                             }}
                           >
-                            {t("Preview another recipe", "Probar otra receta")}
+                            <Dices size={19} aria-hidden="true" />
                           </button>
+                        )}
+
+                        {transfer.actions(
+                          {
+                            day,
+                            type,
+                            ...(type === "breakfast"
+                              ? { member_id: v.member.id }
+                              : {}),
+                          },
+                          lib.plans,
+                          "saved",
+                          false,
+                          "copy",
+                        )}
+                        <IconAction
+                          icon={Eraser}
+                          label={t("Remove meal", "Eliminar comida")}
+                          disabled={v.busy}
+                          onClick={async () => {
+                            if (
+                              window.confirm(
+                                t(
+                                  "Remove this meal for everyone?",
+                                  "¿Eliminar esta comida para todos?",
+                                ),
+                              )
+                            )
+                              await v.operate(() =>
+                                v.repository.deleteMeal(
+                                  day,
+                                  type,
+                                  lib.revision,
+                                ),
+                              );
+                          }}
+                        />
+                        {transfer.actions(
+                          {
+                            day,
+                            type,
+                            ...(type === "breakfast"
+                              ? { member_id: v.member.id }
+                              : {}),
+                          },
+                          lib.plans,
+                          "saved",
+                          false,
+                          "swap",
                         )}
                       </div>
                     )}

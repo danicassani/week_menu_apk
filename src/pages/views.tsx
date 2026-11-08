@@ -19,7 +19,6 @@ import {
   Plus,
   Scale,
   Search,
-  ShoppingBasket,
   Trash2,
   Utensils,
 } from "lucide-react";
@@ -34,7 +33,7 @@ import type {
 } from "../domain/types";
 import { targetOn } from "../domain/state";
 import { daySummary } from "../domain/calories";
-import { addDays, formatDay, localDay, weekDays } from "../domain/dates";
+import { addDays, formatDay, localDay } from "../domain/dates";
 import type { PlannedRecipe } from "../domain/planning";
 import { mealLabel, translator } from "../lib/i18n";
 import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
@@ -269,7 +268,7 @@ export function Dashboard(v: ViewProps) {
             </p>
           </div>
           {v.own && (
-            <Button secondary onClick={v.openTarget}>
+            <Button secondary busy={v.busy} onClick={v.openTarget}>
               {t("Review target", "Revisar objetivo")}
               <ArrowRight size={15} />
             </Button>
@@ -465,43 +464,6 @@ export function Dashboard(v: ViewProps) {
               </span>
             </div>
           )}
-          <SectionTitle
-            title={t("A glance at your week", "Un vistazo a tu semana")}
-            action={
-              <TextLink onClick={() => v.navigate("menu")}>
-                {t("Open menu", "Abrir menú")}
-              </TextLink>
-            }
-          />
-          <div className="week-glance">
-            {weekDays(v.day, v.s.household.week_start).map((d) => (
-              <button
-                key={d}
-                className={d === v.day ? "today" : ""}
-                onClick={() => v.navigate("menu")}
-              >
-                <span>{formatDay(d, v.language, { weekday: "short" })}</span>
-                <b>{formatDay(d, v.language, { day: "numeric" })}</b>
-                <div className="meal-dots">
-                  {mealTypes.map((m) => (
-                    <i
-                      key={m}
-                      className={
-                        v.s.meals.some(
-                          (x) =>
-                            x.day === d &&
-                            x.type === m &&
-                            x.member_id === v.member.id,
-                        )
-                          ? "filled"
-                          : ""
-                      }
-                    />
-                  ))}
-                </div>
-              </button>
-            ))}
-          </div>
         </div>
         <aside>
           <section className="panel log-panel">
@@ -536,29 +498,6 @@ export function Dashboard(v: ViewProps) {
             )}
             <EntryList v={v} entries={entries} />
           </section>
-          <button
-            className="shopping-shortcut"
-            onClick={() => v.navigate("shopping")}
-          >
-            <div className="stat-icon">
-              <ShoppingBasket size={21} />
-            </div>
-            <div>
-              <h3>
-                {t(
-                  "One list. Less to remember.",
-                  "Una lista. Menos que recordar.",
-                )}
-              </h3>
-              <p>
-                {t(
-                  "Your household shopping list",
-                  "La lista de compra del hogar",
-                )}
-              </p>
-            </div>
-            <ChevronRight size={20} />
-          </button>
           <div className="quiet-note">
             <span className="eyebrow">
               {t("Made for your household", "Para vuestro hogar")}

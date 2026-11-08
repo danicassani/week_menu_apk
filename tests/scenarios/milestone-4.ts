@@ -73,11 +73,21 @@ export async function historicalScenario(
       exact: true,
     })
     .click();
-  await expect(dialog.locator(".portion-allocation").first()).toBeVisible();
+  await expect(dialog.locator(".portion-allocation")).toHaveCount(2);
   await dialog.evaluate((el) => {
     el.scrollTop = 0;
   });
   await page.screenshot({ path: capture });
+  await dialog
+    .getByRole("button", {
+      name: t(
+        "Confirm historical correction",
+        "Confirmar corrección del historial",
+      ),
+      exact: true,
+    })
+    .scrollIntoViewIfNeeded();
+  await page.screenshot({ path: capture.replace(".png", "-actions.png") });
   await dialog
     .getByRole("button", {
       name: t(
