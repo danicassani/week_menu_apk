@@ -252,7 +252,7 @@ test("moving the last draft portion into an empty slot removes the saved source 
   const target = day(page, "Wednesday 4 November").locator(".meal-card").nth(2);
   await expect(target.locator(".meal-recipe-link")).toHaveText(names[0]);
 });
-test("a rejected draft paste explains the conflict inside the open suggestion dialog", async ({
+test("a repeated shared recipe can be pasted into the next meal after overwrite review", async ({
   page,
 }) => {
   await generate(page);
@@ -263,22 +263,25 @@ test("a rejected draft paste explains the conflict inside the open suggestion di
     .nth(0)
     .getByRole("button", { name: "Copy meal", exact: true })
     .click();
-  const before = await meals
-    .nth(1)
+  const source = await meals
+    .nth(0)
     .locator(".suggested-recipe-link")
     .allTextContents();
   await meals
     .nth(1)
     .getByRole("button", { name: "Paste meal", exact: true })
     .click();
-  const dialog = page.getByRole("dialog", {
-    name: "Review your menu suggestions",
-  });
-  await expect(dialog.getByRole("alert")).toBeVisible();
+  const review = page.getByRole("dialog", { name: "Review pasted meal" });
+  await expect(review).toBeVisible();
+  await review
+    .getByRole("button", { name: "Replace and paste", exact: true })
+    .click();
   expect(
     await meals.nth(1).locator(".suggested-recipe-link").allTextContents(),
-  ).toEqual(before);
+  ).toEqual(source);
   await expect(
-    page.getByRole("dialog", { name: "Review pasted meal" }),
+    page
+      .getByRole("dialog", { name: "Review your menu suggestions" })
+      .getByRole("alert"),
   ).toHaveCount(0);
 });
