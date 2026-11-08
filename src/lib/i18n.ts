@@ -2,6 +2,10 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  database_timeout: [
+    "The database took too long and canceled the operation. Try again shortly.",
+    "La base de datos ha tardado demasiado y ha cancelado la operación. Inténtalo de nuevo en unos instantes.",
+  ],
   catalogue_item_unavailable: [
     "This item is no longer available. Refresh the collection.",
     "Este elemento ya no está disponible. Actualiza la colección.",
