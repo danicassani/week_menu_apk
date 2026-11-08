@@ -187,6 +187,25 @@ export class SupabaseRepository implements Repository {
       p_cursor: q.cursor ?? null,
     });
   }
+  getRecipeReview() {
+    return this.rpc<{ reviewed_recipe_ids: string[] }>("get_recipe_review");
+  }
+  resetRecipeReview() {
+    return this.rpc<{ reviewed_recipe_ids: string[] }>("reset_recipe_review");
+  }
+  reviewRecipe(recipe: PlannedRecipe, banned: boolean) {
+    return this.rpc<PlannedRecipe>(
+      "review_recipe",
+      {
+        p_recipe_id: recipe.id,
+        p_banned: banned,
+        p_revision: recipe.veto_revision ?? 0,
+        p_content_revision: recipe.revision ?? 1,
+      },
+      true,
+      true,
+    );
+  }
   setRecipeVeto(recipe: PlannedRecipe, banned: boolean) {
     return this.rpc<PlannedRecipe>(
       "set_recipe_veto",

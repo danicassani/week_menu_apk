@@ -6,6 +6,8 @@ Vetoed recipes remain in the ordinary catalogue, including search and paging. Th
 
 Manual selection, recipe copying and explicitly copying a previous week remain available. Vetoing a recipe never removes or recalculates saved meals or shopping contributions. If no eligible suggestion exists, the existing planner explains the gap rather than silently choosing a vetoed recipe. A shared revision change invalidates outdated suggestion reviews through the existing concurrency guards.
 
+The subsequent [recipe-review update](recipe-review.md) adds a single-write fast path that preserves loaded catalogue cards and introduces Recipe Tinder with personal progress. Its current frontend also requires migration 20.
+
 ## Persistence and permissions
 
 Migration 19 adds `app_private.recipe_vetoes`, keyed by household and recipe ID, with its own revision. It has forced RLS and no direct application/anonymous table grants. A scoped RPC verifies the current Google account's active membership before reading/updating the preference. Any active household member can change a veto, consistent with shared recipe editing.

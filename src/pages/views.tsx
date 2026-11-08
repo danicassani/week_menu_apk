@@ -40,6 +40,7 @@ import { mealLabel, translator } from "../lib/i18n";
 import { Button, Empty, SectionTitle, TextLink } from "../components/ui";
 
 export type ViewProps = {
+  onRecipeVeto: (recipe: PlannedRecipe) => void;
   allocationColors: Record<string, string>;
   ensurePlanning: (
     force?: boolean,

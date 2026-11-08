@@ -1,3 +1,5 @@
+- [Recipe Tinder, personal review progress and fast recipe vetoes](docs/recipe-review.md)
+
 # Week Menu App
 
 Household meal-planning PWA: individual breakfasts, shared lunches/dinners with personal portions, calorie budgets, and one shared shopping list. English and Spanish; minimalistic design with seven device-local colour families and light/dark modes.

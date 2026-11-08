@@ -3949,3 +3949,43 @@ textarea:focus-visible {
 .recipe-actions {
   margin: 12px 0;
 }
+
+.recipe-review-card {
+  touch-action: pan-y;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  background: var(--surface);
+  display: grid;
+  gap: 18px;
+  user-select: none;
+  margin: 20px 0;
+}
+.recipe-review-card > p {
+  overflow-wrap: anywhere;
+}
+.recipe-review-card details {
+  user-select: text;
+}
+.review-decisions {
+  justify-content: space-between;
+  margin: 20px 0;
+}
+.review-decisions .button {
+  min-width: 110px;
+  min-height: 48px;
+}
+.review-footer {
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  padding-top: 18px;
+  margin-top: 24px;
+}
+.review-progress {
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .recipe-review-card {
+    transform: none !important;
+  }
+}

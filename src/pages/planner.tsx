@@ -1,6 +1,8 @@
+import { RecipeReview } from "../components/recipe-review";
 import {
   ingredientNames,
   ingredientText,
+  sortedIngredients,
   recipePresentation,
 } from "../domain/content-presentation";
 import { HistoricalCorrection } from "../components/historical-correction";
@@ -17,6 +19,7 @@ import type { CatalogueSummary, CataloguePage } from "../domain/catalogue";
 import {
   cacheCataloguePage,
   cacheCatalogueDetail,
+  cacheRecipeVeto,
   cacheIdentity,
 } from "../lib/offline-store";
 import {
@@ -1623,6 +1626,8 @@ export function ContentManager(v: ViewProps) {
     lib = v.s.planning;
   const [tab, setTab] = useState<"recipes" | "ingredients">("recipes"),
     [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
+    [reviewOpen, setReviewOpen] = useState(false),
+    [catalogueTick, setCatalogueTick] = useState(0),
     [contextRecipe, setContextRecipe] = useState<PlannedRecipe | null>(null),
     [readingIngredient, setReadingIngredient] = useState<Ingredient | null>(
       null,
@@ -1637,12 +1642,21 @@ export function ContentManager(v: ViewProps) {
       kind: "ingredient" | "recipe";
       data: Ingredient | PlannedRecipe;
     } | null>(null);
+  const ownVetoRevisions = useRef(new Set<number>()),
+    vetoPatches = useRef(
+      new Map<string, Pick<PlannedRecipe, "banned" | "veto_revision">>(),
+    ),
+    pendingVeto = useRef(0),
+    deferredRevision = useRef<number | undefined>(undefined),
+    filterKey = useRef(""),
+    lastRepository = useRef(v.repository);
   const generation = useRef(0),
     pageFlight = useRef(false);
   const loadPage = async (
     cursor: string | null,
     append: boolean,
     gen = generation.current,
+    refreshCount = 0,
   ) => {
     if (pageFlight.current && append) return;
     pageFlight.current = true;
@@ -1656,11 +1670,40 @@ export function ContentManager(v: ViewProps) {
         archived,
         cursor,
       });
+      while (
+        result.next_cursor &&
+        result.items.length < refreshCount &&
+        gen === generation.current
+      ) {
+        const next = await v.repository.cataloguePage({
+          kind: tab === "recipes" ? "recipe" : "ingredient",
+          query,
+          archived,
+          cursor: result.next_cursor,
+        });
+        result.items.push(
+          ...next.items.filter(
+            (item) => !result.items.some((old) => old.id === item.id),
+          ),
+        );
+        result.next_cursor = next.next_cursor;
+      }
       if (
         gen !== generation.current ||
         identity !== cacheIdentity(v.repository)
       )
         return;
+      result.items = result.items.map((item) => {
+        const patch =
+          tab === "recipes" ? vetoPatches.current.get(item.id) : undefined;
+        return patch && (patch.veto_revision ?? 0) > (item.veto_revision ?? 0)
+          ? {
+              ...item,
+              banned: patch.banned,
+              veto_revision: patch.veto_revision,
+            }
+          : item;
+      });
       setPage((previous) => {
         const items = append
           ? [
@@ -1701,17 +1744,98 @@ export function ContentManager(v: ViewProps) {
     }
   };
   useEffect(() => {
+    const key = JSON.stringify([tab, query, archived]);
+    const changed =
+      filterKey.current !== key || lastRepository.current !== v.repository;
+    if (!changed && pendingVeto.current) {
+      deferredRevision.current = lib?.revision;
+      pageFlight.current = false;
+      setLoading(false);
+      return;
+    }
+    if (
+      !changed &&
+      lib?.revision !== undefined &&
+      ownVetoRevisions.current.delete(lib.revision) &&
+      page.items.length > 0
+    ) {
+      pageFlight.current = false;
+      setLoading(false);
+      return;
+    }
+    filterKey.current = key;
+    lastRepository.current = v.repository;
     const gen = ++generation.current;
     pageFlight.current = false;
-    setPage({ items: [], next_cursor: null });
+    if (changed) setPage({ items: [], next_cursor: null });
     setLoading(true);
     setPageError("");
-    const timer = setTimeout(() => void loadPage(null, false, gen), 150);
+    const timer = setTimeout(
+      () => void loadPage(null, false, gen, changed ? 0 : page.items.length),
+      150,
+    );
     return () => {
       clearTimeout(timer);
       generation.current++;
     };
-  }, [tab, query, archived, lib?.revision, v.repository]);
+  }, [tab, query, archived, lib?.revision, v.repository, catalogueTick]);
+  const changeVeto = async (
+    recipe: PlannedRecipe,
+    banned: boolean,
+    review = false,
+  ) => {
+    const identity = cacheIdentity(v.repository),
+      base = lib?.revision,
+      viewKey = filterKey.current;
+    pendingVeto.current++;
+    let next: PlannedRecipe | undefined;
+    try {
+      next = await (review
+        ? v.repository.reviewRecipe(recipe, banned)
+        : v.repository.setRecipeVeto(recipe, banned));
+      if (identity !== cacheIdentity(v.repository))
+        throw Error("membership_changed");
+      const accepted = next;
+      vetoPatches.current.set(accepted.id, {
+        banned: accepted.banned,
+        veto_revision: accepted.veto_revision,
+      });
+      if (accepted.household_revision === (base ?? -2) + 1)
+        ownVetoRevisions.current.add(accepted.household_revision);
+      if (filterKey.current === viewKey)
+        setPage((current) => {
+          const items = current.items.map((item) =>
+            item.id === accepted.id &&
+            (item.veto_revision ?? 0) <= (accepted.veto_revision ?? 0)
+              ? {
+                  ...item,
+                  banned: accepted.banned,
+                  veto_revision: accepted.veto_revision,
+                }
+              : item,
+          );
+          return { ...current, items };
+        });
+      v.onRecipeVeto(accepted);
+      setReadingRecipe((current) =>
+        current?.id === accepted.id ? accepted : current,
+      );
+      void cacheRecipeVeto(identity, accepted).catch(() => {});
+      return accepted;
+    } finally {
+      pendingVeto.current--;
+      const deferred = deferredRevision.current;
+      deferredRevision.current = undefined;
+      if (
+        deferred !== undefined &&
+        (!next ||
+          deferred !== next.household_revision ||
+          deferred !== (base ?? -2) + 1 ||
+          page.items.length === 0)
+      )
+        setCatalogueTick((n) => n + 1);
+    }
+  };
   const readItem = async (item: CatalogueSummary, context = false) => {
     await v.operate(
       async () => {
@@ -1827,6 +1951,30 @@ export function ContentManager(v: ViewProps) {
           {t("Ingredients & units", "Ingredientes y unidades")}
         </Button>
       </div>
+      {tab === "recipes" && (
+        <div className="button-row recipe-actions">
+          <Button secondary onClick={() => setReviewOpen(true)}>
+            {t("Recipe Tinder", "Tinder de recetas")}
+          </Button>
+        </div>
+      )}
+      {reviewOpen && (
+        <RecipeReview
+          repository={v.repository}
+          language={v.language}
+          onClose={() => setReviewOpen(false)}
+          onAccessError={(error) =>
+            void v.operate(
+              async () => {
+                throw error;
+              },
+              undefined,
+              false,
+            )
+          }
+          onDecision={(recipe, banned) => changeVeto(recipe, banned, true)}
+        />
+      )}
       <div className="recipe-toolbar">
         <label className="search-field">
           <Search size={16} />
@@ -1993,10 +2141,9 @@ export function ContentManager(v: ViewProps) {
                   onClick={() =>
                     void v.operate(
                       async () => {
-                        const identity = cacheIdentity(v.repository);
                         let next: PlannedRecipe;
                         try {
-                          next = await v.repository.setRecipeVeto(
+                          next = await changeVeto(
                             readingRecipe,
                             !readingRecipe.banned,
                           );
@@ -2004,27 +2151,18 @@ export function ContentManager(v: ViewProps) {
                           if (
                             error instanceof Error &&
                             error.message.includes("stale_content")
-                          ) {
-                            const detail = await v.repository.catalogueItem(
-                              "recipe",
-                              readingRecipe.id,
+                          )
+                            setReadingRecipe(
+                              (
+                                await v.repository.catalogueItem(
+                                  "recipe",
+                                  readingRecipe.id,
+                                )
+                              ).item as PlannedRecipe,
                             );
-                            setReadingRecipe(detail.item as PlannedRecipe);
-                          }
                           throw error;
                         }
-                        if (identity !== cacheIdentity(v.repository))
-                          throw Error("membership_changed");
-                        setReadingRecipe(next);
-                        setPage((current) => ({
-                          ...current,
-                          items: current.items.map((item) =>
-                            item.id === next.id
-                              ? { ...item, banned: next.banned }
-                              : item,
-                          ),
-                        }));
-                        void cacheCatalogueDetail(identity, {
+                        void cacheCatalogueDetail(cacheIdentity(v.repository), {
                           item: next,
                           ingredients: detailFoods,
                         }).catch(() => {});
@@ -2033,6 +2171,7 @@ export function ContentManager(v: ViewProps) {
                         "Recipe veto updated.",
                         "Veto de la receta actualizado.",
                       ),
+                      false,
                     )
                   }
                 >
@@ -2635,7 +2774,7 @@ function ContentEditor({
                           <option value="">
                             {t("Choose ingredient", "Elige ingrediente")}
                           </option>
-                          {lib.ingredients
+                          {sortedIngredients(lib.ingredients, v.language)
                             .filter(
                               (f) => !f.archived || f.id === l.ingredient_id,
                             )

@@ -161,6 +161,12 @@ export interface Repository {
   cataloguePage(
     query: import("./catalogue").CatalogueQuery,
   ): Promise<import("./catalogue").CataloguePage>;
+  getRecipeReview(): Promise<{ reviewed_recipe_ids: string[] }>;
+  resetRecipeReview(): Promise<{ reviewed_recipe_ids: string[] }>;
+  reviewRecipe(
+    recipe: import("./planning").PlannedRecipe,
+    banned: boolean,
+  ): Promise<import("./planning").PlannedRecipe>;
   setRecipeVeto(
     recipe: import("./planning").PlannedRecipe,
     banned: boolean,
