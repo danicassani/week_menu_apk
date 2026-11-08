@@ -196,12 +196,17 @@ export function Planner(v: ViewProps) {
     [editing, setEditing] = useState<MealPlan | null>(null),
     [notice, setNotice] = useState(""),
     [previewNotice, setPreviewNotice] = useState(""),
+    [saveError, setSaveError] = useState<{
+      text: string;
+      code?: string;
+    } | null>(null),
     [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
     [readingPlan, setReadingPlan] = useState<MealPlan | null>(null),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [correctionDay, setCorrectionDay] = useState<string | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null);
+  useEffect(() => setSaveError(null), [preview]);
   const closedCheck = useClosedDayCheck(anchor, v.language, setCorrectionDay);
   const transfer = useMealTransfers(
     v,
@@ -1028,6 +1033,17 @@ export function Planner(v: ViewProps) {
               ))}
             </section>
           )}
+          {saveError && (
+            <div className="inline-error" role="alert">
+              <p>{saveError.text}</p>
+              {saveError.code && (
+                <p className="fine-print">
+                  {t("Error code", "Código del error")}:{" "}
+                  <code>{saveError.code}</code>
+                </p>
+              )}
+            </div>
+          )}
           <IconAction
             icon={Check}
             className="preview-confirm"
@@ -1040,14 +1056,36 @@ export function Planner(v: ViewProps) {
             }
             busy={v.busy}
             onClick={async () => {
+              setSaveError(null);
               if (
                 await v.operate(
-                  () =>
-                    v.repository.applyPlans(
-                      preview.plans,
-                      preview.revision,
-                      preview.replace,
-                    ),
+                  async () => {
+                    try {
+                      await v.repository.applyPlans(
+                        preview.plans,
+                        preview.revision,
+                        preview.replace,
+                      );
+                    } catch (error) {
+                      const code =
+                        error instanceof Error &&
+                        /^[a-z][a-z0-9_]{0,100}$/.test(error.message)
+                          ? error.message
+                          : undefined;
+                      setSaveError({
+                        text: errorMessage(
+                          error,
+                          v.language,
+                          t(
+                            "The suggested menu could not be saved. Your suggestions are kept; try again.",
+                            "No se ha podido guardar el menú sugerido. Se conservan las sugerencias; inténtalo de nuevo.",
+                          ),
+                        ),
+                        code,
+                      });
+                      throw error;
+                    }
+                  },
                   t("Menu saved.", "Menú guardado."),
                 )
               )
