@@ -781,3 +781,45 @@ test("vetoed recipes remain readable and dimmed in the saved offline catalogue",
     page.getByRole("button", { name: "Remove veto", exact: true }),
   ).toHaveCount(0);
 });
+test("source-backed recipe provenance and original quantity estimates survive an offline reload", async ({
+  page,
+  context,
+}) => {
+  await enter(page);
+  await page
+    .getByRole("navigation", { name: "Main navigation" })
+    .getByRole("button", { name: "Recipes", exact: true })
+    .click();
+  await page
+    .getByRole("searchbox", { name: "Search collection" })
+    .fill("Banana bread");
+  await page.getByRole("button", { name: /Banana bread/ }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Banana bread", exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await context.setOffline(true);
+  await page.reload();
+  await expect(
+    page.getByRole("heading", { name: "Your household, offline" }),
+  ).toBeVisible();
+  await page
+    .getByRole("navigation", { name: "Offline navigation" })
+    .getByRole("button", { name: "Recipes", exact: true })
+    .click();
+  await page
+    .getByRole("searchbox", { name: "Search saved recipes" })
+    .fill("Banana bread");
+  await page.locator(".recipe-card").click();
+  const reader = page.getByRole("dialog", {
+    name: "Banana bread",
+    exact: true,
+  });
+  await reader.locator(".recipe-source-details summary").click();
+  await expect(reader.getByRole("link")).toHaveAttribute(
+    "href",
+    "https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf",
+  );
+  await expect(reader).toContainText("2 large eggs → 120 g");
+  await expect(reader).toContainText("Unsalted butter");
+});

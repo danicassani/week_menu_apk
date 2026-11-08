@@ -1232,3 +1232,102 @@ it("accepts consecutive repeated meals and content without legacy variety metada
     "invalid_recipe",
   );
 });
+it("new global recipes work in existing and new households and private edits stay private", async () => {
+  await actor();
+  const pack = JSON.parse(
+    readFileSync("content/expansions/requested-recipes.json", "utf8"),
+  );
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const plans = pack.recipes.map((r: any, index: number) => ({
+    day: addDays(day, 200 + index),
+    type: r.meal_types[0],
+    revision: 0,
+    shared_recipe_id: r.meal_types[0] === "breakfast" ? null : r.id,
+    portions: [
+      makePortion(
+        r,
+        home.membership_id,
+        profile,
+        600,
+        false,
+        lib.ingredients,
+        [],
+      ),
+    ],
+  }));
+  await rpc("apply_meal_plans", [plans, lib.revision, false]);
+  const saved = await rpc<PlanningState>("get_planning_library");
+  for (const r of pack.recipes) {
+    expect(saved.recipes.some((f) => f.id === r.id)).toBe(true);
+    expect(
+      saved.plans.some((p) => p.portions.some((q) => q.recipe_id === r.id)),
+    ).toBe(true);
+  }
+  // Exercise the independent server re-planning path, including tiny spices.
+  for (const [index, recipe] of pack.recipes.entries()) {
+    const review = await rpc<any>("preview_meal_transfer", [
+      {
+        mode: "paste",
+        target: {
+          day: addDays(day, 200 + index),
+          type: recipe.meal_types[0],
+          ...(recipe.meal_types[0] === "breakfast"
+            ? { member_id: home.membership_id }
+            : {}),
+        },
+        choice: { recipe_id: recipe.id, revision: 1, desserts: {} },
+      },
+    ]);
+    const actual = review.plans[0].portions.find(
+      (p: any) => p.member_id === home.membership_id,
+    );
+    const expected = makePortion(
+      recipe,
+      home.membership_id,
+      profile,
+      actual.budget,
+      false,
+      lib.ingredients,
+      [],
+    );
+    expect(actual.lines).toEqual(expected.lines);
+  }
+  const original = pack.recipes[0];
+  const detail = (await rpc<any>("get_catalogue_item", ["recipe", original.id]))
+    .item;
+  await rpc("save_household_content", [
+    "recipe",
+    {
+      ...detail,
+      name: { en: "Our private toast", es: "Nuestra tostada privada" },
+    },
+    detail.revision,
+    false,
+  ]);
+  await actor(b);
+  const theirs = await call<any>("get_catalogue_item", [
+    other.household_id,
+    other.membership_id,
+    "recipe",
+    original.id,
+  ]);
+  expect(theirs.item.name).toEqual(original.name);
+  expect(theirs.item.source_recipe.url).toBe(original.source_recipe.url);
+  const ingredients = await call<any>("get_catalogue_item", [
+    other.household_id,
+    other.membership_id,
+    "ingredient",
+    "mozzarella",
+  ]);
+  expect(ingredients.item.nutrition_per_100g.energy_kcal).toBe(257);
+  await expect(
+    db.exec(
+      "update app_private.starter_content set data='{}'::jsonb where id='global_banana_bread'",
+    ),
+  ).rejects.toThrow("permission denied");
+  await actor();
+  expect(
+    (await rpc<any>("get_catalogue_item", ["recipe", original.id])).item.name
+      .en,
+  ).toBe("Our private toast");
+});

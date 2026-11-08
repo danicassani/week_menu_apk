@@ -1,3 +1,4 @@
+import expansion from "../../content/expansions/requested-recipes.json" with { type: "json" };
 import { ingredientMatches } from "../domain/content-presentation";
 import {
   historicalQuantities,
@@ -235,10 +236,14 @@ export class PreviewRepository implements Repository {
   private s: HouseholdState;
   private serial = 0;
   private library: PlanningState = {
-    ingredients: structuredClone(
-      ingredientSeed.ingredients,
-    ) as unknown as Ingredient[],
-    recipes: structuredClone(recipes.recipes) as unknown as PlannedRecipe[],
+    ingredients: structuredClone([
+      ...ingredientSeed.ingredients,
+      ...expansion.ingredients,
+    ]) as unknown as Ingredient[],
+    recipes: structuredClone([
+      ...recipes.recipes,
+      ...expansion.recipes,
+    ]) as unknown as PlannedRecipe[],
     substitutions: structuredClone(substitutionSeed.rules),
     plans: [],
     revision: 0,

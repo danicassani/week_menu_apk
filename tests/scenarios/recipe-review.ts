@@ -18,7 +18,7 @@ export async function recipeReviewScenario(
     await page
       .getByRole("button", { name: "Switch language", exact: true })
       .click();
-  await page.evaluate(() => {
+  const total = await page.evaluate(() => {
     const saved = JSON.parse(sessionStorage.getItem("week-menu-demo-server")!);
     const base = saved.library.recipes[0];
     for (let i = 0; i < 13; i++)
@@ -37,6 +37,7 @@ export async function recipeReviewScenario(
         .map((r: { id: string; revision: number }) => [r.id, r.revision ?? 1]),
     );
     sessionStorage.setItem("week-menu-demo-server", JSON.stringify(saved));
+    return saved.library.recipes.length;
   });
   await page.reload();
   const nav = page.getByRole("navigation", {
@@ -59,7 +60,9 @@ export async function recipeReviewScenario(
     name: t("Recipe Tinder", "Tinder de recetas"),
     exact: true,
   });
-  await expect(modal.locator(".review-progress")).toContainText("59 / 61");
+  await expect(modal.locator(".review-progress")).toContainText(
+    `${total - 2} / ${total}`,
+  );
   await expect(modal.locator(".recipe-review-card")).toContainText(
     t("ZZ review 11", "ZZ repaso 11"),
   );
@@ -70,7 +73,9 @@ export async function recipeReviewScenario(
   await page.mouse.down();
   await page.mouse.move(box.x + box.width * 0.15, box.y + 36, { steps: 8 });
   await page.mouse.up();
-  await expect(modal.locator(".review-progress")).toContainText("60 / 61");
+  await expect(modal.locator(".review-progress")).toContainText(
+    `${total - 1} / ${total}`,
+  );
   await expect(card).toContainText(t("ZZ review 12", "ZZ repaso 12"));
   await modal
     .getByRole("button", { name: t("Close", "Cerrar"), exact: true })
@@ -78,7 +83,9 @@ export async function recipeReviewScenario(
   expect(await first!.evaluate((el) => el.isConnected)).toBe(true);
   await expect(page.locator(".recipe-card")).toHaveCount(50);
   await open();
-  await expect(modal.locator(".review-progress")).toContainText("60 / 61");
+  await expect(modal.locator(".review-progress")).toContainText(
+    `${total - 1} / ${total}`,
+  );
   await expect(card).toContainText(t("ZZ review 12", "ZZ repaso 12"));
   // Right swipe accepts the final recipe; both button alternatives remain available.
   await expect(
@@ -123,7 +130,7 @@ export async function recipeReviewScenario(
       exact: true,
     })
     .click();
-  await expect(modal.locator(".review-progress")).toContainText("0 / 61");
+  await expect(modal.locator(".review-progress")).toContainText(`0 / ${total}`);
   const after = await page.evaluate(() =>
     JSON.parse(sessionStorage.getItem("week-menu-demo-server")!),
   );

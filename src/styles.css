@@ -3989,3 +3989,24 @@ textarea:focus-visible {
     transform: none !important;
   }
 }
+
+.recipe-source-details {
+  margin-block: 1rem;
+  padding-block: 0.75rem;
+  border-block: 1px solid var(--line);
+}
+.recipe-source-details summary {
+  cursor: pointer;
+}
+.recipe-source-details a {
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+.source-quantities {
+  padding-inline-start: 1.25rem;
+  font-size: 0.85rem;
+}
+.source-quantities li {
+  margin-block: 0.5rem;
+  overflow-wrap: anywhere;
+}

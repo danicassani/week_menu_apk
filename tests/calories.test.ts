@@ -6,6 +6,7 @@ import {
   proposeTarget,
   restingEnergy,
   roundQuantity,
+  roundWeight,
 } from "../src/domain/calories";
 import {
   addDays,
@@ -125,6 +126,16 @@ describe("calorie estimates and screening before display rounding", () => {
     expect(roundQuantity(4.5)).toBe(5);
     expect(roundQuantity(1.3, 0.5)).toBe(1.5);
     expect(() => roundQuantity(0.1)).toThrow("quantity_needs_review");
+  });
+  it("keeps tiny weighed ingredients while preserving normal and piece-unit rounding", () => {
+    expect(roundWeight(0.3)).toBe(0.3);
+    expect(roundWeight(0.16)).toBe(0.2);
+    expect(roundWeight(0.01)).toBe(0.1);
+    expect(roundWeight(0.99)).toBe(1);
+    expect(roundWeight(4.5)).toBe(5);
+    expect(roundWeight(125)).toBe(130);
+    expect(() => roundWeight(0)).toThrow("invalid_quantity");
+    expect(() => roundQuantity(0.1, 1)).toThrow("quantity_needs_review");
   });
 });
 describe("local dates and independent midnight cutoffs", () => {

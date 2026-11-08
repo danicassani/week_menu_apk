@@ -1,0 +1,3804 @@
+{
+  "schema_version": "1.0.0",
+  "release": "2026-11",
+  "expansion": "requested-2026-11-08",
+  "ingredients": [
+    {
+      "id": "mozzarella",
+      "name": {
+        "en": "Mozzarella",
+        "es": "Mozzarella"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 257.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-360",
+        "original_name": "Cheese, Mozzarella, fresh",
+        "proximates_row": 621,
+        "energy_cell": "M621",
+        "raw_energy_value": "257"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "butter",
+      "name": {
+        "en": "Unsalted butter",
+        "es": "Mantequilla sin sal"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 744.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-661",
+        "original_name": "Butter, unsalted",
+        "proximates_row": 487,
+        "energy_cell": "M487",
+        "raw_energy_value": "744"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "sugar",
+      "name": {
+        "en": "White sugar",
+        "es": "Azúcar blanco"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 394.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-063",
+        "original_name": "Sugar, white",
+        "proximates_row": 2635,
+        "energy_cell": "M2635",
+        "raw_energy_value": "394"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "self_raising_flour",
+      "name": {
+        "en": "Self-raising flour",
+        "es": "Harina con levadura"
+      },
+      "state": "dry",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 348.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "11-888",
+        "original_name": "Flour, wheat, white, self raising",
+        "proximates_row": 1175,
+        "energy_cell": "M1175",
+        "raw_energy_value": "348"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "icing_sugar",
+      "name": {
+        "en": "Icing sugar",
+        "es": "Azúcar glas"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 393.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-062",
+        "original_name": "Sugar, icing",
+        "proximates_row": 2634,
+        "energy_cell": "M2634",
+        "raw_energy_value": "393"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "low_fat_spread",
+      "name": {
+        "en": "Low-fat spread",
+        "es": "Margarina ligera"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 354.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-497",
+        "original_name": "Fat spread, low fat (26-39%), not polyunsaturated, including dairy type",
+        "proximates_row": 1111,
+        "energy_cell": "M1111",
+        "raw_energy_value": "354"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "feta",
+      "name": {
+        "en": "Feta",
+        "es": "Feta"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 250.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-525",
+        "original_name": "Cheese, Feta",
+        "proximates_row": 613,
+        "energy_cell": "M613",
+        "raw_energy_value": "250"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "burger_roll",
+      "name": {
+        "en": "White burger roll",
+        "es": "Pan de hamburguesa"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 254.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "11-1006",
+        "original_name": "Bread rolls, white, soft",
+        "proximates_row": 387,
+        "energy_cell": "M387",
+        "raw_energy_value": "254"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "vegetable_oil",
+      "name": {
+        "en": "Vegetable oil",
+        "es": "Aceite vegetal"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 899.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-686",
+        "original_name": "Oil, vegetable, average",
+        "proximates_row": 1794,
+        "energy_cell": "M1794",
+        "raw_energy_value": "899"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "wheat_tortilla",
+      "name": {
+        "en": "Wheat tortilla",
+        "es": "Tortilla de trigo"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 285.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "11-925",
+        "original_name": "Tortilla, wheat, soft",
+        "proximates_row": 2743,
+        "energy_cell": "M2743",
+        "raw_energy_value": "285"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "kidney_beans_canned",
+      "name": {
+        "en": "Canned kidney beans, drained",
+        "es": "Alubias rojas en conserva, escurridas"
+      },
+      "state": "cooked",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 100.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "13-660",
+        "original_name": "Beans, red kidney, canned in water, re-heated, drained",
+        "proximates_row": 160,
+        "energy_cell": "M160",
+        "raw_energy_value": "100"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "roast_chicken",
+      "name": {
+        "en": "Roast chicken breast",
+        "es": "Pechuga de pollo asada"
+      },
+      "state": "cooked",
+      "dietary_patterns": ["omnivore"],
+      "nutrition_per_100g": {
+        "energy_kcal": 153.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "18-330",
+        "original_name": "Chicken, light meat, roasted",
+        "proximates_row": 703,
+        "energy_cell": "M703",
+        "raw_energy_value": "153"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "cheddar",
+      "name": {
+        "en": "Cheddar",
+        "es": "Cheddar"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 416.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-346",
+        "original_name": "Cheese, Cheddar, English",
+        "proximates_row": 604,
+        "energy_cell": "M604",
+        "raw_energy_value": "416"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "sweetcorn_raw",
+      "name": {
+        "en": "Corn on the cob (edible kernels)",
+        "es": "Mazorca de maíz (granos comestibles)"
+      },
+      "state": "raw_edible",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 60.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "13-622",
+        "original_name": "Sweetcorn, kernels, raw",
+        "proximates_row": 2662,
+        "energy_cell": "M2662",
+        "raw_energy_value": "60"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "chicken_stock",
+      "name": {
+        "en": "Ready-made chicken stock",
+        "es": "Caldo de pollo preparado"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore"],
+      "nutrition_per_100g": {
+        "energy_kcal": 12.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-681",
+        "original_name": "Stock, chicken, ready made, retail",
+        "proximates_row": 2622,
+        "energy_cell": "M2622",
+        "raw_energy_value": "12"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "egg_noodles",
+      "name": {
+        "en": "Dried egg noodles",
+        "es": "Fideos al huevo"
+      },
+      "state": "dry",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 338.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "11-719",
+        "original_name": "Noodles, egg, dried, raw",
+        "proximates_row": 1753,
+        "energy_cell": "M1753",
+        "raw_energy_value": "338"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "tortilla_chips",
+      "name": {
+        "en": "Tortilla chips",
+        "es": "Nachos de maíz"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 504.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-644",
+        "original_name": "Tortilla chips fried in sunflower oil",
+        "proximates_row": 2742,
+        "energy_cell": "M2742",
+        "raw_energy_value": "504"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "whole_milk",
+      "name": {
+        "en": "Whole milk",
+        "es": "Leche entera"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 63.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-596",
+        "original_name": "Milk, whole, pasteurised, average",
+        "proximates_row": 1681,
+        "energy_cell": "M1681",
+        "raw_energy_value": "63"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "parmesan",
+      "name": {
+        "en": "Parmesan",
+        "es": "Parmesano"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 415.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-526",
+        "original_name": "Cheese, Parmesan, fresh",
+        "proximates_row": 623,
+        "energy_cell": "M623",
+        "raw_energy_value": "415"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "cashew",
+      "name": {
+        "en": "Cashews",
+        "es": "Anacardos"
+      },
+      "state": "raw_edible",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 573.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "14-811",
+        "original_name": "Cashew nuts, kernel only, plain",
+        "proximates_row": 546,
+        "energy_cell": "M546",
+        "raw_energy_value": "573"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "ricotta",
+      "name": {
+        "en": "Ricotta",
+        "es": "Ricotta"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 144.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-176",
+        "original_name": "Cheese, Ricotta",
+        "proximates_row": 631,
+        "energy_cell": "M631",
+        "raw_energy_value": "144"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "white_wine",
+      "name": {
+        "en": "Dry white wine",
+        "es": "Vino blanco seco"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 75.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-755",
+        "original_name": "Wine, white, dry",
+        "proximates_row": 2860,
+        "energy_cell": "M2860",
+        "raw_energy_value": "75"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "double_cream",
+      "name": {
+        "en": "Double cream",
+        "es": "Nata para montar"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 496.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "12-334",
+        "original_name": "Cream, fresh, double, including Jersey cream",
+        "proximates_row": 886,
+        "energy_cell": "M886",
+        "raw_energy_value": "496"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "green_pesto",
+      "name": {
+        "en": "Green pesto",
+        "es": "Pesto verde"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 420.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-622",
+        "original_name": "Pesto, green",
+        "proximates_row": 1992,
+        "energy_cell": "M1992",
+        "raw_energy_value": "420"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "pine_nuts",
+      "name": {
+        "en": "Pine nuts",
+        "es": "Piñones"
+      },
+      "state": "raw_edible",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 688.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "14-839",
+        "original_name": "Pine nuts, kernel only",
+        "proximates_row": 2043,
+        "energy_cell": "M2043",
+        "raw_energy_value": "688"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "thyme",
+      "name": {
+        "en": "Fresh thyme",
+        "es": "Tomillo fresco"
+      },
+      "state": "raw_edible",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 95.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "13-893",
+        "original_name": "Thyme, fresh",
+        "proximates_row": 2709,
+        "energy_cell": "M2709",
+        "raw_energy_value": "95"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "tomato_sauce",
+      "name": {
+        "en": "Tomato pasta sauce",
+        "es": "Salsa de tomate para pasta"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 70.0
+      },
+      "source": {
+        "dataset": "cofid_2021",
+        "url": "https://www.gov.uk/government/publications/composition-of-foods-integrated-dataset-cofid",
+        "workbook_sha256": "436e9445ef2adb2a75f3d7edd51302de3adad25385f9795fc94ba58bd030e97d",
+        "food_code": "17-834",
+        "original_name": "Sauce, tomato based, homemade",
+        "proximates_row": 2476,
+        "energy_cell": "M2476",
+        "raw_energy_value": "70"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "banana_chips",
+      "name": {
+        "en": "Banana chips (ASDA reference)",
+        "es": "Chips de plátano (referencia ASDA)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 533
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.asda.com/groceries/product/dried-fruit/asda-banana-chips-75g/7361131",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 533,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "black_pepper",
+      "name": {
+        "en": "Black pepper (Tesco reference)",
+        "es": "Pimienta negra (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 304
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/256150775",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 304,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "hot_salsa",
+      "name": {
+        "en": "Hot salsa (Tesco reference)",
+        "es": "Salsa mexicana picante (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 43
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/260076385",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 43,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "pak_choi",
+      "name": {
+        "en": "Pak choi (Tesco reference)",
+        "es": "Pak choi (referencia Tesco)"
+      },
+      "state": "raw_edible",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 19
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/252895723",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 19,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "bamboo_shoots",
+      "name": {
+        "en": "Bamboo shoots (Kingfisher reference)",
+        "es": "Brotes de bambú (referencia Kingfisher)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 13
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/265819146",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 13,
+        "match_actual_product": true,
+        "nutrition_basis": "drained_weight"
+      },
+      "quantity_basis": "drained_edible_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "stevia_sweetener",
+      "name": {
+        "en": "Truvia stevia sweetener",
+        "es": "Edulcorante de estevia Truvia"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 0
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.truvia.co.uk/products/truvia-pouch",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 0,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "pecorino",
+      "name": {
+        "en": "Pecorino (Tesco reference)",
+        "es": "Pecorino (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 378
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/294136643",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 378,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "sun_dried_tomatoes",
+      "name": {
+        "en": "Sun-dried tomatoes in oil (Tesco reference)",
+        "es": "Tomates secos en aceite (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 183
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/265335941",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 183,
+        "match_actual_product": true,
+        "nutrition_basis": "drained_weight"
+      },
+      "quantity_basis": "drained_edible_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "chilli_flakes",
+      "name": {
+        "en": "Chilli flakes (Tesco reference)",
+        "es": "Copos de guindilla (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 376
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/300456163",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 376,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "italian_sausage",
+      "name": {
+        "en": "Fresh fennel pork sausage (Salsicciamo reference)",
+        "es": "Salchicha fresca de cerdo e hinojo (referencia Salsicciamo)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore"],
+      "nutrition_per_100g": {
+        "energy_kcal": 134
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.carnevale.co.uk/ssm023so-salsicciamo-sicilian-sausage-mince-1kg.html",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 134,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "oregano",
+      "name": {
+        "en": "Dried oregano (Tesco reference)",
+        "es": "Orégano (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 308
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/256149795",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 308,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "gnocchi",
+      "name": {
+        "en": "Gnocchi (Tesco reference)",
+        "es": "Ñoquis (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian"],
+      "nutrition_per_100g": {
+        "energy_kcal": 173.184
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/273961567",
+        "accessed_on": "2026-11-08",
+        "match_actual_product": true,
+        "energy_kcal_per_100g_cooked": 164,
+        "cooked_g_from_125g_uncooked": 132,
+        "yield_is_approximate": true,
+        "energy_basis": "uncooked_weight_normalized_using_published_cooking_yield"
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "lemon_zest",
+      "name": {
+        "en": "Lemon zest (Tesco reference)",
+        "es": "Ralladura de limón (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 42
+      },
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/293588005",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100g": 42,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g",
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        }
+      ]
+    },
+    {
+      "id": "balsamic_vinegar",
+      "name": {
+        "en": "Balsamic vinegar (Tesco reference)",
+        "es": "Vinagre balsámico (referencia Tesco)"
+      },
+      "state": "as_sold",
+      "dietary_patterns": ["omnivore", "pescatarian", "vegetarian", "vegan"],
+      "nutrition_per_100g": {
+        "energy_kcal": 94.33962264150944
+      },
+      "conversions": [
+        {
+          "unit": "g",
+          "grams_per_unit": 1
+        },
+        {
+          "unit": "kg",
+          "grams_per_unit": 1000
+        },
+        {
+          "unit": "ml",
+          "grams_per_unit": 1.06,
+          "basis": "editable_density_estimate"
+        }
+      ],
+      "source": {
+        "dataset": "uk_product_label",
+        "url": "https://www.tesco.com/shop/en-GB/products/254296718",
+        "accessed_on": "2026-11-08",
+        "energy_kcal_per_100ml": 100,
+        "density_g_per_ml": 1.06,
+        "density_is_estimate": true,
+        "match_actual_product": true
+      },
+      "quantity_basis": "edible_reference_weight",
+      "shopping_policy": "include",
+      "default_unit": "g"
+    }
+  ],
+  "recipes": [
+    {
+      "id": "global_tomato_mozzarella_toast",
+      "name": {
+        "en": "Tomato, mozzarella and rocket toast",
+        "es": "Tostada de tomate, mozzarella y rúcula"
+      },
+      "meal_types": ["breakfast", "lunch", "dinner"],
+      "reference_servings": 2,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Tomato, mozzarella and rocket toast",
+            "es": "Tostada de tomate, mozzarella y rúcula"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "tomato",
+              "quantity": 350,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 18.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "balsamic_vinegar",
+              "quantity": 15.9,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "thyme",
+              "quantity": 2,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bread",
+              "quantity": 160,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mozzarella",
+              "quantity": 125,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "quantity": 2,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "rocket",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Roast halved tomatoes with oil, vinegar and thyme at 200°C (180°C fan) for 30 minutes.",
+              "es": "Asa los tomates partidos con aceite, vinagre y tomillo a 200°C (180°C con ventilador) durante 30 minutos."
+            },
+            {
+              "en": "Toast the bread; add the tomatoes, mozzarella, basil and rocket, then drizzle with the remaining oil.",
+              "es": "Tuesta el pan y añade tomates, mozzarella, albahaca y rúcula. Termina con el aceite restante."
+            }
+          ],
+          "reference_energy_kcal": 905.07
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.bbcgoodfood.com/recipes/roasted-tomato-mozzarella-rocket",
+        "title": "Roasted tomato, mozzarella & rocket",
+        "publisher": "Good Food",
+        "accessed_on": "2026-11-08",
+        "original_servings": "2",
+        "original_quantities": [
+          {
+            "ingredient_id": "tomato",
+            "quantity": "350 g baby plum tomatoes",
+            "normalized_g": 350,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "1 tbsp olive oil, plus drizzling",
+            "normalized_g": 18.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "balsamic_vinegar",
+            "quantity": "1 tbsp balsamic vinegar",
+            "normalized_g": 15.9,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "thyme",
+            "quantity": "a few thyme sprigs",
+            "normalized_g": 2,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "bread",
+            "quantity": "4 thick slices bread",
+            "normalized_g": 160,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "mozzarella",
+            "quantity": "125 g mozzarella",
+            "normalized_g": 125,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "basil",
+            "quantity": "a few basil leaves",
+            "normalized_g": 2,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "rocket",
+            "quantity": "a small handful rocket",
+            "normalized_g": 20,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.7,
+          "count": 6,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Wholemeal bread is the selected bread reference; the source permits bread of choice. The oil estimate includes the finishing drizzle.",
+          "es": "Se utiliza pan integral; la fuente permite elegir el pan. La estimación de aceite incluye el añadido final."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 905.07,
+        "with_optional_dessert": 905.07
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_banana_bread",
+      "name": {
+        "en": "Banana bread",
+        "es": "Banana bread"
+      },
+      "meal_types": ["breakfast"],
+      "reference_servings": 10,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Banana bread",
+            "es": "Banana bread"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "butter",
+              "quantity": 145,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sugar",
+              "quantity": 140,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "quantity": 120,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "self_raising_flour",
+              "quantity": 140,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "baking_powder",
+              "quantity": 5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "icing_sugar",
+              "quantity": 50,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "water",
+              "quantity": 12.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana_chips",
+              "quantity": 20,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Line a loaf tin. Cream butter and sugar, beat in eggs, then fold in flour, baking powder and mashed banana.",
+              "es": "Forra un molde. Bate mantequilla y azúcar, incorpora los huevos y mezcla harina, levadura y plátano machacado."
+            },
+            {
+              "en": "Bake at 180°C (160°C fan), checking from 30–40 minutes; allow about 50 minutes, until a skewer comes out clean. Cool before icing.",
+              "es": "Hornea a 180°C (160°C con ventilador). Comprueba desde los 30–40 minutos; calcula unos 50, hasta que la brocheta salga limpia. Enfría antes de glasear."
+            },
+            {
+              "en": "Mix icing sugar with water, drizzle over the loaf and finish with banana chips.",
+              "es": "Mezcla azúcar glas y agua, reparte sobre el bizcocho y termina con chips de plátano."
+            }
+          ],
+          "reference_energy_kcal": 2748.05
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.bbcgoodfood.com/recipes/brilliant-banana-loaf",
+        "title": "Banana bread",
+        "publisher": "Good Food",
+        "accessed_on": "2026-11-08",
+        "original_servings": "8–10 slices; reference calculation uses 10",
+        "original_quantities": [
+          {
+            "ingredient_id": "butter",
+            "quantity": "140 g butter, plus greasing",
+            "normalized_g": 145,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sugar",
+            "quantity": "140 g caster sugar",
+            "normalized_g": 140,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "egg",
+            "quantity": "2 large eggs",
+            "normalized_g": 120,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "self_raising_flour",
+            "quantity": "140 g self-raising flour",
+            "normalized_g": 140,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "baking_powder",
+            "quantity": "1 tsp baking powder",
+            "normalized_g": 5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "banana",
+            "quantity": "2 ripe bananas, peeled",
+            "normalized_g": 200,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "icing_sugar",
+            "quantity": "50 g icing sugar",
+            "normalized_g": 50,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "water",
+            "quantity": "2–3 tsp water for icing",
+            "normalized_g": 12.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "banana_chips",
+            "quantity": "a handful banana chips",
+            "normalized_g": 20,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.5,
+          "count": 2357,
+          "scale": 5
+        },
+        "changes": {
+          "en": "The reference is the whole loaf, divided into 10 portions. Bake as a batch and divide afterwards; scaled portions are ingredient requirements, not separate miniature baking instructions.",
+          "es": "La referencia es el bizcocho entero dividido en 10 porciones. Hornea una tanda y repártela después; las cantidades escaladas no son instrucciones para hornear porciones individuales."
+        },
+        "reference_caption": {
+          "en": "Ingredients for one loaf (10 reference slices)",
+          "es": "Ingredientes para un bizcocho (10 porciones de referencia)"
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 2748.05,
+        "with_optional_dessert": 2748.05
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_scrambled_toast",
+      "name": {
+        "en": "Scrambled eggs with toast",
+        "es": "Huevos revueltos con tostada"
+      },
+      "meal_types": ["breakfast"],
+      "reference_servings": 1,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Scrambled eggs with toast",
+            "es": "Huevos revueltos con tostada"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "bread",
+              "quantity": 40,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "low_fat_spread",
+              "quantity": 5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "milk",
+              "quantity": 30.9,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "quantity": 100,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 0.3,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Beat eggs with pepper. Warm the milk in a non-stick pan, add the eggs and stir gently until softly set.",
+              "es": "Bate los huevos con pimienta. Calienta la leche en una sartén antiadherente, incorpora los huevos y remueve hasta que cuajen suavemente."
+            },
+            {
+              "en": "Toast the bread, spread it lightly and serve with the eggs.",
+              "es": "Tuesta el pan, unta la margarina y sirve con los huevos."
+            }
+          ],
+          "reference_energy_kcal": 250.63
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.safefood.net/recipes/scrambled-egg-toast",
+        "title": "Scrambled egg on toast",
+        "publisher": "Safefood",
+        "accessed_on": "2026-11-08",
+        "original_servings": "1",
+        "original_quantities": [
+          {
+            "ingredient_id": "bread",
+            "quantity": "1 slice wholegrain bread",
+            "normalized_g": 40,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "low_fat_spread",
+            "quantity": "1 tsp low-fat spread",
+            "normalized_g": 5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "milk",
+            "quantity": "2 tbsp / about 30 ml low-fat milk",
+            "normalized_g": 30.9,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "egg",
+            "quantity": "2 eggs",
+            "normalized_g": 100,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "pepper to taste",
+            "normalized_g": 0.3,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.375,
+          "count": 16,
+          "scale": 5
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 250.63,
+        "with_optional_dessert": 250.63
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_spinach_omelette",
+      "name": {
+        "en": "Spinach omelette",
+        "es": "Tortilla de espinacas"
+      },
+      "meal_types": ["breakfast", "lunch", "dinner"],
+      "reference_servings": 2,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Spinach omelette",
+            "es": "Tortilla de espinacas"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "egg",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "quantity": 70,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 27,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "feta",
+              "quantity": 75,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 1,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 0.5,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Soften chopped onion in half the oil. Wilt the spinach, then cool slightly and mix with beaten eggs, cheese and seasoning.",
+              "es": "Ablanda la cebolla picada con la mitad del aceite. Añade las espinacas, deja templar y mezcla con huevos batidos, queso y condimentos."
+            },
+            {
+              "en": "Heat the remaining oil, add the mixture and cook 5–7 minutes. Turn carefully and cook the other side until set.",
+              "es": "Calienta el aceite restante, vierte la mezcla y cocina 5–7 minutos. Da la vuelta con cuidado y termina de cuajar."
+            }
+          ],
+          "reference_energy_kcal": 750.25
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.midiariodecocina.com/tortilla-de-espinacas/",
+        "title": "Tortilla de espinacas",
+        "publisher": "Carolina Rojas · Mi Diario de Cocina",
+        "accessed_on": "2026-11-08",
+        "original_servings": "2",
+        "original_quantities": [
+          {
+            "ingredient_id": "egg",
+            "quantity": "4 eggs",
+            "normalized_g": 200,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "spinach",
+            "quantity": "200 g fresh spinach",
+            "normalized_g": 200,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 small onion",
+            "normalized_g": 70,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "2 tbsp olive oil",
+            "normalized_g": 27,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "feta",
+            "quantity": "½ cup Parmesan, feta or preferred cheese",
+            "normalized_g": 75,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "salt to taste",
+            "normalized_g": 1,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "pepper to taste",
+            "normalized_g": 0.5,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 5,
+          "count": 1,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Feta is the selected cheese option explicitly offered by the source.",
+          "es": "Se ha elegido feta entre los quesos que ofrece expresamente la fuente."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 750.25,
+        "with_optional_dessert": 750.25
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_potato_noodle_soup",
+      "name": {
+        "en": "Potato and noodle soup",
+        "es": "Sopa con patata y fideos"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 1,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Potato and noodle soup",
+            "es": "Sopa con patata y fideos"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "vegetable_oil",
+              "quantity": 13.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pasta",
+              "quantity": 100,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "potato",
+              "quantity": 360,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sugar",
+              "quantity": 4,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_puree",
+              "quantity": 70,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "water",
+              "quantity": 1250,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 2,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 0.5,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Soften sliced onion and diced potatoes in the oil. Add water and simmer until tender.",
+              "es": "Rehoga la cebolla en tiras y la patata en dados con el aceite. Añade el agua y cuece hasta que estén tiernas."
+            },
+            {
+              "en": "Add sugar and tomato concentrate, reduce to the desired consistency, then cook the vermicelli in the soup and season.",
+              "es": "Añade azúcar y concentrado de tomate. Reduce a tu gusto, cuece los fideos en la sopa y salpimenta."
+            }
+          ],
+          "reference_energy_kcal": 876.24
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.marmiton.org/recettes/recette_soupe-bonne-femme_52833.aspx",
+        "title": "Soupe bonne femme",
+        "publisher": "Marmiton · Soupe bonne femme",
+        "accessed_on": "2026-11-08",
+        "original_servings": "Whole published ingredient batch; serving count not exposed",
+        "original_quantities": [
+          {
+            "ingredient_id": "vegetable_oil",
+            "quantity": "1 tbsp oil",
+            "normalized_g": 13.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "pasta",
+            "quantity": "100 g vermicelli",
+            "normalized_g": 100,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 medium onion",
+            "normalized_g": 150,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "potato",
+            "quantity": "2 potatoes",
+            "normalized_g": 360,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sugar",
+            "quantity": "1 sugar cube",
+            "normalized_g": 4,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "tomato_puree",
+            "quantity": "1 small tin tomato concentrate",
+            "normalized_g": 70,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "water",
+            "quantity": "1–1.5 litres water in the method",
+            "normalized_g": 1250,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "salt to taste",
+            "normalized_g": 2,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "pepper to taste",
+            "normalized_g": 0.5,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.8,
+          "count": 4,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Vermicelli uses the catalogue’s dry wheat pasta reference. The displayed reference is the whole source batch because its serving count was not visible.",
+          "es": "Los fideos utilizan la referencia de pasta de trigo seca. Las cantidades mostradas son toda la tanda publicada, ya que no se veía el número de raciones."
+        },
+        "reference_caption": {
+          "en": "Ingredients for the published batch",
+          "es": "Ingredientes de la tanda publicada"
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 876.24,
+        "with_optional_dessert": 876.24
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_burger",
+      "name": {
+        "en": "Homemade beef burger",
+        "es": "Hamburguesa"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 4,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Homemade beef burger",
+            "es": "Hamburguesa"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "onion",
+              "quantity": 70,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "beef",
+              "quantity": 500,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "quantity": 50,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "vegetable_oil",
+              "quantity": 13.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "burger_roll",
+              "quantity": 240,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Mix mince, chopped onion and egg. Shape four evenly thick patties, chill for 30 minutes and brush with oil.",
+              "es": "Mezcla carne picada, cebolla y huevo. Forma cuatro hamburguesas de grosor uniforme, enfría 30 minutos y pincela con aceite."
+            },
+            {
+              "en": "Cook on a hot barbecue, turning once, until thoroughly cooked. Serve in the split rolls.",
+              "es": "Cocina a la barbacoa, dando la vuelta, hasta que estén bien hechas. Sirve en los panes abiertos."
+            }
+          ],
+          "reference_energy_kcal": 1470.96
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.bbcgoodfood.com/recipes/beef-burgers-learn-make",
+        "title": "Homemade beef burgers",
+        "publisher": "Good Food",
+        "accessed_on": "2026-11-08",
+        "original_servings": "4",
+        "original_quantities": [
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 small onion",
+            "normalized_g": 70,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "beef",
+            "quantity": "500 g beef mince",
+            "normalized_g": 500,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "egg",
+            "quantity": "1 egg",
+            "normalized_g": 50,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "vegetable_oil",
+            "quantity": "1 tbsp vegetable oil",
+            "normalized_g": 13.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "burger_roll",
+            "quantity": "4 burger buns",
+            "normalized_g": 240,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4,
+          "count": 109,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Optional toppings from the source are omitted. The nutrition reference is extra-lean mince; update it for the actual meat used.",
+          "es": "Se omiten los acompañamientos opcionales. La referencia nutricional es carne picada muy magra; ajústala a la carne utilizada."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 1470.96,
+        "with_optional_dessert": 1470.96
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_quesadilla",
+      "name": {
+        "en": "Chicken quesadilla",
+        "es": "Quesadilla"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 2,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Chicken quesadilla",
+            "es": "Quesadilla"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "hot_salsa",
+              "quantity": 60,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "wheat_tortilla",
+              "quantity": 120,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "kidney_beans_canned",
+              "quantity": 130,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spring_onion",
+              "quantity": 15,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "roast_chicken",
+              "quantity": 50,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cheddar",
+              "quantity": 85,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "quantity": 10,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "vegetable_oil",
+              "quantity": 5,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Spread salsa over the tortillas. Fill with mashed beans, spring onion, cooked chicken, cheddar and coriander, then sandwich together.",
+              "es": "Unta las tortillas con salsa. Rellena con alubias machacadas, cebolleta, pollo cocinado, cheddar y cilantro, y tapa con la otra tortilla."
+            },
+            {
+              "en": "Brush with oil; fry for about four minutes, turn carefully and cook another two minutes until golden and hot throughout.",
+              "es": "Pincela con aceite y cocina unos cuatro minutos. Da la vuelta con cuidado y cocina otros dos, hasta dorar y calentar todo."
+            }
+          ],
+          "reference_energy_kcal": 978.1
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.bbcgoodfood.com/recipes/chicken-quesadillas",
+        "title": "Chicken quesadillas",
+        "publisher": "Sara Buenfeld · Good Food",
+        "accessed_on": "2026-11-08",
+        "original_servings": "2",
+        "original_quantities": [
+          {
+            "ingredient_id": "hot_salsa",
+            "quantity": "4 tbsp hot salsa",
+            "normalized_g": 60,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "wheat_tortilla",
+            "quantity": "2 large flour tortillas",
+            "normalized_g": 120,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "kidney_beans_canned",
+            "quantity": "215 g can kidney beans, drained",
+            "normalized_g": 130,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "spring_onion",
+            "quantity": "1 spring onion",
+            "normalized_g": 15,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "roast_chicken",
+            "quantity": "50 g leftover roast chicken",
+            "normalized_g": 50,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "cheddar",
+            "quantity": "85 g mature cheddar",
+            "normalized_g": 85,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "coriander",
+            "quantity": "½ of a 20 g pack coriander, optional",
+            "normalized_g": 10,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "vegetable_oil",
+            "quantity": "oil for brushing",
+            "normalized_g": 5,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.3,
+          "count": 47,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Optional coriander is included. Chicken is already cooked; its cooked nutrition reference is kept separate from raw chicken.",
+          "es": "Se incluye el cilantro opcional. El pollo ya está cocinado y utiliza una referencia distinta del pollo crudo."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 978.1,
+        "with_optional_dessert": 978.1
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_roasted_four_vegetables",
+      "name": {
+        "en": "Roasted potato, sweet potato, onion and corn",
+        "es": "Verduras al horno: patata, batata, cebolla y mazorca"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 2,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Roasted potato, sweet potato, onion and corn",
+            "es": "Verduras al horno: patata, batata, cebolla y mazorca"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "potato",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "quantity": 250,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweetcorn_raw",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 27,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Heat the oven to 200–220°C. Cut roots evenly and onion into wedges; coat with oil. Start the corn in its husk separately, allowing about 40 minutes.",
+              "es": "Calienta el horno a 200–220°C. Corta los tubérculos uniformemente y la cebolla en gajos; añade aceite. Asa aparte la mazorca con sus hojas, calculando unos 40 minutos."
+            },
+            {
+              "en": "Roast the roots first for 10–15 minutes, then add onion. Turn occasionally and finish when tender; remove the corn husk before serving.",
+              "es": "Asa los tubérculos 10–15 minutos antes de añadir la cebolla. Remueve y termina cuando estén tiernos; retira las hojas de la mazorca al servir."
+            }
+          ],
+          "reference_energy_kcal": 807.73
+        }
+      ],
+      "source_recipe": {
+        "url": "https://fast2eat.com/roasted-vegetables/",
+        "title": "Mediterranean roasted vegetables – Fast2eat",
+        "publisher": "Susana Macedo · Fast2eat",
+        "accessed_on": "2026-11-08",
+        "original_servings": "2",
+        "original_quantities": [
+          {
+            "ingredient_id": "potato",
+            "quantity": "Adapted share of the source’s 500 g root vegetables",
+            "normalized_g": 250,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sweet_potato",
+            "quantity": "Adapted share of the source’s 500 g root vegetables",
+            "normalized_g": 250,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 onion",
+            "normalized_g": 150,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sweetcorn_raw",
+            "quantity": "1 corn cob, requested addition; edible kernels only",
+            "normalized_g": 150,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "2 tbsp olive oil",
+            "normalized_g": 27,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 5,
+          "count": 1,
+          "scale": 5
+        },
+        "changes": {
+          "en": "User-approved adaptation: only potato, sweet potato, onion and one corn cob; all other vegetables, garlic, herbs and garnishes omitted. The source includes corn in its roasting guide. Split its 500 g root allowance equally between potato and sweet potato; adapted yield is two portions.",
+          "es": "Adaptación autorizada: solo patata, batata, cebolla y una mazorca; sin las demás verduras, ajo, hierbas ni guarniciones. La fuente incluye maíz en su guía. Se reparten sus 500 g de tubérculos entre patata y batata; rendimiento adaptado de dos porciones."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 807.73,
+        "with_optional_dessert": 807.73
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_ramen",
+      "name": {
+        "en": "Chicken ramen",
+        "es": "Ramen de pollo"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 4,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Chicken ramen",
+            "es": "Ramen de pollo"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "chicken_stock",
+              "quantity": 1200,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "quantity": 25,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli",
+              "quantity": 15,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "soy_sauce",
+              "quantity": 35,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mushroom",
+              "quantity": 100,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pak_choi",
+              "quantity": 100,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chicken",
+              "quantity": 300,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg_noodles",
+              "quantity": 100,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bamboo_shoots",
+              "quantity": 50,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "water",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 0.5,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Simmer the stock and water with coriander stalks and most of the chilli for 5–10 minutes.",
+              "es": "Cuece el caldo y el agua con los tallos de cilantro y casi toda la guindilla durante 5–10 minutos."
+            },
+            {
+              "en": "Add soy sauce, pepper, mushrooms, pak choi, thinly sliced chicken and noodles. Simmer until chicken is cooked through; add bamboo shoots and finish with coriander and chilli.",
+              "es": "Añade soja, pimienta, champiñones, pak choi, pollo en tiras finas y fideos. Cuece hasta cocinar completamente el pollo, añade bambú y termina con cilantro y guindilla."
+            }
+          ],
+          "reference_energy_kcal": 870.07
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.bbcgoodfood.com/recipes/cheats-chicken-ramen",
+        "title": "Cheat’s chicken ramen",
+        "publisher": "Chelsie Collins · Good Food",
+        "accessed_on": "2026-11-08",
+        "original_servings": "4",
+        "original_quantities": [
+          {
+            "ingredient_id": "chicken_stock",
+            "quantity": "1.2 l ready-made chicken stock",
+            "normalized_g": 1200,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "coriander",
+            "quantity": "small pack coriander",
+            "normalized_g": 25,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "chilli",
+            "quantity": "1 red chilli",
+            "normalized_g": 15,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "soy_sauce",
+            "quantity": "2 tbsp light soy sauce",
+            "normalized_g": 35,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "mushroom",
+            "quantity": "100 g mushrooms",
+            "normalized_g": 100,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "pak_choi",
+            "quantity": "100 g baby pak choi",
+            "normalized_g": 100,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "chicken",
+            "quantity": "2 chicken breast fillets",
+            "normalized_g": 300,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "egg_noodles",
+            "quantity": "100 g egg noodles",
+            "normalized_g": 100,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "bamboo_shoots",
+            "quantity": "50 g bamboo shoots",
+            "normalized_g": 50,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "water",
+            "quantity": "200 ml water in the method",
+            "normalized_g": 200,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "a grinding of black pepper",
+            "normalized_g": 0.5,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.5,
+          "count": 25,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Use drained bamboo shoots. Chicken stock and soy-sauce spoon weights use identified density estimates.",
+          "es": "Usa brotes de bambú escurridos. Los pesos de caldo y cucharadas de soja usan estimaciones de densidad identificadas."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 870.07,
+        "with_optional_dessert": 870.07
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_baked_nachos",
+      "name": {
+        "en": "Oven-grilled nachos",
+        "es": "Nachos al horno"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 3,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Oven-grilled nachos",
+            "es": "Nachos al horno"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "tortilla_chips",
+              "quantity": 175,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "hot_salsa",
+              "quantity": 225,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spring_onion",
+              "quantity": 30,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cheddar",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli_flakes",
+              "quantity": 0.5,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Spread chips on an oven tray. Add salsa, sliced spring onion, grated cheddar and chilli flakes.",
+              "es": "Reparte los nachos en una bandeja. Añade salsa, cebolleta cortada, cheddar rallado y copos de guindilla."
+            },
+            {
+              "en": "Place under the hot oven grill for about three minutes, until the cheese melts.",
+              "es": "Pon bajo el gratinador caliente del horno unos tres minutos, hasta fundir el queso."
+            }
+          ],
+          "reference_energy_kcal": 1611.53
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.bbcgoodfood.com/recipes/speedy-nachos",
+        "title": "Nachos",
+        "publisher": "Silvana Franco · Good Food",
+        "accessed_on": "2026-11-08",
+        "original_servings": "3",
+        "original_quantities": [
+          {
+            "ingredient_id": "tortilla_chips",
+            "quantity": "175 g tortilla chips",
+            "normalized_g": 175,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "hot_salsa",
+            "quantity": "225 g jar salsa",
+            "normalized_g": 225,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "spring_onion",
+            "quantity": "a few spring onions",
+            "normalized_g": 30,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "cheddar",
+            "quantity": "a good chunk of cheese; cheddar permitted",
+            "normalized_g": 150,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "chilli_flakes",
+            "quantity": "a pinch of chilli flakes",
+            "normalized_g": 0.5,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 4.3,
+          "count": 43,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Cheddar is explicitly offered by the source. Optional soured cream and guacamole are omitted.",
+          "es": "La fuente ofrece cheddar expresamente. Se omiten la nata agria y el guacamole opcionales."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 1611.53,
+        "with_optional_dessert": 1611.53
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_carrot_muffins",
+      "name": {
+        "en": "No-added-sugar carrot muffins",
+        "es": "Magdalenas de zanahoria sin azúcar añadido"
+      },
+      "meal_types": ["breakfast"],
+      "reference_servings": 4,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "No-added-sugar carrot muffins",
+            "es": "Magdalenas de zanahoria sin azúcar añadido"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "carrot",
+              "quantity": 300,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_zest",
+              "quantity": 2,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "quantity": 150,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "stevia_sweetener",
+              "quantity": 15,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 91.6,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "quantity": 129,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "flour",
+              "quantity": 220,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "whole_milk",
+              "quantity": 25.75,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 3,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "baking_powder",
+              "quantity": 12,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Grate carrot and lemon zest. Beat eggs and sweetener for five minutes; mix in oil, milk and yogurt, then flour, baking powder, salt, zest and carrot.",
+              "es": "Ralla zanahoria y limón. Bate huevos y edulcorante cinco minutos; incorpora aceite, leche y yogur, y después harina, levadura, sal, ralladura y zanahoria."
+            },
+            {
+              "en": "Fill muffin cases and chill 15 minutes while preheating to 250°C. Bake at 200°C without fan for 15–16 minutes, until a skewer comes out clean.",
+              "es": "Llena los moldes y enfría 15 minutos mientras precalientas a 250°C. Hornea a 200°C sin ventilador 15–16 minutos, hasta que la brocheta salga limpia."
+            }
+          ],
+          "reference_energy_kcal": 1951.54
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.recetasderechupete.com/magdalenas-de-zanahoria-sin-azucar/41234/",
+        "title": "Magdalenas de zanahoria sin azúcar",
+        "publisher": "Alfonso López · Recetas de Rechupete",
+        "accessed_on": "2026-11-08",
+        "original_servings": "4",
+        "original_quantities": [
+          {
+            "ingredient_id": "carrot",
+            "quantity": "2 large carrots",
+            "normalized_g": 300,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "lemon_zest",
+            "quantity": "zest of 1 lemon",
+            "normalized_g": 2,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "egg",
+            "quantity": "3 medium eggs",
+            "normalized_g": 150,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "stevia_sweetener",
+            "quantity": "15 g stevia or preferred sweetener",
+            "normalized_g": 15,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "100 ml olive oil",
+            "normalized_g": 91.6,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "yogurt",
+            "quantity": "125 ml natural yogurt",
+            "normalized_g": 129,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "flour",
+            "quantity": "220 g wholemeal wheat flour",
+            "normalized_g": 220,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "whole_milk",
+            "quantity": "25 ml whole milk",
+            "normalized_g": 25.75,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "about 3 g salt",
+            "normalized_g": 3,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "baking_powder",
+            "quantity": "12 g baking powder",
+            "normalized_g": 12,
+            "estimated": false
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "rating": {
+          "value": 3.9,
+          "count": 74,
+          "scale": 5
+        },
+        "changes": {
+          "en": "Optional oat/nut decoration omitted. Truvia is the selected permitted sweetener; sweetness varies by product. Make a batch and divide afterwards; source serving count is four, not four individual muffins.",
+          "es": "Se omite la decoración opcional de avena/frutos secos. Se elige Truvia entre los edulcorantes permitidos; el dulzor depende del producto. Hornea una tanda y repártela; la fuente indica cuatro raciones, no cuatro magdalenas."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 1951.54,
+        "with_optional_dessert": 1951.54
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_sweet_potato_cacio",
+      "name": {
+        "en": "Cacio e pepe sweet potato noodles",
+        "es": "Noodles de boniato cacio e pepe"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 2,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Cacio e pepe sweet potato noodles",
+            "es": "Noodles de boniato cacio e pepe"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 27,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "quantity": 340,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 7.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "butter",
+              "quantity": 14,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 2,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parmesan",
+              "quantity": 28,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pecorino",
+              "quantity": 28,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Stir-fry the spiralized sweet potato with half the oil for 2–3 minutes. Warm butter, remaining oil and pepper separately, then toss with noodles and both cheeses.",
+              "es": "Saltea el boniato espiralizado con la mitad del aceite 2–3 minutos. Calienta aparte mantequilla, aceite restante y pimienta; mezcla con el boniato y ambos quesos."
+            }
+          ],
+          "reference_energy_kcal": 870.81
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.elle.com/es/gourmet/recetas-cocina/g61135980/recetas-pasta-saludable/",
+        "title": "Noodles de boniato Cacio E Pepe",
+        "publisher": "ELLE Gourmet / Delish",
+        "accessed_on": "2026-11-08",
+        "original_servings": "2",
+        "original_quantities": [
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "2 tbsp olive oil",
+            "normalized_g": 27,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sweet_potato",
+            "quantity": "340 g spiralized sweet potato",
+            "normalized_g": 340,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "1½ tsp kosher salt",
+            "normalized_g": 7.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "butter",
+            "quantity": "1 tbsp unsalted butter",
+            "normalized_g": 14,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "1 tsp ground black pepper",
+            "normalized_g": 2,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "parmesan",
+            "quantity": "28 g Parmesan",
+            "normalized_g": 28,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "pecorino",
+            "quantity": "28 g Pecorino Romano",
+            "normalized_g": 28,
+            "estimated": false
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "additional_urls": [
+          "https://www.delish.com/cooking/recipe-ideas/a42165740/sweet-potato-noodles-recipe/"
+        ]
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 870.81,
+        "with_optional_dessert": 870.81
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_creamy_vegan_tomato_pasta",
+      "name": {
+        "en": "Creamy vegan tomato pasta",
+        "es": "Pasta vegana cremosa con tomate"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 4,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Creamy vegan tomato pasta",
+            "es": "Pasta vegana cremosa con tomate"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "water",
+              "quantity": 360,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cashew",
+              "quantity": 90,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pasta",
+              "quantity": 450,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 40.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli_flakes",
+              "quantity": 6,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "quantity": 70,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "quantity": 12,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_puree",
+              "quantity": 90,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sun_dried_tomatoes",
+              "quantity": 30,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "quantity": 30,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 6,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Soak most cashews in hot water for one hour, drain and blend with water. Cook pasta; toast remaining cashews with oil.",
+              "es": "Remoja casi todos los anacardos una hora en agua caliente, escurre y tritura con agua nueva. Cuece la pasta y tuesta los anacardos restantes con aceite."
+            },
+            {
+              "en": "Soften onion and garlic, add tomatoes and chilli, cashew cream and pasta water. Finish the pasta in this sauce; add toasted cashews and basil.",
+              "es": "Rehoga cebolla y ajo, añade tomates y guindilla, y después crema de anacardos y agua de pasta. Termina la pasta en la salsa; añade anacardos tostados y albahaca."
+            }
+          ],
+          "reference_energy_kcal": 2609.32
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.elle.com/es/gourmet/recetas-cocina/g61135980/recetas-pasta-saludable/",
+        "title": "Pasta vegana cremosa con tomate",
+        "publisher": "ELLE Gourmet / Delish",
+        "accessed_on": "2026-11-08",
+        "original_servings": "4",
+        "original_quantities": [
+          {
+            "ingredient_id": "water",
+            "quantity": "1½ cups water, plus pasta cooking water",
+            "normalized_g": 360,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "cashew",
+            "quantity": "90 g cashews",
+            "normalized_g": 90,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "pasta",
+            "quantity": "450 g penne",
+            "normalized_g": 450,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "3 tbsp olive oil",
+            "normalized_g": 40.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "chilli_flakes",
+            "quantity": "3 tsp crushed red pepper flakes",
+            "normalized_g": 6,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 small onion",
+            "normalized_g": 70,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "garlic",
+            "quantity": "4 cloves garlic",
+            "normalized_g": 12,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "tomato_puree",
+            "quantity": "6 tbsp tomato paste",
+            "normalized_g": 90,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sun_dried_tomatoes",
+            "quantity": "30 g sun-dried tomatoes",
+            "normalized_g": 30,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "basil",
+            "quantity": "30 g basil",
+            "normalized_g": 30,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "2 tbsp plus 1¼ tsp salt; most cooking salt discarded",
+            "normalized_g": 6,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "changes": {
+          "en": "The retained salt estimate excludes discarded pasta water. The selected sun-dried tomato reference is an oil-packed UK product. Source ingredient list says three teaspoons of chilli; its method uses less, so review the heat to taste.",
+          "es": "La estimación de sal excluye el agua de cocción desechada. La referencia de tomate seco es un producto británico en aceite. La lista de la fuente indica tres cucharaditas de guindilla y el método usa menos: revisa el picante."
+        },
+        "additional_urls": [
+          "https://www.delish.com/cooking/recipe-ideas/a42156905/creamy-tomato-vegan-pasta-recipe/"
+        ]
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 2609.32,
+        "with_optional_dessert": 2609.32
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_sweet_potato_lasagna",
+      "name": {
+        "en": "Sweet potato lasagna",
+        "es": "Lasaña de boniato"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 8,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Sweet potato lasagna",
+            "es": "Lasaña de boniato"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 29,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "quantity": 200,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "quantity": 6,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "italian_sausage",
+              "quantity": 450,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_sauce",
+              "quantity": 680,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "quantity": 140,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ricotta",
+              "quantity": 450,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "quantity": 60,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parmesan",
+              "quantity": 75,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "oregano",
+              "quantity": 0.5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "quantity": 900,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mozzarella",
+              "quantity": 180,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "quantity": 5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 3,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 1,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Cook onion, garlic and sausage; add tomato sauce and spinach. Mix ricotta, egg, oregano and some Parmesan. Layer with thin sweet potato slices; top with remaining cheeses.",
+              "es": "Cocina cebolla, ajo y salchicha; añade salsa y espinacas. Mezcla ricotta, huevo, orégano y parte del parmesano. Alterna con láminas finas de boniato; cubre con los quesos."
+            },
+            {
+              "en": "Bake at 190°C, covered for 45 minutes and uncovered for 15. Rest ten minutes; add parsley.",
+              "es": "Hornea a 190°C: 45 minutos tapada y 15 destapada. Reposa diez minutos y añade perejil."
+            }
+          ],
+          "reference_energy_kcal": 3727.72
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.elle.com/es/gourmet/recetas-cocina/g61135980/recetas-pasta-saludable/",
+        "title": "Lasaña de boniato",
+        "publisher": "ELLE Gourmet · Delish",
+        "accessed_on": "2026-11-08",
+        "original_servings": "8",
+        "original_quantities": [
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "2 tbsp olive oil, plus pan-greasing spray",
+            "normalized_g": 29,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 large onion",
+            "normalized_g": 200,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "garlic",
+            "quantity": "2 cloves garlic",
+            "normalized_g": 6,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "italian_sausage",
+            "quantity": "450 g sweet Italian sausage, casing removed",
+            "normalized_g": 450,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "tomato_sauce",
+            "quantity": "680 g marinara sauce",
+            "normalized_g": 680,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "spinach",
+            "quantity": "140 g baby spinach",
+            "normalized_g": 140,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "ricotta",
+            "quantity": "450 g ricotta",
+            "normalized_g": 450,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "egg",
+            "quantity": "1 large egg",
+            "normalized_g": 60,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "parmesan",
+            "quantity": "75 g Parmesan",
+            "normalized_g": 75,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "oregano",
+            "quantity": "1 tsp dried oregano",
+            "normalized_g": 0.5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "sweet_potato",
+            "quantity": "about 900 g sweet potato",
+            "normalized_g": 900,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "mozzarella",
+            "quantity": "180 g mozzarella",
+            "normalized_g": 180,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "parsley",
+            "quantity": "parsley garnish",
+            "normalized_g": 5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "salt to taste",
+            "normalized_g": 3,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "pepper to taste",
+            "normalized_g": 1,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        }
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 3727.72,
+        "with_optional_dessert": 3727.72
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    },
+    {
+      "id": "global_pesto_chicken_gnocchi",
+      "name": {
+        "en": "Creamy pesto chicken gnocchi bake",
+        "es": "Ñoquis al horno con pesto cremoso y pollo"
+      },
+      "meal_types": ["lunch", "dinner"],
+      "reference_servings": 4,
+      "components": [
+        {
+          "id": "main",
+          "kind": "main",
+          "name": {
+            "en": "Creamy pesto chicken gnocchi bake",
+            "es": "Ñoquis al horno con pesto cremoso y pollo"
+          },
+          "optional": false,
+          "default_included": true,
+          "ingredients": [
+            {
+              "ingredient_id": "chicken",
+              "quantity": 680,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "quantity": 27,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "quantity": 70,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "quantity": 6,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "quantity": 225,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "white_wine",
+              "quantity": 60,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chicken_stock",
+              "quantity": 240,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "double_cream",
+              "quantity": 28.2,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "gnocchi",
+              "quantity": 480,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "green_pesto",
+              "quantity": 120,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mozzarella",
+              "quantity": 170,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "quantity": 5,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pine_nuts",
+              "quantity": 10,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "quantity": 4,
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "quantity": 0.6,
+              "unit": "g"
+            }
+          ],
+          "instructions": [
+            {
+              "en": "Brown chicken; soften onion and garlic. Add tomatoes and wine, then stock, cream and gnocchi. Return chicken and bake at 220°C until its centre reaches 75°C.",
+              "es": "Dora el pollo y rehoga cebolla y ajo. Añade tomates, vino, caldo, nata y ñoquis. Reincorpora el pollo y hornea a 220°C hasta alcanzar 75°C en el centro."
+            },
+            {
+              "en": "Mix in some pesto, add mozzarella and bake four minutes more. Slice chicken and finish with remaining pesto, basil and pine nuts.",
+              "es": "Mezcla parte del pesto, añade mozzarella y hornea cuatro minutos más. Corta el pollo y termina con pesto restante, albahaca y piñones."
+            }
+          ],
+          "reference_energy_kcal": 3083.89
+        }
+      ],
+      "source_recipe": {
+        "url": "https://www.elle.com/es/gourmet/recetas-cocina/g61135980/recetas-pasta-saludable/",
+        "title": "Ñoquis al horno con pesto cremoso y pollo",
+        "publisher": "ELLE Gourmet / Delish",
+        "accessed_on": "2026-11-08",
+        "original_servings": "4",
+        "original_quantities": [
+          {
+            "ingredient_id": "chicken",
+            "quantity": "about 680 g chicken breast",
+            "normalized_g": 680,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "olive_oil",
+            "quantity": "2 tbsp olive oil",
+            "normalized_g": 27,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "onion",
+            "quantity": "1 small onion",
+            "normalized_g": 70,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "garlic",
+            "quantity": "2 cloves garlic",
+            "normalized_g": 6,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "tomato",
+            "quantity": "1½ cups grape tomatoes",
+            "normalized_g": 225,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "white_wine",
+            "quantity": "¼ cup dry white wine",
+            "normalized_g": 60,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "chicken_stock",
+            "quantity": "1 cup low-sodium chicken stock",
+            "normalized_g": 240,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "double_cream",
+            "quantity": "2 tbsp double cream",
+            "normalized_g": 28.2,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "gnocchi",
+            "quantity": "480 g gnocchi",
+            "normalized_g": 480,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "green_pesto",
+            "quantity": "½ cup pesto",
+            "normalized_g": 120,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "mozzarella",
+            "quantity": "170 g mozzarella, optional",
+            "normalized_g": 170,
+            "estimated": false
+          },
+          {
+            "ingredient_id": "basil",
+            "quantity": "basil for serving",
+            "normalized_g": 5,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "pine_nuts",
+            "quantity": "pine nuts for serving",
+            "normalized_g": 10,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "salt",
+            "quantity": "¾ tsp kosher salt",
+            "normalized_g": 4,
+            "estimated": true
+          },
+          {
+            "ingredient_id": "black_pepper",
+            "quantity": "¼ tsp ground pepper",
+            "normalized_g": 0.6,
+            "estimated": true
+          }
+        ],
+        "quantity_notes": {
+          "en": "Weights marked as estimates are editable references, not exact source measurements. Calories are recalculated from the selected UK catalogue foods. These describe the imported reference batch; household edits can differ.",
+          "es": "Los pesos marcados como estimación son referencias editables, no medidas exactas de la fuente. Las calorías se recalculan con los alimentos seleccionados del catálogo británico. Se describe la tanda de referencia importada; las modificaciones del hogar pueden diferir."
+        },
+        "changes": {
+          "en": "The source’s optional mozzarella is included. Stock is a ready-made UK reference: verify the actual product’s salt and nutrition. Gnocchi energy is normalized to uncooked weight using the label’s approximate 125 g uncooked → 132 g cooked yield.",
+          "es": "Se incluye la mozzarella opcional. El caldo utiliza una referencia británica preparada; comprueba sal y valores del producto real. Las calorías de los ñoquis se convierten a peso sin cocinar con el rendimiento aproximado de la etiqueta: 125 g sin cocinar → 132 g cocinados."
+        },
+        "additional_urls": [
+          "https://www.delish.com/cooking/recipe-ideas/a41915964/creamy-pesto-baked-gnocchi-and-chicken-skillet-recipe/"
+        ]
+      },
+      "reference_energy_kcal": {
+        "without_optional_dessert": 3083.89,
+        "with_optional_dessert": 3083.89
+      },
+      "provenance": {
+        "kind": "sourced_recipe_with_paraphrased_method",
+        "copied_recipe_text": false
+      },
+      "review_status": "source_verified_and_desk_validated_not_kitchen_tested"
+    }
+  ]
+}

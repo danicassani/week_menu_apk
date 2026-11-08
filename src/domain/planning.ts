@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { DomainError, roundQuantity } from "./calories";
+import { DomainError, roundQuantity, roundWeight } from "./calories";
 import type { MealType, Profile } from "./types";
 export type Names = { en: string; es: string };
 export interface Ingredient {
@@ -213,11 +213,10 @@ export function makePortion(
     )?.quantity_step;
     const quantity =
       r.unit === "kg" || r.unit === "l"
-        ? roundQuantity(scaled * 1000) / 1000
-        : roundQuantity(
-            scaled,
-            r.unit === "g" || r.unit === "ml" ? undefined : (step ?? 1),
-          );
+        ? roundWeight(scaled * 1000) / 1000
+        : r.unit === "g" || r.unit === "ml"
+          ? roundWeight(scaled)
+          : roundQuantity(scaled, step ?? 1);
     const grams = gramsFor(r.ingredient, quantity, r.unit),
       kcal = new Decimal(grams).mul(r.energy).div(100).toNumber();
     return {
