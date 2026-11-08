@@ -10,7 +10,7 @@ The shopping checklist currently presents eggs in grams. Show a number of eggs i
 - Keep precise edible-weight quantities and nutrition references internally. Changing the shopping display must not change recipes, portions or calorie totals.
 - Aggregate all applicable meal contributions before converting to purchasing units, avoiding rounding each meal separately.
 - Working default for later review: round the combined purchasing requirement upward to whole eggs, while preserving the exact underlying requirement. Do not introduce carton-size assumptions.
-- Preserve quantity increase/decrease behavior, including unchecking and highlighting an increased requirement. Localize unit labels.
+- Preserve quantity increase/decrease behavior, including unchecking an increased requirement without visual increase notices. Localize unit labels.
 
 Reference: [starter quantities and conversions](../../content/starter/README.md).
 
@@ -75,7 +75,7 @@ Remove the week/date-range selector from Shopping. Automatically combine ingredi
 
 Working interpretation for later design review: include today's still-open meals as well as later dates. Continue using the authoritative shared-day cutoff; closed/expired days contribute nothing. This extends the existing [shopping expiry behavior](../version-3/milestone-1.md), rather than restoring past contributions.
 
-Preserve automatic reconciliation after menu changes, compatible-quantity aggregation, checked-state decrease/increase rules and manual additions. Manual items remain independent of meal dates. Keep existing offline checks and synchronization guarantees. Reconcile existing lists during rollout without requiring browser-data clearing; assess backend/API compatibility and efficient querying when the technical design is prepared.
+Preserve automatic reconciliation after menu changes, compatible-quantity aggregation, checked-state decrease/increase rules (increases only uncheck; no highlight or increase message) and manual additions. Manual items remain independent of meal dates. Keep existing offline checks and synchronization guarantees. Reconcile existing lists during rollout without requiring browser-data clearing; assess backend/API compatibility and efficient querying when the technical design is prepared.
 
 ## V4-08 — give Sync now a button appearance
 
@@ -105,6 +105,18 @@ Hide allocation graphics for all individual breakfasts. For lunch and dinner, re
 
 The combined visualization must remain honestly labelled when people have different preparations. It must not imply that one percentage can be used to divide every side or substitution. The proposed calculation and review criteria are recorded in the design and milestone-one acceptance checks.
 
+## V4-11 — historical editor spacing and a visually unchanged closed-day check
+
+Review the historical correction window's layout: action buttons currently appear crowded together. Give primary save/review, cancellation, reload/retry and destructive day-erasure actions clear spacing and grouping. Keep the explicit date, historical-context explanation, review steps and erasure confirmation. Check narrow phones, enlarged text and both languages.
+
+The closed-day check must look like a plain check icon, not a checkbox or a visible button. Activating it must not change its colour, fill, border, shape or selected state. Remove the V3 progressive-red feedback. Five deliberate activations within the existing time window still offer editing; ordinary activations do not unlock a day. Keep keyboard access, a nonvisual accessible name and keyboard-only focus indication, without adding a visible button surface or toggled state.
+
+## V4-12 — quiet shopping quantity increases
+
+When a generated shopping requirement increases, uncheck the item automatically and display its updated required quantity. Remove increase-specific highlighting, badges, explanatory messages and announcements. Do not replace them with another increase notification.
+
+Preserve canonical quantity comparison, stable row identity, ordinary pending/error feedback, manual additions, decrease rules and offline synchronization. An old cached or server-side increase flag must not restore the removed highlight or message. The updated quantity and unchecked checkbox are the complete increase feedback.
+
 ## Delivery boundary
 
-These ten requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
+These twelve requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
