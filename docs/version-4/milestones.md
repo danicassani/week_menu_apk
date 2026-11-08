@@ -4,7 +4,7 @@ Status: proposed delivery order for the confirmed backlog and [design](design.md
 
 ## 1. Quieter navigation and working target review
 
-Deliver V4-03, V4-05, V4-06, V4-08 and V4-09. Reproduce and fix the target-review defect, simplify home, lay out the five menu actions and separate eye, replace empty-slot labels and style Sync now as a button.
+Deliver V4-03, V4-05, V4-06, V4-08, V4-09, V4-10, V4-11 and V4-12. Reproduce and fix the target-review defect, simplify home, lay out the five menu actions and separate eye, replace empty-slot labels and style Sync now as a button.
 
 Acceptance:
 
@@ -12,9 +12,12 @@ Acceptance:
 - Occupied cards expose the requested icon order with usable names and touch targets. Copy/paste, swaps, cancellation, erasure confirmation, eating-out readers and historical permissions retain their behavior.
 - Empty slots keep Suggest beside the placeholder at 320 px, large text and both languages. Closed slots retain read-only access and the five-activation correction exception.
 - Home keeps today's meals and View week without the redundant weekly preview/shopping shortcut. Navigation remains available.
+- Breakfast has no allocation graphic anywhere. Lunch/dinner show one rectangular bar even with sides, meat/plant substitutions and optional desserts. Percentages and avatar details remain accessible; the aggregate is clearly labelled and exact serving quantities stay available. Test mixed/all eating-out and invalid groups, both themes and historical/draft readers.
+- Historical editor actions have clear spacing/grouping in offer, edit, conflict/expiry, review and erase-confirmation states. The plain closed-day check has no checkbox/button surface or activation-induced visual changes; five deliberate activations still open the offer and keyboard-only focus remains visible.
+- Increased shopping requirements uncheck without increase-specific highlights, badges, messages or announcements, including cached/offline rows. Genuine pending/error feedback stays.
 - Sync now keeps the same queue behavior and communicates busy/offline state.
 
-Review phone captures of occupied/empty/closed cards, home and target review. Run relevant unit/browser and authenticated proposal-flow checks; no SQL is presumed necessary before diagnosis.
+Review phone captures of occupied/empty/closed cards, home, target review and a shared meal with substitutions using one allocation bar, plus historical editor action footers and the unchanged closed-day check. Run relevant unit/browser and authenticated proposal-flow checks; no SQL is presumed necessary before diagnosis.
 
 ## 2. Upcoming shopping and egg units
 
@@ -33,12 +36,13 @@ Review list captures and actual payload/query behavior across several weeks. Run
 
 ## 3. Clearer ingredient names and preparation information
 
-Deliver V4-04 through curated starter display names and explicit recipe preparation information.
+Deliver V4-04 and V4-13 through curated starter display names, plain serving captions and removal of the separate generic preparation block.
 
 Acceptance:
 
 - Catalogue, shopping and selectors agree on short names in both languages; meaningful product qualifiers remain.
-- Recipes still explain raw/dry/drained/edible quantities and household preparation notes. New recipes retain this guidance too.
+- The lentil preparation/weighing disclaimer block is absent, without replacement boilerplate. Actual cooking steps and household-authored recipe instructions remain.
+- Catalogue captions say Ingredients for N people / Ingredientes para N personas with correct singular/plural and base counts. Planned portions retain their actual member/meal context. Check saved, suggested, historical and offline readers.
 - Private names/translations, source attribution, conversions and immutable historical snapshots survive unchanged.
 - Similar display names do not merge distinct ingredient identities or shopping reference states.
 

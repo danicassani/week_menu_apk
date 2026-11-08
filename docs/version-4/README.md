@@ -10,7 +10,7 @@ The shopping checklist currently presents eggs in grams. Show a number of eggs i
 - Keep precise edible-weight quantities and nutrition references internally. Changing the shopping display must not change recipes, portions or calorie totals.
 - Aggregate all applicable meal contributions before converting to purchasing units, avoiding rounding each meal separately.
 - Working default for later review: round the combined purchasing requirement upward to whole eggs, while preserving the exact underlying requirement. Do not introduce carton-size assumptions.
-- Preserve quantity increase/decrease behavior, including unchecking and highlighting an increased requirement. Localize unit labels.
+- Preserve quantity increase/decrease behavior, including unchecking an increased requirement without visual increase notices. Localize unit labels.
 
 Reference: [starter quantities and conversions](../../content/starter/README.md).
 
@@ -52,7 +52,7 @@ Remove preparation/reference-state qualifiers such as **raw**, **peeled**, **wit
 | Chickpeas, dry                        | Chickpeas                                          |
 | Sun-dried tomatoes                    | Sun-dried tomatoes — retain the defining qualifier |
 
-Apply this naming principle consistently to the ingredient catalogue, shopping checklist and ingredient selectors in both application languages. Recipe instructions and ingredient-preparation information must still explain the required state and weighing basis.
+Apply this naming principle consistently to the ingredient catalogue, shopping checklist and ingredient selectors in both application languages. Keep actual cooking steps in recipe instructions; the later V4-13 request removes the separate generic preparation/weighing boilerplate.
 
 This is a presentation/content change: retain source names, nutritional reference state, conversions, identity and recorded historical references. Do not merge distinct nutritional records merely because their shorter labels resemble one another. Avoid blanket word deletion that would corrupt meaningful product names such as **sun-dried tomatoes**. Household-created text keeps the existing entered-language/manual-translation behavior.
 
@@ -75,7 +75,7 @@ Remove the week/date-range selector from Shopping. Automatically combine ingredi
 
 Working interpretation for later design review: include today's still-open meals as well as later dates. Continue using the authoritative shared-day cutoff; closed/expired days contribute nothing. This extends the existing [shopping expiry behavior](../version-3/milestone-1.md), rather than restoring past contributions.
 
-Preserve automatic reconciliation after menu changes, compatible-quantity aggregation, checked-state decrease/increase rules and manual additions. Manual items remain independent of meal dates. Keep existing offline checks and synchronization guarantees. Reconcile existing lists during rollout without requiring browser-data clearing; assess backend/API compatibility and efficient querying when the technical design is prepared.
+Preserve automatic reconciliation after menu changes, compatible-quantity aggregation, checked-state decrease/increase rules (increases only uncheck; no highlight or increase message) and manual additions. Manual items remain independent of meal dates. Keep existing offline checks and synchronization guarantees. Reconcile existing lists during rollout without requiring browser-data clearing; assess backend/API compatibility and efficient querying when the technical design is prepared.
 
 ## V4-08 — give Sync now a button appearance
 
@@ -99,6 +99,32 @@ Replace **View recipe / Ver receta** with an eye icon. This is a separate read-o
 
 Use the existing matching outline icon style, translated accessible names/tooltips, visible focus and touch-friendly targets. Preserve per-person breakfast behavior, overwrite review, ordinary closed-day restrictions and the version-three historical-correction boundary. The eraser applies only to its meal; it must not silently become Delete week or Erase day.
 
+## V4-10 — one rectangular allocation bar for shared meals
+
+Hide allocation graphics for all individual breakfasts. For lunch and dinner, replace the pie charts with **one segmented rectangular bar per meal**, rather than separate charts for sides, meat and plant-based substitutions. Preserve member colours, percentages, avatar identification and exact individual quantities.
+
+The combined visualization must remain honestly labelled when people have different preparations. It must not imply that one percentage can be used to divide every side or substitution. The proposed calculation and review criteria are recorded in the design and milestone-one acceptance checks.
+
+## V4-11 — historical editor spacing and a visually unchanged closed-day check
+
+Review the historical correction window's layout: action buttons currently appear crowded together. Give primary save/review, cancellation, reload/retry and destructive day-erasure actions clear spacing and grouping. Keep the explicit date, historical-context explanation, review steps and erasure confirmation. Check narrow phones, enlarged text and both languages.
+
+The closed-day check must look like a plain check icon, not a checkbox or a visible button. Activating it must not change its colour, fill, border, shape or selected state. Remove the V3 progressive-red feedback. Five deliberate activations within the existing time window still offer editing; ordinary activations do not unlock a day. Keep keyboard access, a nonvisual accessible name and keyboard-only focus indication, without adding a visible button surface or toggled state.
+
+## V4-12 — quiet shopping quantity increases
+
+When a generated shopping requirement increases, uncheck the item automatically and display its updated required quantity. Remove increase-specific highlighting, badges, explanatory messages and announcements. Do not replace them with another increase notification.
+
+Preserve canonical quantity comparison, stable row identity, ordinary pending/error feedback, manual additions, decrease rules and offline synchronization. An old cached or server-side increase flag must not restore the removed highlight or message. The updated quantity and unchecked checkbox are the complete increase feedback.
+
+## V4-13 — simpler recipe serving labels and no generic preparation block
+
+Remove the entire generic preparation block illustrated by the lentil recipe: weighing dry, rinsing/cooking according to the package, differences between split/whole lentils and the disclaimer about cooked-weight conversion. Do not replace it with another boilerplate notice. Keep actual recipe cooking steps in the instructions.
+
+Replace the technical reference-serving caption with ordinary wording: **Ingredients for 1 person / Ingredientes para 1 persona**, pluralized and using the recipe's real base serving count. These are the recipe's base quantities before personal calorie scaling, not a special kind of ingredient. A planned meal reader must continue identifying whose actual quantities it shows rather than labelling scaled household portions as one base serving.
+
+This supersedes earlier V4 text proposing automatic preparation notices. Preserve source/reference metadata and nutrition arithmetic internally; do not mutate historical records just to simplify their display. Apply the reader presentation consistently to catalogue, suggested, saved and offline views where applicable.
+
 ## Delivery boundary
 
-These nine requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
+These thirteen requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
