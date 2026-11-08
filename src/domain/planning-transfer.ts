@@ -2,7 +2,6 @@ import { DomainError } from "./calories";
 import { dayCutoff } from "./dates";
 import {
   makePortion,
-  varietyConflict,
   type MealPlan,
   type PlanningState,
   type PlannedRecipe,
@@ -233,24 +232,6 @@ export function buildTransfer(
   put(target, incoming);
   if (request.mode === "swap") put(request.source, reverse);
   const changed = [...working.values()];
-  const base = [
-    ...lib.plans.filter((p) => !plans.some((q) => key(q) === key(p))),
-    ...plans,
-  ];
-  const all = [
-    ...base.filter((p) => !working.has(key(p))),
-    ...changed.filter((p) => p.portions.length),
-  ];
-  if (
-    changed.some((p) =>
-      varietyConflict(
-        p,
-        all.filter((q) => key(p) !== key(q)),
-        state.household.variety_days,
-      ),
-    )
-  )
-    throw new DomainError("variety_conflict");
   const revision = lib.revision,
     occupied = endpointOccupied(plans, target);
   return {

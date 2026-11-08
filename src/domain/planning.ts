@@ -1,6 +1,5 @@
 import Decimal from "decimal.js";
 import { DomainError, roundQuantity } from "./calories";
-import { daysBetween } from "./dates";
 import type { MealType, Profile } from "./types";
 export type Names = { en: string; es: string };
 export interface Ingredient {
@@ -10,7 +9,8 @@ export interface Ingredient {
   id: string;
   name: Names;
   state: string;
-  variety_key: string;
+  /** Legacy metadata, ignored by current planning. */
+  variety_key?: string;
   dietary_patterns: string[];
   nutrition_per_100g: { energy_kcal: number | null };
   conversions: {
@@ -26,7 +26,8 @@ export interface RecipeIngredient {
   ingredient_id: string;
   quantity: number;
   unit: string;
-  variety_role: string;
+  /** Legacy metadata, ignored by current planning. */
+  variety_role?: string;
 }
 export interface RecipeComponent {
   id: string;
@@ -70,12 +71,14 @@ export interface PortionLine {
   unit: string;
   grams: number;
   kcal: number;
-  variety_role: string;
+  /** Legacy metadata, ignored by current planning. */
+  variety_role?: string;
   name: Names;
   nutrition_revision: number;
   grams_per_unit: number;
   energy_per_100g: number;
-  variety_key: string;
+  /** Legacy metadata, ignored by current planning. */
+  variety_key?: string;
 }
 export interface PlannedPortion {
   underlying_recipe_id?: string | null;
@@ -89,7 +92,8 @@ export interface PlannedPortion {
   budget: number;
   lines: PortionLine[];
   substitutions: { from: string; to: string; instructions: Names }[];
-  variety_keys: string[];
+  /** Legacy metadata, ignored by current planning. */
+  variety_keys?: string[];
   warnings: string[];
   recipe_snapshot?: PlannedRecipe;
 }
@@ -226,13 +230,11 @@ export function makePortion(
       unit: r.unit,
       grams,
       kcal,
-      variety_role: r.line.variety_role,
       name: r.ingredient.name,
       nutrition_revision: r.ingredient.revision ?? 1,
       grams_per_unit: r.ingredient.conversions.find((c) => c.unit === r.unit)!
         .grams_per_unit,
       energy_per_100g: r.energy,
-      variety_key: r.ingredient.variety_key,
     };
   });
   const kcal = lines
@@ -250,39 +252,9 @@ export function makePortion(
     budget,
     lines,
     substitutions,
-    variety_keys: [
-      ...new Set(
-        lines
-          .filter((l) => ["main", "base"].includes(l.variety_role))
-          .map((l) => l.variety_key),
-      ),
-    ],
     warnings,
     recipe_snapshot: structuredClone(recipe),
   };
-}
-export function varietyConflict(
-  candidate: MealPlan,
-  retained: MealPlan[],
-  window: number,
-): boolean {
-  if (candidate.type === "breakfast") return false;
-  return retained.some(
-    (m) =>
-      m.type !== "breakfast" &&
-      !(m.day === candidate.day && m.type === candidate.type) &&
-      Math.abs(daysBetween(m.day, candidate.day)) < window &&
-      candidate.portions.some(
-        (p) =>
-          !p.eating_out &&
-          m.portions.some(
-            (q) =>
-              !q.eating_out &&
-              p.member_id === q.member_id &&
-              p.variety_keys.some((k) => q.variety_keys.includes(k)),
-          ),
-      ),
-  );
 }
 export function recalculateLines(
   portion: PlannedPortion,
@@ -306,7 +278,6 @@ export function recalculateLines(
         .grams_per_unit,
       energy_per_100g: energy,
       nutrition_revision: i.revision ?? 1,
-      variety_key: i.variety_key,
     };
   });
   const kcal = lines
@@ -316,13 +287,6 @@ export function recalculateLines(
     ...portion,
     lines,
     kcal,
-    variety_keys: [
-      ...new Set(
-        lines
-          .filter((l) => ["main", "base"].includes(l.variety_role))
-          .map((l) => l.variety_key),
-      ),
-    ],
     warnings: kcal > portion.budget ? ["over_budget"] : [],
   };
 }

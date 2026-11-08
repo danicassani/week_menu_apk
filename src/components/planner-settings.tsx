@@ -15,8 +15,8 @@ export function PlannerSettings(v: ViewProps) {
       <h2 id="planner-settings-title">{t("Settings", "Configuración")}</h2>
       <p className="fine-print">
         {t(
-          "Week start and variety apply to the household. Recipe-update prompts are personal.",
-          "El inicio de semana y la variedad se aplican al hogar. Los avisos para actualizar recetas son personales.",
+          "Week start applies to the household. Recipe-update prompts are personal.",
+          "El inicio de semana se aplica al hogar. Los avisos para actualizar recetas son personales.",
         )}
       </p>
       <ThemeSettings language={v.language} />
@@ -50,34 +50,12 @@ export function PlannerSettings(v: ViewProps) {
               void v.operate(() =>
                 v.repository.savePlannerSettings(
                   Number(e.target.value) as 0 | 1,
-                  v.s.household.variety_days,
                 ),
               )
             }
           >
             <option value={1}>{t("Monday", "Lunes")}</option>
             <option value={0}>{t("Sunday", "Domingo")}</option>
-          </select>
-        </label>
-        <label>
-          {t("Variety window · days", "Intervalo de variedad · días")}
-          <select
-            disabled={v.busy}
-            value={v.s.household.variety_days}
-            onChange={(e) =>
-              void v.operate(() =>
-                v.repository.savePlannerSettings(
-                  v.s.household.week_start,
-                  Number(e.target.value),
-                ),
-              )
-            }
-          >
-            {Array.from({ length: 14 }, (_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
           </select>
         </label>
       </div>

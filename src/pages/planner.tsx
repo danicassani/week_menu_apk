@@ -51,7 +51,6 @@ import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
 import { targetOn } from "../domain/state";
 import {
   makePortion,
-  varietyConflict,
   recalculateLines,
   gramsFor,
   type Ingredient,
@@ -177,8 +176,7 @@ export function suggested(
           ),
         ),
       };
-      if (!varietyConflict(plan, retained, v.s.household.variety_days))
-        return plan;
+      return plan;
     } catch {
       continue;
     }
@@ -295,8 +293,8 @@ export function Planner(v: ViewProps) {
     if (!next) {
       setPreviewNotice(
         t(
-          "No different suitable recipe is available. Your suggestion is unchanged. Add more recipes to increase variety.",
-          "No hay otra receta adecuada. Se mantiene la sugerencia. Añade más recetas para aumentar la variedad.",
+          "No different suitable recipe is available. Your suggestion is unchanged. Add more recipes.",
+          "No hay otra receta adecuada. Se mantiene la sugerencia. Añade más recetas.",
         ),
       );
       return;
@@ -360,8 +358,8 @@ export function Planner(v: ViewProps) {
     setPreviewNotice(
       unavailable
         ? t(
-            "Some suggestions have no suitable alternative. They were preserved; add more recipes for variety.",
-            "Algunas sugerencias no tienen otra alternativa adecuada. Se conservan; añade recetas para ampliar la variedad.",
+            "Some suggestions have no suitable alternative. They were preserved; add more recipes.",
+            "Algunas sugerencias no tienen otra alternativa adecuada. Se conservan; añade más recetas.",
           )
         : "",
     );
@@ -392,40 +390,8 @@ export function Planner(v: ViewProps) {
             g.replace(` · ${type} · `, ` · ${mealLabel(type, v.language)} · `),
           ),
         );
-        const retained = lib.plans.filter(
-          (p) => !replace || !days.includes(p.day) || closed(v, p.day),
-        );
-        if (
-          varietyConflict(
-            result.plan,
-            [...retained, ...plans],
-            v.s.household.variety_days,
-          )
-        )
-          gaps.push(
-            `${day} · ${mealLabel(type, v.language)} · ${t("Variety conflict", "Conflicto de variedad")}`,
-          );
-        else if (result.plan.portions.length) plans.push(result.plan);
+        if (result.plan.portions.length) plans.push(result.plan);
       }
-    for (let pass = 0; pass < 22; pass++) {
-      const retained = lib.plans.filter(
-        (p) => !plans.some((m) => slotKey(m) === slotKey(p)),
-      );
-      const conflicts = plans.filter((p) =>
-        varietyConflict(
-          p,
-          [...retained, ...plans.filter((m) => m !== p)],
-          v.s.household.variety_days,
-        ),
-      );
-      if (!conflicts.length) break;
-      for (const p of conflicts) {
-        gaps.push(
-          `${p.day} · ${mealLabel(p.type, v.language)} · ${t("Variety conflict", "Conflicto de variedad")}`,
-        );
-        plans.splice(plans.indexOf(p), 1);
-      }
-    }
     setLocks([]);
     transfer.clearSwap();
     setPreviewNotice("");
@@ -699,8 +665,8 @@ export function Planner(v: ViewProps) {
                               } else
                                 setNotice(
                                   t(
-                                    "No suitable recipe. Add more recipes to increase variety.",
-                                    "No hay receta adecuada. Añade recetas para aumentar la variedad.",
+                                    "No suitable recipe. Add more recipes.",
+                                    "No hay receta adecuada. Añade más recetas.",
                                   ),
                                 );
                             }}
@@ -856,8 +822,8 @@ export function Planner(v: ViewProps) {
                 <p>{preview.gaps.join(" · ")}</p>
                 <p>
                   {t(
-                    "Add more recipes. Dietary and variety rules have been preserved.",
-                    "Añade más recetas. Se han respetado las restricciones y la variedad.",
+                    "Add more recipes. Dietary restrictions have been preserved.",
+                    "Añade más recetas. Se han respetado las restricciones alimentarias.",
                   )}
                 </p>
               </div>
@@ -1254,7 +1220,6 @@ export function Planner(v: ViewProps) {
                       ingredient_id: l.ingredient_id,
                       quantity: l.quantity,
                       unit: l.unit,
-                      variety_role: l.variety_role,
                     })),
                   instructions: updateRecipe.substitutions.length
                     ? updateRecipe.substitutions.map((s) => s.instructions)
@@ -1412,7 +1377,6 @@ function MealEditor({
                       description: "",
                       kcal: Number.NaN,
                       lines: [],
-                      variety_keys: [],
                       name: { en: "Eating out", es: "Comer fuera" },
                     })
                   : choose(
@@ -1567,15 +1531,6 @@ function MealEditor({
         }
         busy={v.busy}
         onClick={async () => {
-          if (varietyConflict(plan, lib.plans, v.s.household.variety_days)) {
-            setError(
-              t(
-                "A main/base ingredient repeats inside the variety window.",
-                "Se repite un ingrediente principal o base dentro del intervalo de variedad.",
-              ),
-            );
-            return;
-          }
           if (
             await v.operate(
               () => v.repository.applyPlans([plan], revision, true),
@@ -1890,7 +1845,6 @@ export function ContentManager(v: ViewProps) {
               id,
               name: { en: "", es: "" },
               state: "raw_edible",
-              variety_key: id,
               dietary_patterns: ["omnivore"],
               nutrition_per_100g: { energy_kcal: null },
               conversions: [{ unit: "g", grams_per_unit: 1 }],
@@ -2499,24 +2453,6 @@ function ContentEditor({
                 "Las calorías corresponden a 100 g de la parte comestible en este estado. Por ejemplo, el arroz seco y el cocido tienen valores distintos.",
               )}
             </p>
-            <label>
-              {t(
-                "Canonical main/base ingredient key",
-                "Clave común de ingrediente principal/base",
-              )}
-              <input
-                required
-                maxLength={100}
-                value={food.variety_key}
-                onChange={(e) => update({ variety_key: e.target.value })}
-              />
-            </label>
-            <p className="fine-print">
-              {t(
-                "Use the same key for cuts/aliases of the same main ingredient.",
-                "Usa la misma clave para cortes o nombres del mismo ingrediente principal.",
-              )}
-            </p>
             <fieldset>
               <legend>
                 {t(
@@ -2785,7 +2721,7 @@ function ContentEditor({
                             ))}
                         </select>
                       </label>
-                      <div className="form-grid three">
+                      <div className="form-grid">
                         <label>
                           {t("Quantity", "Cantidad")}
                           <input
@@ -2810,23 +2746,6 @@ function ContentEditor({
                                 {c.unit}
                               </option>
                             ))}
-                          </select>
-                        </label>
-                        <label>
-                          {t("Variety role", "Papel en variedad")}
-                          <select
-                            value={l.variety_role}
-                            onChange={(e) =>
-                              line({ variety_role: e.target.value })
-                            }
-                          >
-                            <option value="support">
-                              {t("Support", "Secundario")}
-                            </option>
-                            <option value="main">
-                              {t("Main", "Principal")}
-                            </option>
-                            <option value="base">{t("Base", "Base")}</option>
                           </select>
                         </label>
                       </div>
@@ -2857,7 +2776,6 @@ function ContentEditor({
                           ingredient_id: "",
                           quantity: 100,
                           unit: "g",
-                          variety_role: "support",
                         },
                       ],
                     })

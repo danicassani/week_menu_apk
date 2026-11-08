@@ -34,7 +34,6 @@ import {
 import {
   gramsFor,
   allowed,
-  varietyConflict,
   recalculateLines,
   type Ingredient,
   type PlannedRecipe,
@@ -386,10 +385,10 @@ export class SupabaseRepository implements Repository {
   savePresentation(preferences: import("../domain/presentation").Presentation) {
     return this.rpc("save_my_presentation", { p_preferences: preferences });
   }
-  savePlannerSettings(week: 0 | 1, variety: number) {
+  savePlannerSettings(week: 0 | 1) {
     return this.rpc("save_planner_settings", {
       p_week_start: week,
-      p_variety_days: variety,
+      p_variety_days: 3, // Legacy RPC argument; ignored after migration 21.
     });
   }
   saveProfile(p: Profile, revision: number) {

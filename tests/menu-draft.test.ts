@@ -80,13 +80,15 @@ it("breakfast swaps preserve everyone else's original portion and reprice the vi
     swapDraft([a, b], a, b, s, lib, [lockKey(a, s.viewer_id)]),
   ).toThrow("locked_suggestion");
 });
-it("shared swaps reject variety conflicts atomically and missing or archived recipes stay explicit gaps", async () => {
+it("shared swaps allow repeated ingredients and missing or archived recipes stay explicit gaps", async () => {
   const { s, lib, v, day } = await fixture();
   const a = suggested(v, lib, day, "lunch", [])!;
   const b = suggested(v, lib, addDays(day, 7), "lunch", [], undefined, a)!;
   const old = structuredClone([a, b]);
   lib.plans = [{ ...structuredClone(b), day: addDays(a.day, 1) }];
-  expect(() => swapDraft([a, b], a, b, s, lib, [])).toThrow("variety_conflict");
+  expect(swapDraft([a, b], a, b, s, lib, [])[0].shared_recipe_id).toBe(
+    b.shared_recipe_id,
+  );
   expect([a, b]).toEqual(old);
   lib.recipes = lib.recipes.map((r) => ({ ...r, archived: true }));
   expect(replan(a, addDays(day, 14), "lunch", s, lib).gaps).toHaveLength(

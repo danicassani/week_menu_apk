@@ -150,7 +150,7 @@ it("invalid or locked endpoints, stale references, changed diets and closed days
   ).toThrow("archived_ingredient");
   expect(lib.plans).toEqual(before);
 });
-it("checks the full resulting menu, including retained neighbors outside a suggestion draft", async () => {
+it("allows pasting the same recipe alongside retained neighbors", async () => {
   const { s, lib, ep } = await fixture();
   const recipe = lib.recipes.find((r) => r.id === "m18")!;
   const target = { day: ep(1).day, type: "lunch" as const };
@@ -161,13 +161,12 @@ it("checks the full resulting menu, including retained neighbors outside a sugge
   }).plans;
   lib.plans = retained;
   const before = structuredClone(lib.plans);
-  expect(() =>
-    buildTransfer(
-      s,
-      lib,
-      { mode: "paste", target, choice: choiceFromRecipe(recipe) },
-      [],
-    ),
-  ).toThrow("variety_conflict");
+  const copied = buildTransfer(
+    s,
+    lib,
+    { mode: "paste", target, choice: choiceFromRecipe(recipe) },
+    [],
+  );
+  expect(copied.plans[0].shared_recipe_id).toBe(recipe.id);
   expect(lib.plans).toEqual(before);
 });
