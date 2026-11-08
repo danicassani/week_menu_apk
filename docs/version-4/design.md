@@ -1,6 +1,6 @@
 # Version 4 — design and decisions
 
-Status: implementation design prepared from the twelve [backlog requests](README.md). D4-01 and D4-02 are confirmed by the user. The baseline is the merged V3 milestone-four implementation, ending at migration 16. This document does not claim a deployment or implemented V4 behavior.
+Status: implementation design prepared from the thirteen [backlog requests](README.md). D4-01 and D4-02 are confirmed by the user. The baseline is the merged V3 milestone-four implementation, ending at migration 16. This document does not claim a deployment or implemented V4 behavior.
 
 ## Confirmed decisions
 
@@ -69,9 +69,15 @@ Changing the display conversion must not change meal nutrition, ingredient IDs o
 
 Create a curated English/Spanish display-name mapping for starter identities. Preserve meaningful qualifiers such as sun-dried tomatoes and distinguish nutritionally different records whose shorter names would collide. Household-created names and private overrides remain authored text; do not regex-strip their words.
 
-Retain original source names, reference state, edible/raw/drained basis, nutrition revisions and conversions. Keep preparation instructions in recipe readers/editors, including recipes created later from the ingredient catalogue. Short names alone must not erase the information needed to weigh food correctly. Historic recorded snapshots retain their recorded labels and preparation information; do not rewrite them through a catalogue migration.
+Retain original source names, reference state, edible/raw/drained basis, nutrition revisions and conversions. V4-13 removes the separate generic preparation block from readers, including automatically derived dry/raw/cooked-weight boilerplate. Keep actual cooking steps within the recipe instructions. Historic recorded snapshots retain their recorded labels and preparation information; do not rewrite them through a catalogue migration.
 
-Prefer a presentation mapping over changing the pinned starter dataset or reimporting copies into every household. If a source-backed preparation note is derived for a recipe, resolve it from the correct ingredient reference and keep existing manual recipe preparation instructions intact.
+Prefer a presentation mapping over changing the pinned starter dataset or reimporting copies into every household. Do not automatically insert replacement preparation notices from the ingredient catalogue. Retain household-authored recipe instructions.
+
+## Plain recipe serving captions
+
+V4-13 replaces the reference-serving jargon with Ingredients for N people, correctly pluralized in English and Spanish using the actual recipe reference-serving count. This is display wording only: retain `reference_servings` and all scaling inputs internally. Do not change a multi-serving recipe into a one-serving recipe to match a caption.
+
+Planned readers show the actual meal/member context and recorded quantities. Audit catalogue, suggestion, saved, historical and offline recipe readers so generic preparation boilerplate does not reappear through another rendering path. Hiding that block does not delete immutable source data or the actual numbered cooking instructions. Review the reported lentil pie specifically, plus a multi-serving recipe and a household-authored recipe.
 
 ## Fourteen theme variants
 

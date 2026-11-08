@@ -36,12 +36,13 @@ Review list captures and actual payload/query behavior across several weeks. Run
 
 ## 3. Clearer ingredient names and preparation information
 
-Deliver V4-04 through curated starter display names and explicit recipe preparation information.
+Deliver V4-04 and V4-13 through curated starter display names, plain serving captions and removal of the separate generic preparation block.
 
 Acceptance:
 
 - Catalogue, shopping and selectors agree on short names in both languages; meaningful product qualifiers remain.
-- Recipes still explain raw/dry/drained/edible quantities and household preparation notes. New recipes retain this guidance too.
+- The lentil preparation/weighing disclaimer block is absent, without replacement boilerplate. Actual cooking steps and household-authored recipe instructions remain.
+- Catalogue captions say Ingredients for N people / Ingredientes para N personas with correct singular/plural and base counts. Planned portions retain their actual member/meal context. Check saved, suggested, historical and offline readers.
 - Private names/translations, source attribution, conversions and immutable historical snapshots survive unchanged.
 - Similar display names do not merge distinct ingredient identities or shopping reference states.
 

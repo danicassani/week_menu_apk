@@ -52,7 +52,7 @@ Remove preparation/reference-state qualifiers such as **raw**, **peeled**, **wit
 | Chickpeas, dry                        | Chickpeas                                          |
 | Sun-dried tomatoes                    | Sun-dried tomatoes — retain the defining qualifier |
 
-Apply this naming principle consistently to the ingredient catalogue, shopping checklist and ingredient selectors in both application languages. Recipe instructions and ingredient-preparation information must still explain the required state and weighing basis.
+Apply this naming principle consistently to the ingredient catalogue, shopping checklist and ingredient selectors in both application languages. Keep actual cooking steps in recipe instructions; the later V4-13 request removes the separate generic preparation/weighing boilerplate.
 
 This is a presentation/content change: retain source names, nutritional reference state, conversions, identity and recorded historical references. Do not merge distinct nutritional records merely because their shorter labels resemble one another. Avoid blanket word deletion that would corrupt meaningful product names such as **sun-dried tomatoes**. Household-created text keeps the existing entered-language/manual-translation behavior.
 
@@ -117,6 +117,14 @@ When a generated shopping requirement increases, uncheck the item automatically 
 
 Preserve canonical quantity comparison, stable row identity, ordinary pending/error feedback, manual additions, decrease rules and offline synchronization. An old cached or server-side increase flag must not restore the removed highlight or message. The updated quantity and unchecked checkbox are the complete increase feedback.
 
+## V4-13 — simpler recipe serving labels and no generic preparation block
+
+Remove the entire generic preparation block illustrated by the lentil recipe: weighing dry, rinsing/cooking according to the package, differences between split/whole lentils and the disclaimer about cooked-weight conversion. Do not replace it with another boilerplate notice. Keep actual recipe cooking steps in the instructions.
+
+Replace the technical reference-serving caption with ordinary wording: **Ingredients for 1 person / Ingredientes para 1 persona**, pluralized and using the recipe's real base serving count. These are the recipe's base quantities before personal calorie scaling, not a special kind of ingredient. A planned meal reader must continue identifying whose actual quantities it shows rather than labelling scaled household portions as one base serving.
+
+This supersedes earlier V4 text proposing automatic preparation notices. Preserve source/reference metadata and nutrition arithmetic internally; do not mutate historical records just to simplify their display. Apply the reader presentation consistently to catalogue, suggested, saved and offline views where applicable.
+
 ## Delivery boundary
 
-These twelve requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
+These thirteen requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
