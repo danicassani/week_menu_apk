@@ -99,6 +99,12 @@ Replace **View recipe / Ver receta** with an eye icon. This is a separate read-o
 
 Use the existing matching outline icon style, translated accessible names/tooltips, visible focus and touch-friendly targets. Preserve per-person breakfast behavior, overwrite review, ordinary closed-day restrictions and the version-three historical-correction boundary. The eraser applies only to its meal; it must not silently become Delete week or Erase day.
 
+## V4-10 — one rectangular allocation bar for shared meals
+
+Hide allocation graphics for all individual breakfasts. For lunch and dinner, replace the pie charts with **one segmented rectangular bar per meal**, rather than separate charts for sides, meat and plant-based substitutions. Preserve member colours, percentages, avatar identification and exact individual quantities.
+
+The combined visualization must remain honestly labelled when people have different preparations. It must not imply that one percentage can be used to divide every side or substitution. The proposed calculation and review criteria are recorded in the design and milestone-one acceptance checks.
+
 ## Delivery boundary
 
-These nine requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.
+These ten requests are reserved for version 4. This record introduces no runtime changes, migrations, palette assets or deployment, and does not claim the target-review bug is fixed. The linked design records implementation responsibilities, compatibility requirements and proposed milestone ordering. D4-01 (local themes) and D4-02 (editable estimated egg purchasing units) are confirmed. The working defaults above are explicitly distinguished from the user's requests.

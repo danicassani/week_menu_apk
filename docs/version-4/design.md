@@ -1,6 +1,6 @@
 # Version 4 — design and decisions
 
-Status: implementation design prepared from the nine [backlog requests](README.md). D4-01 and D4-02 are confirmed by the user. The baseline is the merged V3 milestone-four implementation, ending at migration 16. This document does not claim a deployment or implemented V4 behavior.
+Status: implementation design prepared from the ten [backlog requests](README.md). D4-01 and D4-02 are confirmed by the user. The baseline is the merged V3 milestone-four implementation, ending at migration 16. This document does not claim a deployment or implemented V4 behavior.
 
 ## Confirmed decisions
 
@@ -20,6 +20,16 @@ Empty editable slots show `— — —` beside Suggest / Sugerir. Give the slot 
 Remove only the dashboard's weekly preview and shopping shortcut. Keep View week, today's meals, calorie information and all navigation tabs. Give Sync now a button appearance while preserving its existing pending/offline/busy and queue semantics.
 
 Reproduce the target-review defect before changing its logic. `openTarget` currently depends on the selected member being the signed-in person and delegates to the asynchronous proposal flow. Trace the actual dashboard/profile trigger, ownership guard, proposal response, busy state and dialog lifecycle. These are investigation points, not a confirmed diagnosis. A failed proposal must show an actionable error; accepting a revised target still requires explicit review of target and budgets. No automatic acceptance or calorie-formula change.
+
+## One allocation bar per shared meal
+
+V4-10 supersedes V3's visual presentation of separate preparation pies. No allocation graphic appears for breakfast, including readers, suggestion previews and historical correction review. Individual quantity information remains available.
+
+Lunch and dinner show at most one horizontal rectangular bar, segmented by member, aggregating their home-cooked portions across mains, sides, optional dessert and substitutions. Keep stable membership-based colours, visible percentages, an accessible text legend and avatar activation identifying the person and exact quantities. No component or substitution creates an additional chart. A generic unplanned catalogue recipe still has no invented household allocation.
+
+Working calculation for implementation review: use each member's total positive recorded ingredient grams divided by all home-cooked ingredient grams for that meal. Label it **share of total planned ingredient weight**, not a calorie share or a guide to dividing every preparation. Raw ingredient mass is not cooked yield, and distinct tofu/chicken portions do not become a common preparation merely because they share a bar. Retain exact per-person/component quantities as the practical serving instructions; explain that the combined percentage is an overall summary only.
+
+Exclude eating-out portions from the bar and list them separately. All-eating-out or invalid/zero-mass meals show an explanation instead of fabricated segments. Optional dessert affects only its recipient's recorded totals. Whole display percentages should sum to 100 through the existing deterministic apportionment, without changing any quantities, nutrition, recipes or saved snapshots. Keep the aggregation metric a documented working choice until reviewed with representative meal captures.
 
 ## One authoritative upcoming shopping list
 
