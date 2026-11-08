@@ -221,9 +221,7 @@ test("moving the last draft portion into an empty slot removes the saved source 
 }) => {
   await menu(page);
   const source = day(page).locator(".meal-card").nth(1);
-  await source
-    .getByRole("button", { name: "Suggest meal", exact: true })
-    .click();
+  await source.getByRole("button", { name: "Suggest", exact: true }).click();
   await save(page);
   await source
     .getByRole("button", { name: "Preview another recipe", exact: true })
@@ -249,7 +247,7 @@ test("moving the last draft portion into an empty slot removes the saved source 
   await save(page);
   await expect(source.locator(".meal-recipe-link")).toHaveCount(0);
   await expect(
-    source.getByRole("button", { name: "Suggest meal", exact: true }),
+    source.getByRole("button", { name: "Suggest", exact: true }),
   ).toBeVisible();
   const target = day(page, "Wednesday 4 November").locator(".meal-card").nth(2);
   await expect(target.locator(".meal-recipe-link")).toHaveText(names[0]);

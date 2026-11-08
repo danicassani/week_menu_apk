@@ -243,6 +243,7 @@ export function HistoricalCorrection({
   };
   return (
     <Modal
+      className="historical-editor-layout"
       wide
       title={`${t(session ? "Correct recorded meals" : "Edit this recorded day?", session ? "Corregir comidas registradas" : "¿Editar este día registrado?")} · ${date}`}
       onClose={close}

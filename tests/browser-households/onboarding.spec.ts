@@ -16,6 +16,7 @@ async function signedIn(
     failReads: boolean;
     reject?: boolean;
     loseAck?: boolean;
+    proposal?: "success" | "reject";
   },
 ) {
   const user = {
@@ -70,6 +71,25 @@ async function signedIn(
     const args = request.postDataJSON() ?? {};
     requests.push({ name: rpc, args });
     let data: unknown = null;
+    if (budget?.proposal && rpc === "get_my_target_proposal") {
+      if (budget.proposal === "reject") {
+        await route.fulfill({
+          status: 400,
+          json: { code: "P0001", message: "invalid_profile" },
+        });
+        return;
+      }
+      await route.fulfill({
+        json: {
+          resting_kcal: 1800,
+          usual_kcal: 2200,
+          deficit_kcal: 0,
+          daily_kcal: 2200,
+          context_revision: "proposal-v1",
+        },
+      });
+      return;
+    }
     if (budget && rpc === "save_my_meal_budgets") {
       if (budget.reject) {
         await route.fulfill({
@@ -499,4 +519,52 @@ test("a rejected budget keeps the draft, while a lost acknowledgement retries th
   const writes = requests.filter((r) => r.name === "save_my_meal_budgets");
   expect(writes).toHaveLength(3);
   expect(new Set(writes.map((r) => r.args.p_operation)).size).toBe(1);
+});
+
+test("target review opens from its proposal without waiting for an unrelated snapshot and rejection stays actionable", async ({
+  page,
+}) => {
+  const options = {
+    committed: false,
+    failReads: false,
+    proposal: "success" as "success" | "reject",
+  };
+  const requests = await signedIn(page, false, false, options);
+  await page.getByLabel("Household name").fill("Our table");
+  await page
+    .getByRole("button", { name: "Create household", exact: true })
+    .click();
+  await page
+    .getByRole("navigation")
+    .last()
+    .getByRole("button", { name: "Profile", exact: true })
+    .click();
+  const before = requests.filter(
+    (r) => r.name === "get_household_snapshot",
+  ).length;
+  await page
+    .getByRole("button", { name: "Recalculate & review", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", {
+      name: "Review your calorie target",
+      exact: true,
+    }),
+  ).toBeVisible();
+  expect(
+    requests.filter((r) => r.name === "get_household_snapshot"),
+  ).toHaveLength(before);
+  expect(requests.some((r) => r.name === "accept_my_target")).toBe(false);
+  await page.keyboard.press("Escape");
+  options.proposal = "reject";
+  await page
+    .getByRole("button", { name: "Recalculate & review", exact: true })
+    .click();
+  await expect(
+    page.getByText(
+      "Enter a name, adult age, sex, and positive metric measurements.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 });

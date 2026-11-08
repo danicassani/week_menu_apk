@@ -197,7 +197,11 @@ export function ShoppingPage(v: ViewProps) {
           t("Connected", "Con conexión")
         )}
         {queue.online && (
-          <button className="text-link" onClick={() => void queue.sync()}>
+          <button
+            className="button secondary"
+            disabled={queue.syncing}
+            onClick={() => void queue.sync()}
+          >
             {t("Sync now", "Sincronizar ahora")}
           </button>
         )}

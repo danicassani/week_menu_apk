@@ -1,6 +1,8 @@
 # Version 4 — requested backlog
 
-Status: version-four planning started after all four version-three implementation milestones were merged. The requests below are not yet implemented. See the [design and confirmed decisions](design.md) and [delivery milestones](milestones.md). All project documentation remains in English; the application continues supporting English and Spanish.
+Status: version-four planning started after all four version-three implementation milestones were merged. Milestone 1 is implemented for review; the remaining requests are planned. See the [design and confirmed decisions](design.md) and [delivery milestones](milestones.md). All project documentation remains in English; the application continues supporting English and Spanish.
+
+- [Milestone 1 implementation and verification](milestone-1.md).
 
 ## V4-01 — show eggs as units in shopping
 

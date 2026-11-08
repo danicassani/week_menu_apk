@@ -117,3 +117,20 @@ it("a substitution in the main does not split an identical side", () => {
   expect(groups).toHaveLength(3);
   expect(groups.filter((g) => g.shares.length === 2)).toHaveLength(1);
 });
+it("summarizes a whole shared meal by ingredient weight across sides and substitutions without mutating quantities", async () => {
+  const { mealAllocation } = await import("../src/domain/allocation");
+  const a = portion("a", [100, 50]);
+  a.lines[1].component_id = "side";
+  const b = portion("b", [200, 50], { recipe_id: "tofu" });
+  b.lines[1].component_id = "side";
+  const outside = portion("c", [], { eating_out: true, kcal: 500 });
+  const meal = plan([a, b, outside]),
+    before = structuredClone(meal),
+    r = mealAllocation(meal);
+  expect(r.groups).toHaveLength(1);
+  expect(r.groups[0].shares.map((s) => s.percent)).toEqual([38, 62]);
+  expect(r.eatingOut).toEqual([outside]);
+  expect(meal).toEqual(before);
+  b.lines[0].grams = NaN;
+  expect(mealAllocation(plan([a, b])).groups).toHaveLength(0);
+});

@@ -51,9 +51,9 @@ export async function allocationScenario(
   await target.locator(".meal-recipe-link").click();
   const chart = page.locator(".portion-allocation");
   await expect(chart).toBeVisible();
-  expect(
-    await chart.locator(".allocation-group").count(),
-  ).toBeGreaterThanOrEqual(2);
+  expect(await chart.locator(".allocation-group").count()).toBe(1);
+  await expect(chart.locator(".allocation-bar")).toHaveCount(1);
+  await expect(chart.locator("svg")).toHaveCount(0);
   for (const group of await chart.locator(".allocation-group").all()) {
     const percentages = await group
       .locator(".allocation-legend li > span:last-child b")

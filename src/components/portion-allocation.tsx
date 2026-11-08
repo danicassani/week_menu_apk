@@ -1,4 +1,4 @@
-import { allocation } from "../domain/allocation";
+import { mealAllocation } from "../domain/allocation";
 import type { MealPlan } from "../domain/planning";
 import type { Language, Member } from "../domain/types";
 import { translator, mealLabel } from "../lib/i18n";
@@ -31,11 +31,12 @@ export function PortionAllocation({
   memberColors?: Record<string, string>;
 }) {
   const t = translator(language),
-    result = allocation(plan),
+    result = mealAllocation(plan),
     text = (n: { en: string; es: string }) => n[language] || n.en || n.es,
     roster = members.map((m) => m.id).sort();
   const colorFor = (id: string) =>
     memberColors?.[id] ?? allocationColor(Math.max(0, roster.indexOf(id)));
+  if (plan.type === "breakfast") return null;
   return (
     <section
       className="portion-allocation"
@@ -49,8 +50,8 @@ export function PortionAllocation({
       </h3>
       <p className="fine-print">
         {t(
-          "Shares of each preparation, using planned ingredient weights. Open a profile icon for its exact quantities.",
-          "Proporción de cada preparación según los pesos planificados. Pulsa un perfil para ver sus cantidades exactas.",
+          "Overall share of planned ingredient weight, not a division of each preparation. Open a profile for exact serving quantities.",
+          "Proporción del peso total de ingredientes, no de cada preparación. Pulsa un perfil para ver sus cantidades exactas.",
         )}
       </p>
       {!result.groups.length && (
@@ -70,7 +71,6 @@ export function PortionAllocation({
         </p>
       )}
       {result.groups.map((g) => {
-        let angle = 0;
         return (
           <div className="allocation-group" key={g.id}>
             <div>
@@ -83,40 +83,17 @@ export function PortionAllocation({
                   )}
                 </p>
               )}
-              <svg
-                viewBox="0 0 100 100"
-                className="allocation-pie"
-                aria-hidden="true"
-              >
-                {g.shares.map((s) => {
-                  const start = angle;
-                  angle += s.percent * 3.6;
-                  const color = colorFor(s.member_id);
-                  if (s.percent === 100)
-                    return (
-                      <circle
-                        key={s.member_id}
-                        cx="50"
-                        cy="50"
-                        r="46"
-                        fill={color}
-                      />
-                    );
-                  if (!s.percent) return null;
-                  const point = (a: number) =>
-                    [
-                      50 + 46 * Math.cos(((a - 90) * Math.PI) / 180),
-                      50 + 46 * Math.sin(((a - 90) * Math.PI) / 180),
-                    ].join(" ");
-                  return (
-                    <path
-                      key={s.member_id}
-                      d={`M50 50 L${point(start)} A46 46 0 ${s.percent > 50 ? 1 : 0} 1 ${point(angle)} Z`}
-                      fill={color}
-                    />
-                  );
-                })}
-              </svg>
+              <div className="allocation-bar" aria-hidden="true">
+                {g.shares.map((s) => (
+                  <span
+                    key={s.member_id}
+                    style={{
+                      width: `${s.percent}%`,
+                      background: colorFor(s.member_id),
+                    }}
+                  />
+                ))}
+              </div>
             </div>
             <ul className="allocation-legend">
               {g.shares.map((s) => {
