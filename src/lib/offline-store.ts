@@ -262,6 +262,39 @@ export async function cacheCataloguePage(
     },
   }));
 }
+export async function cacheRecipeVeto(
+  id: string,
+  recipe: Pick<PlannedRecipe, "id" | "banned" | "veto_revision">,
+) {
+  return mutate(id, (current) => {
+    const patch = <
+      T extends { id: string; banned?: boolean; veto_revision?: number },
+    >(
+      item: T,
+    ): T =>
+      item.id === recipe.id &&
+      (item.veto_revision ?? 0) <= (recipe.veto_revision ?? 0)
+        ? {
+            ...item,
+            banned: recipe.banned,
+            veto_revision: recipe.veto_revision,
+          }
+        : item;
+    const page = current.catalogue?.recipes;
+    return {
+      ...current,
+      catalogue: page
+        ? {
+            ...current.catalogue,
+            recipes: { ...page, items: page.items.map(patch) },
+          }
+        : current.catalogue,
+      recipes: current.recipes
+        ? { ...current.recipes, recipes: current.recipes.recipes.map(patch) }
+        : current.recipes,
+    };
+  });
+}
 export async function cacheCatalogueDetail(
   id: string,
   detail: import("../domain/catalogue").CatalogueDetail,

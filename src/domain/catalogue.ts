@@ -8,6 +8,7 @@ export interface CatalogueQuery {
 }
 export interface CatalogueSummary {
   banned?: boolean;
+  veto_revision?: number;
   id: string;
   name: Names;
   emoji?: string;

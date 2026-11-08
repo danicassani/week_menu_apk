@@ -1093,3 +1093,96 @@ it("household recipe vetoes survive edits, preserve meals and starter data, and 
     rpc("set_recipe_veto", ["missing-recipe", true, 0]),
   ).rejects.toThrow("catalogue_item_unavailable");
 });
+it("personal recipe review resumes across reads, remains isolated and reopens edited recipes", async () => {
+  await actor();
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const r = lib.recipes.find((r) => r.id === "m03")!;
+  expect((await rpc<any>("get_recipe_review")).reviewed_recipe_ids).toEqual([]);
+  const ack = await rpc<any>("review_recipe", [
+    r.id,
+    true,
+    r.veto_revision ?? 0,
+    r.revision,
+  ]);
+  expect(ack.banned).toBe(true);
+  expect(ack.household_revision).toBeGreaterThan(lib.revision);
+  expect((await rpc<any>("get_recipe_review")).reviewed_recipe_ids).toContain(
+    r.id,
+  );
+  const c = "90000000-0000-0000-0000-000000000003";
+  await db.exec("reset role");
+  await db.query(
+    `insert into auth.users values($1,'c@example.com',now(),'{"provider":"google"}','{}')`,
+    [c],
+  );
+  await actor();
+  await rpc("invite_member", ["c@example.com"]);
+  await actor(c);
+  const invitation = (await call<any>("get_household_access")).invitations[0]
+    .id;
+  await call("join_household", [invitation, "UTC"]);
+  const context = (await call<any>("get_household_access")).active;
+  expect(
+    (
+      await call<any>("get_recipe_review", [
+        context.household_id,
+        context.membership_id,
+      ])
+    ).reviewed_recipe_ids,
+  ).toEqual([]);
+  await call("reset_recipe_review", [
+    context.household_id,
+    context.membership_id,
+  ]);
+  await actor();
+  expect((await rpc<any>("get_recipe_review")).reviewed_recipe_ids).toContain(
+    r.id,
+  );
+  const again = await rpc<any>("review_recipe", [
+    r.id,
+    true,
+    r.veto_revision ?? 0,
+    r.revision,
+  ]);
+  expect(again.veto_revision).toBe(ack.veto_revision);
+  await actor(b);
+  expect(
+    (
+      await call<any>("get_recipe_review", [
+        other.household_id,
+        other.membership_id,
+      ])
+    ).reviewed_recipe_ids,
+  ).toEqual([]);
+  await expect(rpc("reset_recipe_review")).rejects.toThrow(
+    "membership_changed",
+  );
+  await actor();
+  await expect(
+    db.exec("select * from app_private.recipe_reviews"),
+  ).rejects.toThrow("permission denied");
+  await rpc("save_household_content", [
+    "recipe",
+    { ...r, name: { ...r.name, en: "Edited review recipe" } },
+    r.revision,
+    false,
+  ]);
+  expect(
+    (await rpc<any>("get_recipe_review")).reviewed_recipe_ids,
+  ).not.toContain(r.id);
+  await expect(
+    rpc("review_recipe", [r.id, false, ack.veto_revision, r.revision]),
+  ).rejects.toThrow("stale_content");
+  const latest = (await rpc<any>("get_catalogue_item", ["recipe", r.id])).item;
+  await rpc("review_recipe", [
+    r.id,
+    false,
+    latest.veto_revision,
+    latest.revision,
+  ]);
+  await rpc("reset_recipe_review");
+  expect((await rpc<any>("get_recipe_review")).reviewed_recipe_ids).toEqual([]);
+  expect(
+    (await rpc<any>("get_catalogue_item", ["recipe", r.id])).item.banned,
+  ).toBe(false);
+});

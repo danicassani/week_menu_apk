@@ -41,6 +41,7 @@ export interface RecipeComponent {
 export interface PlannedRecipe {
   banned?: boolean;
   veto_revision?: number;
+  household_revision?: number;
   emoji?: string;
   id: string;
   name: Names;

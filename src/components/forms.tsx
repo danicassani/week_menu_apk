@@ -1,5 +1,6 @@
 import {
   ingredientText,
+  sortedIngredients,
   ingredientMatches,
 } from "../domain/content-presentation";
 import { activityType, recentActivity } from "../lib/activity-recent";
@@ -214,7 +215,7 @@ export function ProfileForm({
         />
       </label>
       <div className="ingredient-picker">
-        {(catalogue ?? [])
+        {sortedIngredients(catalogue ?? [], language)
           .filter((i) => ingredientMatches(i, query))
           .map((i) => (
             <label className="check-row" key={i.id}>

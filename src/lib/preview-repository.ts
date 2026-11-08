@@ -310,6 +310,7 @@ export class PreviewRepository implements Repository {
         this.library = data.library;
         this.shopping = data.shopping;
         if (data.eggPurchasing) this.eggPurchasing = data.eggPurchasing;
+        this.recipeReviews = data.recipeReviews ?? {};
         this.serial = data.serial;
         this.receipts = new Map(data.receipts ?? []);
         if (data.language === "en" || data.language === "es")
@@ -372,6 +373,7 @@ export class PreviewRepository implements Repository {
           library: this.library,
           shopping: this.shopping,
           eggPurchasing: this.eggPurchasing,
+          recipeReviews: this.recipeReviews,
           serial: this.serial,
           receipts: [...this.receipts],
           language: this.me().profile?.language ?? "en",
@@ -479,6 +481,31 @@ export class PreviewRepository implements Repository {
       revision: this.serial,
     });
   }
+  private recipeReviews: Record<string, number> = {};
+  async getRecipeReview() {
+    return {
+      reviewed_recipe_ids: this.library.recipes
+        .filter(
+          (r) => !r.archived && this.recipeReviews[r.id] === (r.revision ?? 1),
+        )
+        .map((r) => r.id),
+    };
+  }
+  async resetRecipeReview() {
+    this.me();
+    this.recipeReviews = {};
+    this.persistDemo();
+    return { reviewed_recipe_ids: [] };
+  }
+  async reviewRecipe(recipe: PlannedRecipe, banned: boolean) {
+    const current = this.library.recipes.find((r) => r.id === recipe.id);
+    if (!current || current.archived || current.revision !== recipe.revision)
+      throw new DomainError("stale_content");
+    const next = await this.setRecipeVeto(recipe, banned);
+    this.recipeReviews[recipe.id] = recipe.revision ?? 1;
+    this.persistDemo();
+    return next;
+  }
   async setRecipeVeto(recipe: PlannedRecipe, banned: boolean) {
     this.me();
     const current = this.library.recipes.find((r) => r.id === recipe.id);
@@ -488,14 +515,14 @@ export class PreviewRepository implements Repository {
         current.veto_revision === (recipe.veto_revision ?? 0) + 1 &&
         current.banned === banned
       )
-        return structuredClone(current);
+        return { ...structuredClone(current), household_revision: this.serial };
       throw new DomainError("stale_content");
     }
     current.banned = banned;
     current.veto_revision = (current.veto_revision ?? 0) + 1;
     this.serial++;
     this.persistDemo();
-    return structuredClone(current);
+    return { ...structuredClone(current), household_revision: this.serial };
   }
   async catalogueItem(
     kind: CatalogueKind,
@@ -553,6 +580,7 @@ export class PreviewRepository implements Repository {
         revision: i.revision ?? 1,
         archived: !!i.archived,
         banned: (i as PlannedRecipe).banned === true,
+        veto_revision: (i as PlannedRecipe).veto_revision ?? 0,
         meal_types: (i as PlannedRecipe).meal_types,
         nutrition_per_100g: (i as Ingredient).nutrition_per_100g,
       })),

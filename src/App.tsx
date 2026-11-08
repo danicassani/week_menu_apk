@@ -878,6 +878,34 @@ function Workspace({
       );
   const v: ViewProps = {
     allocationColors: allocationPalette.current.colors,
+    onRecipeVeto: (recipe) =>
+      setS((current) => {
+        if (!current?.planning) return current;
+        const lib = current.planning,
+          ack = recipe.household_revision;
+        const sequential = ack === lib.revision + 1;
+        return {
+          ...current,
+          planning: {
+            ...lib,
+            complete:
+              sequential || (ack !== undefined && ack <= lib.revision)
+                ? lib.complete
+                : false,
+            revision: sequential ? ack : lib.revision,
+            recipes: lib.recipes.map((r) =>
+              r.id === recipe.id &&
+              (r.veto_revision ?? 0) <= (recipe.veto_revision ?? 0)
+                ? {
+                    ...r,
+                    banned: recipe.banned,
+                    veto_revision: recipe.veto_revision,
+                  }
+                : r,
+            ),
+          },
+        };
+      }),
     ensurePlanning,
     clipboard: clipboardScope.current === planningScope ? clipboard : null,
     setClipboard: (next) => {

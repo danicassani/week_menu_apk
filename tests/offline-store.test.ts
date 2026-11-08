@@ -2,6 +2,7 @@ import "fake-indexeddb/auto";
 import { beforeEach, afterAll, it, expect, vi } from "vitest";
 import {
   cacheCataloguePage,
+  cacheRecipeVeto,
   cacheCatalogueDetail,
   closeOfflineStore,
   rememberAccount,
@@ -533,4 +534,40 @@ it("cached catalogue pages and detail references survive compact refreshes witho
   expect(cached?.catalogue?.recipes?.items[0].id).toBe("r");
   expect(cached?.recipes?.recipes[0].id).toBe("r");
   expect(cached?.pending).toHaveLength(1);
+});
+
+it("patches veto status without replacing cached pages or touching same-id ingredients", async () => {
+  const id = "recipe-veto-patch";
+  const recipe = {
+    id: "same",
+    name: { en: "Recipe", es: "Receta" },
+    revision: 1,
+    archived: false,
+    banned: false,
+    veto_revision: 0,
+  };
+  const ingredient = {
+    ...recipe,
+    name: { en: "Ingredient", es: "Ingrediente" },
+  };
+  await rememberAccount(id, "en");
+  await cacheCataloguePage(
+    id,
+    "recipes",
+    [recipe, { ...recipe, id: "another" }],
+    true,
+  );
+  await cacheCataloguePage(id, "ingredients", [ingredient], false);
+  await cacheRecipeVeto(id, { id: "same", banned: true, veto_revision: 2 });
+  let saved = await readOfflineAccount(id);
+  expect(saved!.catalogue!.recipes!.items).toHaveLength(2);
+  expect(saved!.catalogue!.recipes!.more).toBe(true);
+  expect(saved!.catalogue!.recipes!.items[0]).toMatchObject({
+    banned: true,
+    veto_revision: 2,
+  });
+  expect(saved!.catalogue!.ingredients!.items[0]).toEqual(ingredient);
+  await cacheRecipeVeto(id, { id: "same", banned: false, veto_revision: 1 });
+  saved = await readOfflineAccount(id);
+  expect(saved!.catalogue!.recipes!.items[0].banned).toBe(true);
 });

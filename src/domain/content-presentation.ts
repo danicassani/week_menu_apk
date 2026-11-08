@@ -65,3 +65,20 @@ export function recipeServingCaption(count: number, language: "en" | "es") {
     ? `Ingredientes para ${count} ${count === 1 ? "persona" : "personas"}`
     : `Ingredients for ${count} ${count === 1 ? "person" : "people"}`;
 }
+
+export function sortedIngredients<T extends { id: string; name: Names }>(
+  items: readonly T[],
+  language: "en" | "es",
+): T[] {
+  const collator = new Intl.Collator(language, {
+    sensitivity: "base",
+    numeric: true,
+  });
+  return [...items].sort(
+    (a, b) =>
+      collator.compare(
+        ingredientText(a, language),
+        ingredientText(b, language),
+      ) || a.id.localeCompare(b.id),
+  );
+}
