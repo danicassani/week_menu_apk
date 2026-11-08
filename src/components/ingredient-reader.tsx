@@ -68,15 +68,6 @@ export function IngredientReader({
         {ingredient.dietary_patterns.map((d) => diets[d] ?? d).join(" · ") ||
           "—"}
       </p>
-      <p>
-        <b>
-          {t(
-            "Canonical main/base ingredient key",
-            "Clave común de ingrediente principal/base",
-          )}
-        </b>
-        : {ingredient.variety_key}
-      </p>
       <h3>
         {t("Defined unit conversions", "Conversiones de unidades definidas")}
       </h3>

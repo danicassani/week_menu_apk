@@ -239,7 +239,8 @@ it("replans shared meals with reviewed vegetarian substitutions and synchronizes
   ).toBe(true);
   const next = paste(recipe.id, endpoint(11, a, "dinner"));
   const before = (await library()).plans;
-  await expect(preview(next)).rejects.toThrow("variety_conflict");
+  const repeated = await preview(next);
+  expect(repeated.plans[0].shared_recipe_id).toBe(recipe.id);
   expect((await library()).plans).toEqual(before);
   // Move into an empty target must remove the original contribution, without deleting other slots.
   await commit({

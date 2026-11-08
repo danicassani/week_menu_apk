@@ -65,7 +65,6 @@ export function historicalQuantities(
     return {
       ...portion,
       lines: [],
-      variety_keys: [],
       substitutions: [],
       name: { en: portion.description.trim(), es: portion.description.trim() },
     };

@@ -1186,3 +1186,49 @@ it("personal recipe review resumes across reads, remains isolated and reopens ed
     (await rpc<any>("get_catalogue_item", ["recipe", r.id])).item.banned,
   ).toBe(false);
 });
+it("accepts consecutive repeated meals and content without legacy variety metadata", async () => {
+  await actor();
+  let lib = await rpc<PlanningState>("get_planning_library");
+  const ingredient = structuredClone(
+    lib.ingredients.find((i) => i.id === "chickpeas")!,
+  );
+  ingredient.id = "no-variety-chickpeas";
+  delete ingredient.variety_key;
+  await rpc("save_household_content", ["ingredient", ingredient, 0, false]);
+  const recipe = structuredClone(lib.recipes.find((r) => r.id === "m01")!);
+  recipe.id = "no-variety-recipe";
+  for (const c of recipe.components)
+    for (const line of c.ingredients) delete line.variety_role;
+  await rpc("save_household_content", ["recipe", recipe, 0, false]);
+  lib = await rpc<PlanningState>("get_planning_library");
+  const portion = makePortion(
+    recipe,
+    home.membership_id,
+    profile,
+    650,
+    false,
+    lib.ingredients,
+    lib.substitutions,
+  );
+  const batch = [0, 1, 2].flatMap((offset) =>
+    (["lunch", "dinner"] as const).map((type) => ({
+      day: addDays(day, 120 + offset),
+      type,
+      revision: 0,
+      shared_recipe_id: recipe.id,
+      portions: [portion],
+    })),
+  );
+  await rpc("apply_meal_plans", [batch, lib.revision, false]);
+  const saved = (await rpc<PlanningState>("get_planning_library")).plans.filter(
+    (p) => batch.some((b) => b.day === p.day && b.type === p.type),
+  );
+  expect(saved).toHaveLength(6);
+  expect(saved.every((p) => p.shared_recipe_id === recipe.id)).toBe(true);
+  expect(saved[0].portions[0].lines[0].variety_role).toBeUndefined();
+  await rpc("save_planner_settings", [0, -999]); // Obsolete second parameter is ignored.
+  expect((await snapshot()).household.week_start).toBe(0);
+  await expect(rpc("save_planner_settings", [2, 3])).rejects.toThrow(
+    "invalid_recipe",
+  );
+});

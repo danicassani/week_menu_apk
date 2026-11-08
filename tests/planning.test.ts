@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   gramsFor,
   makePortion,
-  varietyConflict,
   type Ingredient,
   type PlannedRecipe,
   type MealPlan,
@@ -28,31 +27,7 @@ const p: Profile = {
   excluded_ingredients: [],
   language: "en",
 };
-const plan = (
-  day: string,
-  type: "breakfast" | "lunch" | "dinner",
-  keys: string[],
-): MealPlan => ({
-  day,
-  type,
-  revision: 1,
-  shared_recipe_id: "m01",
-  portions: [
-    {
-      ...makePortion(
-        recipe("m01"),
-        "a",
-        p,
-        650,
-        false,
-        ingredients,
-        subs.rules,
-      ),
-      variety_keys: keys,
-    },
-  ],
-});
-describe("meal portions and rolling variety", () => {
+describe("meal portions", () => {
   it("scales and recalculates calories from final practical quantities", () => {
     const q = makePortion(
       recipe("b01"),
@@ -111,24 +86,6 @@ describe("meal portions and rolling variety", () => {
         subs.rules,
       ),
     ).toThrow();
-  });
-  it("checks both neighboring directions and week boundaries, excluding breakfast", () => {
-    const old = plan("2026-11-01", "dinner", ["chickpea"]);
-    expect(
-      varietyConflict(plan("2026-11-03", "lunch", ["chickpea"]), [old], 3),
-    ).toBe(true);
-    expect(
-      varietyConflict(plan("2026-11-04", "lunch", ["chickpea"]), [old], 3),
-    ).toBe(false);
-    expect(
-      varietyConflict(plan("2026-10-31", "lunch", ["chickpea"]), [old], 3),
-    ).toBe(true);
-    expect(
-      varietyConflict(plan("2026-11-01", "lunch", ["chickpea"]), [old], 3),
-    ).toBe(true);
-    expect(
-      varietyConflict(plan("2026-11-01", "breakfast", ["chickpea"]), [old], 3),
-    ).toBe(false);
   });
   it("rejects archived selections and missing nutrition", () => {
     expect(() =>

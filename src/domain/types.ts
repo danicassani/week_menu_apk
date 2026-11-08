@@ -215,7 +215,7 @@ export interface Repository {
   savePresentation(
     preferences: import("./presentation").Presentation,
   ): Promise<void>;
-  savePlannerSettings(week: 0 | 1, variety: number): Promise<void>;
+  savePlannerSettings(week: 0 | 1): Promise<void>;
   load(timezone: string): Promise<HouseholdState>;
   saveProfile(profile: Profile, revision: number): Promise<void>;
   proposal(): Promise<Proposal>;

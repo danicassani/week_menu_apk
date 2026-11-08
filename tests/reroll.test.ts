@@ -63,7 +63,7 @@ it("re-rolls only the signed-in person's breakfast and retains the other portion
     old.portions.filter((p) => p.member_id !== v.s.viewer_id),
   );
 });
-it("keeps variety restrictions when choosing an alternative", async () => {
+it("allows an alternative already planned in a neighboring meal", async () => {
   const { v, lib, day } = await fixture();
   const old = suggested(v, lib, day, "lunch", [])!;
   const next = suggested(v, lib, day, "lunch", [], undefined, old)!;
@@ -82,8 +82,8 @@ it("keeps variety restrictions when choosing an alternative", async () => {
       [{ ...next, type: "dinner" }],
       undefined,
       old,
-    ),
-  ).toBeNull();
+    )?.shared_recipe_id,
+  ).toBe(next.shared_recipe_id);
 });
 it("re-rolls another member's breakfast without changing the viewer's portion", async () => {
   const { v, lib, day } = await fixture();

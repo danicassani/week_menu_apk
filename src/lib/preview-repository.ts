@@ -43,7 +43,6 @@ import substitutionSeed from "../../content/starter/substitutions.json" with { t
 import {
   gramsFor,
   allowed,
-  varietyConflict,
   recalculateLines,
   type Ingredient,
   type PlannedRecipe,
@@ -877,8 +876,6 @@ export class PreviewRepository implements Repository {
         )
           throw new DomainError("diet_conflict");
       }
-      if (varietyConflict(m, plans, this.s.household.variety_days))
-        throw new DomainError("variety_conflict");
       const i = plans.findIndex((x) => x.day === m.day && x.type === m.type);
       if (!m.portions.length) {
         if (i >= 0) plans.splice(i, 1);
@@ -896,17 +893,10 @@ export class PreviewRepository implements Repository {
     this.syncPlans();
     this.autoShopping();
   }
-  async savePlannerSettings(week: 0 | 1, variety: number) {
+  async savePlannerSettings(week: 0 | 1) {
     this.me();
-    if (
-      ![0, 1].includes(week) ||
-      !Number.isInteger(variety) ||
-      variety < 1 ||
-      variety > 14
-    )
-      throw new DomainError("invalid_recipe");
+    if (![0, 1].includes(week)) throw new DomainError("invalid_recipe");
     this.s.household.week_start = week;
-    this.s.household.variety_days = variety;
     this.serial++;
   }
   private me() {

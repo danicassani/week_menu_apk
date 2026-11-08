@@ -90,10 +90,6 @@ const messages: Record<string, [string, string]> = {
     "The plan or its inputs changed. Generate a fresh preview before applying.",
     "El plan o sus datos cambiaron. Genera una nueva vista previa antes de aplicar.",
   ],
-  variety_conflict: [
-    "A main/base ingredient repeats inside the configured window.",
-    "Se repite un ingrediente principal o base dentro del intervalo configurado.",
-  ],
   existing_meal: [
     "Existing meals are preserved. Choose replacement explicitly to change them.",
     "Se conservan las comidas existentes. Activa la sustitución explícita para cambiarlas.",
