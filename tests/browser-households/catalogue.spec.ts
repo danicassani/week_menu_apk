@@ -139,6 +139,13 @@ test("authenticated browsing requests 50 summaries and compact snapshots, withou
         ? "Main navigation"
         : "Mobile navigation",
   });
+  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  const themeWrites = requests.filter((r) => !r.name.startsWith("get_")).length;
+  await page.getByRole("radio", { name: "Blue", exact: true }).check();
+  await expect(page.locator("html")).toHaveAttribute("data-colour", "blue");
+  expect(requests.filter((r) => !r.name.startsWith("get_")).length).toBe(
+    themeWrites,
+  );
   await nav.getByRole("button", { name: "Recipes", exact: true }).click();
   await expect(page.locator(".recipe-card")).toHaveCount(50);
   expect(

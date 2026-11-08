@@ -1,3 +1,4 @@
+import { ThemeSettings } from "./theme-settings";
 import { useState } from "react";
 import { Button } from "./ui";
 import { translator } from "../lib/i18n";
@@ -18,6 +19,7 @@ export function PlannerSettings(v: ViewProps) {
           "El inicio de semana y la variedad se aplican al hogar. Los avisos para actualizar recetas son personales.",
         )}
       </p>
+      <ThemeSettings language={v.language} />
       <div className="form-grid">
         <label>
           {t("Text size", "Tamaño del texto")}

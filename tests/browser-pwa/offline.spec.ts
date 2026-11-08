@@ -124,6 +124,11 @@ test("accepting a downloaded app update retains offline pending checks", async (
 }) => {
   const { readFile, writeFile } = await import("node:fs/promises");
   await enter(page);
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page.getByRole("radio", { name: "Violet", exact: true }).check();
+  await page.getByRole("button", { name: "Switch theme", exact: true }).click();
+  await nav.getByRole("button", { name: "Shopping", exact: true }).click();
   const file = "dist/sw.js",
     original = await readFile(file, "utf8");
   try {
@@ -153,6 +158,8 @@ test("accepting a downloaded app update retains offline pending checks", async (
       page.getByRole("heading", { name: "Your household, offline" }),
     ).toBeVisible();
     await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(page.locator("html")).toHaveAttribute("data-colour", "violet");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await expect(
       page.getByText("1 pending sync", { exact: true }),
     ).toBeVisible();
