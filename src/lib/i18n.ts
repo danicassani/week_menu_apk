@@ -4,6 +4,18 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  history_unavailable: [
+    "History is unavailable. Apply migration 27 and reconnect.",
+    "El historial no está disponible. Aplica la migración 27 y vuelve a conectarte.",
+  ],
+  history_event_unavailable: [
+    "This event is no longer available in the last 90 days.",
+    "Este evento ya no está disponible en los últimos 90 días.",
+  ],
+  invalid_history_action: [
+    "This history action is invalid. Reload the menu.",
+    "La acción del historial no es válida. Recarga el menú.",
+  ],
   invalid_meal_times: [
     "Choose a valid time for breakfast, lunch and dinner.",
     "Elige una hora válida para el desayuno, el almuerzo y la cena.",

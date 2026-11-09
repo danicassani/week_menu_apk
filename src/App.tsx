@@ -1,3 +1,4 @@
+import { PlanningHistoryAccess } from "./components/planning-history";
 import { useDeviceTheme } from "./lib/device-theme";
 import type { ThemeMode } from "./domain/themes";
 import { allocationColor } from "./components/portion-allocation";
@@ -1152,7 +1153,12 @@ function Workspace({
         )}
         <main id="main-content" tabIndex={-1}>
           <div className="member-selector-row">
-            <span className="eyebrow">{t("AT A GLANCE", "DE UN VISTAZO")}</span>
+            <PlanningHistoryAccess
+              active={tab === "profile"}
+              scope={repo.offlineId ?? ""}
+              repository={repo}
+              language={language}
+            />
             <label className="member-select">
               <Users size={16} />
               <span className="sr-only">

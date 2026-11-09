@@ -122,6 +122,8 @@ export class SupabaseRepository implements Repository {
     const { data, error } = response;
     if (error && uncertainMutation && !error.code)
       throw new DomainError("mutation_outcome_unknown");
+    if (error?.code === "PGRST202" && name === "apply_meal_plans_with_history")
+      throw new DomainError("history_unavailable");
     if (
       error &&
       error.code === "PGRST202" &&
@@ -142,6 +144,8 @@ export class SupabaseRepository implements Repository {
       throw new DomainError("correction_unavailable");
     if (error?.code === "PGRST202" && name === "save_my_meal_times")
       throw new DomainError("meal_times_unavailable");
+    if (error?.code === "PGRST202" && name.startsWith("get_planning_history"))
+      throw new DomainError("history_unavailable");
     if (error?.code === "57014" && /statement timeout/i.test(error.message))
       throw new DomainError("database_timeout");
     if (error) throw new DomainError(error.message);
@@ -379,12 +383,40 @@ export class SupabaseRepository implements Repository {
       p_archive: archive,
     });
   }
-  applyPlans(batch: MealPlan[], revision: number, replace: boolean) {
-    return this.rpc("apply_meal_plans", {
-      p_batch: batch,
-      p_revision: revision,
-      p_replace: replace,
-    });
+  planningHistory(
+    filters: import("../domain/planning-history").HistoryFilters = {},
+    cursor: import("../domain/planning-history").HistoryCursor | null = null,
+  ) {
+    return this.rpc<import("../domain/planning-history").PlanningHistoryPage>(
+      "get_planning_history",
+      { p_filters: filters, p_cursor: cursor },
+    );
+  }
+  planningHistoryEvent(id: string) {
+    return this.rpc<import("../domain/planning-history").PlanningHistoryEvent>(
+      "get_planning_history_event",
+      { p_event_id: id },
+    );
+  }
+  applyPlans(
+    batch: MealPlan[],
+    revision: number,
+    replace: boolean,
+    operation?: import("../domain/planning-history").HistoryOperation,
+  ) {
+    return this.rpc(
+      operation ? "apply_meal_plans_with_history" : "apply_meal_plans",
+      {
+        p_batch: batch,
+        p_revision: revision,
+        p_replace: replace,
+        ...(operation
+          ? { p_operation: operation.id, p_action: operation.action }
+          : {}),
+      },
+      true,
+      !!operation,
+    );
   }
   savePresentation(preferences: import("../domain/presentation").Presentation) {
     return this.rpc("save_my_presentation", { p_preferences: preferences });

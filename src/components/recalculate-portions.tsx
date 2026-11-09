@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button, Modal } from "./ui";
@@ -17,6 +18,7 @@ export function RecalculatePortionsReview({
 }) {
   const t = translator(v.language),
     [error, setError] = useState("");
+  const operationId = useRef(crypto.randomUUID());
   return (
     <Modal
       title={t("Recalculate quantities", "Recalcular cantidades")}
@@ -83,6 +85,7 @@ export function RecalculatePortionsReview({
                     draft.plans,
                     draft.revision,
                     true,
+                    { id: operationId.current, action: "recalculate" },
                   );
                 } catch (e) {
                   setError(errorMessage(e, v.language));

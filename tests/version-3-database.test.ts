@@ -73,6 +73,11 @@ beforeAll(async () => {
   ]);
   await db.exec("reset role");
   for (const f of migrations.filter((f) => f >= "202611040006")) {
+    if (f.startsWith("202611090027"))
+      await db.query(
+        `insert into app_private.meal_corrections(id,token,member_id,day,action,request,before_meals,after_meals,acknowledgement,created_at) values('87000000-0000-0000-0000-000000000001','87000000-0000-0000-0000-000000000002',$1,current_date-40,'save','{}','[]','[]','{}',clock_timestamp()-interval '40 days')`,
+        [a],
+      );
     await db.exec(readFileSync("supabase/migrations/" + f, "utf8"));
     if (f.startsWith("202611040006"))
       await db.exec("revoke usage on schema auth from week_menu_executor");
@@ -1465,7 +1470,13 @@ it("resizes planned quantities to current budgets atomically, with automatic sho
   expect((await snapshot()).planning!.plans).toEqual(before.planning!.plans);
   const fresh = recalculatePlannedPortions(await snapshot(), [d]);
   const previous = fresh.changes[0].before;
-  await rpc("apply_meal_plans", [fresh.plans, fresh.revision, true]);
+  await rpc("apply_meal_plans_with_history", [
+    "88000000-0000-0000-0000-000000000010",
+    "recalculate",
+    fresh.plans,
+    fresh.revision,
+    true,
+  ]);
   const after = await snapshot(),
     saved = after.planning!.plans.find(
       (p) => p.day === d && p.type === "breakfast",
@@ -1533,4 +1544,222 @@ it("persists personal meal times, validates input and isolates household context
     db.exec("update public.members set meal_times='{}'::jsonb"),
   ).rejects.toThrow("permission denied");
   await rpc("save_my_meal_times", [defaults]);
+});
+
+it("records transactional menu operations with actor, details, receipts and household isolation", async () => {
+  await actor();
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const state = await snapshot();
+  const member = state.members.find((m) => m.id === home.membership_id)!;
+  const r = lib.recipes.find(
+    (r) => r.meal_types.includes("breakfast") && !r.archived && !r.banned,
+  )!;
+  const date = addDays(day, 30);
+  const plan: MealPlan = {
+    day: date,
+    type: "breakfast",
+    revision: 0,
+    shared_recipe_id: null,
+    portions: [
+      makePortion(
+        r,
+        member.id,
+        member.profile!,
+        400,
+        false,
+        lib.ingredients,
+        lib.substitutions,
+      ),
+    ],
+  };
+  const op = "88000000-0000-0000-0000-000000000001";
+  await rpc("apply_meal_plans_with_history", [
+    op,
+    "suggestions",
+    [plan],
+    lib.revision,
+    true,
+  ]);
+  const list = await rpc("get_planning_history", [{}, null]);
+  const entry = list.events.find((e: any) => e.action === "suggestions");
+  expect(entry.actor_id).toBe(member.id);
+  expect(entry.summary.es).toContain("Aprobar sugerencias y guardar");
+  expect(entry.changes).toBeUndefined();
+  const detail = await rpc("get_planning_history_event", [entry.id]);
+  expect(JSON.stringify(detail.changes)).toContain(date);
+  expect(JSON.stringify(detail.changes)).not.toContain("recipe_snapshot");
+  await rpc("apply_meal_plans_with_history", [
+    op,
+    "suggestions",
+    [plan],
+    lib.revision,
+    true,
+  ]);
+  expect(
+    (await rpc("get_planning_history", [{}, null])).events.filter(
+      (e: any) => e.id === entry.id,
+    ),
+  ).toHaveLength(1);
+  await expect(
+    rpc("apply_meal_plans_with_history", [
+      op,
+      "review_meal",
+      [plan],
+      lib.revision,
+      true,
+    ]),
+  ).rejects.toThrow("operation_mismatch");
+  const latest = await rpc<PlanningState>("get_planning_library");
+  const count = (await rpc("get_planning_history", [{}, null])).events.length;
+  await expect(
+    rpc("apply_meal_plans_with_history", [
+      "88000000-0000-0000-0000-000000000002",
+      "suggestions",
+      [plan],
+      lib.revision,
+      true,
+    ]),
+  ).rejects.toThrow("stale_plan");
+  expect((await rpc("get_planning_history", [{}, null])).events).toHaveLength(
+    count,
+  );
+  await rpc("apply_meal_plans_with_history", [
+    "88000000-0000-0000-0000-000000000003",
+    "review_meal",
+    [plan],
+    latest.revision,
+    true,
+  ]);
+  expect((await rpc("get_planning_history", [{}, null])).events).toHaveLength(
+    count,
+  );
+  await actor(b);
+  await expect(
+    call("get_planning_history_event", [
+      other.household_id,
+      other.membership_id,
+      entry.id,
+    ]),
+  ).rejects.toThrow("history_event_unavailable");
+  await expect(rpc("get_planning_history", [{}, null])).rejects.toThrow(
+    "membership_changed",
+  );
+  await actor();
+  await expect(
+    db.exec("delete from app_private.planning_history"),
+  ).rejects.toThrow("permission denied");
+  await expect(
+    db.exec("select app_private.purge_planning_history()"),
+  ).rejects.toThrow("permission denied");
+});
+it("paginates history without payloads, filters authors and purges expired evidence across households", async () => {
+  await db.exec("reset role");
+  await db.query(
+    `insert into app_private.planning_history(household_id,actor_id,actor_name,action,created_at,summary,changes)
+ select $1,$2,'History fixture','budget',clock_timestamp()-interval '1 day', '{"en":"Fixture change","es":"Cambio de prueba"}', '{"seed":{"kind":"budget_overrides","before":null,"after":{"kcal":400}}}' from generate_series(1,61)`,
+    [home.household_id, home.membership_id],
+  );
+  const expired = (
+    await db.query<{ id: string }>(
+      `insert into app_private.planning_history(household_id,actor_name,action,created_at,summary) values($1,'Expired','system',clock_timestamp()-interval '91 days','{}') returning id`,
+      [other.household_id],
+    )
+  ).rows[0].id;
+  await actor();
+  const first = await rpc("get_planning_history", [
+    { actor: "history fixture" },
+    null,
+  ]);
+  expect(first.events).toHaveLength(50);
+  expect(first.next_cursor).not.toBeNull();
+  const second = await rpc("get_planning_history", [
+    { actor: "history fixture" },
+    first.next_cursor,
+  ]);
+  expect(second.events).toHaveLength(11);
+  expect(second.next_cursor).toBeNull();
+  expect(
+    new Set([...first.events, ...second.events].map((e: any) => e.id)).size,
+  ).toBe(61);
+  expect(first.events.every((e: any) => !e.changes)).toBe(true);
+  await db.exec("reset role");
+  await db.exec("select app_private.purge_planning_history()");
+  expect(
+    (
+      await db.query(
+        "select id from app_private.planning_history where id=$1",
+        [expired],
+      )
+    ).rows,
+  ).toHaveLength(0);
+  await actor();
+});
+
+it("imports only real historical evidence with its original timestamp and author", async () => {
+  await actor();
+  const e = await rpc("get_planning_history_event", [
+    "87000000-0000-0000-0000-000000000001",
+  ]);
+  expect(e.imported).toBe(true);
+  expect(e.actor_id).toBe(home.membership_id);
+  expect(Date.parse(e.created_at)).toBeLessThan(Date.now() - 39 * 86400000);
+  expect(e.summary.es).toContain("importado");
+});
+
+it("keeps captured author names and labels unauthenticated administrator writes as system", async () => {
+  await actor();
+  const recent = (await rpc("get_planning_history", [{}, null])).events.find(
+    (e: any) => e.actor_id === home.membership_id,
+  );
+  const savedName = recent.actor_name;
+  await db.exec("reset role");
+  await db.query(
+    "update public.members set name='Renamed author' where id=$1",
+    [home.membership_id],
+  );
+  await actor();
+  expect(
+    (await rpc("get_planning_history_event", [recent.id])).actor_name,
+  ).toBe(savedName);
+  await db.exec("reset role");
+  await db.exec("select set_config('request.jwt.claim.sub','',false)");
+  await db.query(
+    "insert into public.budget_overrides(household_id,member_id,day,meal_type,kcal) values($1,$2,$3,'breakfast',401)",
+    [home.household_id, home.membership_id, addDays(day, 80)],
+  );
+  await actor();
+  const system = (
+    await rpc("get_planning_history", [{ action: "system" }, null])
+  ).events[0];
+  expect(system.actor_id).toBeNull();
+  expect(system.action).toBe("system");
+  await db.exec("reset role");
+  await db.query("update public.members set name=$1 where id=$2", [
+    savedName,
+    home.membership_id,
+  ]);
+  await actor();
+});
+
+it("does not report catalogue revision-only saves as planning changes", async () => {
+  await actor();
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const recipe = lib.recipes.find((r) => !r.archived)!;
+  const before = await rpc("get_planning_history", [
+    { action: "catalogue" },
+    null,
+  ]);
+  await rpc("save_household_content", [
+    "recipe",
+    recipe,
+    recipe.revision ?? 1,
+    false,
+  ]);
+  const after = await rpc("get_planning_history", [
+    { action: "catalogue" },
+    null,
+  ]);
+  expect(after.events.map((e: any) => e.id)).toEqual(
+    before.events.map((e: any) => e.id),
+  );
 });

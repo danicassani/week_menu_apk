@@ -267,3 +267,37 @@ it("binds personal meal-time saves to the authenticated household and member", a
     p_times: times,
   });
 });
+
+it("binds history reads and audited writes to context without sending author text", async () => {
+  const { repo, request } = setup();
+  await repo.load("UTC");
+  await repo.planningHistory(
+    { actor: "Alex" },
+    { id: "event", created_at: "2026-11-09T10:00:00Z" },
+  );
+  expect(request).toHaveBeenLastCalledWith("get_planning_history", {
+    p_household_id: "home-a",
+    p_membership_id: "member-a",
+    p_filters: { actor: "Alex" },
+    p_cursor: { id: "event", created_at: "2026-11-09T10:00:00Z" },
+  });
+  await repo.planningHistoryEvent("event");
+  expect(request).toHaveBeenLastCalledWith("get_planning_history_event", {
+    p_household_id: "home-a",
+    p_membership_id: "member-a",
+    p_event_id: "event",
+  });
+  await repo.applyPlans([], 1, false, {
+    id: "operation",
+    action: "suggestions",
+  });
+  expect(request).toHaveBeenLastCalledWith("apply_meal_plans_with_history", {
+    p_household_id: "home-a",
+    p_membership_id: "member-a",
+    p_batch: [],
+    p_revision: 1,
+    p_replace: false,
+    p_operation: "operation",
+    p_action: "suggestions",
+  });
+});
