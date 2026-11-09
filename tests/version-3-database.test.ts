@@ -1423,3 +1423,69 @@ it("server and historical calorie warnings match whole-kcal displays without rou
   expect(after.targets).toEqual(before.targets);
   expect(after.meals).toEqual(before.meals);
 });
+it("resizes planned quantities to current budgets atomically, with automatic shopping and stale-review protection", async () => {
+  await actor();
+  const { recalculatePlannedPortions } =
+    await import("../src/domain/recalculate-portions");
+  const d = addDays(day, 400),
+    lib = await rpc<PlanningState>("get_planning_library"),
+    state = await snapshot();
+  const person = state.members.find((m) => m.id === home.membership_id)!;
+  const recipe = lib.recipes.find((r) => r.id === "b04")!;
+  const original = {
+    day: d,
+    type: "breakfast",
+    revision: 0,
+    shared_recipe_id: null,
+    portions: [
+      makePortion(
+        recipe,
+        person.id,
+        person.profile!,
+        200,
+        false,
+        lib.ingredients,
+        lib.substitutions,
+      ),
+    ],
+  };
+  await rpc("apply_meal_plans", [[original], lib.revision, false]);
+  await rpc("save_my_budget_override", [d, "breakfast", 750]);
+  const grocery = (await shopping()).items.find(
+    (i) => i.source === "generated" && i.ingredient_id === "yogurt",
+  )!;
+  await rpc("set_shopping_checked", [crypto.randomUUID(), grocery.id, true]);
+  const review = recalculatePlannedPortions(await snapshot(), [d]);
+  expect(review.changes).toHaveLength(1);
+  await rpc("save_my_budget_override", [d, "breakfast", 760]);
+  const before = await snapshot();
+  await expect(
+    rpc("apply_meal_plans", [review.plans, review.revision, true]),
+  ).rejects.toThrow("stale_plan");
+  expect((await snapshot()).planning!.plans).toEqual(before.planning!.plans);
+  const fresh = recalculatePlannedPortions(await snapshot(), [d]);
+  const previous = fresh.changes[0].before;
+  await rpc("apply_meal_plans", [fresh.plans, fresh.revision, true]);
+  const after = await snapshot(),
+    saved = after.planning!.plans.find(
+      (p) => p.day === d && p.type === "breakfast",
+    )!;
+  const portion = saved.portions[0];
+  expect(portion.budget).toBe(760);
+  expect(Math.abs(portion.kcal - 760)).toBeLessThan(
+    Math.abs(previous.kcal - 760),
+  );
+  expect(portion.recipe_snapshot).toEqual(previous.recipe_snapshot);
+  expect(
+    portion.lines.map((l) => [l.ingredient_id, l.component_id, l.unit]),
+  ).toEqual(
+    previous.lines.map((l) => [l.ingredient_id, l.component_id, l.unit]),
+  );
+  expect(after.planning!.plans.filter((p) => p.day !== d)).toEqual(
+    before.planning!.plans.filter((p) => p.day !== d),
+  );
+  expect(after.targets).toEqual(before.targets);
+  const updated = (await shopping()).items.find((i) => i.id === grocery.id)!;
+  expect(updated.quantity).toBeGreaterThan(grocery.quantity!);
+  expect(updated.checked).toBe(false);
+});

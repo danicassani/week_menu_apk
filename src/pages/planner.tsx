@@ -1,3 +1,8 @@
+import { RecalculatePortionsReview } from "../components/recalculate-portions";
+import {
+  recalculatePlannedPortions,
+  type PortionRecalculation,
+} from "../domain/recalculate-portions";
 import { RecipeReview } from "../components/recipe-review";
 import {
   ingredientNames,
@@ -24,6 +29,7 @@ import {
 } from "../lib/offline-store";
 import {
   Plus,
+  Calculator,
   Lock,
   LockOpen,
   RefreshCw,
@@ -47,7 +53,13 @@ import { RecipeReader } from "../components/recipe-reader";
 import { IngredientReader } from "../components/ingredient-reader";
 import { EMOJIS, foodEmoji } from "../domain/presentation";
 import { ContentTextField } from "../components/content-text-field";
-import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
+import {
+  addDays,
+  dayCutoff,
+  formatDay,
+  weekDays,
+  deviceZone,
+} from "../domain/dates";
 import { exceedsDisplayedCalories } from "../domain/calories";
 import { targetOn } from "../domain/state";
 import {
@@ -206,7 +218,10 @@ export function Planner(v: ViewProps) {
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
     [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [correctionDay, setCorrectionDay] = useState<string | null>(null),
-    [inspection, setInspection] = useState<MealPlan | null>(null);
+    [inspection, setInspection] = useState<MealPlan | null>(null),
+    [portionReview, setPortionReview] = useState<PortionRecalculation | null>(
+      null,
+    );
   useEffect(() => setSaveError(null), [preview]);
   const closedCheck = useClosedDayCheck(anchor, v.language, setCorrectionDay);
   const transfer = useMealTransfers(
@@ -493,6 +508,45 @@ export function Planner(v: ViewProps) {
               {t("Suggest week", "Sugerir semana")}
             </Button>
             <IconAction
+              icon={Calculator}
+              label={t("Recalculate quantities", "Recalcular cantidades")}
+              disabled={
+                v.busy ||
+                !lib.plans.some(
+                  (p) =>
+                    days.includes(p.day) &&
+                    !closed(v, p.day) &&
+                    p.portions.some((part) => !part.eating_out),
+                )
+              }
+              onClick={() =>
+                v.operate(
+                  async () => {
+                    const fresh = await v.repository.load(deviceZone());
+                    const draft = recalculatePlannedPortions(fresh, days);
+                    if (!draft.changes.length) {
+                      setNotice(
+                        draft.roundingLimited
+                          ? t(
+                              "Practical rounding prevents a closer fit. Existing quantities are kept.",
+                              "El redondeo práctico impide un ajuste mejor. Se mantienen las cantidades existentes.",
+                            )
+                          : t(
+                              "Planned quantities already match the current budgets.",
+                              "Las cantidades planificadas ya coinciden con los presupuestos actuales.",
+                            ),
+                      );
+                      return;
+                    }
+                    setNotice("");
+                    setPortionReview(draft);
+                  },
+                  undefined,
+                  false,
+                )
+              }
+            />
+            <IconAction
               icon={Eraser}
               label={t("Delete week", "Borrar semana")}
               disabled={
@@ -741,6 +795,13 @@ export function Planner(v: ViewProps) {
         ))}
       </div>
       {transfer.dialog}
+      {portionReview && (
+        <RecalculatePortionsReview
+          v={v}
+          draft={portionReview}
+          onClose={() => setPortionReview(null)}
+        />
+      )}
       {copyOpen && (
         <Modal
           title={t("Copy a previous week", "Copiar una semana anterior")}
