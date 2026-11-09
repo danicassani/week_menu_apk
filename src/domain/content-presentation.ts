@@ -82,3 +82,20 @@ export function sortedIngredients<T extends { id: string; name: Names }>(
       ) || a.id.localeCompare(b.id),
   );
 }
+
+/** Display the substitution itself without repeating cooking-method overrides. */
+export function substitutionText(
+  substitution: { from: string; to: string },
+  ingredients: readonly { id: string; name: Names }[],
+  language: "en" | "es",
+) {
+  const label = (id: string) => {
+    const ingredient = ingredients.find((item) => item.id === id);
+    return ingredient ? ingredientText(ingredient, language) : id;
+  };
+  const from = label(substitution.from),
+    to = label(substitution.to);
+  return language === "es"
+    ? `Sustituye ${from} por ${to}.`
+    : `Replace ${from} with ${to}.`;
+}

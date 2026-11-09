@@ -190,8 +190,11 @@ test("menu actions stay together and planner preferences live in the person's pr
   await expect(page.getByLabel("Week starts on")).toHaveValue("0");
   await expect(page.getByLabel("Variety window · days")).toHaveCount(0);
   await expect(
+    page.getByRole("button", { name: "Save meal times", exact: true }),
+  ).toBeDisabled();
+  await expect(
     page.getByText(/they do not send phone notifications/),
-  ).toBeVisible();
+  ).toHaveCount(0);
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
   await expect(page.locator(".day-card h2").first()).toContainText("Sunday");
   await page.getByRole("button", { name: "Suggest week", exact: true }).click();

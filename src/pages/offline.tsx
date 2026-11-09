@@ -1,5 +1,6 @@
 import { RecipeContent } from "../components/recipe-reader";
 import {
+  substitutionText,
   ingredientText,
   ingredientMatches,
   recipePresentation,
@@ -525,7 +526,11 @@ export function OfflineShell({
                   </ul>
                   {p.substitutions.map((s, i) => (
                     <p className="note" key={i}>
-                      {name(s.instructions)}
+                      {substitutionText(
+                        s,
+                        data?.recipes?.ingredients ?? [],
+                        lang,
+                      )}
                     </p>
                   ))}
                   {(p.recipe_snapshot

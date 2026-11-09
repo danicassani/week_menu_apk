@@ -5,6 +5,7 @@ import {
 } from "../domain/recalculate-portions";
 import { RecipeReview } from "../components/recipe-review";
 import {
+  substitutionText,
   ingredientNames,
   ingredientText,
   sortedIngredients,
@@ -64,7 +65,6 @@ import { exceedsDisplayedCalories } from "../domain/calories";
 import { targetOn } from "../domain/state";
 import {
   makePortion,
-  recalculateLines,
   gramsFor,
   type Ingredient,
   type PlannedRecipe,
@@ -216,7 +216,6 @@ export function Planner(v: ViewProps) {
     [readingRecipe, setReadingRecipe] = useState<PlannedRecipe | null>(null),
     [readingPlan, setReadingPlan] = useState<MealPlan | null>(null),
     [deletingWeek, setDeletingWeek] = useState<number | null>(null),
-    [updateRecipe, setUpdateRecipe] = useState<PlannedPortion | null>(null),
     [correctionDay, setCorrectionDay] = useState<string | null>(null),
     [inspection, setInspection] = useState<MealPlan | null>(null),
     [portionReview, setPortionReview] = useState<PortionRecalculation | null>(
@@ -1053,16 +1052,7 @@ export function Planner(v: ViewProps) {
                       )}
                       {p.substitutions.map((r, i) => (
                         <p className="note" key={i}>
-                          {ingredientText(
-                            lib.ingredients.find((x) => x.id === r.from)!,
-                            v.language,
-                          )}{" "}
-                          →{" "}
-                          {ingredientText(
-                            lib.ingredients.find((x) => x.id === r.to)!,
-                            v.language,
-                          )}
-                          . {name(r.instructions, v.language)}
+                          {substitutionText(r, lib.ingredients, v.language)}
                         </p>
                       ))}
                     </div>
@@ -1231,8 +1221,8 @@ export function Planner(v: ViewProps) {
           </p>
           <p>
             {t(
-              "Rounded amounts exceed the budget. Adjust portions manually after saving.",
-              "Las cantidades redondeadas superan el presupuesto. Ajusta las porciones manualmente después de guardar.",
+              "Rounded amounts exceed the budget. Use Recalculate quantities to adjust meals to current budgets.",
+              "Las cantidades redondeadas superan el presupuesto. Usa Recalcular cantidades para ajustarlas a los presupuestos actuales.",
             )}
           </p>
         </Modal>
@@ -1261,106 +1251,7 @@ export function Planner(v: ViewProps) {
           lib={lib}
           initial={editing}
           onClose={() => setEditing(null)}
-          onSaved={(p) => {
-            if (
-              lib.prompt_show_after !== "never" &&
-              (!lib.prompt_show_after ||
-                lib.prompt_show_after === "now" ||
-                Date.parse(lib.prompt_show_after) <= Date.parse(v.s.server_now))
-            )
-              setUpdateRecipe(p);
-          }}
         />
-      )}
-      {updateRecipe && (
-        <Modal
-          title={t(
-            "Update the saved recipe?",
-            "¿Actualizar la receta guardada?",
-          )}
-          onClose={() => setUpdateRecipe(null)}
-        >
-          <p className="form-intro">
-            {t(
-              "Use only this person’s confirmed variant as one reference serving. Other planned meals stay unchanged.",
-              "Usa solo la variante confirmada de esta persona como una porción de referencia. Las otras comidas planificadas se mantienen.",
-            )}
-          </p>
-          <ul className="ingredient-list">
-            {updateRecipe.lines.map((l, i) => (
-              <li key={i}>
-                <span>{ingredientText(l, v.language)}</span>
-                <b>
-                  {l.quantity} {l.unit}
-                </b>
-              </li>
-            ))}
-          </ul>
-          <p className="muted">
-            {Math.round(updateRecipe.kcal)} kcal ·{" "}
-            {t("One reference serving", "Una porción de referencia")}
-          </p>
-          <p>
-            {v.s.members.find((m) => m.id === updateRecipe.member_id)?.name} ·{" "}
-            {name(updateRecipe.name, v.language)}
-          </p>
-          <Button
-            busy={v.busy}
-            onClick={async () => {
-              const original = lib.recipes.find(
-                (r) => r.id === updateRecipe.recipe_id,
-              );
-              if (!original) return;
-              const components = original.components
-                .filter((c) =>
-                  updateRecipe.lines.some((l) => l.component_id === c.id),
-                )
-                .map((c) => ({
-                  ...c,
-                  ingredients: updateRecipe.lines
-                    .filter((l) => l.component_id === c.id)
-                    .map((l) => ({
-                      ingredient_id: l.ingredient_id,
-                      quantity: l.quantity,
-                      unit: l.unit,
-                    })),
-                  instructions: updateRecipe.substitutions.length
-                    ? updateRecipe.substitutions.map((s) => s.instructions)
-                    : c.instructions,
-                }));
-              if (
-                await v.operate(() =>
-                  v.repository.saveContent(
-                    "recipe",
-                    { ...original, reference_servings: 1, components },
-                    original.revision ?? 1,
-                    false,
-                  ),
-                )
-              )
-                setUpdateRecipe(null);
-            }}
-          >
-            {t("Update saved recipe", "Actualizar receta guardada")}
-          </Button>
-          <Button secondary onClick={() => setUpdateRecipe(null)}>
-            {t(
-              "Keep this meal change only",
-              "Conservar el cambio solo en esta comida",
-            )}
-          </Button>
-          <button
-            className="text-link"
-            onClick={async () => {
-              if (
-                await v.operate(() => v.repository.savePromptPreference(null))
-              )
-                setUpdateRecipe(null);
-            }}
-          >
-            {t("Don’t show again", "No volver a mostrar")}
-          </button>
-        </Modal>
       )}
     </>
   );
@@ -1370,18 +1261,31 @@ function MealEditor({
   lib,
   initial,
   onClose,
-  onSaved,
 }: {
   v: ViewProps;
   lib: PlanningState;
   initial: MealPlan;
   onClose: () => void;
-  onSaved: (p: PlannedPortion) => void;
 }) {
   const t = translator(v.language),
     [plan, setPlan] = useState(initial),
     [revision, setRevision] = useState(lib.revision),
-    [error, setError] = useState("");
+    [failure, setFailure] = useState<{
+      text: string;
+      index: number | null;
+    } | null>(null);
+  const error = failure?.text ?? "",
+    errorIndex = failure?.index ?? null;
+  const errorRef = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (error) {
+      errorRef.current?.focus();
+      errorRef.current?.scrollIntoView({ block: "nearest" });
+    }
+  }, [failure]);
+  const candidates = lib.recipes.filter(
+    (r) => !r.archived && !r.banned && r.meal_types.includes(plan.type),
+  );
   const edit = (index: number, patch: Partial<PlannedPortion>) =>
     setPlan({
       ...plan,
@@ -1393,7 +1297,8 @@ function MealEditor({
     try {
       const old = plan.portions[index],
         m = v.s.members.find((m) => m.id === old.member_id)!,
-        r = lib.recipes.find((r) => r.id === id)!;
+        r = candidates.find((r) => r.id === id);
+      if (!r) throw new Error("no_suitable_recipe");
       const portion = makePortion(
         r,
         m.id,
@@ -1422,9 +1327,9 @@ function MealEditor({
         });
         setPlan({ ...plan, shared_recipe_id: r.id, portions });
       }
-      setError("");
+      setFailure(null);
     } catch (e) {
-      setError(errorMessage(e, v.language));
+      setFailure({ index, text: errorMessage(e, v.language) });
     }
   };
   return (
@@ -1449,11 +1354,17 @@ function MealEditor({
               );
               if (current) setPlan(structuredClone(current));
               setRevision(lib.revision);
+              setFailure(null);
             }}
           >
             {t("Reload for review", "Volver a cargar para revisar")}
           </Button>
         </div>
+      )}
+      {error && errorIndex === null && (
+        <p ref={errorRef} tabIndex={-1} className="inline-error" role="alert">
+          {error}
+        </p>
       )}
       {plan.portions.map((p, index) => (
         <section className="portion-editor" key={p.member_id}>
@@ -1484,17 +1395,29 @@ function MealEditor({
                     })
                   : choose(
                       index,
-                      plan.shared_recipe_id ??
-                        lib.recipes.find(
-                          (r) =>
-                            r.meal_types.includes(plan.type) && !r.archived,
-                        )!.id,
+                      candidates.find(
+                        (r) =>
+                          r.id ===
+                          (plan.shared_recipe_id ?? p.underlying_recipe_id),
+                      )?.id ??
+                        candidates[0]?.id ??
+                        "",
                       p.dessert,
                     )
               }
             />
             {t("Eating out for this person", "Esta persona come fuera")}
           </label>
+          {p.eating_out && error && errorIndex === index && (
+            <p
+              ref={errorRef}
+              tabIndex={-1}
+              className="inline-error"
+              role="alert"
+            >
+              {error}
+            </p>
+          )}
           {p.eating_out ? (
             <div className="form-grid">
               <label>
@@ -1530,23 +1453,56 @@ function MealEditor({
               <label>
                 {t("Recipe", "Receta")}
                 <select
-                  value={p.recipe_id ?? ""}
+                  value={
+                    candidates.some((r) => r.id === p.recipe_id)
+                      ? (p.recipe_id ?? "")
+                      : ""
+                  }
                   onChange={(e) => choose(index, e.target.value, p.dessert)}
                 >
-                  {lib.recipes
-                    .filter(
-                      (r) => !r.archived && r.meal_types.includes(plan.type),
-                    )
-                    .map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {name(r.name, v.language)}
-                      </option>
-                    ))}
+                  {!candidates.some((r) => r.id === p.recipe_id) && (
+                    <option value="" disabled>
+                      {t(
+                        "Choose an available recipe",
+                        "Elige una receta disponible",
+                      )}
+                    </option>
+                  )}
+                  {candidates.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {name(r.name, v.language)}
+                    </option>
+                  ))}
                 </select>
               </label>
+              {!candidates.some((r) => r.id === p.recipe_id) && (
+                <p className="fine-print">
+                  {t("Saved meal", "Comida guardada")}:{" "}
+                  {name(p.name, v.language)}
+                </p>
+              )}
+              {error && errorIndex === index && (
+                <p
+                  ref={errorRef}
+                  tabIndex={-1}
+                  className="inline-error"
+                  role="alert"
+                >
+                  {error}
+                </p>
+              )}
+              {!candidates.length && (
+                <p className="note">
+                  {t(
+                    "No available recipes for this meal. Review the household vetoes in Recipes.",
+                    "No hay recetas disponibles para esta comida. Revisa los vetos del hogar en Recetas.",
+                  )}
+                </p>
+              )}
               <label className="check-row">
                 <input
                   type="checkbox"
+                  disabled={!candidates.some((r) => r.id === p.recipe_id)}
                   checked={p.dessert}
                   onChange={(e) =>
                     choose(index, p.recipe_id!, e.target.checked)
@@ -1559,49 +1515,23 @@ function MealEditor({
               </label>
               {p.substitutions.map((s, i) => (
                 <p className="note" key={i}>
-                  {name(s.instructions, v.language)}
+                  {substitutionText(s, lib.ingredients, v.language)}
                 </p>
               ))}
-              <div className="portion-lines">
+              <ul className="ingredient-list">
                 {p.lines.map((l, i) => (
-                  <label key={l.component_id + l.ingredient_id + i}>
-                    {ingredientText(l, v.language)}
-                    <div className="button-row">
-                      <input
-                        aria-label={ingredientText(l, v.language)}
-                        type="number"
-                        min="0.01"
-                        step="any"
-                        value={l.quantity}
-                        onChange={(e) => {
-                          try {
-                            const next = recalculateLines(
-                              {
-                                ...p,
-                                lines: p.lines.map((x, j) =>
-                                  j === i
-                                    ? { ...x, quantity: e.target.valueAsNumber }
-                                    : x,
-                                ),
-                              },
-                              lib.ingredients,
-                            );
-                            edit(index, next);
-                            setError("");
-                          } catch (err) {
-                            setError(errorMessage(err, v.language));
-                          }
-                        }}
-                      />
-                      <span>{l.unit}</span>
-                    </div>
-                  </label>
+                  <li key={l.component_id + l.ingredient_id + i}>
+                    <span>{ingredientText(l, v.language)}</span>
+                    <b>
+                      {l.quantity} {l.unit}
+                    </b>
+                  </li>
                 ))}
-              </div>
+              </ul>
               <p>
                 <b>{Math.round(p.kcal)} kcal</b>
-                {p.kcal > p.budget
-                  ? ` · ${t("Above budget: adjust quantities manually.", "Supera el presupuesto: ajusta las cantidades manualmente.")}`
+                {exceedsDisplayedCalories(p.kcal, p.budget)
+                  ? ` · ${t("Above budget after rounding.", "Supera el presupuesto tras el redondeo.")}`
                   : ""}
               </p>
               {(p.recipe_snapshot
@@ -1616,11 +1546,6 @@ function MealEditor({
           )}
         </section>
       ))}
-      {error && (
-        <p className="inline-error" role="alert">
-          {error}
-        </p>
-      )}
       <Button
         disabled={
           revision !== lib.revision ||
@@ -1636,15 +1561,22 @@ function MealEditor({
         onClick={async () => {
           if (
             await v.operate(
-              () => v.repository.applyPlans([plan], revision, true),
+              async () => {
+                setFailure(null);
+                try {
+                  await v.repository.applyPlans([plan], revision, true);
+                } catch (err) {
+                  setFailure({
+                    index: null,
+                    text: errorMessage(err, v.language),
+                  });
+                  throw err;
+                }
+              },
               t("Meal saved.", "Comida guardada."),
             )
           ) {
             onClose();
-            const p = plan.portions.find(
-              (p) => p.member_id === v.member.id && !p.eating_out,
-            );
-            if (p) onSaved(p);
           }
         }}
       >
@@ -1672,8 +1604,8 @@ function MealEditor({
       </Button>
       <p className="fine-print">
         {t(
-          "Saved recipes remain unchanged. Quantities and substitutions above apply only to this meal.",
-          "Las recetas guardadas se mantienen. Estas cantidades y sustituciones se aplican solo a esta comida.",
+          "Quantities are calculated from each person’s meal budget. To edit a recipe or its ingredient amounts, use Edit recipe in Recipes.",
+          "Las cantidades se calculan con el presupuesto de cada persona. Para editar una receta o sus cantidades, usa Editar receta en Recetas.",
         )}
       </p>
     </Modal>
@@ -3059,7 +2991,11 @@ export function MealSnapshotView({
               </ul>
               {p.substitutions.map((s, i) => (
                 <p className="note" key={i}>
-                  {name(s.instructions, v.language)}
+                  {substitutionText(
+                    s,
+                    v.s.planning?.ingredients ?? [],
+                    v.language,
+                  )}
                 </p>
               ))}
               {(p.recipe_snapshot
