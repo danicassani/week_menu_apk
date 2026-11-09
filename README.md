@@ -1,11 +1,12 @@
-- [Requested source-backed recipes and import rollout](content/expansions/README.md)
-- [Current planning rules: ingredient repetition is allowed](docs/remove-repetition-rules.md)
-- [Recipe Tinder, personal review progress and fast recipe vetoes](docs/recipe-review.md)
-
 # Week Menu App
 
 Household meal-planning PWA: individual breakfasts, shared lunches/dinners with personal portions, calorie budgets, and one shared shopping list. English and Spanish; minimalistic design with seven device-local colour families and light/dark modes.
 
+- [Version 5: scope, delivery status and activation](docs/version-5/README.md)
+- [Planning change history](docs/planning-change-history.md)
+- [Requested source-backed recipes and import rollout](content/expansions/README.md)
+- [Current planning rules: ingredient repetition is allowed](docs/remove-repetition-rules.md)
+- [Recipe Tinder, personal review progress and fast recipe vetoes](docs/recipe-review.md)
 - [Household recipe vetoes](docs/recipe-vetoes.md)
 - [Version 4 milestone 4: themes and release review](docs/version-4/milestone-4.md)
 - [Version 4 requested backlog](docs/version-4/README.md)
@@ -29,7 +30,7 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Bilingual starter recipe book](content/starter/recipes.md)
 - [Starter food pack, source notice and rebuild instructions](content/starter/README.md)
 
-Version 4's four implementation milestones are complete for review, including quieter meal controls, upcoming shopping/egg units, clearer recipe content and local themes. The existing deployment uses Supabase Google auth, isolated households, personal calorie profiles, shared planning and offline shopping checks. See the release report for migration prerequisites and the remaining hosted/physical-device acceptance.
+**Version 5** groups all changes after V4 closed at PR #34: recipe vetoes/review, simpler planning and recipe forms, sourced recipes, save repairs, calorie/budget improvements, configurable intake times and planning history. The [V5 delivery record](docs/version-5/README.md) distinguishes merged changes from the pending Purchased grouping and local concise-history presentation. V4's milestone reports remain historical baseline records. Current source requires migrations through 27 and the history retention job; source integration does not certify hosted deployment or physical-device acceptance.
 
 ```sh
 npm ci
