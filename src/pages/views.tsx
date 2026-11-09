@@ -192,6 +192,9 @@ export function Dashboard(v: ViewProps) {
         0),
     0,
   );
+  const budgetMargin = v.target
+    ? Math.round(v.target.daily_kcal) - Math.round(totalBudget)
+    : null;
   const pending =
     v.member.profile &&
     v.target &&
@@ -286,6 +289,83 @@ export function Dashboard(v: ViewProps) {
               {t("Your daily picture", "Tu día en cifras")}
             </span>
             <Flame size={20} />
+          </div>
+          <div
+            className="budget-strip"
+            role="group"
+            aria-label={t("Personal meal budgets", "Presupuestos personales")}
+          >
+            <div>
+              <span className="eyebrow">
+                {t("Personal meal budgets", "Presupuestos personales")}
+              </span>
+              <div className="budget-values">
+                {mealTypes.map((m) => (
+                  <span key={m}>
+                    {mealLabel(m, v.language)}{" "}
+                    <b>
+                      {Math.round(
+                        v.s.budget_overrides.find(
+                          (b) =>
+                            b.member_id === v.member.id &&
+                            b.day === v.day &&
+                            b.meal_type === m,
+                        )?.kcal ??
+                          v.target?.budgets[m] ??
+                          0,
+                      )}
+                    </b>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div
+              className={`budget-margin${budgetMargin === null ? "" : budgetMargin < 0 ? " budget-margin--exceeded" : " budget-margin--available"}`}
+              role="status"
+              aria-label={t(
+                "Daily budget margin",
+                "Margen diario de presupuestos",
+              )}
+            >
+              <span>{t("Margin", "Margen")}</span>
+              <strong>
+                {budgetMargin === null ? "—" : `${budgetMargin} kcal`}
+              </strong>
+            </div>
+            <div className="budget-actions">
+              <Popover
+                label={t(
+                  "About planned calories",
+                  "Sobre las calorías planificadas",
+                )}
+                trigger={<Info size={17} />}
+              >
+                {t(
+                  "Planned meals count as assumed intake. Empty slots make the day incomplete; budgets are not consumed calories.",
+                  "Las comidas planificadas cuentan como ingesta asumida. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
+                )}
+                {v.preview && (
+                  <span>
+                    {t(
+                      " Sample meals illustrate the layout. Review and save your own menu in the Menu tab.",
+                      " Las comidas de ejemplo muestran el diseño. Revisa y guarda tu propio menú en la pestaña Menú.",
+                    )}
+                  </span>
+                )}
+              </Popover>
+              {v.own && (
+                <button
+                  className="icon-button"
+                  aria-label={t(
+                    "Adjust meal budgets",
+                    "Ajustar presupuestos de las comidas",
+                  )}
+                  onClick={() => v.openBudget()}
+                >
+                  <Pencil size={17} />
+                </button>
+              )}
+            </div>
           </div>
           <div className="target-number">
             {v.target
@@ -397,66 +477,6 @@ export function Dashboard(v: ViewProps) {
             }
           />
           <MealCards v={v} day={v.day} />
-          <div className="budget-strip">
-            <div>
-              <span className="eyebrow">
-                {t("Personal meal budgets", "Presupuestos personales")}
-              </span>
-              <div className="budget-values">
-                {mealTypes.map((m) => (
-                  <span key={m}>
-                    {mealLabel(m, v.language)}{" "}
-                    <b>
-                      {Math.round(
-                        v.s.budget_overrides.find(
-                          (b) =>
-                            b.member_id === v.member.id &&
-                            b.day === v.day &&
-                            b.meal_type === m,
-                        )?.kcal ??
-                          v.target?.budgets[m] ??
-                          0,
-                      )}
-                    </b>
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="budget-actions">
-              <Popover
-                label={t(
-                  "About planned calories",
-                  "Sobre las calorías planificadas",
-                )}
-                trigger={<Info size={17} />}
-              >
-                {t(
-                  "Planned meals count as assumed intake. Empty slots make the day incomplete; budgets are not consumed calories.",
-                  "Las comidas planificadas cuentan como ingesta asumida. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
-                )}
-                {v.preview && (
-                  <span>
-                    {t(
-                      " Sample meals illustrate the layout. Review and save your own menu in the Menu tab.",
-                      " Las comidas de ejemplo muestran el diseño. Revisa y guarda tu propio menú en la pestaña Menú.",
-                    )}
-                  </span>
-                )}
-              </Popover>
-              {v.own && (
-                <button
-                  className="icon-button"
-                  aria-label={t(
-                    "Adjust meal budgets",
-                    "Ajustar presupuestos de las comidas",
-                  )}
-                  onClick={() => v.openBudget()}
-                >
-                  <Pencil size={17} />
-                </button>
-              )}
-            </div>
-          </div>
           {v.target &&
             exceedsDisplayedCalories(totalBudget, v.target.daily_kcal) && (
               <div className="note warning">
