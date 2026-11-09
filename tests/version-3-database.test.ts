@@ -1362,3 +1362,64 @@ it("saves a generated full week with shared meals and source-backed individual b
     ),
   ).toHaveLength(21);
 });
+it("server and historical calorie warnings match whole-kcal displays without rounding stored energy", async () => {
+  await actor();
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const recipe = lib.recipes.find((r) => r.id === "b04")!;
+  const base = makePortion(
+    recipe,
+    home.membership_id,
+    profile,
+    500,
+    false,
+    lib.ingredients,
+    [],
+  );
+  const yogurt = base.lines.find((l) => l.ingredient_id === "yogurt")!;
+  const before = await snapshot();
+  await db.exec("reset role;set role week_menu_executor");
+  for (const [quantity, budget, warn] of [
+    [100, 57, false],
+    [100.4, 57, false],
+    [100.9, 57, true],
+    [100, 56.8, false],
+    [100, 56.49, true],
+  ] as const) {
+    const portion = {
+      ...base,
+      budget,
+      recipe_snapshot: recipe,
+      kcal: 9999,
+      warnings: [],
+      lines: [{ ...yogurt, quantity, kcal: 9999 }],
+    };
+    const old = {
+      ...portion,
+      lines: [{ ...portion.lines[0], quantity: quantity + 1 }],
+    };
+    const checked = (
+      await db.query<{ r: typeof base }>(
+        "select app_private.checked_portion_v2($1::jsonb) r",
+        [portion],
+      )
+    ).rows[0].r;
+    const historical = (
+      await db.query<{ r: typeof base }>(
+        "select app_private.historical_portion($1::jsonb,$2::jsonb,$3::date,'breakfast') r",
+        [portion, old, day],
+      )
+    ).rows[0].r;
+    for (const result of [checked, historical]) {
+      expect(result.warnings.includes("over_budget")).toBe(warn);
+      expect(result.kcal).toBeCloseTo(
+        (quantity * yogurt.energy_per_100g) / 100,
+        8,
+      );
+      expect(result.budget).toBe(budget);
+    }
+  }
+  await actor();
+  const after = await snapshot();
+  expect(after.targets).toEqual(before.targets);
+  expect(after.meals).toEqual(before.meals);
+});

@@ -33,7 +33,7 @@ import type {
   Target,
 } from "../domain/types";
 import { targetOn } from "../domain/state";
-import { daySummary } from "../domain/calories";
+import { daySummary, exceedsDisplayedCalories } from "../domain/calories";
 import { addDays, formatDay, localDay } from "../domain/dates";
 import type { PlannedRecipe } from "../domain/planning";
 import { mealLabel, translator } from "../lib/i18n";
@@ -457,17 +457,18 @@ export function Dashboard(v: ViewProps) {
               )}
             </div>
           </div>
-          {v.target && totalBudget > v.target.daily_kcal && (
-            <div className="note warning">
-              <Info size={16} />
-              <span>
-                {t(
-                  "Meal budgets exceed your daily target. Review your budgets or portions.",
-                  "Los presupuestos superan tu objetivo diario. Revisa presupuestos o porciones.",
-                )}
-              </span>
-            </div>
-          )}
+          {v.target &&
+            exceedsDisplayedCalories(totalBudget, v.target.daily_kcal) && (
+              <div className="note warning">
+                <Info size={16} />
+                <span>
+                  {t(
+                    "Meal budgets exceed your daily target. Review your budgets or portions.",
+                    "Los presupuestos superan tu objetivo diario. Revisa presupuestos o porciones.",
+                  )}
+                </span>
+              </div>
+            )}
         </div>
         <aside>
           <section className="panel log-panel">
@@ -762,7 +763,7 @@ export function ProfileView(
                 {mealTypes.map((m) => (
                   <div key={m}>
                     <span>{mealLabel(m, v.language)}</span>
-                    <b>{v.target!.budgets[m]} kcal</b>
+                    <b>{Math.round(v.target!.budgets[m])} kcal</b>
                   </div>
                 ))}
               </div>

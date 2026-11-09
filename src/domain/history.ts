@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { DomainError } from "./calories";
+import { DomainError, exceedsDisplayedCalories } from "./calories";
 import {
   recalculateLines,
   type MealPlan,
@@ -102,7 +102,9 @@ export function historicalQuantities(
     lines,
     kcal,
     warnings: [
-      ...(kcal > portion.budget ? ["over_budget"] : []),
+      ...(exceedsDisplayedCalories(kcal, portion.budget)
+        ? ["over_budget"]
+        : []),
       ...(portion.substitutions.length ? ["review_substitutions"] : []),
     ],
   };

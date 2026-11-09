@@ -1,5 +1,10 @@
 import Decimal from "decimal.js";
-import { DomainError, roundQuantity, roundWeight } from "./calories";
+import {
+  DomainError,
+  roundQuantity,
+  roundWeight,
+  exceedsDisplayedCalories,
+} from "./calories";
 import type { MealType, Profile } from "./types";
 export type Names = { en: string; es: string };
 export interface Ingredient {
@@ -239,7 +244,7 @@ export function makePortion(
   const kcal = lines
     .reduce((s, l) => s.plus(l.kcal), new Decimal(0))
     .toNumber();
-  if (kcal > budget) warnings.push("over_budget");
+  if (exceedsDisplayedCalories(kcal, budget)) warnings.push("over_budget");
   if (substitutions.length) warnings.push("review_substitutions");
   return {
     member_id,
@@ -286,6 +291,8 @@ export function recalculateLines(
     ...portion,
     lines,
     kcal,
-    warnings: kcal > portion.budget ? ["over_budget"] : [],
+    warnings: exceedsDisplayedCalories(kcal, portion.budget)
+      ? ["over_budget"]
+      : [],
   };
 }

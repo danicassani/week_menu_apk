@@ -19,6 +19,7 @@ import type {
 } from "../domain/types";
 import { mealLabel, translator } from "../lib/i18n";
 import { dayAt, localDay } from "../domain/dates";
+import { exceedsDisplayedCalories } from "../domain/calories";
 import { targetOn } from "../domain/state";
 import { Button } from "./ui";
 
@@ -276,9 +277,9 @@ export function TargetReview({
   const t = translator(language),
     [budgets, setBudgets] = useState<Partial<Budgets>>(current ?? {});
   const sum = meals.reduce((n, m) => n + (budgets[m] || 0), 0),
-    remaining = Math.round(proposal.daily_kcal - sum),
-    exceeds = sum > proposal.daily_kcal,
-    excess = Math.ceil(sum - proposal.daily_kcal);
+    remaining = Math.round(proposal.daily_kcal) - Math.round(sum),
+    exceeds = exceedsDisplayedCalories(sum, proposal.daily_kcal),
+    excess = -remaining;
   return (
     <form
       onSubmit={(e) => {
