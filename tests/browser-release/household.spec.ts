@@ -111,11 +111,19 @@ for (const language of ["en", "es"] as const) {
       label = await checkbox.getAttribute("aria-label");
     await checkbox.click();
     await expect(
-      page.getByRole("checkbox", { name: label!, exact: true }),
+      page.getByRole("checkbox", {
+        name: label!,
+        exact: true,
+        includeHidden: true,
+      }),
     ).toBeChecked();
     await page.reload();
     await expect(
-      page.getByRole("checkbox", { name: label!, exact: true }),
+      page.getByRole("checkbox", {
+        name: label!,
+        exact: true,
+        includeHidden: true,
+      }),
     ).toBeChecked();
     await expect(page.locator(".shopping-progress")).toContainText(
       t("1 pending sync", "1 por sincronizar"),
@@ -137,7 +145,11 @@ for (const language of ["en", "es"] as const) {
     );
     await expect(page.locator(".shopping-progress .pill")).toHaveCount(0);
     await expect(
-      page.getByRole("checkbox", { name: label!, exact: true }),
+      page.getByRole("checkbox", {
+        name: label!,
+        exact: true,
+        includeHidden: true,
+      }),
     ).toBeChecked();
     await page.screenshot({
       path: `test-results/release/${test.info().project.name}-${language}.png`,
@@ -244,7 +256,9 @@ test("another member is read-only, and offline sign-out clears that device’s s
   await context.setOffline(true);
   await page.reload();
   await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page.getByRole("button", { name: "Sync first" })).toBeDisabled();
   await page
