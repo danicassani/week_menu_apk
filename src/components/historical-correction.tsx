@@ -502,7 +502,7 @@ export function HistoricalCorrection({
                                   v.s.members.find((m) => m.id === p.member_id)
                                     ?.name
                                 }{" "}
-                                · {p.budget} kcal
+                                · {Math.round(p.budget)} kcal
                               </h4>
                               {!historicalProfile(p.member_id) && (
                                 <p className="note">

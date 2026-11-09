@@ -19,6 +19,13 @@ export const ACTIVITY_FACTORS = {
   active: 1.55,
   very_active: 1.725,
 } as const;
+// Warnings use the same whole-kcal precision as displayed totals and limits.
+// Keep the original decimal values for nutrition, targets and portion scaling.
+export const exceedsDisplayedCalories = (
+  actual: number,
+  limit: number,
+): boolean => Math.round(actual) > Math.round(limit);
+
 const valid = (n: number) => Number.isFinite(n) && n > 0;
 
 export function validateProfile(p: Profile): void {

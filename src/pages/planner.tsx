@@ -48,6 +48,7 @@ import { IngredientReader } from "../components/ingredient-reader";
 import { EMOJIS, foodEmoji } from "../domain/presentation";
 import { ContentTextField } from "../components/content-text-field";
 import { addDays, dayCutoff, formatDay, weekDays } from "../domain/dates";
+import { exceedsDisplayedCalories } from "../domain/calories";
 import { targetOn } from "../domain/state";
 import {
   makePortion,
@@ -602,14 +603,16 @@ export function Planner(v: ViewProps) {
                               ? t("With dessert", "Con postre")
                               : t("At home", "En casa")}
                         </p>
-                        {!closed(v, day) && p.warnings.length > 0 && (
-                          <span className="pill">
-                            {t(
-                              "Review portions / substitutions",
-                              "Revisar porciones / sustituciones",
-                            )}
-                          </span>
-                        )}
+                        {!closed(v, day) &&
+                          (p.warnings.some((w) => w !== "over_budget") ||
+                            exceedsDisplayedCalories(p.kcal, p.budget)) && (
+                            <span className="pill">
+                              {t(
+                                "Review portions / substitutions",
+                                "Revisar porciones / sustituciones",
+                              )}
+                            </span>
+                          )}
                       </>
                     )}
                     {plan && (
@@ -921,7 +924,7 @@ export function Planner(v: ViewProps) {
                           {name(p.name, v.language)}
                         </button>{" "}
                         ·{" "}
-                        {p.kcal > p.budget ? (
+                        {exceedsDisplayedCalories(p.kcal, p.budget) ? (
                           <button
                             type="button"
                             className="preview-calorie-warning"
@@ -937,7 +940,7 @@ export function Planner(v: ViewProps) {
                         ) : (
                           Math.round(p.kcal)
                         )}{" "}
-                        / {p.budget} kcal{" "}
+                        / {Math.round(p.budget)} kcal{" "}
                         {p.dessert && (
                           <span className="pill">
                             {t("With dessert", "Con postre")}
@@ -1162,7 +1165,8 @@ export function Planner(v: ViewProps) {
         >
           <p>
             {v.s.members.find((x) => x.id === calorieHelp.member_id)?.name} ·{" "}
-            {Math.round(calorieHelp.kcal)} / {calorieHelp.budget} kcal
+            {Math.round(calorieHelp.kcal)} / {Math.round(calorieHelp.budget)}{" "}
+            kcal
           </p>
           <p>
             {t(
@@ -1399,8 +1403,8 @@ function MealEditor({
                   ?.avatar
               }{" "}
             </span>
-            {v.s.members.find((m) => m.id === p.member_id)?.name} · {p.budget}{" "}
-            kcal
+            {v.s.members.find((m) => m.id === p.member_id)?.name} ·{" "}
+            {Math.round(p.budget)} kcal
           </h3>
           <label className="check-row">
             <input

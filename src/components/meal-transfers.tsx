@@ -410,7 +410,7 @@ export function useMealTransfers(
                         {text(p.name)}
                       </button>
                     )}{" "}
-                    · {Math.round(p.kcal)} / {p.budget} kcal
+                    · {Math.round(p.kcal)} / {Math.round(p.budget)} kcal
                   </p>
                   {!p.eating_out && (
                     <details>
