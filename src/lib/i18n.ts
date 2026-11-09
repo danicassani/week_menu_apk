@@ -1,3 +1,5 @@
+import { PortionError } from "../domain/portion-error";
+import { ingredientText } from "../domain/content-presentation";
 import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
@@ -134,9 +136,25 @@ const messages: Record<string, [string, string]> = {
     "An amount rounds to zero. Choose another recipe or enter a practical amount manually.",
     "Una cantidad se redondea a cero. Elige otra receta o introduce una cantidad práctica manualmente.",
   ],
+  recipe_vetoed: [
+    "This recipe is vetoed in the household. Choose another recipe or review the veto in Recipes.",
+    "Esta receta está vetada en el hogar. Elige otra receta o revisa el veto en Recetas.",
+  ],
+  recipe_unavailable: [
+    "This recipe is no longer in the loaded catalogue. Reload the menu before choosing again.",
+    "Esta receta ya no está en el catálogo cargado. Vuelve a cargar el menú antes de elegir otra vez.",
+  ],
+  recipe_archived: [
+    "This recipe is archived. Restore it in Recipes or choose another recipe.",
+    "Esta receta está archivada. Restáurala en Recetas o elige otra receta.",
+  ],
+  recipe_meal_type_mismatch: [
+    "This recipe is not configured for this meal type. Review its meal types in Recipes or choose another recipe.",
+    "Esta receta no está configurada para este tipo de comida. Revisa sus tipos de comida en Recetas o elige otra receta.",
+  ],
   no_suitable_recipe: [
-    "No suitable recipe exists. Add more recipes or review the catalogue.",
-    "No hay una receta adecuada. Añade más recetas o revisa el catálogo.",
+    "This recipe could not be used for the destination meal. No specific cause was provided; reload the menu and try again.",
+    "No se ha podido usar esta receta en la comida de destino. No se ha recibido el motivo concreto; vuelve a cargar el menú e inténtalo de nuevo.",
   ],
 
   correction_expired: [
@@ -265,6 +283,8 @@ export function errorMessage(
   language: Language,
   fallback?: string,
 ) {
+  if (error instanceof PortionError)
+    return portionErrorMessage(error, language);
   const code = error instanceof Error ? error.message : String(error);
   const found = Object.keys(messages).find((k) => code.includes(k));
   return found
@@ -281,3 +301,92 @@ export const mealLabel = (type: string, language: Language) =>
     lunch: language === "es" ? "Almuerzo" : "Lunch",
     dinner: language === "es" ? "Cena" : "Dinner",
   })[type] ?? type;
+
+function portionErrorMessage(error: PortionError, language: Language): string {
+  const t = translator(language),
+    c = error.context;
+  const recipe = c.recipe[language] || c.recipe.en || c.recipe.es;
+  const ingredient = ingredientText(c.ingredient, language);
+  const diet = (
+    {
+      omnivore: ["omnivorous", "omnívora"],
+      pescatarian: ["pescatarian", "pescetariana"],
+      vegetarian: ["vegetarian", "vegetariana"],
+      vegan: ["vegan", "vegana"],
+    } as const
+  )[c.diet][language === "es" ? 1 : 0];
+  const prefix = t(
+    `Cannot prepare “${recipe}” for ${c.member}: `,
+    `No se puede preparar «${recipe}» para ${c.member}: `,
+  );
+  if (c.reason === "missing_ingredient")
+    return (
+      prefix +
+      t(
+        `ingredient “${ingredient}” is missing from the catalogue. Review the recipe in Recipes.`,
+        `el ingrediente «${ingredient}» no está en el catálogo. Revisa la receta en Recetas.`,
+      )
+    );
+  if (c.reason === "archived_ingredient")
+    return (
+      prefix +
+      t(
+        `ingredient “${ingredient}” is archived. Review it in Recipes.`,
+        `el ingrediente «${ingredient}» está archivado. Revísalo en Recetas.`,
+      )
+    );
+  if (c.reason === "missing_nutrition")
+    return (
+      prefix +
+      t(
+        `ingredient “${ingredient}” has no usable calorie data to calculate portions. Review its nutrition in Recipes.`,
+        `el ingrediente «${ingredient}» no tiene datos calóricos válidos para calcular las porciones. Revisa su información nutricional en Recetas.`,
+      )
+    );
+  const reason =
+    c.reason === "excluded_ingredient"
+      ? t(
+          `“${ingredient}” is excluded in their profile.`,
+          `«${ingredient}» está excluido en su perfil.`,
+        )
+      : t(
+          `“${ingredient}” is incompatible with their ${diet} diet.`,
+          `«${ingredient}» no es compatible con su dieta ${diet}.`,
+        );
+  if (!c.alternatives?.length)
+    return (
+      prefix +
+      reason +
+      " " +
+      t(
+        "No substitution is configured for this ingredient in this recipe. Review the person's preferences or choose another recipe.",
+        "No hay una sustitución configurada para ese ingrediente en esta receta. Revisa las preferencias de esa persona o elige otra receta.",
+      )
+    );
+  const blocked = c.alternatives
+    .map((a) => {
+      const food = ingredientText(a.ingredient, language);
+      const why = (
+        {
+          missing: ["missing from the catalogue", "no está en el catálogo"],
+          archived: ["archived", "está archivado"],
+          excluded: ["excluded in their profile", "está excluido en su perfil"],
+          diet: [
+            `incompatible with their ${diet} diet`,
+            `no es compatible con su dieta ${diet}`,
+          ],
+        } as const
+      )[a.reason][language === "es" ? 1 : 0];
+      return `«${food}»: ${why}`;
+    })
+    .join("; ");
+  return (
+    prefix +
+    reason +
+    " " +
+    t(
+      `The configured substitutions cannot be used (${blocked}). Review the person's preferences or choose another recipe.`,
+      `No se pueden usar las sustituciones configuradas (${blocked}). Revisa las preferencias de esa persona o elige otra receta.`,
+    )
+  );
+}

@@ -1297,8 +1297,12 @@ function MealEditor({
     try {
       const old = plan.portions[index],
         m = v.s.members.find((m) => m.id === old.member_id)!,
-        r = candidates.find((r) => r.id === id);
-      if (!r) throw new Error("no_suitable_recipe");
+        r = lib.recipes.find((r) => r.id === id);
+      if (!r) throw new Error("recipe_unavailable");
+      if (r.banned) throw new Error("recipe_vetoed");
+      if (r.archived) throw new Error("recipe_archived");
+      if (!r.meal_types.includes(plan.type))
+        throw new Error("recipe_meal_type_mismatch");
       const portion = makePortion(
         r,
         m.id,

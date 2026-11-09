@@ -1,3 +1,4 @@
+import { PortionError, type PortionFailureReason } from "./portion-error";
 import Decimal from "decimal.js";
 import {
   DomainError,
@@ -157,6 +158,20 @@ export function makePortion(
 ): PlannedPortion {
   if (recipe.archived || !Number.isFinite(budget) || budget <= 0)
     throw new DomainError("invalid_recipe");
+  const failure = (
+    code: string,
+    reason: PortionFailureReason,
+    ingredient: { id: string; name: Names },
+    alternatives?: PortionError["context"]["alternatives"],
+  ) =>
+    new PortionError(code, {
+      reason,
+      member: profile.name || member_id,
+      recipe: recipe.name,
+      ingredient,
+      diet: profile.diet,
+      alternatives,
+    });
   const chosen = recipe.components.filter(
     (c) => !c.optional || (c.kind === "dessert" ? dessert : c.default_included),
   );
@@ -167,7 +182,14 @@ export function makePortion(
         quantity = line.quantity,
         unit = line.unit;
       if (!ingredient || ingredient.archived)
-        throw new DomainError("archived_ingredient");
+        throw failure(
+          "archived_ingredient",
+          ingredient ? "archived_ingredient" : "missing_ingredient",
+          ingredient ?? {
+            id: line.ingredient_id,
+            name: { en: line.ingredient_id, es: line.ingredient_id },
+          },
+        );
       if (!allowed(ingredient, profile)) {
         const rule = rules.find(
           (r) =>
@@ -180,7 +202,41 @@ export function makePortion(
                 allowed(i, profile),
             ),
         );
-        if (!rule) throw new DomainError("no_suitable_recipe");
+        if (!rule) {
+          const alternatives = rules
+            .filter(
+              (r) =>
+                r.from_ingredient_id === ingredient!.id &&
+                r.allowed_recipe_ids.includes(recipe.id),
+            )
+            .map((r) => {
+              const target = ingredients.find(
+                (i) => i.id === r.to_ingredient_id,
+              );
+              const reason = !target
+                ? "missing"
+                : target.archived
+                  ? "archived"
+                  : profile.excluded_ingredients.includes(target.id)
+                    ? "excluded"
+                    : "diet";
+              return {
+                ingredient: target ?? {
+                  id: r.to_ingredient_id,
+                  name: { en: r.to_ingredient_id, es: r.to_ingredient_id },
+                },
+                reason,
+              } as NonNullable<PortionError["context"]["alternatives"]>[number];
+            });
+          throw failure(
+            "no_suitable_recipe",
+            profile.excluded_ingredients.includes(ingredient.id)
+              ? "excluded_ingredient"
+              : "incompatible_diet",
+            ingredient,
+            alternatives,
+          );
+        }
         const original = ingredient;
         ingredient = ingredients.find((i) => i.id === rule.to_ingredient_id)!;
         quantity = new Decimal(gramsFor(original, quantity, unit))
@@ -195,7 +251,7 @@ export function makePortion(
       }
       const energy = ingredient.nutrition_per_100g.energy_kcal;
       if (energy === null || !Number.isFinite(energy) || energy < 0)
-        throw new DomainError("missing_nutrition");
+        throw failure("missing_nutrition", "missing_nutrition", ingredient);
       return { line, ingredient, quantity, unit, component_id: c.id, energy };
     }),
   );

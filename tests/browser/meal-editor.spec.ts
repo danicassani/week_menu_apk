@@ -42,6 +42,20 @@ for (const language of ["en", "es"] as const) {
           },
         ],
       });
+      saved.library.recipes.push({
+        ...base,
+        id: "incompatible-fixture",
+        name: { en: "Turkey fixture", es: "Receta de pavo de prueba" },
+        meal_types: ["lunch"],
+        components: [
+          {
+            ...base.components[0],
+            ingredients: [
+              { ingredient_id: "turkey", quantity: 100, unit: "g" },
+            ],
+          },
+        ],
+      });
       sessionStorage.setItem("week-menu-demo-server", JSON.stringify(saved));
     });
     await page.reload();
@@ -92,6 +106,8 @@ for (const language of ["en", "es"] as const) {
     const alert = first.getByRole("alert");
     await expect(alert).toBeVisible();
     await expect(alert).toBeFocused();
+    await expect(alert).toContainText("Alex");
+    await expect(alert).toContainText("missing-fixture");
     await expect(
       first.getByRole("combobox", { name: t("Recipe", "Receta"), exact: true }),
     ).not.toHaveValue("broken-recipe");
@@ -117,6 +133,27 @@ for (const language of ["en", "es"] as const) {
       .all()) {
       await expect(selector.locator('option[value="m26"]')).toHaveCount(0);
     }
+    await page
+      .getByRole("dialog")
+      .getByRole("combobox", { name: t("Recipe", "Receta"), exact: true })
+      .first()
+      .selectOption("incompatible-fixture");
+    const sharedError = page.getByRole("dialog").getByRole("alert");
+    await expect(sharedError).toBeVisible();
+    await expect(sharedError).toBeFocused();
+    await expect(sharedError).toContainText("Noa");
+    await expect(sharedError).toContainText(
+      t("Turkey light meat", "Carne blanca de pavo"),
+    );
+    await expect(sharedError).toContainText(
+      t("vegetarian diet", "dieta vegetariana"),
+    );
+    await expect(sharedError).toContainText(
+      t("No substitution is configured", "No hay una sustitución configurada"),
+    );
+    await expect(sharedError).not.toContainText(
+      t("Add more recipes", "Añade más recetas"),
+    );
     await page.keyboard.press("Escape");
     await nav
       .getByRole("button", { name: t("Recipes", "Recetas"), exact: true })
