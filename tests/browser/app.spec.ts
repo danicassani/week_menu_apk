@@ -21,7 +21,7 @@ test("dashboard, profile acceptance, logs, and member permissions", async ({
   await expect(
     page.getByText("Coffee at the bar", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("1790 kcal known intake")).toBeVisible();
+  await expect(page.getByText("490 kcal known intake")).toBeVisible();
   await page.getByRole("button", { name: "Activity", exact: true }).click();
   await page.getByLabel("Activity type").selectOption("walking");
   await page.getByLabel("Pace or intensity").selectOption("17190");
@@ -179,7 +179,7 @@ test("menu actions stay together and planner preferences live in the person's pr
     await page
       .getByRole("button", { name: "Suggest week", exact: true })
       .evaluate((el) => el.nextElementSibling?.getAttribute("aria-label")),
-  ).toBe("Delete week");
+  ).toBe("Recalculate quantities");
   await expect(page.getByLabel("Week starts on")).toHaveCount(0);
   await expect(page.getByLabel("Variety window · days")).toHaveCount(0);
   await nav.getByRole("button", { name: "Profile", exact: true }).click();

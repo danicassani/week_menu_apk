@@ -32,6 +32,7 @@ export interface Profile {
   language: Language;
 }
 export interface Member {
+  meal_times?: import("./meal-times").MealTimes;
   presentation?: import("./presentation").Presentation;
   id: string;
   name: string;
@@ -216,6 +217,7 @@ export interface Repository {
     preferences: import("./presentation").Presentation,
   ): Promise<void>;
   savePlannerSettings(week: 0 | 1): Promise<void>;
+  saveMealTimes(times: import("./meal-times").MealTimes): Promise<void>;
   load(timezone: string): Promise<HouseholdState>;
   saveProfile(profile: Profile, revision: number): Promise<void>;
   proposal(): Promise<Proposal>;

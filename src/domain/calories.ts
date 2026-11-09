@@ -1,4 +1,5 @@
 import Decimal from "decimal.js";
+import { mealCountsNow, type IntakeClock } from "./meal-times";
 import { daysBetween } from "./dates";
 import type {
   Budgets,
@@ -127,8 +128,10 @@ export function daySummary(
   p: Profile,
   entries: DailyEntry[],
   meals: MealSummary[],
+  clock?: IntakeClock,
 ) {
   const intake = meals
+    .filter((meal) => !clock || mealCountsNow(meal, clock))
     .reduce((sum, x) => sum.plus(x.kcal), new Decimal(0))
     .plus(
       entries

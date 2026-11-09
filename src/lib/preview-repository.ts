@@ -1,3 +1,8 @@
+import {
+  DEFAULT_MEAL_TIMES,
+  validMealTimes,
+  type MealTimes,
+} from "../domain/meal-times";
 import expansion from "../../content/expansions/requested-recipes.json" with { type: "json" };
 import { ingredientMatches } from "../domain/content-presentation";
 import {
@@ -315,6 +320,11 @@ export class PreviewRepository implements Repository {
         this.shopping = data.shopping;
         if (data.eggPurchasing) this.eggPurchasing = data.eggPurchasing;
         this.recipeReviews = data.recipeReviews ?? {};
+        this.mealTimes = Object.fromEntries(
+          Object.entries(data.mealTimes ?? {}).filter(([, times]) =>
+            validMealTimes(times),
+          ),
+        ) as Record<string, MealTimes>;
         this.serial = data.serial;
         this.receipts = new Map(data.receipts ?? []);
         if (data.language === "en" || data.language === "es")
@@ -335,6 +345,7 @@ export class PreviewRepository implements Repository {
       members: [
         {
           id: "alex",
+          meal_times: { ...(this.mealTimes.alex ?? DEFAULT_MEAL_TIMES) },
           name: "Alex",
           status: "active",
           time_zone: zone,
@@ -344,6 +355,7 @@ export class PreviewRepository implements Repository {
         },
         {
           id: "noa",
+          meal_times: { ...(this.mealTimes.noa ?? DEFAULT_MEAL_TIMES) },
           name: "Noa",
           status: "active",
           time_zone: zone,
@@ -378,6 +390,7 @@ export class PreviewRepository implements Repository {
           shopping: this.shopping,
           eggPurchasing: this.eggPurchasing,
           recipeReviews: this.recipeReviews,
+          mealTimes: this.mealTimes,
           serial: this.serial,
           receipts: [...this.receipts],
           language: this.me().profile?.language ?? "en",
@@ -486,6 +499,7 @@ export class PreviewRepository implements Repository {
     });
   }
   private recipeReviews: Record<string, number> = {};
+  private mealTimes: Record<string, MealTimes> = {};
   async getRecipeReview() {
     return {
       reviewed_recipe_ids: this.library.recipes
@@ -897,6 +911,14 @@ export class PreviewRepository implements Repository {
     this.serial++;
     this.syncPlans();
     this.autoShopping();
+  }
+  async saveMealTimes(times: MealTimes) {
+    if (!validMealTimes(times)) throw new DomainError("invalid_meal_times");
+    const member = this.me();
+    member.meal_times = { ...times };
+    this.mealTimes[member.id] = { ...times };
+    this.serial++;
+    this.persistDemo();
   }
   async savePlannerSettings(week: 0 | 1) {
     this.me();

@@ -140,6 +140,8 @@ export class SupabaseRepository implements Repository {
       /historical_correction/.test(name)
     )
       throw new DomainError("correction_unavailable");
+    if (error?.code === "PGRST202" && name === "save_my_meal_times")
+      throw new DomainError("meal_times_unavailable");
     if (error?.code === "57014" && /statement timeout/i.test(error.message))
       throw new DomainError("database_timeout");
     if (error) throw new DomainError(error.message);
@@ -386,6 +388,9 @@ export class SupabaseRepository implements Repository {
   }
   savePresentation(preferences: import("../domain/presentation").Presentation) {
     return this.rpc("save_my_presentation", { p_preferences: preferences });
+  }
+  saveMealTimes(times: import("../domain/meal-times").MealTimes) {
+    return this.rpc("save_my_meal_times", { p_times: times });
   }
   savePlannerSettings(week: 0 | 1) {
     return this.rpc("save_planner_settings", {
