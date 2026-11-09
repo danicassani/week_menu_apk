@@ -419,6 +419,7 @@ export function Planner(v: ViewProps) {
     setCalorieHelp(null);
     setPreview({
       id: crypto.randomUUID(),
+      history_action: "copy_week",
       plans,
       gaps,
       replace,
@@ -1119,6 +1120,10 @@ export function Planner(v: ViewProps) {
                         preview.plans,
                         preview.revision,
                         preview.replace,
+                        {
+                          id: preview.id,
+                          action: preview.history_action ?? "suggestions",
+                        },
                       );
                     } catch (error) {
                       const code =
@@ -1276,6 +1281,7 @@ function MealEditor({
     } | null>(null);
   const error = failure?.text ?? "",
     errorIndex = failure?.index ?? null;
+  const operationRef = useRef<{ payload: string; id: string } | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
   useEffect(() => {
     if (error) {
@@ -1568,7 +1574,13 @@ function MealEditor({
               async () => {
                 setFailure(null);
                 try {
-                  await v.repository.applyPlans([plan], revision, true);
+                  const payload = JSON.stringify({ plan, revision });
+                  if (operationRef.current?.payload !== payload)
+                    operationRef.current = { payload, id: crypto.randomUUID() };
+                  await v.repository.applyPlans([plan], revision, true, {
+                    id: operationRef.current.id,
+                    action: "review_meal",
+                  });
                 } catch (err) {
                   setFailure({
                     index: null,

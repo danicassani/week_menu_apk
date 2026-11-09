@@ -1,4 +1,13 @@
 import {
+  historyActionLabel,
+  type HistoryAction,
+  type HistoryOperation,
+  type HistoryFilters,
+  type HistoryCursor,
+  type PlanningHistoryEvent,
+  type PlanningHistoryPage,
+} from "../domain/planning-history";
+import {
   DEFAULT_MEAL_TIMES,
   validMealTimes,
   type MealTimes,
@@ -325,6 +334,9 @@ export class PreviewRepository implements Repository {
             validMealTimes(times),
           ),
         ) as Record<string, MealTimes>;
+        this.historyEvents = data.historyEvents ?? [];
+        this.historyStarted = data.historyStarted ?? this.historyStarted;
+        this.historyOperations = new Map(data.historyOperations ?? []);
         this.serial = data.serial;
         this.receipts = new Map(data.receipts ?? []);
         if (data.language === "en" || data.language === "es")
@@ -380,6 +392,192 @@ export class PreviewRepository implements Repository {
       budget_overrides: [],
       meal_locks: [],
     };
+    this.installHistory();
+  }
+  private historyEvents: PlanningHistoryEvent[] = [];
+  private historyStarted = new Date().toISOString();
+  private historyOperations = new Map<string, string>();
+  private historyDepth = 0;
+  private historySnapshot() {
+    const clean = (v: unknown) =>
+      JSON.parse(
+        JSON.stringify(v, (key, value) =>
+          [
+            "recipe_snapshot",
+            "revision",
+            "nutrition_revision",
+            "created_at",
+            "updated_at",
+            "veto_revision",
+          ].includes(key)
+            ? undefined
+            : value,
+        ),
+      );
+    const result: Record<string, { kind: string; value: unknown }> = {};
+    const add = (kind: string, key: string, value: unknown) => {
+      result[kind + ":" + key] = { kind, value: clean(value) };
+    };
+    for (const p of this.library.plans)
+      add("meal_plans", p.day + "/" + p.type, {
+        ...p,
+        portions: p.portions.map((x) => ({
+          ...x,
+          member: this.s.members.find((m) => m.id === x.member_id)?.name,
+          recipe: x.name,
+        })),
+      });
+    for (const r of this.library.recipes) add("saved_recipes", r.id, r);
+    for (const f of this.library.ingredients) add("food_items", f.id, f);
+    for (const m of this.s.members)
+      add("profiles", m.id, {
+        member: m.name,
+        diet: m.profile?.diet,
+        excluded_ingredients: m.profile?.excluded_ingredients,
+      });
+    for (const t of this.s.targets)
+      add("targets", t.id, {
+        member: this.s.members.find((m) => m.id === t.member_id)?.name,
+        day: t.effective_date,
+        daily_kcal: t.daily_kcal,
+        budgets: t.budgets,
+      });
+    for (const b of this.s.budget_overrides)
+      add("budget_overrides", b.member_id + b.day + b.meal_type, {
+        ...b,
+        type: b.meal_type,
+        member: this.s.members.find((m) => m.id === b.member_id)?.name,
+      });
+    add("household", "week", { week_start: this.s.household.week_start });
+    return result;
+  }
+  private installHistory() {
+    const actions: Record<string, HistoryAction> = {
+      applyPlans: "legacy",
+      deleteMeal: "delete_meal",
+      deleteWeek: "delete_week",
+      applyTransfer: "transfer",
+      applyCorrection: "correction",
+      saveContent: "catalogue",
+      saveProfile: "profile",
+      acceptTarget: "target",
+      saveBudgetOverride: "budget",
+      saveBudgetOverrides: "budget",
+      setRecipeVeto: "veto",
+      reviewRecipe: "veto",
+      savePlannerSettings: "week_start",
+    };
+    const self = this as unknown as Record<
+      string,
+      (...args: any[]) => Promise<any>
+    >;
+    for (const [method, action] of Object.entries(actions)) {
+      const original = self[method].bind(this);
+      self[method] = async (...args: any[]) => {
+        const outer = this.historyDepth++ === 0,
+          before = outer ? this.historySnapshot() : null;
+        try {
+          const value = await original(...args);
+          if (before) {
+            const after = this.historySnapshot(),
+              changes: NonNullable<PlanningHistoryEvent["changes"]> = {};
+            for (const key of new Set([
+              ...Object.keys(before),
+              ...Object.keys(after),
+            ])) {
+              const b = before[key]?.value ?? null,
+                n = after[key]?.value ?? null;
+              if (JSON.stringify(b) !== JSON.stringify(n))
+                changes[key] = {
+                  kind: (after[key] ?? before[key]).kind,
+                  before: b,
+                  after: n,
+                };
+            }
+            if (Object.keys(changes).length) {
+              const a =
+                method === "applyPlans"
+                  ? (args[3]?.action ?? action)
+                  : method === "applyTransfer"
+                    ? args[0].mode === "swap"
+                      ? "swap"
+                      : "paste"
+                    : action;
+              const actor = this.me();
+              const count = Object.keys(changes).length;
+              this.historyEvents.unshift({
+                id: crypto.randomUUID(),
+                actor_id: actor.id,
+                actor_name: actor.name,
+                action: a,
+                created_at: new Date().toISOString(),
+                imported: false,
+                summary: {
+                  en: `${actor.name} updated planning (${count} changes) using “${historyActionLabel(a, "en")}”.`,
+                  es: `${actor.name} ha actualizado la planificación (${count} cambios) usando «${historyActionLabel(a, "es")}».`,
+                },
+                changes,
+              });
+            }
+            this.historyEvents = this.historyEvents.filter(
+              (e) => Date.parse(e.created_at) >= Date.now() - 90 * 86400000,
+            );
+            this.persistDemo();
+          }
+          return value;
+        } finally {
+          this.historyDepth--;
+        }
+      };
+    }
+  }
+  async planningHistory(
+    filters: HistoryFilters = {},
+    cursor: HistoryCursor | null = null,
+  ): Promise<PlanningHistoryPage> {
+    this.me();
+    const events = this.historyEvents
+      .filter(
+        (e) =>
+          Date.parse(e.created_at) >= Date.now() - 90 * 86400000 &&
+          (!filters.actor ||
+            e.actor_name
+              .toLocaleLowerCase()
+              .includes(filters.actor.toLocaleLowerCase())) &&
+          (!filters.action || e.action === filters.action) &&
+          (!filters.from || e.created_at >= filters.from) &&
+          (!filters.until || e.created_at < filters.until) &&
+          (!cursor ||
+            e.created_at < cursor.created_at ||
+            (e.created_at === cursor.created_at && e.id < cursor.id)),
+      )
+      .sort(
+        (a, b) =>
+          b.created_at.localeCompare(a.created_at) || b.id.localeCompare(a.id),
+      );
+    const selected = events.slice(0, 50).map((e) => ({
+      ...e,
+      changes: undefined,
+      change_count: Object.keys(e.changes ?? {}).length,
+    }));
+    const last = selected.at(-1);
+    return {
+      events: structuredClone(selected),
+      next_cursor:
+        events.length > 50 && last
+          ? { id: last.id, created_at: last.created_at }
+          : null,
+      complete_since: this.historyStarted,
+    };
+  }
+  async planningHistoryEvent(id: string) {
+    this.me();
+    const event = this.historyEvents.find(
+      (e) =>
+        e.id === id && Date.parse(e.created_at) >= Date.now() - 90 * 86400000,
+    );
+    if (!event) throw new DomainError("history_event_unavailable");
+    return structuredClone(event);
   }
   private persistDemo() {
     try {
@@ -391,6 +589,9 @@ export class PreviewRepository implements Repository {
           eggPurchasing: this.eggPurchasing,
           recipeReviews: this.recipeReviews,
           mealTimes: this.mealTimes,
+          historyEvents: this.historyEvents,
+          historyStarted: this.historyStarted,
+          historyOperations: [...this.historyOperations],
           serial: this.serial,
           receipts: [...this.receipts],
           language: this.me().profile?.language ?? "en",
@@ -866,8 +1067,24 @@ export class PreviewRepository implements Repository {
     this.syncPlans();
     this.autoShopping();
   }
-  async applyPlans(batch: MealPlan[], revision: number, replace: boolean) {
+  async applyPlans(
+    batch: MealPlan[],
+    revision: number,
+    replace: boolean,
+    operation?: HistoryOperation,
+  ) {
     this.me();
+    const request = JSON.stringify({
+      batch,
+      revision,
+      replace,
+      action: operation?.action,
+    });
+    if (operation && this.historyOperations.has(operation.id)) {
+      if (this.historyOperations.get(operation.id) !== request)
+        throw new DomainError("operation_mismatch");
+      return;
+    }
     if (revision !== this.serial) throw new DomainError("stale_plan");
     const originals = structuredClone(this.library.plans),
       plans = originals.filter(
@@ -911,6 +1128,7 @@ export class PreviewRepository implements Repository {
     this.serial++;
     this.syncPlans();
     this.autoShopping();
+    if (operation) this.historyOperations.set(operation.id, request);
   }
   async saveMealTimes(times: MealTimes) {
     if (!validMealTimes(times)) throw new DomainError("invalid_meal_times");

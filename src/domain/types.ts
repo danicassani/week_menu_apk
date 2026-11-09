@@ -205,10 +205,18 @@ export interface Repository {
     revision: number,
     archive: boolean,
   ): Promise<void>;
+  planningHistory(
+    filters?: import("./planning-history").HistoryFilters,
+    cursor?: import("./planning-history").HistoryCursor | null,
+  ): Promise<import("./planning-history").PlanningHistoryPage>;
+  planningHistoryEvent(
+    id: string,
+  ): Promise<import("./planning-history").PlanningHistoryEvent>;
   applyPlans(
     batch: MealPlan[],
     revision: number,
     replace: boolean,
+    operation?: import("./planning-history").HistoryOperation,
   ): Promise<void>;
   deleteMeal(day: string, type: MealType, revision: number): Promise<void>;
   deleteWeek(start: string, revision: number): Promise<void>;

@@ -23,6 +23,7 @@ import { errorMessage, mealLabel, translator } from "../lib/i18n";
 import type { ViewProps } from "../pages/views";
 import type { MealPlan, PlannedRecipe } from "../domain/planning";
 export type MenuDraft = {
+  history_action?: "suggestions" | "copy_week";
   id: string;
   plans: MealPlan[];
   revision: number;

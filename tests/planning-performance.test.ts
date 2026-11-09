@@ -242,11 +242,59 @@ begin update app_private.projection_probe set calls=calls+1;return query ${body}
         .filter((i: any) => i.source === "generated")
         .map((i: any) => [i.key, i.quantity]),
     );
+    // History must retain the one-projection performance repair and compact reads.
+    await db.exec("reset role");
+    for (const file of files.filter((f) => f >= "202611090025"))
+      await db.exec(readFileSync("supabase/migrations/" + file, "utf8"));
+    await db.exec("update app_private.projection_probe set calls=0");
+    await actor();
+    const historyBatch = batch.map((m) => ({ ...m, day: addDays(m.day, 14) }));
+    const historyRevision = (await rpc("get_planning_library")).revision;
+    await db.exec("reset role");
+    await db.exec("update app_private.projection_probe set calls=0");
+    await actor();
+    const historyOperation = crypto.randomUUID();
+    const historyStart = performance.now();
+    await rpc("apply_meal_plans_with_history", [
+      historyOperation,
+      "suggestions",
+      historyBatch,
+      historyRevision,
+      false,
+    ]);
+    const historyElapsed = performance.now() - historyStart;
+    const history = await rpc("get_planning_history", [{}, null]);
+    expect(history.events).toHaveLength(1);
+    expect(history.events[0].change_count).toBe(21);
+    expect(JSON.stringify(history)).not.toContain("recipe_snapshot");
+    expect(JSON.stringify(history).length).toBeLessThan(2000);
+    const event = await rpc("get_planning_history_event", [
+      history.events[0].id,
+    ]);
+    expect(Object.keys(event.changes)).toHaveLength(21);
+    expect(JSON.stringify(event)).not.toContain("recipe_snapshot");
+    await rpc("apply_meal_plans_with_history", [
+      historyOperation,
+      "suggestions",
+      historyBatch,
+      historyRevision,
+      false,
+    ]);
+    await db.exec("reset role");
+    expect(
+      (
+        await db.query<{ calls: number }>(
+          "select calls from app_private.projection_probe",
+        )
+      ).rows[0].calls,
+    ).toBe(1);
+    await actor();
     mkdirSync("test-results", { recursive: true });
     writeFileSync(
       "test-results/planning-performance.json",
       JSON.stringify({
         elapsed,
+        historyElapsed,
         secondElapsed,
         afterElapsed,
         shoppingMs,
