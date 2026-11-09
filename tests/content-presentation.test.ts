@@ -1,6 +1,7 @@
 import { it, expect } from "vitest";
 import { ingredients, recipes } from "../src/lib/content";
 import {
+  substitutionText,
   ingredientNames,
   ingredientText,
   ingredientMatches,
@@ -86,4 +87,24 @@ it("hides known boilerplate while preserving private methods, notes, reference q
   const privateCopy = { ...structuredClone(original), id: "private-recipe" };
   expect(recipePresentation(privateCopy)).toBe(privateCopy);
   expect(recipes).toEqual(before);
+});
+
+it("shows only named substitutions in both languages, including custom ingredients", () => {
+  const items = [
+    { id: "custom-chicken", name: { en: "Chicken", es: "Pollo" } },
+    { id: "custom-tofu", name: { en: "Tofu", es: "Tofu" } },
+  ];
+  const swap = {
+    from: "custom-chicken",
+    to: "custom-tofu",
+    instructions: {
+      en: "Omit frying raw chicken.",
+      es: "Omite freír pollo crudo.",
+    },
+  };
+  expect(substitutionText(swap, items, "es")).toBe("Sustituye Pollo por Tofu.");
+  expect(substitutionText(swap, items, "en")).toBe(
+    "Replace Chicken with Tofu.",
+  );
+  expect(swap.instructions.es).toContain("freír");
 });

@@ -1,4 +1,7 @@
-import { ingredientText } from "../domain/content-presentation";
+import {
+  ingredientText,
+  substitutionText,
+} from "../domain/content-presentation";
 import { useEffect, useRef, useState } from "react";
 import { Copy, ClipboardPaste, ArrowDownUp, X } from "lucide-react";
 import { IconAction } from "./icon-action";
@@ -432,7 +435,11 @@ export function useMealTransfers(
                       </ul>
                       {p.substitutions.map((s, i) => (
                         <p key={i} className="note">
-                          {text(s.instructions)}
+                          {substitutionText(
+                            s,
+                            lib?.ingredients ?? [],
+                            v.language,
+                          )}
                         </p>
                       ))}
                     </details>

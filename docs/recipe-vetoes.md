@@ -4,7 +4,7 @@ A recipe's catalogue reader offers **Veto recipe / Vetar receta**. A veto applie
 
 Vetoed recipes remain in the ordinary catalogue, including search and paging. Their cards use a transparent background, dashed border, muted title and faded emoji, with a **Vetoed / Vetada** label. Text stays readable, and cards remain enabled for ordinary clicks, keyboard activation and the existing copy context action. This is separate from archiving, which retains its existing hide/show behavior.
 
-Manual selection, recipe copying and explicitly copying a previous week remain available. Vetoing a recipe never removes or recalculates saved meals or shopping contributions. If no eligible suggestion exists, the existing planner explains the gap rather than silently choosing a vetoed recipe. A shared revision change invalidates outdated suggestion reviews through the existing concurrency guards.
+The [planned-meal review update](planned-meal-review.md) now excludes vetoed recipes from the saved-meal selector. Saved recipes remain readable and editable in Recipes; copying and previous-week workflows keep their existing validation. Vetoing a recipe never removes or recalculates saved meals or shopping contributions. If no eligible suggestion exists, the existing planner explains the gap rather than silently choosing a vetoed recipe. A shared revision change invalidates outdated suggestion reviews through the existing concurrency guards.
 
 The subsequent [recipe-review update](recipe-review.md) adds a single-write fast path that preserves loaded catalogue cards and introduces Recipe Tinder with personal progress. Its current frontend also requires migration 20.
 
