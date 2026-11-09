@@ -1,6 +1,8 @@
 # Version 4 — requested backlog
 
-Status: version-four planning started after all four version-three implementation milestones were merged. All four implementation milestones are complete; milestone 4 is ready for review. Deployment and hosted acceptance remain release steps. See the [design and confirmed decisions](design.md) and [delivery milestones](milestones.md). All project documentation remains in English; the application continues supporting English and Spanish.
+**Version boundary:** V4 closed with merged PR #34. All subsequent requested changes belong to [Version 5](../version-5/README.md). The milestone status and evidence below record V4 at delivery; they do not classify later changes as V4.
+
+Status: version-four planning started after all four version-three implementation milestones were merged. All four V4 implementation milestones were completed and merged at PR #34. Deployment and hosted acceptance remain separate from this source-version closure. See the [design and confirmed decisions](design.md) and [delivery milestones](milestones.md). All project documentation remains in English; the application continues supporting English and Spanish.
 
 - [Milestone 1 implementation and verification](milestone-1.md).
 - [Milestone 2 implementation, migration and verification](milestone-2.md).

@@ -2,7 +2,7 @@
 
 Open Profile and activate **AT A GLANCE / DE UN VISTAZO** five times within five seconds. This works with touch, mouse and keyboard. Navigation, household changes and backgrounding reset the sequence. Every active household member can read the same history; the gesture is an access shortcut, not authorization. History is online-only and read-only.
 
-The newest 50 summaries load first. Filter by author name/ID, action and action dates, load older pages, refresh, or expand an event to fetch its details. Times are stored by the server in UTC and displayed in the device timezone, identified in the panel. The displayed meal dates identify the planning week independently of the time when it was edited.
+Filters are collapsed by default. The newest 50 summaries load first. Filter by author name/ID, action and action dates, load older pages, refresh, or expand an event to fetch a concise list of actual differences. Recipe replacements show only old/new recipe names, meal date and breakfast/lunch/dinner, without portions, ingredients or calorie totals. Unchanged meals and fields are omitted; the same recipe changing for both people in a shared meal appears once. Quantity-only edits show only changed ingredient amounts. Imported correction arrays and current normalized records use the same comparison. The stored audit evidence is unchanged. Times are stored by the server in UTC and displayed in the device timezone, identified in the panel. The displayed meal dates identify the planning week independently of the time when it was edited.
 
 ## What is recorded
 

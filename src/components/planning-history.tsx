@@ -1,6 +1,7 @@
+import { historyDiff } from "../domain/history-diff";
 import { useEffect, useRef, useState } from "react";
 import { Modal, Button } from "./ui";
-import { errorMessage, translator, mealLabel } from "../lib/i18n";
+import { errorMessage, translator } from "../lib/i18n";
 import {
   historyActionLabel,
   HISTORY_ACTIONS,
@@ -127,62 +128,72 @@ export function PlanningHistoryPanel({
           {new Date(page.complete_since).toLocaleString(language)}
         </p>
       )}
-      <form
-        className="history-filters"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const data = new FormData(e.currentTarget);
-          const from = String(data.get("from") || ""),
-            until = String(data.get("until") || "");
-          setFilters({
-            actor: String(data.get("actor") || ""),
-            action: String(data.get("action") || ""),
-            from: from ? new Date(from + "T00:00:00").toISOString() : "",
-            until: until
-              ? new Date(
-                  new Date(until + "T00:00:00").setDate(
-                    new Date(until + "T00:00:00").getDate() + 1,
-                  ),
-                ).toISOString()
-              : "",
-          });
-        }}
-      >
-        <div className="form-grid">
-          <label>
-            {t("Author", "Autor")}
-            <input
-              name="actor"
-              placeholder={t(
-                "Name or all authors",
-                "Nombre o todos los autores",
-              )}
-            />
-          </label>
-          <label>
-            {t("Action", "Acción")}
-            <select name="action">
-              <option value="">{t("All actions", "Todas las acciones")}</option>
-              {Object.keys(HISTORY_ACTIONS).map((a) => (
-                <option key={a} value={a}>
-                  {historyActionLabel(a, language)}
+      <details className="history-filter-panel">
+        <summary>
+          {t("Filters", "Filtros")}
+          {Object.values(filters).some(Boolean)
+            ? ` · ${t("active", "activos")}`
+            : ""}
+        </summary>
+        <form
+          className="history-filters"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const data = new FormData(e.currentTarget);
+            const from = String(data.get("from") || ""),
+              until = String(data.get("until") || "");
+            setFilters({
+              actor: String(data.get("actor") || ""),
+              action: String(data.get("action") || ""),
+              from: from ? new Date(from + "T00:00:00").toISOString() : "",
+              until: until
+                ? new Date(
+                    new Date(until + "T00:00:00").setDate(
+                      new Date(until + "T00:00:00").getDate() + 1,
+                    ),
+                  ).toISOString()
+                : "",
+            });
+          }}
+        >
+          <div className="form-grid">
+            <label>
+              {t("Author", "Autor")}
+              <input
+                name="actor"
+                placeholder={t(
+                  "Name or all authors",
+                  "Nombre o todos los autores",
+                )}
+              />
+            </label>
+            <label>
+              {t("Action", "Acción")}
+              <select name="action">
+                <option value="">
+                  {t("All actions", "Todas las acciones")}
                 </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {t("Changes from", "Cambios desde")}
-            <input type="date" name="from" />
-          </label>
-          <label>
-            {t("Changes until", "Cambios hasta")}
-            <input type="date" name="until" />
-          </label>
-        </div>
-        <Button type="submit" busy={loading}>
-          {t("Filter history", "Filtrar historial")}
-        </Button>
-      </form>
+                {Object.keys(HISTORY_ACTIONS).map((a) => (
+                  <option key={a} value={a}>
+                    {historyActionLabel(a, language)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label>
+              {t("Changes from", "Cambios desde")}
+              <input type="date" name="from" />
+            </label>
+            <label>
+              {t("Changes until", "Cambios hasta")}
+              <input type="date" name="until" />
+            </label>
+          </div>
+          <Button type="submit" busy={loading}>
+            {t("Filter history", "Filtrar historial")}
+          </Button>
+        </form>
+      </details>
       {loading && (
         <p role="status">{t("Loading history…", "Cargando historial…")}</p>
       )}
@@ -309,163 +320,31 @@ function HistoryEntry({
             </Button>
           </div>
         )}
-        {detail &&
-          Object.entries(detail).map(([key, change]) => (
-            <section className="history-change" key={key}>
-              <h3>{kindLabel(change.kind, language)}</h3>
-              {change.kind !== "meal_plans" && change.kind !== "correction" && (
-                <p className="fine-print">
-                  {t(
-                    "Preferences and catalogue changes affect subsequent selections; saved-meal changes are listed separately.",
-                    "Los cambios de preferencias y catálogo afectan a las próximas selecciones; los cambios de comidas guardadas aparecen por separado.",
-                  )}
-                </p>
-              )}
-              <div className="history-comparison">
-                <div>
-                  <h4>{t("Before", "Antes")}</h4>
-                  <HistoryValue value={change.before} language={language} />
-                </div>
-                <div>
-                  <h4>{t("After", "Después")}</h4>
-                  <HistoryValue value={change.after} language={language} />
-                </div>
-              </div>
-            </section>
-          ))}
+        {detail && <HistoryDiff changes={detail} language={language} />}
       </details>
     </li>
   );
 }
-const labels: Record<string, [string, string]> = {
-  member: ["Person", "Persona"],
-  day: ["Date", "Fecha"],
-  type: ["Meal", "Comida"],
-  portions: ["Portions", "Porciones"],
-  recipe: ["Recipe", "Receta"],
-  name: ["Name", "Nombre"],
-  description: ["Description", "Descripción"],
-  eating_out: ["Eating out", "Comer fuera"],
-  kcal: ["Calories", "Calorías"],
-  budget: ["Budget", "Presupuesto"],
-  dessert: ["Dessert", "Postre"],
-  lines: ["Ingredients", "Ingredientes"],
-  quantity: ["Quantity", "Cantidad"],
-  unit: ["Unit", "Unidad"],
-  diet: ["Diet", "Dieta"],
-  excluded_ingredients: ["Excluded ingredients", "Ingredientes excluidos"],
-  daily_kcal: ["Daily target", "Objetivo diario"],
-  budgets: ["Budgets", "Presupuestos"],
-  banned: ["Vetoed", "Vetada"],
-  week_start: ["Week starts on", "La semana empieza en"],
-  archived: ["Archived", "Archivado"],
-  components: ["Recipe", "Receta"],
-  ingredients: ["Ingredients", "Ingredientes"],
-  instructions: ["Method", "Preparación"],
-  nutrition_per_100g: ["Nutrition per 100 g", "Nutrición por 100 g"],
-  energy_kcal: ["Calories", "Calorías"],
-  protein_g: ["Protein (g)", "Proteínas (g)"],
-  fat_g: ["Fat (g)", "Grasa (g)"],
-  carbohydrate_g: ["Carbohydrates (g)", "Hidratos de carbono (g)"],
-  fibre_aoac_g: ["Fibre (g)", "Fibra (g)"],
-  state: ["Food state", "Estado del alimento"],
-  optional: ["Optional", "Opcional"],
-  default_included: ["Included by default", "Incluido por defecto"],
-  conversions: ["Units", "Unidades"],
-  grams_per_unit: ["Grams per unit", "Gramos por unidad"],
-  meal_types: ["Meal types", "Tipos de comida"],
-  reference_servings: ["Reference servings", "Raciones de referencia"],
-  dietary_patterns: ["Dietary patterns", "Patrones alimentarios"],
-  ingredient_id: ["Ingredient", "Ingrediente"],
-  data: ["Content", "Contenido"],
-  breakfast: ["Breakfast", "Desayuno"],
-  lunch: ["Lunch", "Almuerzo"],
-  dinner: ["Dinner", "Cena"],
-};
-function kindLabel(kind: string, language: Language) {
-  return ({
-    meal_plans: ["Meal", "Comida"],
-    profiles: ["Dietary preferences", "Preferencias alimentarias"],
-    targets: ["Target and budgets", "Objetivo y presupuestos"],
-    budget_overrides: ["Meal budget", "Presupuesto de comida"],
-    recipe_vetoes: ["Recipe veto", "Veto de receta"],
-    food_items: ["Ingredient", "Ingrediente"],
-    saved_recipes: ["Recipe", "Receta"],
-    household: ["Week start", "Inicio de semana"],
-    correction: ["Historical correction", "Corrección histórica"],
-  }[kind] ?? ["Change", "Cambio"])[language === "es" ? 1 : 0];
-}
-function HistoryValue({
-  value,
+function HistoryDiff({
+  changes,
   language,
-  field,
 }: {
-  value: unknown;
+  changes: NonNullable<PlanningHistoryEvent["changes"]>;
   language: Language;
-  field?: string;
 }) {
-  const t = translator(language);
-  if (value === null || value === undefined)
-    return <span>{t("Not present", "No existe")}</span>;
-  if (typeof value === "boolean")
-    return <span>{value ? t("Yes", "Sí") : t("No", "No")}</span>;
-  if (
-    typeof value === "string" &&
-    ["omnivore", "pescatarian", "vegetarian", "vegan"].includes(value)
-  )
-    return (
-      <span>
-        {
-          (
-            {
-              omnivore: ["Omnivorous", "Omnívora"],
-              pescatarian: ["Pescatarian", "Pescetariana"],
-              vegetarian: ["Vegetarian", "Vegetariana"],
-              vegan: ["Vegan", "Vegana"],
-            } as Record<string, string[]>
-          )[value][language === "es" ? 1 : 0]
-        }
-      </span>
-    );
-  if (typeof value !== "object")
-    return (
-      <span>
-        {field === "type"
-          ? mealLabel(String(value), language)
-          : field === "week_start"
-            ? value === 1
-              ? t("Monday", "Lunes")
-              : t("Sunday", "Domingo")
-            : String(value)}
-      </span>
-    );
-  if (Array.isArray(value))
-    return value.length ? (
-      <ul>
-        {value.map((v, i) => (
-          <li key={i}>
-            <HistoryValue value={v} language={language} />
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <span>—</span>
-    );
-  const record = value as Record<string, unknown>;
-  if (typeof record.en === "string" || typeof record.es === "string")
-    return <span>{String(record[language] || record.en || record.es)}</span>;
-  return (
-    <dl>
-      {Object.entries(record)
-        .filter(([key]) => key in labels)
-        .map(([key, v]) => (
-          <div key={key}>
-            <dt>{labels[key][language === "es" ? 1 : 0]}</dt>
-            <dd>
-              <HistoryValue value={v} language={language} field={key} />
-            </dd>
-          </div>
-        ))}
-    </dl>
+  const lines = historyDiff(changes, language);
+  return lines.length ? (
+    <ul className="history-diff">
+      {lines.map((line) => (
+        <li key={line}>{line}</li>
+      ))}
+    </ul>
+  ) : (
+    <p className="fine-print">
+      {translator(language)(
+        "No specific changes were recorded in this event.",
+        "No se registraron diferencias concretas en este evento.",
+      )}
+    </p>
   );
 }

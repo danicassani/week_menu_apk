@@ -1,6 +1,6 @@
 # Version 4 milestone 4 — device themes and release review
 
-Status: implemented for review. This completes the four V4 implementation milestones and V4-02. Merge/deployment and hosted physical-device acceptance are separate release steps.
+Status: V4 implementation completed and merged in PR #34. This closes the four V4 implementation milestones and V4-02. All subsequent requested changes are grouped as [Version 5](../version-5/README.md). The evidence below remains the V4 delivery record; hosted deployment and physical-device acceptance are separate from source integration.
 
 ## Seven families, fourteen variants
 

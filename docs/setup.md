@@ -1,6 +1,6 @@
 # Run, configure and verify the app
 
-All four version-four implementation milestones are ready for review; see the [V4 release report](version-4/milestone-4.md). The current frontend requires successful migrations through 27, including the household recipe-veto extension and menu-save repair; milestone 4 itself added no SQL or environment variable. Existing projects should apply only pending migrations and must not repeat successful scripts. Earlier milestone reports below retain the incremental rollout details.
+The current product change grouping is **V5**, covering all work after V4 closed at PR #34. See [V5 scope, delivery status and activation](version-5/README.md); the [V4 release report](version-4/milestone-4.md) is historical baseline evidence. The current frontend requires successful migrations through 27 and the planning-history retention job. Existing projects should apply only pending migrations and must not repeat successful scripts. Earlier milestone reports below retain their original rollout details.
 
 For version 3 milestone 1, apply [migration 13](../supabase/migrations/202611070013_budget_commits_and_shopping_expiry.sql) after 1–12 and before deploying the matching client. See [the milestone report](version-3/milestone-1.md) for budget acknowledgements, shopping expiry and offline behavior.
 
@@ -40,13 +40,13 @@ npm run test:pwa
 npm run test:release
 ```
 
-The [current release verification report](version-4/milestone-4.md) separates executed checks from pending real-device/Google-session acceptance. `npm run check:deployment -- https://week-menu-apk.pages.dev` audits only public hosting files and headers.
+The [V5 verification and status record](version-5/README.md#verification-and-status) distinguishes integrated checks, pending changes and hosted/physical-device acceptance. `npm run check:deployment -- https://week-menu-apk.pages.dev` audits only public hosting files and headers.
 
 Browser checks use `/usr/bin/chromium` when installed, otherwise Playwright's Chromium. Set `CHROMIUM_PATH` to override. Unit/integration tests run PostgreSQL through PGlite, including the actual migrations, role grants and row-level policies. They do not substitute for testing the hosted OAuth flow.
 
 ## Supabase setup
 
-**Current V4:** one Supabase project serves multiple isolated households, with one household per person. Any verified Google account can create its own household or accept an invitation. Keep `public` as the exposed Data API schema; do not expose `app_private`. Apply pending migrations through 25 as the project administrator before deploying the current client. Migration 19 adds household recipe vetoes; [migration 20](../supabase/migrations/202611080020_recipe_review.sql) adds personal recipe-review progress and the fast veto acknowledgement. See the [recipe review rollout](recipe-review.md#rollout). [Migration 21](../supabase/migrations/202611080021_remove_variety.sql) removes ingredient repetition constraints; see the [current planning rules](remove-repetition-rules.md). [Migration 22](../supabase/migrations/202611080022_sourced_recipes.sql) adds the [source-backed recipe expansion](../content/expansions/README.md).
+**Current V5:** one Supabase project serves multiple isolated households, with one household per person. Any verified Google account can create its own household or accept an invitation. Keep `public` as the exposed Data API schema; do not expose `app_private`. Apply pending migrations through 27 and install the history retention job as the project administrator before deploying the current client. Migration 19 adds household recipe vetoes; [migration 20](../supabase/migrations/202611080020_recipe_review.sql) adds personal recipe-review progress and the fast veto acknowledgement. See the [recipe review rollout](recipe-review.md#rollout). [Migration 21](../supabase/migrations/202611080021_remove_variety.sql) removes ingredient repetition constraints; see the [current planning rules](remove-repetition-rules.md). [Migration 22](../supabase/migrations/202611080022_sourced_recipes.sql) adds the [source-backed recipe expansion](../content/expansions/README.md).
 
 For calorie warnings that disagree with the whole-kcal values shown on screen, deploy the frontend comparison fix and apply [migration 25](../supabase/migrations/202611090025_calorie_warning_precision.sql) after 1–24 to align server-generated warning flags. Calculated/stored energy remains precise; see the [comparison contract and regression coverage](calorie-warning-precision.md).
 
@@ -54,7 +54,7 @@ For `57014: canceling statement due to statement timeout` when saving a week, ap
 
 **Migration 21 failed after 22 was already applied:** run [migration 23](../supabase/migrations/202611080023_variety_compatibility_repair.sql) directly to complete the missing changes. Do not replay 21 or 22 afterward. See the [confirmed cause, supported states and verification](variety-migration-repair.md). Successful installations can also apply 23; it is a no-op when the updates are already complete.
 
-**Fresh-install foundation prerequisite:** migration 6 deliberately requires an initialized original household. Follow the [v2 migration rollout](version-2/milestone-1.md#review-and-rollout) after the original foundation procedure below. The numbered procedure describes the legacy single-household stage and its owner bootstrap, not the current V4 access policy. Do not replay migrations 1–5 on an existing database.
+**Fresh-install foundation prerequisite:** migration 6 deliberately requires an initialized original household. Follow the [v2 migration rollout](version-2/milestone-1.md#review-and-rollout) after the original foundation procedure below. The numbered procedure describes the legacy single-household stage and its owner bootstrap, not the current V5 access policy. Do not replay migrations 1–5 on an existing database.
 
 ### Legacy foundation stage: migrations 1–5
 
