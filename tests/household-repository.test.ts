@@ -256,3 +256,14 @@ it("distinguishes a PostgreSQL statement timeout from connectivity failures with
     "The database took too long",
   );
 });
+it("binds personal meal-time saves to the authenticated household and member", async () => {
+  const { repo, request } = setup();
+  await repo.load("Europe/Madrid");
+  const times = { breakfast: "08:30", lunch: "14:00", dinner: "21:00" };
+  await repo.saveMealTimes(times);
+  expect(request).toHaveBeenLastCalledWith("save_my_meal_times", {
+    p_household_id: "home-a",
+    p_membership_id: "member-a",
+    p_times: times,
+  });
+});

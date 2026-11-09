@@ -1489,3 +1489,48 @@ it("resizes planned quantities to current budgets atomically, with automatic sho
   expect(updated.quantity).toBeGreaterThan(grocery.quantity!);
   expect(updated.checked).toBe(false);
 });
+
+it("persists personal meal times, validates input and isolates household context", async () => {
+  await actor();
+  const defaults = { breakfast: "09:00", lunch: "14:00", dinner: "21:00" };
+  const before = await snapshot();
+  expect(
+    before.members.find((m) => m.id === home.membership_id)?.meal_times,
+  ).toEqual(defaults);
+  const times = { ...defaults, breakfast: "08:30" };
+  await rpc("save_my_meal_times", [times]);
+  expect(
+    (await snapshot()).members.find((m) => m.id === home.membership_id)
+      ?.meal_times,
+  ).toEqual(times);
+  for (const invalid of [
+    null,
+    {},
+    [],
+    { ...times, dinner: "24:00" },
+    { ...times, lunch: 14 },
+    { ...times, extra: "00:00" },
+  ])
+    await expect(rpc("save_my_meal_times", [invalid])).rejects.toThrow(
+      "invalid_meal_times",
+    );
+  await actor(b);
+  expect(
+    (
+      await call<HouseholdState>("get_household_snapshot", [
+        other.household_id,
+        other.membership_id,
+      ])
+    ).members.find((m) => m.id === other.membership_id)?.meal_times,
+  ).toEqual(defaults);
+  await expect(rpc("save_my_meal_times", [defaults])).rejects.toThrow();
+  await actor();
+  expect(
+    (await snapshot()).members.find((m) => m.id === home.membership_id)
+      ?.meal_times,
+  ).toEqual(times);
+  await expect(
+    db.exec("update public.members set meal_times='{}'::jsonb"),
+  ).rejects.toThrow("permission denied");
+  await rpc("save_my_meal_times", [defaults]);
+});

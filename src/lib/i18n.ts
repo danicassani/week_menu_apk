@@ -2,6 +2,14 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  invalid_meal_times: [
+    "Choose a valid time for breakfast, lunch and dinner.",
+    "Elige una hora válida para el desayuno, el almuerzo y la cena.",
+  ],
+  meal_times_unavailable: [
+    "Meal-time settings are unavailable. Apply migration 26 and try again.",
+    "Los horarios aún no están disponibles. Aplica la migración 26 y vuelve a intentarlo.",
+  ],
   database_timeout: [
     "The database took too long and canceled the operation. Try again shortly.",
     "La base de datos ha tardado demasiado y ha cancelado la operación. Inténtalo de nuevo en unos instantes.",

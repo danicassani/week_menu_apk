@@ -1,4 +1,5 @@
 import { ingredientText } from "../domain/content-presentation";
+import { useMealClock } from "../lib/use-meal-clock";
 import { Popover } from "../components/popover";
 import { AvatarPicker } from "../components/avatar-picker";
 import { PlannerSettings } from "../components/planner-settings";
@@ -178,8 +179,13 @@ export function Dashboard(v: ViewProps) {
     meals = v.s.meals.filter(
       (m) => m.member_id === v.member.id && m.day === v.day,
     );
+  const now = useMealClock(v.s.server_now);
   const summary = v.member.profile
-    ? daySummary(v.member.profile, entries, meals)
+    ? daySummary(v.member.profile, entries, meals, {
+        now,
+        time_zone: v.member.time_zone,
+        meal_times: v.member.meal_times,
+      })
     : null;
   const totalBudget = mealTypes.reduce(
     (n, m) =>
@@ -300,8 +306,8 @@ export function Dashboard(v: ViewProps) {
                     trigger={<Info size={17} />}
                   >
                     {t(
-                      "Planned meals count as assumed intake. Empty slots make the day incomplete; budgets are not consumed calories.",
-                      "Las comidas planificadas cuentan como ingesta asumida. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
+                      "Planned meals count as assumed intake at your configured meal times. Empty slots make the day incomplete; budgets are not consumed calories.",
+                      "Las comidas planificadas cuentan como ingesta asumida a las horas que configures. Las comidas vacías dejan el día incompleto; los presupuestos no son calorías consumidas.",
                     )}
                     {v.preview && (
                       <span>
@@ -451,8 +457,8 @@ export function Dashboard(v: ViewProps) {
             <p>
               {summary?.complete
                 ? t(
-                    "Includes assumed planned meals",
-                    "Incluye las comidas planificadas",
+                    "Includes meals whose scheduled time has passed",
+                    "Incluye las comidas cuya hora ya ha llegado",
                   )
                 : t(
                     "Provisional · some meals are missing",

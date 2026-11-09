@@ -1,3 +1,4 @@
+import { MealTimeSettings } from "./meal-time-settings";
 import { ThemeSettings } from "./theme-settings";
 import { useState } from "react";
 import { Button } from "./ui";
@@ -15,11 +16,12 @@ export function PlannerSettings(v: ViewProps) {
       <h2 id="planner-settings-title">{t("Settings", "Configuración")}</h2>
       <p className="fine-print">
         {t(
-          "Week start applies to the household. Recipe-update prompts are personal.",
-          "El inicio de semana se aplica al hogar. Los avisos para actualizar recetas son personales.",
+          "Week start applies to the household. Meal times and recipe-update prompts are personal.",
+          "El inicio de semana se aplica al hogar. Los horarios y los avisos para actualizar recetas son personales.",
         )}
       </p>
       <ThemeSettings language={v.language} />
+      <MealTimeSettings {...v} />
       <div className="form-grid">
         <label>
           {t("Text size", "Tamaño del texto")}
