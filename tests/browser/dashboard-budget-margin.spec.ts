@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-test("budgets sit below the daily heading with a responsive green/red margin in light and dark mode", async ({
+test("budgets form one four-column row below the whole daily card in light and dark mode", async ({
   page,
 }) => {
   await page.clock.setFixedTime(new Date("2026-11-03T12:00:00Z"));
@@ -20,12 +20,37 @@ test("budgets sit below the daily heading with a responsive green/red margin in 
         "color",
         mode === "light" ? "rgb(22, 101, 52)" : "rgb(134, 239, 172)",
       );
-      const boxes = await page.locator(".budget-strip").evaluate((el) => {
-        const group = el.firstElementChild!.getBoundingClientRect(),
-          m = el.querySelector(".budget-margin")!.getBoundingClientRect();
-        return { right: group.right, marginLeft: m.left };
-      });
-      expect(boxes.marginLeft).toBeGreaterThanOrEqual(boxes.right - 1);
+      const boxes = await page
+        .locator(".dashboard-budget-strip")
+        .evaluate((el) => {
+          const cells = [...el.querySelector(".budget-values")!.children].map(
+            (cell) => {
+              const box = cell.getBoundingClientRect(),
+                number = cell
+                  .querySelector("b,strong")!
+                  .getBoundingClientRect();
+              return { left: box.left, top: box.top, numberTop: number.top };
+            },
+          );
+          return {
+            cells,
+            top: el.getBoundingClientRect().top,
+            cardBottom: document
+              .querySelector(".target-card")!
+              .getBoundingClientRect().bottom,
+          };
+        });
+      expect(boxes.cells).toHaveLength(4);
+      expect(boxes.top).toBeGreaterThanOrEqual(boxes.cardBottom);
+      for (let i = 1; i < 4; i++) {
+        expect(boxes.cells[i].left).toBeGreaterThan(boxes.cells[i - 1].left);
+        expect(Math.abs(boxes.cells[i].top - boxes.cells[0].top)).toBeLessThan(
+          1,
+        );
+        expect(
+          Math.abs(boxes.cells[i].numberTop - boxes.cells[0].numberTop),
+        ).toBeLessThan(1);
+      }
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -47,6 +72,13 @@ test("budgets sit below the daily heading with a responsive green/red margin in 
   await expect(margin).toHaveCSS("color", "rgb(252, 165, 165)");
   await expect(margin).toContainText("-");
   await page
-    .locator(".target-card")
-    .screenshot({ path: "test-results/dashboard-budget-margin-dark.png" });
+    .getByRole("button", { name: "Switch language", exact: true })
+    .click();
+  await page.setViewportSize({ width: 390, height: 900 });
+  await expect(
+    page.getByRole("group", { name: "Presupuestos personales" }),
+  ).toContainText("Desayuno");
+  await page
+    .locator(".daily-picture")
+    .screenshot({ path: "test-results/dashboard-budget-row-es-dark.png" });
 });

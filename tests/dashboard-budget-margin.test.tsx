@@ -77,7 +77,11 @@ for (const language of ["en", "es"] as const)
     ).toBeNull();
     const heading = document.querySelector(".target-card-heading")!,
       budgets = document.querySelector(".budget-strip")!,
-      number = document.querySelector(".target-number")!;
-    expect(heading.nextElementSibling).toBe(budgets);
-    expect(budgets.nextElementSibling).toBe(number);
+      card = document.querySelector(".target-card")!;
+    expect(card.nextElementSibling).toBe(budgets);
+    expect(card.contains(budgets)).toBe(false);
+    expect(
+      heading.nextElementSibling?.classList.contains("target-number"),
+    ).toBe(true);
+    expect(budgets.querySelector(".budget-values")?.children.length).toBe(4);
   });
