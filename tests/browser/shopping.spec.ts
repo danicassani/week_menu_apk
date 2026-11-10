@@ -22,9 +22,25 @@ test("saved portions automatically generate an upcoming list and retain manual c
   await page.getByRole("button", { name: "Save item", exact: true }).click();
   const manual = page.getByRole("checkbox", {
     name: "Kitchen towels · 2 rolls",
+    includeHidden: true,
   });
   await manual.click();
   await expect(manual).toBeChecked();
+  await expect(manual).not.toBeVisible();
+  const purchased = page.locator(".shopping-purchased details");
+  await expect(purchased).not.toHaveAttribute("open");
+  await expect(purchased.locator("summary")).toHaveText("Purchased 1");
+  await purchased.locator("summary").click();
+  await expect(manual).toBeVisible();
+  await manual.click();
+  await expect(manual).not.toBeChecked();
+  await expect(page.locator(".shopping-purchased")).toHaveCount(0);
+  await expect(manual).toBeVisible();
+  await manual.click();
+  await expect(manual).toBeChecked();
+  await expect(manual).not.toBeVisible();
+  await purchased.locator("summary").click();
+
   await expect(page.locator(".sync-status")).toContainText("Connected");
   await expect(page.getByLabel("From", { exact: true })).toHaveCount(0);
   await expect(

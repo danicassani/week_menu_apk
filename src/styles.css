@@ -3097,6 +3097,32 @@ textarea {
 .shopping-group > h2 {
   margin-bottom: 14px;
 }
+.shopping-purchased summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+}
+.shopping-purchased summary::-webkit-details-marker {
+  display: none;
+}
+.shopping-purchased summary > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.shopping-purchased details[open] > summary > svg {
+  transform: rotate(180deg);
+}
+.shopping-purchased-source {
+  margin-top: 20px;
+}
+.shopping-purchased-source > h2 {
+  margin-bottom: 14px;
+}
 .shopping-checklist {
   list-style: none;
   padding: 0;

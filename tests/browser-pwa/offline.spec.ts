@@ -52,9 +52,13 @@ test("production shell reloads offline, retains checked intents across restart, 
     page.getByRole("heading", { name: "Your household, offline" }),
   ).toBeVisible();
   await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await page.reload();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   const nav = page.getByRole("navigation", { name: "Offline navigation" });
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
   await expect(page.locator(".day-card")).toHaveCount(7);
@@ -71,7 +75,9 @@ test("production shell reloads offline, retains checked intents across restart, 
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Shopping", exact: true })
     .click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await expect(page.locator(".sync-status")).toContainText("Connected");
   await expect(
     page.getByText("Saved on this device · pending sync", { exact: true }),
@@ -98,7 +104,9 @@ test("offline sign-out requires explicitly discarding queued changes and clears 
   await context.setOffline(true);
   await page.reload();
   await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(
     page.getByText(/shopping changes waiting to sync/),
@@ -152,12 +160,16 @@ test("accepting a downloaded app update retains offline pending checks", async (
       page.getByRole("heading", { name: "Your household, offline" }),
     ).toBeVisible();
     await page.getByRole("checkbox").click();
-    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }),
+    ).toBeChecked();
     await page.getByRole("button", { name: "Update & reload" }).click();
     await expect(
       page.getByRole("heading", { name: "Your household, offline" }),
     ).toBeVisible();
-    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }),
+    ).toBeChecked();
     await expect(page.locator("html")).toHaveAttribute("data-colour", "violet");
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
     await expect(
@@ -216,13 +228,17 @@ test("a waiting release cannot replace the active shell before the user accepts 
     ).toBeVisible();
     await context.setOffline(true);
     await page.getByRole("checkbox").click();
-    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }),
+    ).toBeChecked();
     await page.getByRole("button", { name: "Update & reload" }).click();
     await expect(page.locator("html")).toHaveAttribute(
       "data-release-marker",
       "new-release",
     );
-    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }),
+    ).toBeChecked();
     await expect(
       page.getByText("1 pending sync", { exact: true }),
     ).toBeVisible();
@@ -339,7 +355,9 @@ test("missing shell offline shows recovery guidance, preserves queued checks and
   await context.setOffline(true);
   await page.reload();
   await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await page.evaluate(async () => {
     for (const key of await caches.keys()) await caches.delete(key);
   });
@@ -360,7 +378,9 @@ test("missing shell offline shows recovery guidance, preserves queued checks and
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Shopping", exact: true })
     .click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await expect
     .poll(() =>
       page.evaluate(async () => {
@@ -376,7 +396,9 @@ test("missing shell offline shows recovery guidance, preserves queued checks and
   await expect(
     page.getByRole("heading", { name: "Your household, offline" }),
   ).toBeVisible();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
 });
 test("a new worker replaces an incomplete predecessor without an unreachable update button", async ({
   page,
@@ -536,7 +558,9 @@ test("an installed worker stuck on a redirected page upgrades without losing sho
     const old = context.serviceWorkers()[0];
     await context.setOffline(true);
     await page.getByRole("checkbox").click();
-    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }),
+    ).toBeChecked();
     await expect(
       page.getByText("1 pending sync", { exact: true }),
     ).toBeVisible();
@@ -566,7 +590,9 @@ test("an installed worker stuck on a redirected page upgrades without losing sho
     ).toBeVisible();
     // Chrome may auto-reload and legitimately synchronize during the online
     // worker update. The intent must survive, whether still queued or accepted.
-    await expect(page.getByRole("checkbox")).toBeChecked();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }),
+    ).toBeChecked();
   } finally {
     await writeFile("dist/sw.js", original);
   }
@@ -614,6 +640,7 @@ test("complete offline expiry subtracts quantities and preserves pending checks 
   const manual = page.getByRole("checkbox", {
     name: "Coffee for the household · 2 packs",
     exact: true,
+    includeHidden: true,
   });
   await manual.click();
   await expect(manual).toBeChecked();
@@ -632,6 +659,7 @@ test("complete offline expiry subtracts quantities and preserves pending checks 
   ).toHaveCount(0);
   await page.reload();
   await expect(manual).toBeChecked();
+  await page.locator(".shopping-purchased summary").click();
   await expect(
     page.getByText("Saved on this device · pending sync", { exact: true }),
   ).toBeVisible();
@@ -644,7 +672,9 @@ test("legacy range caches request refresh while retaining queued checks", async 
   await context.setOffline(true);
   await page.reload();
   await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   const before = await page.evaluate(
     async () =>
       await new Promise<any>((resolve, reject) => {
@@ -678,8 +708,11 @@ test("legacy range caches request refresh while retaining queued checks", async 
       exact: true,
     }),
   ).toBeVisible();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   expect(before).toHaveLength(1);
+  await page.locator(".shopping-purchased summary").click();
   await expect(
     page.getByText("Saved on this device · pending sync", { exact: true }),
   ).toBeVisible();
@@ -691,7 +724,9 @@ test("legacy range caches request refresh while retaining queued checks", async 
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Shopping", exact: true })
     .click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await expect(
     page.getByText("Saved on this device · pending sync", { exact: true }),
   ).toHaveCount(0);

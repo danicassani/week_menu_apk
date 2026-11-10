@@ -68,7 +68,12 @@ export async function upcomingShoppingScenario(
   await expect(eggRow()).toHaveCount(1);
   const before = await eggRow().innerText();
   await eggRow().getByRole("checkbox").click();
-  await expect(eggRow().getByRole("checkbox")).toBeChecked();
+  await expect(
+    eggRow().getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
+  await expect(
+    eggRow().getByRole("checkbox", { includeHidden: true }),
+  ).not.toBeVisible();
   await expect(page.locator(".sync-status")).toContainText(
     t("Connected", "Con conexión"),
   );
