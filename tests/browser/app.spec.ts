@@ -53,9 +53,12 @@ test("dashboard, profile acceptance, logs, and member permissions", async ({
     page.getByRole("button", { name: "Food", exact: true }),
   ).toHaveCount(0);
   await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Profile", exact: true })
+    .getByRole("button", { name: "Open my profile", exact: true })
     .click();
+  await expect(
+    page.getByRole("button", { name: "Edit profile", exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("View household member").selectOption("noa");
   await expect(page.getByRole("button", { name: "Edit profile" })).toHaveCount(
     0,
   );
@@ -73,7 +76,9 @@ test("owner invitations, recipe preparation, and all five tabs", async ({
   page,
 }) => {
   const nav = page.getByRole("navigation", { name: "Main navigation" });
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Invite member", exact: true })
     .click();
@@ -182,7 +187,9 @@ test("menu actions stay together and planner preferences live in the person's pr
   ).toBe("Recalculate quantities");
   await expect(page.getByLabel("Week starts on")).toHaveCount(0);
   await expect(page.getByLabel("Variety window · days")).toHaveCount(0);
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   await expect(
     page.getByRole("heading", { name: "Settings", exact: true }),
   ).toBeVisible();
@@ -200,7 +207,9 @@ test("menu actions stay together and planner preferences live in the person's pr
   await page.getByRole("button", { name: "Suggest week", exact: true }).click();
   await expect(page.locator(".preview-date-range")).toHaveText("01/11 - 07/11");
   await page.keyboard.press("Escape");
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   await expect(page.getByLabel("Week starts on")).toHaveValue("0");
   await page.getByLabel("View household member").selectOption("noa");
   await expect(
@@ -277,7 +286,9 @@ test("personal text size and emoji preferences survive navigation", async ({
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   await expect(avatar).toContainText("🐱");
   await page
     .getByRole("combobox", { name: "View household member", exact: true })

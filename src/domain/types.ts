@@ -15,7 +15,8 @@ export type Language = "en" | "es";
 export type MealType = "breakfast" | "lunch" | "dinner";
 export type ActivityLevel = "sedentary" | "light" | "active" | "very_active";
 export type Goal = "lose" | "maintain";
-export type Tab = "dashboard" | "menu" | "shopping" | "recipes" | "profile";
+export type Tab =
+  "dashboard" | "menu" | "shopping" | "recipes" | "cooking" | "profile";
 export type Budgets = Record<MealType, number>;
 export interface Profile {
   name: string;
@@ -140,6 +141,8 @@ export interface EntryInput {
   activity_code?: string;
 }
 export interface Repository {
+  getCooking(): Promise<import("./cooking").CookingState>;
+  cookingCommand(command: import("./cooking").CookingCommand): Promise<void>;
   readonly accountId: string;
   readonly offlineId?: string;
   householdAccess?(): Promise<HouseholdAccess>;

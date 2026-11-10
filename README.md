@@ -2,6 +2,7 @@
 
 Household meal-planning PWA: individual breakfasts, shared lunches/dinners with personal portions, calorie budgets, and one shared shopping list. English and Spanish; minimalistic design with seven device-local colour families and light/dark modes.
 
+- [Version 6: shared batch cooking](docs/version-6/README.md)
 - [Version 5: scope, delivery status and activation](docs/version-5/README.md)
 - [Planning change history](docs/planning-change-history.md)
 - [Requested source-backed recipes and import rollout](content/expansions/README.md)
@@ -30,7 +31,7 @@ Household meal-planning PWA: individual breakfasts, shared lunches/dinners with 
 - [Bilingual starter recipe book](content/starter/recipes.md)
 - [Starter food pack, source notice and rebuild instructions](content/starter/README.md)
 
-**Version 5** groups all changes after V4 closed at PR #34: recipe vetoes/review, simpler planning and recipe forms, sourced recipes, save repairs, calorie/budget improvements, configurable intake times and planning history. The [V5 delivery record](docs/version-5/README.md) distinguishes merged changes from the pending Purchased grouping and local concise-history presentation. V4's milestone reports remain historical baseline records. Current source requires migrations through 27 and the history retention job; source integration does not certify hosted deployment or physical-device acceptance.
+**Version 5** groups all changes after V4 closed at PR #34: recipe vetoes/review, simpler planning and recipe forms, sourced recipes, save repairs, calorie/budget improvements, configurable intake times and planning history. The [V5 delivery record](docs/version-5/README.md) preserves that version boundary. Concise history is integrated through PR #49; the Purchased grouping remains the separate PR #46. V4's milestone reports remain historical baseline records. V6 adds [shared batch cooking](docs/version-6/README.md), with Cocina replacing Perfil in navigation while the user emoji retains profile access. Current source requires migrations through 28 and the history retention job; source integration does not certify hosted deployment or physical-device acceptance.
 
 ```sh
 npm ci

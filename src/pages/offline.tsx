@@ -477,8 +477,8 @@ export function OfflineShell({
           ))}
         <p className="offline-limit">
           {t(
-            "Profiles, health logs, menu edits and shopping-list generation need a connection. Browser storage may be cleared by the device; load these views online again if they are missing.",
-            "Los perfiles, registros de salud, ediciones del menú y generación de compra requieren conexión. El dispositivo puede borrar el almacenamiento; vuelve a cargar estas vistas con conexión si faltan.",
+            "Kitchen, profiles, health logs, menu edits and shopping-list generation need a connection. Browser storage may be cleared by the device; load these views online again if they are missing.",
+            "Cocina, los perfiles, registros de salud, ediciones del menú y generación de compra requieren conexión. El dispositivo puede borrar el almacenamiento; vuelve a cargar estas vistas con conexión si faltan.",
           )}
         </p>
       </main>

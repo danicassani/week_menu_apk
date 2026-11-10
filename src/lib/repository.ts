@@ -122,6 +122,8 @@ export class SupabaseRepository implements Repository {
     const { data, error } = response;
     if (error && uncertainMutation && !error.code)
       throw new DomainError("mutation_outcome_unknown");
+    if (error?.code === "PGRST202" && name.includes("cooking"))
+      throw new DomainError("cooking_migration_required");
     if (error?.code === "PGRST202" && name === "apply_meal_plans_with_history")
       throw new DomainError("history_unavailable");
     if (
@@ -181,6 +183,24 @@ export class SupabaseRepository implements Repository {
     return this.rpc<import("../domain/history").CorrectionEvent[]>(
       "get_historical_corrections",
       { p_day: day },
+    );
+  }
+  getCooking() {
+    return this.rpc<import("../domain/cooking").CookingState>(
+      "get_cooking_state",
+    );
+  }
+  cookingCommand(command: import("../domain/cooking").CookingCommand) {
+    return this.rpc(
+      "apply_cooking_command",
+      {
+        p_operation: command.operation,
+        p_revision: command.revision,
+        p_action: command.action,
+        p_payload: command.payload,
+      },
+      true,
+      true,
     );
   }
   getPlanningLibrary() {

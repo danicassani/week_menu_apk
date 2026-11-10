@@ -193,7 +193,9 @@ export function historyDiff(
       if (!same(x, y))
         output.push(`${label}: ${x ?? "—"} → ${y ?? "—"}${suffix}.`);
     };
-    if (change.kind === "profiles") {
+    if (change.kind === "cooking") {
+      output.push(named(value, language));
+    } else if (change.kind === "profiles") {
       const diet = (v: unknown) =>
         diets[String(v)]?.[language === "es" ? 1 : 0] ?? String(v ?? "—");
       if (b.diet !== a.diet)

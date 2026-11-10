@@ -43,8 +43,11 @@ for (const language of ["en", "es"] as const)
       })
       .click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
-    await nav
-      .getByRole("button", { name: t("Profile", "Perfil"), exact: true })
+    await page
+      .getByRole("button", {
+        name: t("Open my profile", "Abrir mi perfil"),
+        exact: true,
+      })
       .click();
     const tap = () =>
       page.getByRole("button", { name: label, exact: true }).click();
@@ -80,8 +83,11 @@ for (const language of ["en", "es"] as const)
     });
     await page.keyboard.press("Escape");
     await page.reload();
-    await nav
-      .getByRole("button", { name: t("Profile", "Perfil"), exact: true })
+    await page
+      .getByRole("button", {
+        name: t("Open my profile", "Abrir mi perfil"),
+        exact: true,
+      })
       .click();
     for (let i = 0; i < 5; i++) await tap();
     await expect(dialog.locator(".history-events > li")).toHaveCount(1);
@@ -168,8 +174,7 @@ test("imported recipe replacements show one concise line in a dark mobile histor
     .getByRole("button", { name: "Switch language", exact: true })
     .click();
   await page
-    .getByRole("navigation", { name: "Navegación móvil" })
-    .getByRole("button", { name: "Perfil", exact: true })
+    .getByRole("button", { name: "Abrir mi perfil", exact: true })
     .click();
   for (let i = 0; i < 5; i++)
     await page

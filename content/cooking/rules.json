@@ -1,0 +1,5242 @@
+{
+  "version": 1,
+  "sources": [
+    "https://www.food.gov.uk/safety-hygiene/chilling",
+    "https://www.gov.uk/government/publications/home-food-fact-checker/home-food-fact-checker"
+  ],
+  "rules": [
+    {
+      "recipe_id": "b01",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Core and dice the apple; grate the ginger.",
+              "es": "Retira el corazón de la manzana, córtala y ralla el jengibre."
+            },
+            {
+              "en": "Simmer the oats, milk, apple and ginger gently for 5–8 minutes, stirring; add a little water if needed.",
+              "es": "Cuece suavemente la avena, la leche, la manzana y el jengibre durante 5–8 minutos, removiendo; añade un poco de agua si hace falta."
+            },
+            {
+              "en": "Serve with the measured chopped walnuts.",
+              "es": "Sirve con las nueces pesadas y troceadas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "walnut",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b02",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Simmer the oats with the soya drink for 5–8 minutes, stirring.",
+              "es": "Cuece la avena con la bebida de soja durante 5–8 minutos, removiendo."
+            },
+            {
+              "en": "Slice the weighed peeled banana. Serve over the oats with the measured peanut butter.",
+              "es": "Corta el plátano ya pelado y pesado. Sírvelo sobre la avena con la crema de cacahuete medida."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "soy_milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "peanut_butter",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b03",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Mix oats, yogurt and milk in a covered container. Refrigerate overnight, below 5°C.",
+              "es": "Mezcla la avena, el yogur y la leche en un recipiente tapado. Refrigera toda la noche, a menos de 5 °C."
+            },
+            {
+              "en": "Wash the berries and add with the weighed pumpkin seeds before serving.",
+              "es": "Lava los frutos rojos y añádelos con las pipas de calabaza pesadas justo antes de servir."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "blueberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "raspberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pumpkin_seed",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b04",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Wash and core the pear, keeping its skin; weigh the edible portion and dice.",
+              "es": "Lava la pera y retira el corazón, conservando la piel; pesa la parte comestible y córtala."
+            },
+            {
+              "en": "Combine with yogurt, oats and chopped walnuts. Serve chilled.",
+              "es": "Combina con el yogur, la avena y las nueces troceadas. Sirve frío."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pear",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "walnut",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b05",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Toast the bread. Mash the weighed avocado flesh with lemon juice and salt.",
+              "es": "Tuesta el pan. Machaca la pulpa de aguacate pesada con el zumo de limón y la sal."
+            },
+            {
+              "en": "Beat the weighed shell-free egg and cook in a non-stick pan with a splash of water until fully set.",
+              "es": "Bate el huevo pesado sin cáscara y cocínalo en una sartén antiadherente con un poco de agua hasta que cuaje por completo."
+            },
+            {
+              "en": "Top the toast with avocado and cooked egg; no additional oil is included.",
+              "es": "Reparte el aguacate y el huevo cocinado sobre la tostada; no se incluye aceite adicional."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "avocado",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b06",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Toast the bread and grate the washed tomato over it.",
+              "es": "Tuesta el pan y ralla encima el tomate lavado."
+            },
+            {
+              "en": "Add the measured olive oil and pumpkin seeds. Serve with the peeled, weighed orange.",
+              "es": "Añade el aceite de oliva y las pipas de calabaza medidos. Acompaña con la naranja pelada y pesada."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pumpkin_seed",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b07",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Wash spinach and tomato. Warm the measured oil and wilt the spinach.",
+              "es": "Lava las espinacas y el tomate. Calienta el aceite medido y rehoga las espinacas."
+            },
+            {
+              "en": "Add the beaten shell-free egg and stir until fully set. Serve with toast and sliced tomato.",
+              "es": "Añade el huevo batido sin cáscara y remueve hasta que cuaje por completo. Sirve con la tostada y el tomate cortado."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b08",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Slice the mushrooms and cook them in the measured oil until their released liquid evaporates.",
+              "es": "Corta los champiñones y cocínalos con el aceite medido hasta que se evapore el agua que suelten."
+            },
+            {
+              "en": "Add the beaten weighed egg, parsley and salt. Fold only after the egg is fully set; serve with bread.",
+              "es": "Añade el huevo batido y pesado, el perejil y la sal. Dobla la tortilla cuando el huevo esté completamente cuajado; sirve con el pan."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mushroom",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b09",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Blend the oats finely, then mix with the mashed banana, weighed shell-free egg, milk and baking powder.",
+              "es": "Tritura la avena y mézclala con el plátano machacado, el huevo pesado sin cáscara, la leche y la levadura química."
+            },
+            {
+              "en": "Use the measured oil to grease a non-stick pan. Cook small pancakes on both sides until the centres are fully cooked, not wet.",
+              "es": "Engrasa una sartén antiadherente con el aceite medido. Cocina tortitas pequeñas por ambos lados hasta que el centro esté completamente hecho, sin masa húmeda."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "baking_powder",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b10",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Peel and stone the mango, then weigh and dice the flesh.",
+              "es": "Pela el mango, retira el hueso y pesa y corta la pulpa."
+            },
+            {
+              "en": "Combine with yogurt, oats and the measured sunflower seeds.",
+              "es": "Mezcla con el yogur, la avena y las pipas de girasol medidas."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mango",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sunflower_seed",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b11",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Whisk cocoa into the soya drink. Add oats and simmer for 5–8 minutes, stirring.",
+              "es": "Disuelve el cacao en la bebida de soja. Añade la avena y cuece suavemente durante 5–8 minutos, removiendo."
+            },
+            {
+              "en": "Top with the weighed banana slices and chopped almonds.",
+              "es": "Añade por encima el plátano pesado y cortado y las almendras troceadas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "soy_milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cocoa",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "b12",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the chickpeas from their weighed dry amount using the separate soaking and boiling instructions.",
+              "es": "Prepara los garbanzos a partir de su peso en seco siguiendo las instrucciones separadas de remojo y cocción."
+            },
+            {
+              "en": "Mash the cooked chickpeas with lemon, salt and measured oil. Spread onto toast and add tomato and parsley.",
+              "es": "Machaca los garbanzos cocidos con el limón, la sal y el aceite medido. Extiende sobre la tostada y añade tomate y perejil."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "chickpeas",
+          "method": "plain_boiled",
+          "soak": true
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chickpeas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m01",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry chickpeas separately. Soften the chopped onion and garlic in the measured oil.",
+              "es": "Prepara aparte los garbanzos secos. Rehoga la cebolla y el ajo picados con el aceite medido."
+            },
+            {
+              "en": "Add tomatoes and simmer 10 minutes. Add the cooked chickpeas, then spinach; cook until the spinach is tender.",
+              "es": "Añade el tomate y cuece 10 minutos. Incorpora los garbanzos cocidos y después las espinacas; cocina hasta que estén tiernas."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the apple, weigh and chop; serve with the measured yogurt.",
+              "es": "Lava la manzana y retira el corazón; pesa y corta la parte comestible y sirve con el yogur medido."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "chickpeas",
+          "method": "plain_boiled",
+          "soak": true
+        },
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_brown",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chickpeas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_brown",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m02",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Rinse the dry lentils. Soften onion, garlic and ginger in the measured oil.",
+              "es": "Enjuaga las lentejas secas. Rehoga la cebolla, el ajo y el jengibre con el aceite medido."
+            },
+            {
+              "en": "Add lentils, tomatoes and enough water to cover generously. Simmer 20–25 minutes until the lentils are tender; stir in coconut milk and coriander.",
+              "es": "Añade las lentejas, el tomate y suficiente agua para cubrir holgadamente. Cuece 20–25 minutos hasta que estén tiernas; incorpora la leche de coco y el cilantro."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel the orange, weigh its flesh and serve with the measured almonds.",
+              "es": "Pela la naranja, pesa la pulpa y sirve con las almendras medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_white",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "lentils_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coconut_milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_white",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m03",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry beans separately. Dice the vegetables and soften them in the measured oil.",
+              "es": "Prepara aparte las alubias secas. Corta las verduras y rehógalas con el aceite medido."
+            },
+            {
+              "en": "Add tomatoes and a splash of water; simmer until the carrot is tender. Fold in cooked beans and basil and heat through.",
+              "es": "Añade el tomate y un poco de agua; cuece hasta que la zanahoria esté tierna. Incorpora las alubias cocidas y la albahaca y calienta bien."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Serve the weighed bread plain or lightly toasted; add no unlisted butter or oil.",
+              "es": "Sirve el pan pesado, solo o ligeramente tostado; no añadas mantequilla ni aceite que no figuren en la receta."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the pear, weigh and dice; warm with the ginger and a little water until tender.",
+              "es": "Lava la pera, retira el corazón, pesa y corta; calienta con el jengibre y un poco de agua hasta que esté tierna."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "beans_white",
+          "method": "plain_boiled",
+          "soak": true
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "beans_white",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "celery",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "pear",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m04",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soak and vigorously boil the dry kidney beans using their full preparation instructions before using them here.",
+              "es": "Remoja y hierve enérgicamente las alubias rojas secas siguiendo todas sus instrucciones de preparación antes de usarlas aquí."
+            },
+            {
+              "en": "Soften onion, pepper and chilli in the measured oil. Add tomatoes and simmer 15 minutes, then add cooked beans and coriander and heat through.",
+              "es": "Rehoga la cebolla, el pimiento y la guindilla con el aceite medido. Añade el tomate y cuece 15 minutos; incorpora las alubias cocidas y el cilantro y calienta bien."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the berries, slice if needed and serve with the yogurt.",
+              "es": "Lava y pesa los frutos rojos, córtalos si hace falta y sirve con el yogur."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "beans_kidney",
+          "method": "plain_boiled",
+          "soak": true
+        },
+        {
+          "component_id": "side",
+          "ingredient_id": "quinoa",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "beans_kidney",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "quinoa",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "strawberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "blueberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m05",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cut the carrot and courgette into thin strips. Stir-fry with ginger and measured oil until tender.",
+              "es": "Corta la zanahoria y el calabacín en tiras finas. Saltéalos con el jengibre y el aceite medido hasta que estén tiernos."
+            },
+            {
+              "en": "Fold in the source-matching plain steamed tofu gently with the soy sauce and cooked pasta. Heat through and sprinkle with sesame.",
+              "es": "Incorpora con cuidado el tofu natural al vapor que corresponda a la referencia, la salsa de soja y la pasta cocida. Calienta bien y añade el sésamo."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel and weigh the banana. Stir cocoa into yogurt and add banana slices.",
+              "es": "Pela y pesa el plátano. Mezcla el cacao con el yogur y añade el plátano cortado."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "pasta_wholewheat",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "tofu",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "courgette",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "soy_sauce",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sesame",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "pasta_wholewheat",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cocoa",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m06",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry barley separately. Slice the leek and mushrooms.",
+              "es": "Cuece aparte la cebada pesada en seco. Corta el puerro y los champiñones."
+            },
+            {
+              "en": "Cook leek and mushrooms in the measured oil with garlic until tender. Fold in barley, parsley and pumpkin seeds.",
+              "es": "Cocina el puerro y los champiñones con el aceite medido y el ajo hasta que estén tiernos. Incorpora la cebada, el perejil y las pipas de calabaza."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Remove peel and seeds, weigh the melon flesh and serve with washed mint.",
+              "es": "Retira la piel y las semillas, pesa la pulpa del melón y sirve con menta lavada."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "barley",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "mushroom",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "leek",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "barley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pumpkin_seed",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "melon",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mint",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m07",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Dice the peeled squash and courgette. Toss with measured oil and salt; roast at 200°C until tender, about 25–35 minutes.",
+              "es": "Corta la calabaza pelada y el calabacín. Mezcla con el aceite medido y la sal; asa a 200 °C hasta que estén tiernos, unos 25–35 minutos."
+            },
+            {
+              "en": "Prepare the weighed dry couscous. Fold through the roasted vegetables, lemon, almonds and mint.",
+              "es": "Prepara el cuscús pesado en seco. Mezcla con las verduras asadas, el limón, las almendras y la menta."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the edible grapes and serve with the measured walnut kernels.",
+              "es": "Lava y pesa la parte comestible de las uvas y sirve con las nueces medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "couscous",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "squash",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "courgette",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "couscous",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mint",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "grapes",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "walnut",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m08",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry lentils separately. Soften finely diced carrot, onion and garlic in measured oil.",
+              "es": "Cuece aparte las lentejas pesadas en seco. Rehoga la zanahoria, la cebolla y el ajo picados con el aceite medido."
+            },
+            {
+              "en": "Add tomatoes and simmer until the carrot is soft. Stir in cooked lentils and basil; serve over cooked spaghetti.",
+              "es": "Añade el tomate y cuece hasta que la zanahoria esté blanda. Incorpora las lentejas cocidas y la albahaca; sirve sobre los espaguetis cocidos."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel both fruits, weigh the edible flesh, chop and combine.",
+              "es": "Pela ambas frutas, pesa la parte comestible, corta y mezcla."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "lentils_green",
+          "method": "plain_boiled",
+          "soak": false
+        },
+        {
+          "component_id": "side",
+          "ingredient_id": "pasta_wholewheat",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "lentils_green",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "pasta_wholewheat",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "kiwi",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m09",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry chickpeas separately. Dice aubergine and cook in measured oil, adding splashes of water rather than extra oil.",
+              "es": "Prepara aparte los garbanzos secos. Corta la berenjena y cocínala con el aceite medido, añadiendo pequeñas cantidades de agua en vez de más aceite."
+            },
+            {
+              "en": "Add ginger, garlic, chilli, tomatoes and coconut milk. Simmer until the aubergine is tender; add cooked chickpeas and heat through.",
+              "es": "Añade el jengibre, el ajo, la guindilla, el tomate y la leche de coco. Cuece hasta que la berenjena esté tierna; incorpora los garbanzos cocidos y calienta bien."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the apple, weigh and chop; serve with the measured yogurt.",
+              "es": "Lava la manzana y retira el corazón; pesa y corta la parte comestible y sirve con el yogur medido."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "chickpeas",
+          "method": "plain_boiled",
+          "soak": true
+        },
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_white",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chickpeas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "aubergine",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coconut_milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_white",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m10",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soften onion, pepper and garlic in measured oil. Add tomatoes and simmer 15 minutes.",
+              "es": "Rehoga la cebolla, el pimiento y el ajo con el aceite medido. Añade el tomate y cuece 15 minutos."
+            },
+            {
+              "en": "Make shallow wells, add the weighed shell-free egg and cover. Cook until both white and yolk are fully set; finish with parsley.",
+              "es": "Forma huecos, añade el huevo pesado sin cáscara y tapa. Cocina hasta que la clara y la yema estén completamente cuajadas; termina con perejil."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Serve the weighed bread plain or lightly toasted; add no unlisted butter or oil.",
+              "es": "Sirve el pan pesado, solo o ligeramente tostado; no añadas mantequilla ni aceite que no figuren en la receta."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel the orange, weigh its flesh and serve with the measured almonds.",
+              "es": "Pela la naranja, pesa la pulpa y sirve con las almendras medidas."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m11",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Slice the raw peeled potato thinly. Steam or microwave with a little water until tender; drain.",
+              "es": "Corta la patata cruda pelada en láminas finas. Cuécela al vapor o en microondas con un poco de agua hasta que esté tierna; escurre."
+            },
+            {
+              "en": "Soften onion in the measured oil, then add potato and beaten egg. Cook gently on both sides until fully set throughout.",
+              "es": "Rehoga la cebolla con el aceite medido; añade la patata y el huevo batido. Cocina suavemente por ambos lados hasta que esté completamente cuajada."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Wash and chop the vegetables. Toss with the measured oil and vinegar.",
+              "es": "Lava y corta las verduras. Mézclalas con el aceite y el vinagre medidos."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the pear, weigh and dice; warm with the ginger and a little water until tender.",
+              "es": "Lava la pera, retira el corazón, pesa y corta; calienta con el jengibre y un poco de agua hasta que esté tierna."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cucumber",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "vinegar",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "pear",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m12",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Rinse and cook the weighed dry quinoa. Wilt spinach and garlic in the measured oil.",
+              "es": "Lava y cuece la quinoa pesada en seco. Rehoga las espinacas y el ajo con el aceite medido."
+            },
+            {
+              "en": "Combine quinoa, spinach, chopped tomato, almonds and lemon juice; serve warm.",
+              "es": "Combina la quinoa, las espinacas, el tomate cortado, las almendras y el zumo de limón; sirve templado."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the berries, slice if needed and serve with the yogurt.",
+              "es": "Lava y pesa los frutos rojos, córtalos si hace falta y sirve con el yogur."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "quinoa",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "quinoa",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "strawberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "blueberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m13",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry beans separately. Roast pepper strips with measured oil at 200°C until tender.",
+              "es": "Prepara aparte las alubias secas. Asa el pimiento en tiras con el aceite medido a 200 °C hasta que esté tierno."
+            },
+            {
+              "en": "Mash the cooked beans with lemon, garlic and salt. Fill the warmed pitta with the bean mixture, peppers and washed rocket.",
+              "es": "Machaca las alubias cocidas con el limón, el ajo y la sal. Rellena la pita caliente con la mezcla, el pimiento y la rúcula lavada."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel and weigh the banana. Stir cocoa into yogurt and add banana slices.",
+              "es": "Pela y pesa el plátano. Mezcla el cacao con el yogur y añade el plátano cortado."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "beans_white",
+          "method": "plain_boiled",
+          "soak": true
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "beans_white",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pitta",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "rocket",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cocoa",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m14",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry barley. Boil frozen peas until cooked through, following the packet.",
+              "es": "Cuece la cebada pesada en seco. Hierve los guisantes congelados hasta que estén hechos, siguiendo el envase."
+            },
+            {
+              "en": "Soften sliced spring onion in measured oil, then combine with barley, peas, lemon, mint and pumpkin seeds.",
+              "es": "Rehoga la cebolleta cortada con el aceite medido; mezcla con la cebada, los guisantes, el limón, la menta y las pipas de calabaza."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Remove peel and seeds, weigh the melon flesh and serve with washed mint.",
+              "es": "Retira la piel y las semillas, pesa la pulpa del melón y sirve con menta lavada."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "barley",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "peas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "barley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spring_onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mint",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pumpkin_seed",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "melon",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mint",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m15",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soften onion and pepper in measured oil. Add garlic and beef mince and break it up as it cooks.",
+              "es": "Rehoga la cebolla y el pimiento con el aceite medido. Añade el ajo y la carne picada, separándola mientras se cocina."
+            },
+            {
+              "en": "Add tomatoes and simmer until the mince is thoroughly cooked; check the core-temperature instruction. Serve with bulgur and parsley.",
+              "es": "Añade el tomate y cuece hasta que la carne esté completamente hecha; comprueba la indicación de temperatura interior. Sirve con bulgur y perejil."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the edible grapes and serve with the measured walnut kernels.",
+              "es": "Lava y pesa la parte comestible de las uvas y sirve con las nueces medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "bulgur",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "beef",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "bulgur",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "grapes",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "walnut",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m16",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Finely mince the weighed turkey light meat; mix with oats, weighed egg and half the garlic, then shape small meatballs.",
+              "es": "Pica finamente la carne blanca de pavo pesada; mezcla con la avena, el huevo pesado y la mitad del ajo y forma albóndigas pequeñas."
+            },
+            {
+              "en": "Soften onion and remaining garlic in measured oil. Add tomatoes and meatballs, cover and simmer until cooked through; check their centres reach the specified safe temperature.",
+              "es": "Rehoga la cebolla y el ajo restante con el aceite medido. Añade el tomate y las albóndigas, tapa y cuece hasta que estén hechas; comprueba que el centro alcance la temperatura segura indicada."
+            },
+            {
+              "en": "Serve with cooked pasta and basil.",
+              "es": "Sirve con la pasta cocida y la albahaca."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel both fruits, weigh the edible flesh, chop and combine.",
+              "es": "Pela ambas frutas, pesa la parte comestible, corta y mezcla."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "pasta",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "turkey",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "oats",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "pasta",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "kiwi",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m17",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cut peeled potato into small cubes. Toss with half the measured oil and roast at 200°C for 15 minutes.",
+              "es": "Corta la patata pelada en dados pequeños. Mezcla con la mitad del aceite medido y asa a 200 °C durante 15 minutos."
+            },
+            {
+              "en": "Add chicken coated with remaining oil, lemon and garlic. Roast until the potato is tender and the chicken reaches the safe core temperature; steam broccoli separately.",
+              "es": "Añade el pollo con el aceite restante, el limón y el ajo. Asa hasta que la patata esté tierna y el pollo alcance la temperatura interior segura; cuece el brócoli al vapor aparte."
+            },
+            {
+              "en": "Serve together with parsley and the listed salt.",
+              "es": "Sirve todo junto con el perejil y la sal indicada."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the apple, weigh and chop; serve with the measured yogurt.",
+              "es": "Lava la manzana y retira el corazón; pesa y corta la parte comestible y sirve con el yogur medido."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chicken",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "broccoli",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m18",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry rice separately. Slice chicken and vegetables into strips.",
+              "es": "Cuece aparte el arroz pesado en seco. Corta el pollo y las verduras en tiras."
+            },
+            {
+              "en": "Cook chicken in measured oil until it reaches the safe core temperature. Add onion and peppers and cook until tender; fold in rice, lime and coriander.",
+              "es": "Cocina el pollo con el aceite medido hasta que alcance la temperatura interior segura. Añade la cebolla y los pimientos y cocina hasta que estén tiernos; incorpora el arroz, la lima y el cilantro."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel the orange, weigh its flesh and serve with the measured almonds.",
+              "es": "Pela la naranja, pesa la pulpa y sirve con las almendras medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_white",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chicken",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_green",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lime_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_white",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m19",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the dry rice and boil the trimmed green beans until tender. Slice pork into medallions and the cored apple into wedges.",
+              "es": "Cuece el arroz en seco y hierve las judías verdes limpias hasta que estén tiernas. Corta el cerdo en medallones y la manzana sin corazón en gajos."
+            },
+            {
+              "en": "Cook pork in measured oil until it reaches the safe core temperature. Add onion and apple with a splash of water, cover until tender and stir in mustard.",
+              "es": "Cocina el cerdo con el aceite medido hasta que alcance la temperatura interior segura. Añade cebolla y manzana con un poco de agua, tapa hasta que estén tiernas e incorpora la mostaza."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the pear, weigh and dice; warm with the ginger and a little water until tender.",
+              "es": "Lava la pera, retira el corazón, pesa y corta; calienta con el jengibre y un poco de agua hasta que esté tierna."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_brown",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "pork",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mustard",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "green_beans",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_brown",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "pear",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m20",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Boil or steam the weighed raw potato and trimmed green beans until tender.",
+              "es": "Hierve o cuece al vapor la patata pesada en crudo y las judías verdes limpias hasta que estén tiernas."
+            },
+            {
+              "en": "Bake salmon with measured oil, lemon and dill at 190°C until fully cooked and safely hot in the centre. Serve with the vegetables.",
+              "es": "Hornea el salmón con el aceite medido, el limón y el eneldo a 190 °C hasta que esté completamente cocinado y a temperatura segura en el centro. Sirve con las verduras."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the berries, slice if needed and serve with the yogurt.",
+              "es": "Lava y pesa los frutos rojos, córtalos si hace falta y sirve con el yogur."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "salmon",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "green_beans",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "dill",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "strawberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "blueberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m21",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry chickpeas separately. Soften onion and garlic in measured oil, add tomatoes and simmer 10 minutes.",
+              "es": "Prepara aparte los garbanzos secos. Rehoga cebolla y ajo con el aceite medido, añade el tomate y cuece 10 minutos."
+            },
+            {
+              "en": "Add cooked chickpeas and nestle cod into the sauce. Cover until the fish is safely cooked through, then wilt in spinach and add parsley.",
+              "es": "Añade los garbanzos cocidos y coloca el bacalao en la salsa. Tapa hasta que el pescado esté completamente cocinado a temperatura segura; incorpora las espinacas y el perejil."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel and weigh the banana. Stir cocoa into yogurt and add banana slices.",
+              "es": "Pela y pesa el plátano. Mezcla el cacao con el yogur y añade el plátano cortado."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "chickpeas",
+          "method": "plain_boiled",
+          "soak": true
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "cod",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chickpeas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cocoa",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m22",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry rice. Boil the frozen peas following the packet and drain.",
+              "es": "Cuece el arroz pesado en seco. Hierve los guisantes congelados siguiendo el envase y escurre."
+            },
+            {
+              "en": "Heat measured oil and garlic; add raw edible prawns and cook thoroughly to the safe core-temperature instruction. Fold through rice, peas, lemon and parsley.",
+              "es": "Calienta el aceite medido y el ajo; añade los langostinos crudos sin partes no comestibles y cocina hasta alcanzar la temperatura interior segura indicada. Incorpora el arroz, los guisantes, el limón y el perejil."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Remove peel and seeds, weigh the melon flesh and serve with washed mint.",
+              "es": "Retira la piel y las semillas, pesa la pulpa del melón y sirve con menta lavada."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_white",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "prawns",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "peas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_white",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "melon",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mint",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m23",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Drain and weigh tuna. Cook the weighed dry pasta, then drain.",
+              "es": "Escurre y pesa el atún. Cuece la pasta pesada en seco y escurre."
+            },
+            {
+              "en": "Toss pasta with tuna, chopped washed tomato, rocket, measured oil, lemon and basil; serve immediately.",
+              "es": "Mezcla la pasta con el atún, el tomate lavado y cortado, la rúcula, el aceite medido, el limón y la albahaca; sirve enseguida."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the edible grapes and serve with the measured walnut kernels.",
+              "es": "Lava y pesa la parte comestible de las uvas y sirve con las nueces medidas."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "pasta",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "tuna",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "rocket",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "pasta",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "grapes",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "walnut",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m24",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Drain the sardines before weighing. Toast the bread and top with washed sliced tomato.",
+              "es": "Escurre las sardinas antes de pesarlas. Tuesta el pan y coloca encima el tomate lavado y cortado."
+            },
+            {
+              "en": "Add sardines, lemon and parsley. The source nutrition already includes retained oil; no additional oil is listed.",
+              "es": "Añade las sardinas, el limón y el perejil. Los valores de referencia ya incluyen el aceite retenido; no se añade aceite adicional."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Wash and chop the vegetables. Toss with the measured oil and vinegar.",
+              "es": "Lava y corta las verduras. Mézclalas con el aceite y el vinagre medidos."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel both fruits, weigh the edible flesh, chop and combine.",
+              "es": "Pela ambas frutas, pesa la parte comestible, corta y mezcla."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "sardines",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cucumber",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "vinegar",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "kiwi",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m25",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soften onion and mushrooms in measured oil. Add extra-lean beef mince and cook thoroughly, breaking it apart.",
+              "es": "Rehoga la cebolla y los champiñones con el aceite medido. Añade la ternera picada extramagra y cocina completamente, separándola."
+            },
+            {
+              "en": "Check the safe core temperature, then remove from the heat and stir in yogurt and mustard without boiling. Serve with rice and parsley.",
+              "es": "Comprueba la temperatura interior segura; retira del fuego e incorpora el yogur y la mostaza sin hervir. Sirve con arroz y perejil."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the apple, weigh and chop; serve with the measured yogurt.",
+              "es": "Lava la manzana y retira el corazón; pesa y corta la parte comestible y sirve con el yogur medido."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_brown",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "beef",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mushroom",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mustard",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_brown",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m26",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed quinoa. Slice turkey and carrot; cook them in measured oil with splashes of water as needed.",
+              "es": "Cuece la quinoa pesada. Corta el pavo y la zanahoria y cocínalos con el aceite medido y pequeñas cantidades de agua si hacen falta."
+            },
+            {
+              "en": "Check that the turkey reaches the safe core temperature. Add spinach to wilt, then combine with quinoa, lemon and parsley.",
+              "es": "Comprueba que el pavo alcance la temperatura interior segura. Añade las espinacas para rehogarlas y mezcla con la quinoa, el limón y el perejil."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel the orange, weigh its flesh and serve with the measured almonds.",
+              "es": "Pela la naranja, pesa la pulpa y sirve con las almendras medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "quinoa",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "turkey",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "quinoa",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m27",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare dry couscous. Cook diced chicken in measured oil with garlic until its centre reaches the safe temperature.",
+              "es": "Prepara el cuscús seco. Cocina el pollo en dados con el aceite medido y el ajo hasta que su centro alcance la temperatura segura."
+            },
+            {
+              "en": "Add courgette and cook until tender. Fold in couscous, chopped tomato, lemon and basil.",
+              "es": "Añade el calabacín y cocina hasta que esté tierno. Incorpora el cuscús, el tomate cortado, el limón y la albahaca."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the pear, weigh and dice; warm with the ginger and a little water until tender.",
+              "es": "Lava la pera, retira el corazón, pesa y corta; calienta con el jengibre y un poco de agua hasta que esté tierna."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "couscous",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chicken",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "courgette",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "couscous",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "pear",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m28",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry bulgur. Cook thin pork strips in measured oil until they reach the safe core temperature.",
+              "es": "Prepara el bulgur seco. Cocina el cerdo en tiras finas con el aceite medido hasta que alcance la temperatura interior segura."
+            },
+            {
+              "en": "Add onion, pepper and garlic; soften, then add tomatoes and simmer until the vegetables are tender. Serve with bulgur and parsley.",
+              "es": "Añade la cebolla, el pimiento y el ajo; rehoga e incorpora el tomate. Cuece hasta que las verduras estén tiernas y sirve con bulgur y perejil."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the berries, slice if needed and serve with the yogurt.",
+              "es": "Lava y pesa los frutos rojos, córtalos si hace falta y sirve con el yogur."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "bulgur",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "pork",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "bulgur",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "strawberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "blueberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m29",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry rice. Bake salmon with measured oil at 190°C until safely cooked through.",
+              "es": "Cuece el arroz pesado en seco. Hornea el salmón con el aceite medido a 190 °C hasta que esté completamente cocinado a temperatura segura."
+            },
+            {
+              "en": "Combine warm rice with salmon, washed chopped tomato and cucumber, lemon and dill. Serve immediately.",
+              "es": "Combina el arroz templado con el salmón, el tomate y el pepino lavados y cortados, el limón y el eneldo. Sirve enseguida."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel and weigh the banana. Stir cocoa into yogurt and add banana slices.",
+              "es": "Pela y pesa el plátano. Mezcla el cacao con el yogur y añade el plátano cortado."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "rice_brown",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "salmon",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cucumber",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "dill",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "rice_brown",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cocoa",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m30",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cut potato into small cubes, toss with measured oil and roast at 200°C until nearly tender.",
+              "es": "Corta la patata en dados pequeños, mezcla con el aceite medido y asa a 200 °C hasta que esté casi tierna."
+            },
+            {
+              "en": "Add cod with garlic and lemon, and frozen peas with a little water. Cover and continue until fish reaches a safe core temperature and peas are cooked; add parsley.",
+              "es": "Añade el bacalao con ajo y limón y los guisantes congelados con un poco de agua. Tapa y continúa hasta que el pescado alcance una temperatura interior segura y los guisantes estén hechos; añade perejil."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Remove peel and seeds, weigh the melon flesh and serve with washed mint.",
+              "es": "Retira la piel y las semillas, pesa la pulpa del melón y sirve con menta lavada."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "cod",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "peas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "melon",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mint",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m31",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry lentils. Cut cauliflower and carrot, toss with measured oil and roast at 200°C until tender and lightly coloured.",
+              "es": "Cuece las lentejas pesadas en seco. Corta la coliflor y la zanahoria, mezcla con el aceite medido y asa a 200 °C hasta que estén tiernas y ligeramente doradas."
+            },
+            {
+              "en": "Toss with cooked lentils, lemon, parsley and pumpkin seeds; serve warm.",
+              "es": "Mezcla con las lentejas cocidas, el limón, el perejil y las pipas de calabaza; sirve templado."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the edible grapes and serve with the measured walnut kernels.",
+              "es": "Lava y pesa la parte comestible de las uvas y sirve con las nueces medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "lentils_green",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "cauliflower",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lentils_green",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_juice",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pumpkin_seed",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "grapes",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "walnut",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m32",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the quinoa and steam broccoli until tender. Warm measured oil and ginger in a pan.",
+              "es": "Cuece la quinoa y cocina el brócoli al vapor hasta que esté tierno. Calienta el aceite medido y el jengibre en una sartén."
+            },
+            {
+              "en": "Add the source-matching plain steamed tofu gently, broccoli and soy sauce. Heat through, then serve with quinoa and sesame.",
+              "es": "Añade con cuidado el tofu natural al vapor que corresponda a la referencia, el brócoli y la salsa de soja. Calienta bien y sirve con quinoa y sésamo."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel both fruits, weigh the edible flesh, chop and combine.",
+              "es": "Pela ambas frutas, pesa la parte comestible, corta y mezcla."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "quinoa",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "tofu",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "broccoli",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "soy_sauce",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sesame",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "quinoa",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "kiwi",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m33",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare the dry beans separately. Dice the raw peeled sweet potato and simmer with onion, garlic, tomatoes and measured oil, adding water as needed.",
+              "es": "Prepara aparte las alubias secas. Corta el boniato crudo pelado y cuécelo con la cebolla, el ajo, el tomate y el aceite medido, añadiendo agua si hace falta."
+            },
+            {
+              "en": "When the sweet potato is tender, add the cooked beans, heat through and finish with coriander.",
+              "es": "Cuando el boniato esté tierno, añade las alubias cocidas, calienta bien y termina con cilantro."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the apple, weigh and chop; serve with the measured yogurt.",
+              "es": "Lava la manzana y retira el corazón; pesa y corta la parte comestible y sirve con el yogur medido."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "beans_blackeye",
+          "method": "plain_boiled",
+          "soak": true
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "beans_blackeye",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "apple",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m34",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook pasta and frozen peas separately. Warm measured oil with garlic and wilt the spinach.",
+              "es": "Cuece la pasta y los guisantes congelados por separado. Calienta el aceite medido con el ajo y rehoga las espinacas."
+            },
+            {
+              "en": "Take the pan off the heat and mix in yogurt, cooked peas and pasta, loosening with a little cooking water. Add basil; do not boil the yogurt sauce.",
+              "es": "Retira la sartén del fuego y mezcla el yogur, los guisantes cocidos y la pasta, aligerando con un poco de agua de cocción. Añade albahaca; no hiervas la salsa de yogur."
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "instructions": [
+            {
+              "en": "Cook the weighed dry grain using its preparation instructions; serve with the main dish.",
+              "es": "Cocina el cereal pesado en seco siguiendo sus instrucciones de preparación y sírvelo con el plato principal."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Peel the orange, weigh its flesh and serve with the measured almonds.",
+              "es": "Pela la naranja, pesa la pulpa y sirve con las almendras medidas."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "side",
+          "ingredient_id": "pasta_wholewheat",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "peas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "side",
+          "ingredients": [
+            {
+              "ingredient_id": "pasta_wholewheat",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "orange",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "almond",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m35",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Prepare dry chickpeas and couscous separately. Halve and deseed the peppers; soften them at 200°C for 15 minutes.",
+              "es": "Prepara por separado los garbanzos secos y el cuscús. Parte los pimientos y retira las semillas; ablanda en el horno a 200 °C durante 15 minutos."
+            },
+            {
+              "en": "Cook mushrooms in measured oil, then combine with cooked chickpeas, couscous, tomatoes and parsley. Fill peppers and bake until tender and hot throughout.",
+              "es": "Cocina los champiñones con el aceite medido y mezcla con los garbanzos cocidos, el cuscús, el tomate y el perejil. Rellena los pimientos y hornea hasta que estén tiernos y bien calientes."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and core the pear, weigh and dice; warm with the ginger and a little water until tender.",
+              "es": "Lava la pera, retira el corazón, pesa y corta; calienta con el jengibre y un poco de agua hasta que esté tierna."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "chickpeas",
+          "method": "plain_boiled",
+          "soak": true
+        },
+        {
+          "component_id": "main",
+          "ingredient_id": "couscous",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "pepper_red",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chickpeas",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mushroom",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "couscous",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "pear",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ginger",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "m36",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook the weighed lentils. Boil the weighed raw potato and mash it with a little cooking water, without unlisted butter or milk.",
+              "es": "Cuece las lentejas pesadas. Hierve la patata pesada en crudo y cháfala con un poco de agua de cocción, sin añadir mantequilla ni leche que no estén indicadas."
+            },
+            {
+              "en": "Soften onion, carrot and courgette in measured oil. Add tomatoes, cooked lentils and basil; simmer until tender.",
+              "es": "Rehoga la cebolla, la zanahoria y el calabacín con el aceite medido. Añade tomate, lentejas cocidas y albahaca; cuece hasta que estén tiernos."
+            },
+            {
+              "en": "Put the filling in an oven dish, top with mash and bake at 200°C until bubbling and lightly coloured.",
+              "es": "Coloca el relleno en una fuente, cubre con el puré y hornea a 200 °C hasta que burbujee y se dore ligeramente."
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "instructions": [
+            {
+              "en": "Wash and weigh the berries, slice if needed and serve with the yogurt.",
+              "es": "Lava y pesa los frutos rojos, córtalos si hace falta y sirve con el yogur."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [
+        {
+          "component_id": "main",
+          "ingredient_id": "lentils_green",
+          "method": "plain_boiled",
+          "soak": false
+        }
+      ],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "lentils_green",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "courgette",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        },
+        {
+          "id": "dessert",
+          "ingredients": [
+            {
+              "ingredient_id": "strawberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "blueberry",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_tomato_mozzarella_toast",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Roast halved tomatoes with oil, vinegar and thyme at 200°C (180°C fan) for 30 minutes.",
+              "es": "Asa los tomates partidos con aceite, vinagre y tomillo a 200°C (180°C con ventilador) durante 30 minutos."
+            },
+            {
+              "en": "Toast the bread; add the tomatoes, mozzarella, basil and rocket, then drizzle with the remaining oil.",
+              "es": "Tuesta el pan y añade tomates, mozzarella, albahaca y rúcula. Termina con el aceite restante."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "balsamic_vinegar",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "thyme",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mozzarella",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "rocket",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_banana_bread",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Line a loaf tin. Cream butter and sugar, beat in eggs, then fold in flour, baking powder and mashed banana.",
+              "es": "Forra un molde. Bate mantequilla y azúcar, incorpora los huevos y mezcla harina, levadura y plátano machacado."
+            },
+            {
+              "en": "Bake at 180°C (160°C fan), checking from 30–40 minutes; allow about 50 minutes, until a skewer comes out clean. Cool before icing.",
+              "es": "Hornea a 180°C (160°C con ventilador). Comprueba desde los 30–40 minutos; calcula unos 50, hasta que la brocheta salga limpia. Enfría antes de glasear."
+            },
+            {
+              "en": "Mix icing sugar with water, drizzle over the loaf and finish with banana chips.",
+              "es": "Mezcla azúcar glas y agua, reparte sobre el bizcocho y termina con chips de plátano."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "butter",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sugar",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "self_raising_flour",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "baking_powder",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "icing_sugar",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "water",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "banana_chips",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_scrambled_toast",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Beat eggs with pepper. Warm the milk in a non-stick pan, add the eggs and stir gently until softly set.",
+              "es": "Bate los huevos con pimienta. Calienta la leche en una sartén antiadherente, incorpora los huevos y remueve hasta que cuajen suavemente."
+            },
+            {
+              "en": "Toast the bread, spread it lightly and serve with the eggs.",
+              "es": "Tuesta el pan, unta la margarina y sirve con los huevos."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "bread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "low_fat_spread",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_spinach_omelette",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soften chopped onion in half the oil. Wilt the spinach, then cool slightly and mix with beaten eggs, cheese and seasoning.",
+              "es": "Ablanda la cebolla picada con la mitad del aceite. Añade las espinacas, deja templar y mezcla con huevos batidos, queso y condimentos."
+            },
+            {
+              "en": "Heat the remaining oil, add the mixture and cook 5–7 minutes. Turn carefully and cook the other side until set.",
+              "es": "Calienta el aceite restante, vierte la mezcla y cocina 5–7 minutos. Da la vuelta con cuidado y termina de cuajar."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "feta",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_potato_noodle_soup",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soften sliced onion and diced potatoes in the oil. Add water and simmer until tender.",
+              "es": "Rehoga la cebolla en tiras y la patata en dados con el aceite. Añade el agua y cuece hasta que estén tiernas."
+            },
+            {
+              "en": "Add sugar and tomato concentrate, reduce to the desired consistency, then cook the vermicelli in the soup and season.",
+              "es": "Añade azúcar y concentrado de tomate. Reduce a tu gusto, cuece los fideos en la sopa y salpimenta."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "vegetable_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pasta",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sugar",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_puree",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "water",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_burger",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Mix mince, chopped onion and egg. Shape four evenly thick patties, chill for 30 minutes and brush with oil.",
+              "es": "Mezcla carne picada, cebolla y huevo. Forma cuatro hamburguesas de grosor uniforme, enfría 30 minutos y pincela con aceite."
+            },
+            {
+              "en": "Cook on a hot barbecue, turning once, until thoroughly cooked. Serve in the split rolls.",
+              "es": "Cocina a la barbacoa, dando la vuelta, hasta que estén bien hechas. Sirve en los panes abiertos."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "beef",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "vegetable_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "burger_roll",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_quesadilla",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Spread salsa over the tortillas. Fill with mashed beans, spring onion, cooked chicken, cheddar and coriander, then sandwich together.",
+              "es": "Unta las tortillas con salsa. Rellena con alubias machacadas, cebolleta, pollo cocinado, cheddar y cilantro, y tapa con la otra tortilla."
+            },
+            {
+              "en": "Brush with oil; fry for about four minutes, turn carefully and cook another two minutes until golden and hot throughout.",
+              "es": "Pincela con aceite y cocina unos cuatro minutos. Da la vuelta con cuidado y cocina otros dos, hasta dorar y calentar todo."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "hot_salsa",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "wheat_tortilla",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "kidney_beans_canned",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spring_onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "roast_chicken",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cheddar",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "vegetable_oil",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_roasted_four_vegetables",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Heat the oven to 200–220°C. Cut roots evenly and onion into wedges; coat with oil. Start the corn in its husk separately, allowing about 40 minutes.",
+              "es": "Calienta el horno a 200–220°C. Corta los tubérculos uniformemente y la cebolla en gajos; añade aceite. Asa aparte la mazorca con sus hojas, calculando unos 40 minutos."
+            },
+            {
+              "en": "Roast the roots first for 10–15 minutes, then add onion. Turn occasionally and finish when tender; remove the corn husk before serving.",
+              "es": "Asa los tubérculos 10–15 minutos antes de añadir la cebolla. Remueve y termina cuando estén tiernos; retira las hojas de la mazorca al servir."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweetcorn_raw",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_ramen",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Simmer the stock and water with coriander stalks and most of the chilli for 5–10 minutes.",
+              "es": "Cuece el caldo y el agua con los tallos de cilantro y casi toda la guindilla durante 5–10 minutos."
+            },
+            {
+              "en": "Add soy sauce, pepper, mushrooms, pak choi, thinly sliced chicken and noodles. Simmer until chicken is cooked through; add bamboo shoots and finish with coriander and chilli.",
+              "es": "Añade soja, pimienta, champiñones, pak choi, pollo en tiras finas y fideos. Cuece hasta cocinar completamente el pollo, añade bambú y termina con cilantro y guindilla."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chicken_stock",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "coriander",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "soy_sauce",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mushroom",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pak_choi",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chicken",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg_noodles",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "bamboo_shoots",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "water",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_baked_nachos",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Spread chips on an oven tray. Add salsa, sliced spring onion, grated cheddar and chilli flakes.",
+              "es": "Reparte los nachos en una bandeja. Añade salsa, cebolleta cortada, cheddar rallado y copos de guindilla."
+            },
+            {
+              "en": "Place under the hot oven grill for about three minutes, until the cheese melts.",
+              "es": "Pon bajo el gratinador caliente del horno unos tres minutos, hasta fundir el queso."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "tortilla_chips",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "hot_salsa",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spring_onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cheddar",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli_flakes",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_carrot_muffins",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Grate carrot and lemon zest. Beat eggs and sweetener for five minutes; mix in oil, milk and yogurt, then flour, baking powder, salt, zest and carrot.",
+              "es": "Ralla zanahoria y limón. Bate huevos y edulcorante cinco minutos; incorpora aceite, leche y yogur, y después harina, levadura, sal, ralladura y zanahoria."
+            },
+            {
+              "en": "Fill muffin cases and chill 15 minutes while preheating to 250°C. Bake at 200°C without fan for 15–16 minutes, until a skewer comes out clean.",
+              "es": "Llena los moldes y enfría 15 minutos mientras precalientas a 250°C. Hornea a 200°C sin ventilador 15–16 minutos, hasta que la brocheta salga limpia."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "carrot",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "lemon_zest",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "stevia_sweetener",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "yogurt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "flour",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "whole_milk",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "baking_powder",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_sweet_potato_cacio",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Stir-fry the spiralized sweet potato with half the oil for 2–3 minutes. Warm butter, remaining oil and pepper separately, then toss with noodles and both cheeses.",
+              "es": "Saltea el boniato espiralizado con la mitad del aceite 2–3 minutos. Calienta aparte mantequilla, aceite restante y pimienta; mezcla con el boniato y ambos quesos."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "butter",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parmesan",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pecorino",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_creamy_vegan_tomato_pasta",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Soak most cashews in hot water for one hour, drain and blend with water. Cook pasta; toast remaining cashews with oil.",
+              "es": "Remoja casi todos los anacardos una hora en agua caliente, escurre y tritura con agua nueva. Cuece la pasta y tuesta los anacardos restantes con aceite."
+            },
+            {
+              "en": "Soften onion and garlic, add tomatoes and chilli, cashew cream and pasta water. Finish the pasta in this sauce; add toasted cashews and basil.",
+              "es": "Rehoga cebolla y ajo, añade tomates y guindilla, y después crema de anacardos y agua de pasta. Termina la pasta en la salsa; añade anacardos tostados y albahaca."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "water",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "cashew",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pasta",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chilli_flakes",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_puree",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sun_dried_tomatoes",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_sweet_potato_lasagna",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Cook onion, garlic and sausage; add tomato sauce and spinach. Mix ricotta, egg, oregano and some Parmesan. Layer with thin sweet potato slices; top with remaining cheeses.",
+              "es": "Cocina cebolla, ajo y salchicha; añade salsa y espinacas. Mezcla ricotta, huevo, orégano y parte del parmesano. Alterna con láminas finas de boniato; cubre con los quesos."
+            },
+            {
+              "en": "Bake at 190°C, covered for 45 minutes and uncovered for 15. Rest ten minutes; add parsley.",
+              "es": "Hornea a 190°C: 45 minutos tapada y 15 destapada. Reposa diez minutos y añade perejil."
+            }
+          ]
+        }
+      ],
+      "whole": true,
+      "bases": [],
+      "reason": null,
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "italian_sausage",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato_sauce",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "spinach",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "ricotta",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "egg",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parmesan",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "oregano",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "sweet_potato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mozzarella",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "parsley",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "recipe_id": "global_pesto_chicken_gnocchi",
+      "method": [
+        {
+          "id": "main",
+          "instructions": [
+            {
+              "en": "Brown chicken; soften onion and garlic. Add tomatoes and wine, then stock, cream and gnocchi. Return chicken and bake at 220°C until its centre reaches 75°C.",
+              "es": "Dora el pollo y rehoga cebolla y ajo. Añade tomates, vino, caldo, nata y ñoquis. Reincorpora el pollo y hornea a 220°C hasta alcanzar 75°C en el centro."
+            },
+            {
+              "en": "Mix in some pesto, add mozzarella and bake four minutes more. Slice chicken and finish with remaining pesto, basil and pine nuts.",
+              "es": "Mezcla parte del pesto, añade mozzarella y hornea cuatro minutos más. Corta el pollo y termina con pesto restante, albahaca y piñones."
+            }
+          ]
+        }
+      ],
+      "whole": false,
+      "bases": [],
+      "reason": {
+        "en": "Finish at serving time; no reviewed batch preparation.",
+        "es": "Termina al servir; no hay preparación por tandas revisada."
+      },
+      "ingredients": [
+        {
+          "id": "main",
+          "ingredients": [
+            {
+              "ingredient_id": "chicken",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "olive_oil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "onion",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "garlic",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "tomato",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "white_wine",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "chicken_stock",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "double_cream",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "gnocchi",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "green_pesto",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "mozzarella",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "basil",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "pine_nuts",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "salt",
+              "unit": "g"
+            },
+            {
+              "ingredient_id": "black_pepper",
+              "unit": "g"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

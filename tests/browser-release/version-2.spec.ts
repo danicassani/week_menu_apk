@@ -234,8 +234,11 @@ for (const language of ["en", "es"] as const) {
       ),
     ).toBe(true);
     // The app must also honor an explicit browser text-size override at 200%.
-    await nav
-      .getByRole("button", { name: t("Profile", "Perfil"), exact: true })
+    await page
+      .getByRole("button", {
+        name: t("Open my profile", "Abrir mi perfil"),
+        exact: true,
+      })
       .click();
     await page
       .locator("html")

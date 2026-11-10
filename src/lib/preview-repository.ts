@@ -1,4 +1,11 @@
 import {
+  defaultCookingSettings,
+  cookingRequirements,
+  type CookingState,
+  type CookingCommand,
+} from "../domain/cooking";
+import { applyCookingCommand, refreshCooking } from "../domain/cooking-ledger";
+import {
   historyActionLabel,
   type HistoryAction,
   type HistoryOperation,
@@ -85,6 +92,80 @@ import type {
 
 // Ephemeral, explicitly labelled preview. It never authenticates or accesses Supabase.
 export class PreviewRepository implements Repository {
+  private cooking: CookingState | null = null;
+  private cookingReceipts = new Map<string, string>();
+  async getCooking() {
+    this.me();
+    const settings =
+      this.cooking?.settings ?? defaultCookingSettings(this.me().time_zone);
+    const state: CookingState = {
+      settings,
+      batches: this.cooking?.batches ?? [],
+      requirements: cookingRequirements(
+        { ...this.s, planning: this.library },
+        settings,
+      ),
+      revision: this.serial,
+      server_now: new Date().toISOString(),
+    };
+    if (refreshCooking(state)) {
+      state.revision = ++this.serial;
+      this.cookingAudit(
+        "system",
+        "Automatic consumption",
+        "Consumo automático",
+        true,
+      );
+    }
+    this.cooking = state;
+    this.persistDemo();
+    return structuredClone(state);
+  }
+  private cookingAudit(action: string, en: string, es: string, system = false) {
+    const who = system ? "Sistema / System" : this.me().name;
+    this.historyEvents.unshift({
+      id: crypto.randomUUID(),
+      actor_id: system ? null : this.me().id,
+      actor_name: who,
+      action: system ? "system" : "cooking",
+      created_at: this.timestamp(),
+      imported: false,
+      summary: { en: `${who}: ${en}.`, es: `${who}: ${es}.` },
+      changes: {
+        cooking: { kind: "cooking", before: null, after: { en, es } },
+      },
+    });
+  }
+  async cookingCommand(command: CookingCommand) {
+    this.me();
+    const request = JSON.stringify(command),
+      receipt = this.cookingReceipts.get(command.operation);
+    if (receipt) {
+      if (receipt !== request) throw new DomainError("operation_mismatch");
+      return;
+    }
+    const state = await this.getCooking();
+    this.cooking = applyCookingCommand(state, command);
+    this.serial = this.cooking.revision;
+    const labels: Record<string, [string, string]> = {
+      settings: [
+        "Changed cooking settings",
+        "Cambió la configuración de cocina",
+      ],
+      plan: ["Planned cooking sessions", "Planificó sesiones de cocina"],
+      prepare: ["Registered a cooked batch", "Registró una tanda cocinada"],
+      assign: ["Reassigned a container", "Reasignó un recipiente"],
+      release: ["Released a reservation", "Liberó una reserva"],
+      use: ["Confirmed consumption", "Confirmó el consumo"],
+      restore: ["Recorded a leftover", "Registró un sobrante"],
+      discard: ["Discarded a container", "Descartó un recipiente"],
+      store: ["Changed container storage", "Cambió la conservación"],
+      cancel: ["Cancelled a cooking session", "Canceló una sesión de cocina"],
+    };
+    this.cookingAudit(command.action, ...labels[command.action]);
+    this.cookingReceipts.set(command.operation, request);
+    this.persistDemo();
+  }
   private correctionSessions = new Map<string, CorrectionSession>();
   private corrections: CorrectionEvent[] = [];
   private correctionReceipts = new Map<
@@ -325,6 +406,8 @@ export class PreviewRepository implements Repository {
       const saved = sessionStorage.getItem("week-menu-demo-server");
       if (saved) {
         const data = JSON.parse(saved);
+        this.cooking = data.cooking ?? null;
+        this.cookingReceipts = new Map(data.cookingReceipts ?? []);
         this.library = data.library;
         this.shopping = data.shopping;
         if (data.eggPurchasing) this.eggPurchasing = data.eggPurchasing;
@@ -584,6 +667,8 @@ export class PreviewRepository implements Repository {
       sessionStorage.setItem(
         "week-menu-demo-server",
         JSON.stringify({
+          cooking: this.cooking,
+          cookingReceipts: [...this.cookingReceipts],
           library: this.library,
           shopping: this.shopping,
           eggPurchasing: this.eggPurchasing,

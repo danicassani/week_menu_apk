@@ -1,5 +1,6 @@
 import type { Language } from "./types";
 export const HISTORY_ACTIONS = {
+  cooking: ["Cooking", "Cocina"],
   suggestions: ["Approve suggestions & save", "Aprobar sugerencias y guardar"],
   copy_week: ["Save copied week", "Guardar semana copiada"],
   review_meal: ["Save this meal only", "Guardar solo esta comida"],
