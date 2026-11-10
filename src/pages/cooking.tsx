@@ -1,9 +1,12 @@
+import {
+  CookingProposalView,
+  CookingAllocationDetails,
+} from "../components/cooking-proposal";
 import { useEffect, useRef, useState } from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { ArrowLeft, ArrowRight, CookingPot, RefreshCw } from "lucide-react";
 import { Button, Modal, SectionTitle } from "../components/ui";
 import {
-  batchIngredientAmounts,
   cookingProposal,
   cookedShare,
   containerAvailable,
@@ -34,6 +37,7 @@ export function CookingPage(v: ViewProps) {
       b: CookingBatch;
       c: CookingContainer;
     } | null>(null);
+  const settingsPanel = useRef<HTMLDetailsElement>(null);
   const pending = useRef<CookingCommand | null>(null),
     active = useRef(true);
   const name = (n: { en: string; es: string }) => n[v.language] || n.en || n.es;
@@ -139,13 +143,7 @@ export function CookingPage(v: ViewProps) {
                   : t("Available", "Disponible");
   return (
     <section className="cooking-page">
-      <SectionTitle
-        title={t("Kitchen", "Cocina")}
-        subtitle={t(
-          "Shared sessions and prepared portions for your saved menu.",
-          "Sesiones compartidas y raciones preparadas para vuestro menú guardado.",
-        )}
-      />
+      <SectionTitle title={t("Kitchen", "Cocina")} />
       {!online ? (
         <p role="status" className="note warning">
           {t(
@@ -186,13 +184,8 @@ export function CookingPage(v: ViewProps) {
       </div>
       {online && state && settings ? (
         <>
-          <details className="cooking-settings panel">
-            <summary>
-              {t(
-                "Household cooking settings",
-                "Configuración de cocina del hogar",
-              )}
-            </summary>
+          <details ref={settingsPanel} className="cooking-settings panel">
+            <summary>{t("Cooking settings", "Ajustes de cocina")}</summary>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -379,12 +372,15 @@ export function CookingPage(v: ViewProps) {
                 <ArrowRight size={16} />
               </Button>
             </div>
-            <p className="muted">
-              {t(
-                "Only reviewed preparations appear here. Fresh finishes and recipes with edited methods are prepared at serving time. Shopping quantities and calories stay based on the menu.",
-                "Solo aparecen preparaciones revisadas. Los acabados frescos y las recetas con métodos modificados se preparan al servir. La compra y las calorías siguen basadas en el menú.",
-              )}
-            </p>
+            <details className="cooking-help">
+              <summary>{t("How it works", "Cómo funciona")}</summary>
+              <p className="muted">
+                {t(
+                  "Only reviewed preparations appear here. Fresh finishes and recipes with edited methods are prepared at serving time. Shopping quantities and calories stay based on the menu.",
+                  "Solo aparecen preparaciones revisadas. Los acabados frescos y las recetas con métodos modificados se preparan al servir. La compra y las calorías siguen basadas en el menú.",
+                )}
+              </p>
+            </details>
             <div className="inline-actions">
               <Button
                 disabled={busy}
@@ -396,13 +392,14 @@ export function CookingPage(v: ViewProps) {
               <Button
                 secondary
                 disabled={busy}
+                aria-label={t("Refresh", "Actualizar")}
+                title={t("Refresh", "Actualizar")}
                 onClick={() => {
                   pending.current = null;
                   void load();
                 }}
               >
                 <RefreshCw size={16} />
-                {t("Refresh", "Actualizar")}
               </Button>
             </div>
             {!state.settings.sessions.length ? (
@@ -415,382 +412,277 @@ export function CookingPage(v: ViewProps) {
             ) : null}
           </div>
           {proposal ? (
-            <section
-              className="panel"
-              aria-label={t("Session proposal", "Propuesta de sesiones")}
-            >
-              <h2>{t("Review sessions", "Revisar sesiones")}</h2>
-              {proposal.tasks.length === 0 ? (
-                <p>
-                  {t(
-                    "No new preparations can be scheduled for this week.",
-                    "No hay nuevas preparaciones que programar para esta semana.",
-                  )}
-                </p>
-              ) : (
-                proposal.tasks.map((b, i) => (
-                  <article className="cooking-task" key={i}>
-                    <h3>
-                      {stamp(b.session_at)} · {name(b.name)}
-                    </h3>
-                    <p>
-                      {Math.round(b.grams * 10) / 10} g{" "}
-                      {t(
-                        "in reference ingredients",
-                        "de ingredientes de referencia",
-                      )}
-                    </p>
-                    <ul>
-                      {batchIngredientAmounts(b).map((l, i) => (
-                        <li key={i}>
-                          {name(l.name)}: {l.grams} g
-                        </li>
-                      ))}
-                    </ul>
-                    {b.soak ? (
-                      <p className="note">
-                        {t(
-                          "Soak legumes before this session, following the packet.",
-                          "Remoja las legumbres antes de esta sesión, siguiendo el envase.",
-                        )}
-                      </p>
-                    ) : null}
-                    <ul>
-                      {b.allocations.map((a) => (
-                        <li key={a.target.id}>
-                          {a.target.day} ·{" "}
-                          {mealLabel(a.target.type, v.language)} ·{" "}
-                          {a.target.member}: {a.grams} g ·{" "}
-                          {storageLabel(a.storage)}
-                          {a.storage === "frozen"
-                            ? ` · ${t("start defrosting by", "empieza a descongelar antes de")} ${stamp(new Date(Date.parse(a.target.due_at) - 86400000).toISOString())}`
-                            : ""}
-                        </li>
-                      ))}
-                    </ul>
-                    {b.instructions.map((s, j) => (
-                      <p key={j}>{name(s)}</p>
-                    ))}
-                  </article>
-                ))
-              )}
-              {proposal.gaps.length ? (
-                <details>
-                  <summary>
-                    {t("Meals without a session", "Comidas sin sesión")} (
-                    {proposal.gaps.length})
-                  </summary>
-                  <ul>
-                    {proposal.gaps.map((g, i) => (
-                      <li key={i}>
-                        {g.day} · {mealLabel(g.type, v.language)} · {g.member} ·{" "}
-                        {name(g.name)}:{" "}
-                        {g.reason === "past_meal"
-                          ? t(
-                              "meal time has passed",
-                              "la hora de esta comida ya ha pasado",
-                            )
-                          : t(
-                              "no suitable future cooking time; add one above",
-                              "no hay un horario futuro adecuado; añádelo arriba",
-                            )}
-                      </li>
-                    ))}
-                  </ul>
-                </details>
-              ) : null}
-              <Button
-                busy={busy}
-                disabled={!proposal.tasks.length}
-                onClick={() => void send("plan", { tasks: proposal.tasks })}
-              >
-                {t("Confirm sessions", "Confirmar sesiones")}
-              </Button>
-            </section>
+            <CookingProposalView
+              proposal={proposal}
+              language={v.language}
+              stamp={stamp}
+              busy={busy}
+              onConfirm={() => void send("plan", { tasks: proposal.tasks })}
+              onConfigure={() => {
+                const panel = settingsPanel.current;
+                if (!panel) return;
+                panel.open = true;
+                panel.scrollIntoView({ block: "start" });
+                panel
+                  .querySelector<HTMLElement>('input[type="time"],button')
+                  ?.focus();
+              }}
+            />
           ) : null}
-          <section>
-            <h2>{t("Sessions and batches", "Sesiones y tandas")}</h2>
-            {!state.batches.filter((b) => b.status !== "discarded").length ? (
-              <p className="panel">
-                {t(
-                  "No sessions or batches registered yet.",
-                  "Todavía no hay sesiones ni tandas registradas.",
-                )}
-              </p>
-            ) : null}
-            {state.batches
-              .filter((b) => b.status !== "discarded")
-              .map((b) => (
-                <article key={b.id} className="panel cooking-batch">
-                  <h3>{name(b.name)}</h3>
-                  <p>
-                    {b.status === "planned"
-                      ? t("Planned for", "Prevista para")
-                      : t("Cooked on", "Cocinada el")}{" "}
-                    {stamp(b.cooked_at ?? b.session_at)} · {b.grams} g{" "}
-                    {t("reference", "de referencia")}
-                    {b.cooked_grams !== null
-                      ? ` · ${b.cooked_grams} g ${t("cooked", "cocinados")}`
-                      : ""}
-                  </p>
-                  {b.status === "planned" ? (
-                    <>
-                      {b.allocations.some(
-                        (a) =>
-                          !state.requirements.some(
-                            (r) =>
-                              r.id === a.target.id &&
-                              r.menu_signature === a.target.menu_signature &&
-                              r.signature === b.signature,
-                          ),
-                      ) ? (
-                        <p className="note warning">
-                          {t(
-                            "The menu changed. Cancel this session and propose it again.",
-                            "El menú ha cambiado. Cancela esta sesión y vuelve a proponerla.",
-                          )}
-                        </p>
-                      ) : null}
-                      <ul>
-                        {b.allocations.map((a) => (
-                          <li key={a.target.id}>
-                            {a.target.day} ·{" "}
-                            {mealLabel(a.target.type, v.language)} ·{" "}
-                            {a.target.member}: {a.grams} g ·{" "}
-                            {storageLabel(a.storage)}
-                          </li>
-                        ))}
-                      </ul>
-                      <details>
-                        <summary>
-                          {t(
-                            "Preparation and storage",
-                            "Preparación y conservación",
-                          )}
-                        </summary>
-                        <ul>
-                          {batchIngredientAmounts(b).map((l, i) => (
-                            <li key={i}>
-                              {name(l.name)}: {l.grams} g
-                            </li>
-                          ))}
-                        </ul>
-                        {b.soak ? (
-                          <p>
+          {(!proposal ||
+            state.batches.some((b) => b.status !== "discarded")) && (
+            <section>
+              <h2>{t("Sessions and batches", "Sesiones y tandas")}</h2>
+              {!state.batches.filter((b) => b.status !== "discarded").length ? (
+                <p className="panel">
+                  {t("No batches yet.", "Sin tandas todavía.")}
+                </p>
+              ) : null}
+              {state.batches
+                .filter((b) => b.status !== "discarded")
+                .map((b) => (
+                  <article key={b.id} className="panel cooking-batch">
+                    <h3>{name(b.name)}</h3>
+                    <p>
+                      {b.status === "planned"
+                        ? t("Planned for", "Prevista para")
+                        : t("Cooked on", "Cocinada el")}{" "}
+                      {stamp(b.cooked_at ?? b.session_at)} · {b.grams} g{" "}
+                      {t("reference", "de referencia")}
+                      {b.cooked_grams !== null
+                        ? ` · ${b.cooked_grams} g ${t("cooked", "cocinados")}`
+                        : ""}
+                    </p>
+                    {b.status === "planned" ? (
+                      <>
+                        {b.allocations.some(
+                          (a) =>
+                            !state.requirements.some(
+                              (r) =>
+                                r.id === a.target.id &&
+                                r.menu_signature === a.target.menu_signature &&
+                                r.signature === b.signature,
+                            ),
+                        ) ? (
+                          <p className="note warning">
                             {t(
-                              "Soak legumes in advance according to the packet.",
-                              "Remoja las legumbres antes según el envase.",
+                              "The menu changed. Cancel this session and propose it again.",
+                              "El menú ha cambiado. Cancela esta sesión y vuelve a proponerla.",
                             )}
                           </p>
                         ) : null}
-                        {b.instructions.map((x, i) => (
-                          <p key={i}>{name(x)}</p>
-                        ))}
-                        <p>
-                          {t(
-                            `Cool within ${b.cool_hours} hour(s); fridge maximum ${b.fridge_hours} hours, freezer maximum 30 days. Defrost in fridge, use within 24 hours, reheat once.`,
-                            `Enfría en ${b.cool_hours} hora(s); nevera máximo ${b.fridge_hours} horas, congelador máximo 30 días. Descongela en nevera, consume en 24 horas y recalienta una sola vez.`,
-                          )}
-                        </p>
-                      </details>
-                      <div className="inline-actions">
-                        <Button disabled={busy} onClick={() => setPreparing(b)}>
-                          {t(
-                            "Register cooked batch",
-                            "Registrar tanda cocinada",
-                          )}
-                        </Button>
-                        <Button
-                          secondary
-                          disabled={busy}
-                          onClick={() =>
-                            void send("cancel", { batch_id: b.id })
-                          }
-                        >
-                          {t("Cancel session", "Cancelar sesión")}
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <details className="cooking-stock">
-                      <summary>
-                        {t("Containers", "Recipientes")} ({b.containers.length})
-                        {b.containers.some((c) => c.review_needed || c.pending)
-                          ? ` · ${t("Review pending", "Revisión pendiente")}`
-                          : ""}
-                      </summary>
-                      {b.containers.map((c) => (
-                        <div className="cooking-container" key={c.id}>
-                          <div>
-                            <b>{statusLabel(c)}</b>
-                            <p>
-                              {c.target_snapshot
-                                ? `${c.target_snapshot.day} · ${mealLabel(c.target_snapshot.type, v.language)} · ${c.target_snapshot.member}`
-                                : t("Unassigned", "Sin asignar")}
-                            </p>
-                            <p>
-                              {c.grams} g {t("reference", "de referencia")}
-                              {cookedShare(b, c.grams) !== null
-                                ? ` · ${cookedShare(b, c.grams)} g ${t("cooked", "cocinados")}`
-                                : ""}{" "}
-                              · {storageLabel(c.storage)}
-                            </p>
-                            <small>
-                              {t("Use by", "Consumir antes de")}{" "}
-                              {stamp(c.expires_at)}
-                            </small>
-                          </div>
-                          <div className="inline-actions">
-                            {c.status === "reserved" &&
-                            !c.review_needed &&
-                            c.storage === "fridge" &&
-                            Date.parse(c.expires_at) >
-                              Date.parse(state.server_now) ? (
-                              <Button
-                                secondary
-                                disabled={busy}
-                                onClick={() =>
-                                  void send("use", { container_ids: [c.id] })
-                                }
-                              >
-                                {t("Confirm consumed", "Confirmar consumo")}
-                              </Button>
-                            ) : null}
-                            {c.status === "reserved" ? (
-                              <Button
-                                secondary
-                                disabled={busy}
-                                onClick={() =>
-                                  void send("release", { container_id: c.id })
-                                }
-                              >
-                                {t("Release reservation", "Liberar reserva")}
-                              </Button>
-                            ) : null}
-                            {["used", "assumed"].includes(c.status) &&
-                            Date.parse(c.expires_at) >
-                              Date.parse(state.server_now) ? (
-                              <Button
-                                secondary
-                                disabled={busy}
-                                onClick={() =>
-                                  void send("restore", { container_id: c.id })
-                                }
-                              >
-                                {t("Left over", "Sobró")}
-                              </Button>
-                            ) : null}
-                            {containerAvailable(c, state.server_now) ? (
-                              <Button
-                                secondary
-                                disabled={busy}
-                                onClick={() => setAssigning({ b, c })}
-                              >
-                                {t(
-                                  "Propose reassignment",
-                                  "Proponer reasignación",
-                                )}
-                              </Button>
-                            ) : null}
-                            {["available", "reserved"].includes(c.status) ? (
-                              <>
-                                <Button
-                                  secondary
-                                  disabled={
-                                    busy ||
-                                    Date.parse(c.expires_at) <=
-                                      Date.parse(state.server_now) ||
-                                    (c.storage === "fridge" && !!c.thawed_at)
-                                  }
-                                  onClick={() =>
-                                    void send("store", {
-                                      container_id: c.id,
-                                      storage:
-                                        c.storage === "fridge"
-                                          ? "frozen"
-                                          : c.storage === "frozen"
-                                            ? "thawing"
-                                            : "fridge",
-                                    })
-                                  }
-                                >
-                                  {c.storage === "fridge"
-                                    ? t("Freeze", "Congelar")
-                                    : c.storage === "frozen"
-                                      ? t(
-                                          "Start defrosting",
-                                          "Empezar a descongelar",
-                                        )
-                                      : t(
-                                          "Fully defrosted",
-                                          "Descongelado por completo",
-                                        )}
-                                </Button>
+                        <CookingAllocationDetails
+                          batch={b}
+                          language={v.language}
+                          stamp={stamp}
+                        />
+                        <div className="inline-actions">
+                          <Button
+                            disabled={busy}
+                            onClick={() => setPreparing(b)}
+                          >
+                            {t(
+                              "Register cooked batch",
+                              "Registrar tanda cocinada",
+                            )}
+                          </Button>
+                          <Button
+                            secondary
+                            disabled={busy}
+                            onClick={() =>
+                              void send("cancel", { batch_id: b.id })
+                            }
+                          >
+                            {t("Cancel session", "Cancelar sesión")}
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <details className="cooking-stock">
+                        <summary>
+                          {t("Containers", "Recipientes")} (
+                          {b.containers.length})
+                          {b.containers.some(
+                            (c) => c.review_needed || c.pending,
+                          )
+                            ? ` · ${t("Review pending", "Revisión pendiente")}`
+                            : ""}
+                        </summary>
+                        {b.containers.map((c) => (
+                          <div className="cooking-container" key={c.id}>
+                            <div>
+                              <b>{statusLabel(c)}</b>
+                              <p>
+                                {c.target_snapshot
+                                  ? `${c.target_snapshot.day} · ${mealLabel(c.target_snapshot.type, v.language)} · ${c.target_snapshot.member}`
+                                  : t("Unassigned", "Sin asignar")}
+                              </p>
+                              <p>
+                                {c.grams} g {t("reference", "de referencia")}
+                                {cookedShare(b, c.grams) !== null
+                                  ? ` · ${cookedShare(b, c.grams)} g ${t("cooked", "cocinados")}`
+                                  : ""}{" "}
+                                · {storageLabel(c.storage)}
+                              </p>
+                              <small>
+                                {t("Use by", "Consumir antes de")}{" "}
+                                {stamp(c.expires_at)}
+                              </small>
+                            </div>
+                            <div className="inline-actions">
+                              {c.status === "reserved" &&
+                              !c.review_needed &&
+                              c.storage === "fridge" &&
+                              Date.parse(c.expires_at) >
+                                Date.parse(state.server_now) ? (
                                 <Button
                                   secondary
                                   disabled={busy}
                                   onClick={() =>
-                                    void send("discard", { container_id: c.id })
+                                    void send("use", { container_ids: [c.id] })
                                   }
                                 >
-                                  {t("Discard", "Descartar")}
+                                  {t("Confirm consumed", "Confirmar consumo")}
                                 </Button>
-                              </>
-                            ) : null}
+                              ) : null}
+                              {c.status === "reserved" ? (
+                                <Button
+                                  secondary
+                                  disabled={busy}
+                                  onClick={() =>
+                                    void send("release", { container_id: c.id })
+                                  }
+                                >
+                                  {t("Release reservation", "Liberar reserva")}
+                                </Button>
+                              ) : null}
+                              {["used", "assumed"].includes(c.status) &&
+                              Date.parse(c.expires_at) >
+                                Date.parse(state.server_now) ? (
+                                <Button
+                                  secondary
+                                  disabled={busy}
+                                  onClick={() =>
+                                    void send("restore", { container_id: c.id })
+                                  }
+                                >
+                                  {t("Left over", "Sobró")}
+                                </Button>
+                              ) : null}
+                              {containerAvailable(c, state.server_now) ? (
+                                <Button
+                                  secondary
+                                  disabled={busy}
+                                  onClick={() => setAssigning({ b, c })}
+                                >
+                                  {t(
+                                    "Propose reassignment",
+                                    "Proponer reasignación",
+                                  )}
+                                </Button>
+                              ) : null}
+                              {["available", "reserved"].includes(c.status) ? (
+                                <>
+                                  <Button
+                                    secondary
+                                    disabled={
+                                      busy ||
+                                      Date.parse(c.expires_at) <=
+                                        Date.parse(state.server_now) ||
+                                      (c.storage === "fridge" && !!c.thawed_at)
+                                    }
+                                    onClick={() =>
+                                      void send("store", {
+                                        container_id: c.id,
+                                        storage:
+                                          c.storage === "fridge"
+                                            ? "frozen"
+                                            : c.storage === "frozen"
+                                              ? "thawing"
+                                              : "fridge",
+                                      })
+                                    }
+                                  >
+                                    {c.storage === "fridge"
+                                      ? t("Freeze", "Congelar")
+                                      : c.storage === "frozen"
+                                        ? t(
+                                            "Start defrosting",
+                                            "Empezar a descongelar",
+                                          )
+                                        : t(
+                                            "Fully defrosted",
+                                            "Descongelado por completo",
+                                          )}
+                                  </Button>
+                                  <Button
+                                    secondary
+                                    disabled={busy}
+                                    onClick={() =>
+                                      void send("discard", {
+                                        container_id: c.id,
+                                      })
+                                    }
+                                  >
+                                    {t("Discard", "Descartar")}
+                                  </Button>
+                                </>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                      {[
-                        ...new Set(
-                          b.containers
-                            .filter(
-                              (c) =>
-                                c.status === "reserved" &&
-                                !c.review_needed &&
-                                c.storage === "fridge" &&
-                                Date.parse(c.expires_at) >
-                                  Date.parse(state.server_now),
-                            )
-                            .map(
-                              (c) =>
-                                `${c.target_snapshot!.day}/${c.target_snapshot!.type}`,
-                            ),
-                        ),
-                      ].map((slot) => (
-                        <Button
-                          key={slot}
-                          secondary
-                          disabled={busy}
-                          onClick={() =>
-                            void send("use", {
-                              container_ids: state.batches
-                                .flatMap((x) => x.containers)
-                                .filter(
-                                  (c) =>
-                                    c.status === "reserved" &&
-                                    !c.review_needed &&
-                                    c.storage === "fridge" &&
-                                    Date.parse(c.expires_at) >
-                                      Date.parse(state.server_now) &&
-                                    `${c.target_snapshot?.day}/${c.target_snapshot?.type}` ===
-                                      slot,
-                                )
-                                .map((c) => c.id),
-                            })
-                          }
-                        >
-                          {t(
-                            "Confirm all portions",
-                            "Confirmar todas las raciones",
-                          )}{" "}
-                          · {slot}
-                        </Button>
-                      ))}
-                    </details>
-                  )}
-                </article>
-              ))}
-          </section>
+                        ))}
+                        {[
+                          ...new Set(
+                            b.containers
+                              .filter(
+                                (c) =>
+                                  c.status === "reserved" &&
+                                  !c.review_needed &&
+                                  c.storage === "fridge" &&
+                                  Date.parse(c.expires_at) >
+                                    Date.parse(state.server_now),
+                              )
+                              .map(
+                                (c) =>
+                                  `${c.target_snapshot!.day}/${c.target_snapshot!.type}`,
+                              ),
+                          ),
+                        ].map((slot) => (
+                          <Button
+                            key={slot}
+                            secondary
+                            disabled={busy}
+                            onClick={() =>
+                              void send("use", {
+                                container_ids: state.batches
+                                  .flatMap((x) => x.containers)
+                                  .filter(
+                                    (c) =>
+                                      c.status === "reserved" &&
+                                      !c.review_needed &&
+                                      c.storage === "fridge" &&
+                                      Date.parse(c.expires_at) >
+                                        Date.parse(state.server_now) &&
+                                      `${c.target_snapshot?.day}/${c.target_snapshot?.type}` ===
+                                        slot,
+                                  )
+                                  .map((c) => c.id),
+                              })
+                            }
+                          >
+                            {t(
+                              "Confirm all portions",
+                              "Confirmar todas las raciones",
+                            )}{" "}
+                            · {slot}
+                          </Button>
+                        ))}
+                      </details>
+                    )}
+                  </article>
+                ))}
+            </section>
+          )}
         </>
       ) : online && !error ? (
         <p role="status">{t("Loading kitchen…", "Cargando cocina…")}</p>
