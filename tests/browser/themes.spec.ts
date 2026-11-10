@@ -41,8 +41,7 @@ test("legacy light/dark preference survives; corrupt colour and blocked storage 
     .getByRole("button", { name: "Explore the preview", exact: true })
     .click();
   await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Profile", exact: true })
+    .getByRole("button", { name: "Open my profile", exact: true })
     .click();
   await page.getByRole("radio", { name: "Pink", exact: true }).check();
   await expect(page.locator("html")).toHaveAttribute("data-colour", "pink");

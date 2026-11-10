@@ -1,3 +1,4 @@
+import { CookingPage } from "./pages/cooking";
 import { PlanningHistoryAccess } from "./components/planning-history";
 import { useDeviceTheme } from "./lib/device-theme";
 import type { ThemeMode } from "./domain/themes";
@@ -42,7 +43,7 @@ import {
   Moon,
   ShoppingBasket,
   Sun,
-  UserRound,
+  CookingPot,
   Users,
   X,
 } from "lucide-react";
@@ -95,7 +96,7 @@ const navigation = [
   { id: "menu", en: "Menu", es: "Menú", icon: CalendarDays },
   { id: "shopping", en: "Shopping", es: "Compra", icon: ShoppingBasket },
   { id: "recipes", en: "Recipes", es: "Recetas", icon: ChefHat },
-  { id: "profile", en: "Profile", es: "Perfil", icon: UserRound },
+  { id: "cooking", en: "Kitchen", es: "Cocina", icon: CookingPot },
 ] as const;
 
 export default function App() {
@@ -1067,7 +1068,11 @@ function Workspace({
           <div className="breadcrumb">
             <span>{householdName}</span>
             <span>/</span>
-            <b>{navigation.find((n) => n.id === tab)?.[language]}</b>
+            <b>
+              {tab === "profile"
+                ? t("Profile", "Perfil")
+                : navigation.find((n) => n.id === tab)?.[language]}
+            </b>
           </div>
           <a
             className="mobile-brand"
@@ -1206,6 +1211,8 @@ function Workspace({
             <ShoppingPage {...v} />
           ) : tab === "recipes" ? (
             <ContentManager {...v} />
+          ) : tab === "cooking" ? (
+            <CookingPage {...v} />
           ) : (
             <ProfileView
               {...v}

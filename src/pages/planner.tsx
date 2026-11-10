@@ -1,3 +1,5 @@
+import { DomainError } from "../domain/calories";
+import { batchRecipeScore, type CookingState } from "../domain/cooking";
 import { RecalculatePortionsReview } from "../components/recalculate-portions";
 import {
   recalculatePlannedPortions,
@@ -110,6 +112,7 @@ export function suggested(
   recipeId?: string,
   previous?: MealPlan,
   breakfastMember?: string,
+  cooking?: CookingState,
 ): MealPlan | null {
   const members = eligible(v);
   if (!members.length) return null;
@@ -137,6 +140,43 @@ export function suggested(
       const j = Math.floor(Math.random() * (i + 1));
       [order[i], order[j]] = [order[j], order[i]];
     }
+  }
+  if (cooking) {
+    const scores = new Map<string, number>();
+    for (const recipe of order) {
+      try {
+        const proposal: MealPlan = {
+          day,
+          type,
+          revision: 0,
+          shared_recipe_id: type === "breakfast" ? null : recipe.id,
+          portions: members.map((member) =>
+            makePortion(
+              recipe,
+              member.id,
+              member.profile!,
+              budgetFor(v, member.id, day, type),
+              false,
+              lib.ingredients,
+              lib.substitutions,
+            ),
+          ),
+        };
+        scores.set(
+          recipe.id,
+          batchRecipeScore(
+            proposal,
+            retained,
+            { ...v.s, planning: lib },
+            cooking.settings,
+            cooking,
+          ),
+        );
+      } catch {
+        scores.set(recipe.id, Infinity);
+      }
+    }
+    order.sort((a, b) => scores.get(a.id)! - scores.get(b.id)!);
   }
   if (type === "breakfast") {
     const portions: PlannedPortion[] = [];
@@ -201,6 +241,8 @@ export function Planner(v: ViewProps) {
     lib = v.s.planning;
   const [anchor, setAnchor] = useState(v.menuAnchor ?? v.day),
     [replace, setReplace] = useState(false),
+    [batchMode, setBatchMode] = useState(false),
+    [cooking, setCooking] = useState<CookingState | null>(null),
     [locks, setLocks] = useState<string[]>([]),
     [calorieHelp, setCalorieHelp] = useState<PlannedPortion | null>(null),
     [copyOpen, setCopyOpen] = useState(false),
@@ -251,6 +293,7 @@ export function Planner(v: ViewProps) {
     );
   const days = weekDays(anchor, v.s.household.week_start);
   const generate = (slots: { day: string; type: MealType }[]) => {
+    if (batchMode && !cooking) return;
     setPreviewNotice("");
     setCalorieHelp(null);
     setLocks([]);
@@ -268,10 +311,17 @@ export function Planner(v: ViewProps) {
         lib.plans.some((m) => m.day === slot.day && m.type === slot.type)
       )
         continue;
-      const plan = suggested(v, lib, slot.day, slot.type, [
-        ...retained,
-        ...plans,
-      ]);
+      const plan = suggested(
+        v,
+        lib,
+        slot.day,
+        slot.type,
+        [...retained, ...plans],
+        undefined,
+        undefined,
+        undefined,
+        batchMode ? (cooking ?? undefined) : undefined,
+      );
       if (plan) plans.push(plan);
       else
         gaps.push(
@@ -496,6 +546,36 @@ export function Planner(v: ViewProps) {
               <ArrowRight size={16} />
             </Button>
           </div>
+          <label className="check-label">
+            <input
+              type="checkbox"
+              checked={batchMode}
+              disabled={v.busy}
+              onChange={(e) => {
+                const enabled = e.target.checked;
+                if (!enabled) {
+                  setBatchMode(false);
+                  return;
+                }
+                void v.operate(
+                  async () => {
+                    const next = await v.repository.getCooking();
+                    await v.ensurePlanning(true);
+                    if (!next.settings.sessions.length)
+                      throw new DomainError("cooking_schedule_required");
+                    setCooking(next);
+                    setBatchMode(true);
+                  },
+                  undefined,
+                  false,
+                );
+              }}
+            />
+            {t(
+              "Generate week for batch cooking",
+              "Generar semana para batch cooking",
+            )}
+          </label>
           <div className="week-actions">
             <Button
               busy={v.busy}

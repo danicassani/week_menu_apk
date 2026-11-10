@@ -525,9 +525,7 @@ test("target review opens from its proposal without waiting for an unrelated sna
     .getByRole("button", { name: "Create household", exact: true })
     .click();
   await page
-    .getByRole("navigation")
-    .last()
-    .getByRole("button", { name: "Profile", exact: true })
+    .getByRole("button", { name: "Open my profile", exact: true })
     .click();
   const before = requests.filter(
     (r) => r.name === "get_household_snapshot",

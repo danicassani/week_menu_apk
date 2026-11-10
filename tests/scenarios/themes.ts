@@ -19,8 +19,11 @@ export async function themesScenario(
   const nav = page.getByRole("navigation", {
     name: t("Mobile navigation", "Navegación móvil"),
   });
-  await nav
-    .getByRole("button", { name: t("Profile", "Perfil"), exact: true })
+  await page
+    .getByRole("button", {
+      name: t("Open my profile", "Abrir mi perfil"),
+      exact: true,
+    })
     .click();
   const settings = page.locator(".theme-settings");
   await expect(settings.getByRole("radio")).toHaveCount(7);
@@ -59,8 +62,11 @@ export async function themesScenario(
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-colour", "orange");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await nav
-    .getByRole("button", { name: t("Profile", "Perfil"), exact: true })
+  await page
+    .getByRole("button", {
+      name: t("Open my profile", "Abrir mi perfil"),
+      exact: true,
+    })
     .click();
   await page.setViewportSize({ width: 320, height: 780 });
   await page.evaluate(() => {

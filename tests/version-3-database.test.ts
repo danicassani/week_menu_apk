@@ -1763,3 +1763,263 @@ it("does not report catalogue revision-only saves as planning changes", async ()
     before.events.map((e: any) => e.id),
   );
 });
+
+it("V6 cooking is canonical, scoped, idempotent and never changes shopping or saved calories", async () => {
+  await actor();
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const d = addDays(day, 26),
+    recipe = lib.recipes.find((r) => r.id === "m02")!;
+  const plan: MealPlan = {
+    day: d,
+    type: "lunch",
+    revision: 0,
+    shared_recipe_id: recipe.id,
+    portions: [
+      makePortion(
+        recipe,
+        home.membership_id,
+        profile,
+        650,
+        false,
+        lib.ingredients,
+        lib.substitutions,
+      ),
+    ],
+  };
+  await rpc("apply_meal_plans", [[plan], lib.revision, false]);
+  const beforeShopping = await shopping(),
+    beforePlans = (await rpc<PlanningState>("get_planning_library")).plans;
+  let state = await rpc<any>("get_cooking_state");
+  const session = new Date();
+  session.setUTCDate(session.getUTCDate() + 1);
+  session.setUTCHours(10, 0, 0, 0);
+  const settings = {
+    timezone: "UTC",
+    sessions: [{ weekday: session.getUTCDay() || 7, time: "10:00" }],
+    usage_mode: "manual",
+    prefer_whole: false,
+  };
+  const send = async (
+    action: string,
+    payload: any,
+    revision = state.revision,
+    operation = crypto.randomUUID(),
+  ) => rpc("apply_cooking_command", [operation, revision, action, payload]);
+  await send("settings", { settings });
+  state = await rpc("get_cooking_state");
+  const r = state.requirements.find(
+    (r: any) => r.day === d && r.scope.includes("rice_"),
+  );
+  expect(r).toBeDefined();
+  // Use a session within the thirty-day freezing cap.
+  const near = new Date(d + "T10:00:00Z");
+  near.setUTCDate(near.getUTCDate() - 4);
+  settings.sessions = [{ weekday: near.getUTCDay() || 7, time: "10:00" }];
+  await send("settings", { settings });
+  state = await rpc("get_cooking_state");
+  const task = {
+    session_at: near.toISOString(),
+    allocations: [
+      {
+        target: { ...r, lines: [], name: { en: "forged", es: "falso" } },
+        grams: r.grams,
+        storage: "frozen",
+      },
+    ],
+  };
+  const op = crypto.randomUUID(),
+    rev = state.revision;
+  await send("plan", { tasks: [task] }, rev, op);
+  await send("plan", { tasks: [task] }, rev, op);
+  await expect(send("plan", { tasks: [] }, rev, op)).rejects.toThrow(
+    "operation_mismatch",
+  );
+  state = await rpc("get_cooking_state");
+  expect(state.batches).toHaveLength(1);
+  expect(state.batches[0].lines).toEqual(r.lines);
+  await expect(send("plan", { tasks: [task] })).rejects.toThrow(
+    "cooking_overallocated",
+  );
+  await expect(
+    send("cancel", { batch_id: state.batches[0].id }, rev),
+  ).rejects.toThrow("stale_plan");
+  // Preparation cannot pretend old food was safely chilled today.
+  const id = state.batches[0].id,
+    now = new Date().toISOString();
+  await expect(
+    send("prepare", {
+      batch_id: id,
+      grams: r.grams,
+      cooked_grams: null,
+      cooked_at: "2020-01-01T00:00:00Z",
+      stored_at: now,
+      storage: "frozen",
+    }),
+  ).rejects.toThrow("cooking_storage_invalid");
+  await send("prepare", {
+    batch_id: id,
+    grams: r.grams / 2,
+    cooked_grams: r.grams,
+    cooked_at: now,
+    stored_at: now,
+    storage: "frozen",
+  });
+  state = await rpc("get_cooking_state");
+  expect(state.batches[0].status).toBe("cooked");
+  expect(state.batches[0].containers[0].grams).toBe(r.grams / 2);
+  await send("settings", {
+    settings: { ...state.settings, timezone: "Europe/Madrid" },
+  });
+  state = await rpc("get_cooking_state");
+  expect(state.batches[0].containers[0].usage_timezone).toBe("Europe/Madrid");
+  const container = state.batches[0].containers[0].id;
+  await expect(send("use", { container_ids: [container] })).rejects.toThrow(
+    "cooking_review_required",
+  );
+  await send("release", { container_id: container });
+  state = await rpc("get_cooking_state");
+  await send("assign", {
+    container_id: container,
+    target_id: r.id,
+    grams: r.grams / 4,
+  });
+  state = await rpc("get_cooking_state");
+  expect(state.batches[0].containers).toHaveLength(2);
+  expect(
+    state.batches[0].containers.reduce((n: number, c: any) => n + c.grams, 0),
+  ).toBe(r.grams / 2);
+  await send("store", { container_id: container, storage: "thawing" });
+  state = await rpc("get_cooking_state");
+  await send("store", { container_id: container, storage: "fridge" });
+  state = await rpc("get_cooking_state");
+  await expect(
+    send("store", { container_id: container, storage: "frozen" }),
+  ).rejects.toThrow("cooking_storage_invalid");
+  await actor(b);
+  await expect(rpc("get_cooking_state")).rejects.toThrow("membership_changed");
+  await actor();
+  expect((await shopping()).items).toEqual(beforeShopping.items);
+  expect((await rpc<PlanningState>("get_planning_library")).plans).toEqual(
+    beforePlans,
+  );
+  const history = await rpc<any>("get_planning_history", [{}, null]);
+  expect(
+    history.events.some(
+      (e: any) => e.action === "cooking" && e.actor_id === home.membership_id,
+    ),
+  ).toBe(true);
+  await send("discard", { container_id: container });
+}, 30000);
+
+it("V6 automatic use is recorded as System and changing modes leaves past manual reservations pending", async () => {
+  await actor();
+  const lib = await rpc<PlanningState>("get_planning_library"),
+    source = lib.plans.find(
+      (p) => p.day === addDays(day, 26) && p.type === "lunch",
+    )!;
+  const yesterday = addDays((await snapshot()).server_now.slice(0, 10), -1),
+    past = { ...source, day: yesterday, type: "dinner" };
+  await db.exec("reset role");
+  await db.query(
+    `insert into public.meal_plans(household_id,day,meal_type,data,revision) values($1,$2,'dinner',$3,1) on conflict(household_id,day,meal_type) do update set data=excluded.data`,
+    [home.household_id, yesterday, past],
+  );
+  await actor();
+  let state = await rpc<any>("get_cooking_state");
+  const r = state.requirements.find(
+    (r: any) => r.day === yesterday && r.type === "dinner",
+  )!;
+  expect(r).toBeDefined();
+  const batch = structuredClone(state.batches[0]),
+    base = batch.containers[1];
+  batch.id = crypto.randomUUID();
+  batch.status = "cooked";
+  batch.grams = r.grams;
+  batch.cooked_at = yesterday + "T10:00:00Z";
+  batch.containers = ["manual", "automatic"].map((mode) => ({
+    ...base,
+    id: crypto.randomUUID(),
+    batch_id: batch.id,
+    grams: r.grams / 2,
+    status: "reserved",
+    storage: "frozen",
+    target_id: r.id,
+    target_snapshot: r,
+    usage_mode: mode,
+    usage_timezone: "UTC",
+    expires_at: new Date(Date.now() + 86400000 * 10).toISOString(),
+  }));
+  await db.exec("reset role");
+  await db.query(
+    `update app_private.cooking_ledger set batches=batches || jsonb_build_array($2::jsonb) where household_id=$1`,
+    [home.household_id, batch],
+  );
+  await actor();
+  state = await rpc("get_cooking_state");
+  const fresh = state.batches.find((b: any) => b.id === batch.id);
+  expect(fresh.containers.map((c: any) => c.status)).toEqual([
+    "reserved",
+    "assumed",
+  ]);
+  expect(fresh.containers[0].pending).toBe(true);
+  const history = await rpc<any>("get_planning_history", [
+    { action: "system" },
+    null,
+  ]);
+  const event = history.events.find((e: any) =>
+    e.summary.en.includes("Automatic consumption"),
+  );
+  expect(event).toMatchObject({
+    actor_id: null,
+    actor_name: "Sistema / System",
+  });
+  await rpc("apply_cooking_command", [
+    crypto.randomUUID(),
+    state.revision,
+    "settings",
+    { settings: { ...state.settings, usage_mode: "automatic" } },
+  ]);
+  state = await rpc("get_cooking_state");
+  expect(
+    state.batches.find((b: any) => b.id === batch.id).containers[0].status,
+  ).toBe("reserved");
+  const stock = state.batches.find((b: any) => b.id === batch.id).containers[1];
+  await rpc("apply_cooking_command", [
+    crypto.randomUUID(),
+    state.revision,
+    "restore",
+    { container_id: stock.id },
+  ]);
+  state = await rpc("get_cooking_state");
+  expect(
+    state.batches.find((b: any) => b.id === batch.id).containers[1].status,
+  ).toBe("available");
+  const manual = state.batches.find((b: any) => b.id === batch.id).containers[0]
+    .id;
+  const send = async (action: string, payload: any) => {
+    await rpc("apply_cooking_command", [
+      crypto.randomUUID(),
+      state.revision,
+      action,
+      payload,
+    ]);
+    state = await rpc("get_cooking_state");
+  };
+  await send("store", { container_id: manual, storage: "thawing" });
+  await send("store", { container_id: manual, storage: "fridge" });
+  await send("use", { container_ids: [manual] });
+  expect(
+    state.batches.find((b: any) => b.id === batch.id).containers[0].status,
+  ).toBe("used");
+  await send("restore", { container_id: manual });
+  await db.exec("reset role");
+  await db.query(
+    `update app_private.cooking_ledger set batches=jsonb_set(batches, array[(jsonb_array_length(batches)-1)::text,'containers','0','expires_at'],to_jsonb(clock_timestamp()-interval '1 hour')) where household_id=$1`,
+    [home.household_id],
+  );
+  await actor();
+  state = await rpc("get_cooking_state");
+  await expect(
+    send("assign", { container_id: manual, target_id: r.id, grams: 1 }),
+  ).rejects.toThrow("cooking_expired");
+});

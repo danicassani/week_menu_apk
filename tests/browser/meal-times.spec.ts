@@ -16,7 +16,9 @@ test("scheduled intake updates without reload and personal times survive reload"
     page.getByText("400 kcal known intake", { exact: true }),
   ).toBeVisible();
   const nav = page.getByRole("navigation", { name: "Main navigation" });
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   await page.getByLabel("Lunch time", { exact: true }).fill("09:00");
   await page.getByLabel("Dinner time", { exact: true }).fill("09:00");
   await page
@@ -34,8 +36,7 @@ test("scheduled intake updates without reload and personal times survive reload"
     page.getByText("1700 kcal known intake", { exact: true }),
   ).toBeVisible();
   await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("button", { name: "Profile", exact: true })
+    .getByRole("button", { name: "Open my profile", exact: true })
     .click();
   await expect(page.getByLabel("Lunch time", { exact: true })).toHaveValue(
     "09:00",

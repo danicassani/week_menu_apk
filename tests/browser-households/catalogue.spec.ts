@@ -139,7 +139,9 @@ test("authenticated browsing requests 50 summaries and compact snapshots, withou
         ? "Main navigation"
         : "Mobile navigation",
   });
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   const themeWrites = requests.filter((r) => !r.name.startsWith("get_")).length;
   await page.getByRole("radio", { name: "Blue", exact: true }).check();
   await expect(page.locator("html")).toHaveAttribute("data-colour", "blue");

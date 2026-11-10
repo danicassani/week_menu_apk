@@ -18,6 +18,8 @@ For household recipe vetoes, apply [migration 19](../supabase/migrations/2026110
 
 For scheduled known intake, apply [migration 26](../supabase/migrations/202611090026_meal_intake_times.sql) after 1–25. It adds personal breakfast, lunch and dinner times, defaulting to 09:00, 14:00 and 21:00. See [meal intake times](meal-intake-times.md).
 
+For shared batch cooking, apply [migration 28](../supabase/migrations/202611100028_batch_cooking.sql) after 1–27, before deploying the V6 client. It adds household cooking settings, authoritative session/stock RPCs and receipt retention through the existing history job. See [V6 configuration and rollout](version-6/README.md).
+
 For planning change history, apply [migration 27](../supabase/migrations/202611090027_planning_change_history.sql), then enable the required [daily retention job](../supabase/operations/planning_history_retention.sql). See [history access, security and rollout](planning-change-history.md).
 
 ## Local development

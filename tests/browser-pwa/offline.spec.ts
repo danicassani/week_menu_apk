@@ -125,7 +125,9 @@ test("accepting a downloaded app update retains offline pending checks", async (
   const { readFile, writeFile } = await import("node:fs/promises");
   await enter(page);
   const nav = page.getByRole("navigation", { name: "Main navigation" });
-  await nav.getByRole("button", { name: "Profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Open my profile", exact: true })
+    .click();
   await page.getByRole("radio", { name: "Violet", exact: true }).check();
   await page.getByRole("button", { name: "Switch theme", exact: true }).click();
   await nav.getByRole("button", { name: "Shopping", exact: true }).click();

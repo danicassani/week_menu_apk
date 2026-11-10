@@ -4,6 +4,54 @@ import type { Language } from "../domain/types";
 export const translator = (language: Language) => (en: string, es: string) =>
   language === "es" ? es : en;
 const messages: Record<string, [string, string]> = {
+  cooking_schedule_required: [
+    "Configure cooking days and times in Kitchen first.",
+    "Configura primero los días y horas de cocina en Cocina.",
+  ],
+  cooking_migration_required: [
+    "Kitchen is unavailable. Apply migration 28 and reconnect.",
+    "Cocina no está disponible. Aplica la migración 28 y vuelve a conectarte.",
+  ],
+  invalid_cooking_settings: [
+    "Check the timezone and cooking days/times.",
+    "Revisa la zona horaria y los días y horas de cocina.",
+  ],
+  invalid_cooking_quantity: [
+    "Enter a positive amount, up to 1,000,000 g.",
+    "Indica una cantidad positiva, hasta 1.000.000 g.",
+  ],
+  invalid_cooking_command: [
+    "This cooking action is no longer available. Refresh the view.",
+    "Esta acción de cocina ya no está disponible. Actualiza la vista.",
+  ],
+  cooking_target_changed: [
+    "The planned meal changed. Review the session and its reservations.",
+    "La comida planificada ha cambiado. Revisa la sesión y sus reservas.",
+  ],
+  cooking_session_changed: [
+    "Choose a future session matching the household cooking schedule.",
+    "Elige una sesión futura que coincida con el horario de cocina del hogar.",
+  ],
+  cooking_storage_invalid: [
+    "Storage cannot safely cover this meal. Check cooling, expiry and the 24-hour defrosting window.",
+    "La conservación no permite cubrir esta comida. Revisa el enfriado, la caducidad y las 24 horas para descongelar.",
+  ],
+  cooking_expired: [
+    "This container has expired; discard it.",
+    "Este recipiente ha caducado; descártalo.",
+  ],
+  cooking_unavailable_stock: [
+    "This container is reserved, used, thawing or discarded.",
+    "Este recipiente está reservado, consumido, descongelándose o descartado.",
+  ],
+  cooking_overallocated: [
+    "This meal already has enough reserved portions. Refresh before reserving more.",
+    "Esta comida ya tiene suficientes raciones reservadas. Actualiza antes de reservar más.",
+  ],
+  cooking_review_required: [
+    "Review or release the affected reservation before continuing.",
+    "Revisa o libera la reserva afectada antes de continuar.",
+  ],
   history_unavailable: [
     "History is unavailable. Apply migration 27 and reconnect.",
     "El historial no está disponible. Aplica la migración 27 y vuelve a conectarte.",

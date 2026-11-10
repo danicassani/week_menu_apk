@@ -219,9 +219,12 @@ test("another member is read-only, and offline sign-out clears that device’s s
     page.getByRole("button", { name: "Food", exact: true }),
   ).toHaveCount(0);
   await page
-    .getByRole("navigation", { name: "Mobile navigation" })
-    .getByRole("button", { name: "Profile", exact: true })
+    .getByRole("button", { name: "Open my profile", exact: true })
     .click();
+  await expect(
+    page.getByRole("button", { name: "Edit profile", exact: true }),
+  ).toBeVisible();
+  await page.getByLabel("View household member").selectOption("noa");
   await expect(
     page.getByRole("button", { name: "Edit profile", exact: true }),
   ).toHaveCount(0);
