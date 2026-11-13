@@ -106,3 +106,7 @@ The production build registers a public-shell service worker. Menu, recipes and 
 - Confirm PKCE redirects, refresh, sign-out and browser storage clearing on the final HTTPS origin.
 - Confirm revision notifications and foreground date rollover with users in different IANA timezones. Database tests cover the two lock models, but hosted-browser integration still needs verification.
 - Review project backup, retention and actual provider/free-plan limits before entering real household history. No live service configuration or hosted end-to-end result is claimed by the local test suite.
+
+### Shared preparation model
+
+After migration 28, apply [migration 29](../supabase/migrations/202611110029_recipe_preparations.sql) and [migration 30](../supabase/migrations/202611110030_budget_portion_commit.sql), then deploy the updated frontend. See the [recipe-model rollout](recipe-preparations/README.md) for snapshot compatibility, editor protection and atomic budget updates. These migrations do not change existing saved meal quantities or cooked batch composition.

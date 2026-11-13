@@ -67,6 +67,13 @@ test("budgets form one four-column row below the whole daily card in light and d
   await page
     .getByRole("button", { name: "Save overrides", exact: true })
     .click();
+  await page
+    .getByRole("heading", { name: "Review the change", exact: true })
+    .waitFor();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Save changes", exact: true })
+    .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(margin).toHaveClass(/budget-margin--exceeded/);
   await expect(margin).toHaveCSS("color", "rgb(252, 165, 165)");

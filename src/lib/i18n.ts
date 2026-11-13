@@ -168,6 +168,22 @@ const messages: Record<string, [string, string]> = {
     "Existing meals are preserved. Choose replacement explicitly to change them.",
     "Se conservan las comidas existentes. Activa la sustitución explícita para cambiarlas.",
   ],
+  invalid_recipe_model: [
+    "The recipe variant or preparation is incomplete. Review its ingredients and steps.",
+    "La variante o preparación está incompleta. Revisa sus ingredientes y pasos.",
+  ],
+  no_compatible_variant: [
+    "This recipe has no variant compatible with this person’s diet and exclusions.",
+    "Esta receta no tiene una variante compatible con la dieta y exclusiones de esta persona.",
+  ],
+  recipe_update_required: [
+    "Update the app before editing this recipe; it uses the new preparation format.",
+    "Actualiza la app antes de editar esta receta: utiliza el nuevo formato de preparaciones.",
+  ],
+  preparation_revision_conflict: [
+    "This preparation was changed. Save it as a new preparation revision.",
+    "Esta preparación ha cambiado. Guárdala como una nueva versión de preparación.",
+  ],
   invalid_recipe: [
     "Review the recipe, ingredients and positive quantities.",
     "Revisa la receta, los ingredientes y las cantidades positivas.",

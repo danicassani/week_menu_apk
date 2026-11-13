@@ -36,7 +36,7 @@ export function ProfileForm({
   member: Member;
   today: string;
   catalogue?: { id: string; name: Record<Language, string> }[];
-  onSave: (p: Profile) => void;
+  onSave: (p: Profile, reviewTarget?: boolean) => void;
 } & Base) {
   const t = translator(language);
   const [p, setP] = useState<Profile>(
@@ -56,13 +56,40 @@ export function ProfileForm({
     },
   );
   const [query, setQuery] = useState("");
+  const [section, setSection] = useState<
+    "all" | "identity" | "health" | "food"
+  >(member.profile ? "identity" : "all");
   const field = <K extends keyof Profile>(key: K, value: Profile[K]) =>
     setP({ ...p, [key]: value });
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave(p);
+        const fields =
+          section === "health"
+            ? [
+                "age",
+                "sex",
+                "height_cm",
+                "weight_kg",
+                "activity_level",
+                "goal",
+                "target_weight_kg",
+                "target_date",
+              ]
+            : section === "food"
+              ? ["diet", "excluded_ingredients"]
+              : ["name", "language"];
+        const saved =
+          member.profile && section !== "all"
+            ? ({
+                ...member.profile,
+                ...Object.fromEntries(
+                  fields.map((key) => [key, p[key as keyof Profile]]),
+                ),
+              } as Profile)
+            : p;
+        onSave(saved, section === "all" || section === "health");
       }}
     >
       <p className="form-intro">
@@ -71,182 +98,224 @@ export function ProfileForm({
           "Tu hogar puede ver tu perfil y registros. Solo tú puedes modificarlos.",
         )}
       </p>
-      <label>
-        {t("Your name", "Tu nombre")}
-        <input
-          required
-          maxLength={80}
-          value={p.name}
-          autoComplete="given-name"
-          onChange={(e) => field("name", e.target.value)}
-        />
-      </label>
-      <div className="form-grid">
+      {member.profile && (
+        <div className="button-row">
+          {(["identity", "health", "food"] as const).map((key) => (
+            <Button
+              key={key}
+              type="button"
+              secondary={section !== key}
+              onClick={() => setSection(key)}
+            >
+              {key === "identity"
+                ? t("Your details", "Tus datos")
+                : key === "health"
+                  ? t("Health and goals", "Salud y objetivos")
+                  : t("Food preferences", "Alimentación")}
+            </Button>
+          ))}
+        </div>
+      )}
+      <fieldset
+        hidden={section !== "all" && section !== "identity"}
+        disabled={section !== "all" && section !== "identity"}
+      >
         <label>
-          {t("Age · adults only", "Edad · solo adultos")}
+          {t("Your name", "Tu nombre")}
           <input
             required
-            type="number"
-            min="18"
-            step="1"
-            value={p.age || ""}
-            onChange={(e) => field("age", e.target.valueAsNumber)}
+            maxLength={80}
+            value={p.name}
+            autoComplete="given-name"
+            onChange={(e) => field("name", e.target.value)}
           />
         </label>
-        <label>
-          {t("Sex", "Sexo")}
-          <select
-            required
-            value={p.sex}
-            onChange={(e) => field("sex", e.target.value as Profile["sex"])}
-          >
-            <option value="">{t("Select", "Seleccionar")}</option>
-            <option value="female">{t("Female", "Femenino")}</option>
-            <option value="male">{t("Male", "Masculino")}</option>
-          </select>
-        </label>
-        <label>
-          {t("Height · cm", "Altura · cm")}
-          <input
-            required
-            type="number"
-            min="1"
-            step="0.1"
-            value={p.height_cm || ""}
-            onChange={(e) => field("height_cm", e.target.valueAsNumber)}
-          />
-        </label>
-        <label>
-          {t("Current weight · kg", "Peso actual · kg")}
-          <input
-            required
-            type="number"
-            min="1"
-            step="0.1"
-            value={p.weight_kg || ""}
-            onChange={(e) => field("weight_kg", e.target.valueAsNumber)}
-          />
-        </label>
-      </div>
-      <label>
-        {t("Usual activity", "Actividad habitual")}
-        <select
-          value={p.activity_level}
-          onChange={(e) =>
-            field("activity_level", e.target.value as Profile["activity_level"])
-          }
-        >
-          <option value="sedentary">
-            {t("Sedentary · 1.2", "Sedentaria · 1,2")}
-          </option>
-          <option value="light">
-            {t("Lightly active · 1.375", "Ligeramente activa · 1,375")}
-          </option>
-          <option value="active">{t("Active · 1.55", "Activa · 1,55")}</option>
-          <option value="very_active">
-            {t("Very active · 1.725", "Muy activa · 1,725")}
-          </option>
-        </select>
-      </label>
-      <label>
-        {t("Your goal", "Tu objetivo")}
-        <select
-          value={p.goal}
-          onChange={(e) => field("goal", e.target.value as Profile["goal"])}
-        >
-          <option value="maintain">
-            {t("Maintain weight", "Mantener peso")}
-          </option>
-          <option value="lose">{t("Lose weight", "Perder peso")}</option>
-        </select>
-      </label>
-      {p.goal === "lose" && (
+      </fieldset>
+      <fieldset
+        hidden={section !== "all" && section !== "health"}
+        disabled={section !== "all" && section !== "health"}
+      >
         <div className="form-grid">
           <label>
-            {t("Target weight · kg", "Peso objetivo · kg")}
+            {t("Age · adults only", "Edad · solo adultos")}
             <input
-              type="number"
               required
-              min="1"
-              step="0.1"
-              value={p.target_weight_kg ?? ""}
-              onChange={(e) =>
-                field("target_weight_kg", e.target.valueAsNumber)
-              }
+              type="number"
+              min="18"
+              step="1"
+              value={p.age || ""}
+              onChange={(e) => field("age", e.target.valueAsNumber)}
             />
           </label>
           <label>
-            {t("Target date", "Fecha objetivo")}
-            <input
-              type="date"
+            {t("Sex", "Sexo")}
+            <select
               required
-              min={today}
-              value={p.target_date ?? ""}
-              onChange={(e) => field("target_date", e.target.value)}
+              value={p.sex}
+              onChange={(e) => field("sex", e.target.value as Profile["sex"])}
+            >
+              <option value="">{t("Select", "Seleccionar")}</option>
+              <option value="female">{t("Female", "Femenino")}</option>
+              <option value="male">{t("Male", "Masculino")}</option>
+            </select>
+          </label>
+          <label>
+            {t("Height · cm", "Altura · cm")}
+            <input
+              required
+              type="number"
+              min="1"
+              step="0.1"
+              value={p.height_cm || ""}
+              onChange={(e) => field("height_cm", e.target.valueAsNumber)}
+            />
+          </label>
+          <label>
+            {t("Current weight · kg", "Peso actual · kg")}
+            <input
+              required
+              type="number"
+              min="1"
+              step="0.1"
+              value={p.weight_kg || ""}
+              onChange={(e) => field("weight_kg", e.target.valueAsNumber)}
             />
           </label>
         </div>
-      )}
-      <div className="rule" />
-      <h3>{t("Food preferences", "Preferencias alimentarias")}</h3>
-      <label>
-        {t("Dietary pattern", "Patrón alimentario")}
-        <select
-          value={p.diet}
-          onChange={(e) => field("diet", e.target.value as Profile["diet"])}
-        >
-          <option value="omnivore">{t("Omnivore", "Omnívoro")}</option>
-          <option value="vegetarian">{t("Vegetarian", "Vegetariano")}</option>
-          <option value="vegan">{t("Vegan", "Vegano")}</option>
-          <option value="pescatarian">
-            {t("Pescatarian", "Pescetariano")}
-          </option>
-        </select>
-      </label>
-      <label>
-        {t(
-          "Exclude catalogue ingredients",
-          "Excluir ingredientes del catálogo",
-        )}
-        <input
-          type="search"
-          placeholder={t("Search ingredients…", "Buscar ingredientes…")}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </label>
-      <div className="ingredient-picker">
-        {sortedIngredients(catalogue ?? [], language)
-          .filter((i) => ingredientMatches(i, query))
-          .map((i) => (
-            <label className="check-row" key={i.id}>
+        <label>
+          {t("Usual activity", "Actividad habitual")}
+          <select
+            value={p.activity_level}
+            onChange={(e) =>
+              field(
+                "activity_level",
+                e.target.value as Profile["activity_level"],
+              )
+            }
+          >
+            <option value="sedentary">
+              {t("Sedentary · 1.2", "Sedentaria · 1,2")}
+            </option>
+            <option value="light">
+              {t("Lightly active · 1.375", "Ligeramente activa · 1,375")}
+            </option>
+            <option value="active">
+              {t("Active · 1.55", "Activa · 1,55")}
+            </option>
+            <option value="very_active">
+              {t("Very active · 1.725", "Muy activa · 1,725")}
+            </option>
+          </select>
+        </label>
+        <label>
+          {t("Your goal", "Tu objetivo")}
+          <select
+            value={p.goal}
+            onChange={(e) => field("goal", e.target.value as Profile["goal"])}
+          >
+            <option value="maintain">
+              {t("Maintain weight", "Mantener peso")}
+            </option>
+            <option value="lose">{t("Lose weight", "Perder peso")}</option>
+          </select>
+        </label>
+        {p.goal === "lose" && (
+          <div className="form-grid">
+            <label>
+              {t("Target weight · kg", "Peso objetivo · kg")}
               <input
-                type="checkbox"
-                checked={p.excluded_ingredients.includes(i.id)}
+                type="number"
+                required
+                min="1"
+                step="0.1"
+                value={p.target_weight_kg ?? ""}
                 onChange={(e) =>
-                  field(
-                    "excluded_ingredients",
-                    e.target.checked
-                      ? [...p.excluded_ingredients, i.id]
-                      : p.excluded_ingredients.filter((id) => id !== i.id),
-                  )
+                  field("target_weight_kg", e.target.valueAsNumber)
                 }
               />
-              {ingredientText(i, language)}
             </label>
-          ))}
-      </div>
-      <label>
-        {t("Language", "Idioma")}
-        <select
-          value={p.language}
-          onChange={(e) => field("language", e.target.value as Language)}
-        >
-          <option value="en">English</option>
-          <option value="es">Español</option>
-        </select>
-      </label>
-      <div className="note">
+            <label>
+              {t("Target date", "Fecha objetivo")}
+              <input
+                type="date"
+                required
+                min={today}
+                value={p.target_date ?? ""}
+                onChange={(e) => field("target_date", e.target.value)}
+              />
+            </label>
+          </div>
+        )}
+      </fieldset>
+      <fieldset
+        hidden={section !== "all" && section !== "food"}
+        disabled={section !== "all" && section !== "food"}
+      >
+        <h3>{t("Food preferences", "Preferencias alimentarias")}</h3>
+        <label>
+          {t("Dietary pattern", "Patrón alimentario")}
+          <select
+            value={p.diet}
+            onChange={(e) => field("diet", e.target.value as Profile["diet"])}
+          >
+            <option value="omnivore">{t("Omnivore", "Omnívoro")}</option>
+            <option value="vegetarian">{t("Vegetarian", "Vegetariano")}</option>
+            <option value="vegan">{t("Vegan", "Vegano")}</option>
+            <option value="pescatarian">
+              {t("Pescatarian", "Pescetariano")}
+            </option>
+          </select>
+        </label>
+        <label>
+          {t(
+            "Exclude catalogue ingredients",
+            "Excluir ingredientes del catálogo",
+          )}
+          <input
+            type="search"
+            placeholder={t("Search ingredients…", "Buscar ingredientes…")}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </label>
+        <div className="ingredient-picker">
+          {sortedIngredients(catalogue ?? [], language)
+            .filter((i) => ingredientMatches(i, query))
+            .map((i) => (
+              <label className="check-row" key={i.id}>
+                <input
+                  type="checkbox"
+                  checked={p.excluded_ingredients.includes(i.id)}
+                  onChange={(e) =>
+                    field(
+                      "excluded_ingredients",
+                      e.target.checked
+                        ? [...p.excluded_ingredients, i.id]
+                        : p.excluded_ingredients.filter((id) => id !== i.id),
+                    )
+                  }
+                />
+                {ingredientText(i, language)}
+              </label>
+            ))}
+        </div>
+      </fieldset>
+      <fieldset
+        hidden={section !== "all" && section !== "identity"}
+        disabled={section !== "all" && section !== "identity"}
+      >
+        <label>
+          {t("Language", "Idioma")}
+          <select
+            value={p.language}
+            onChange={(e) => field("language", e.target.value as Language)}
+          >
+            <option value="en">English</option>
+            <option value="es">Español</option>
+          </select>
+        </label>
+      </fieldset>
+      <div className="note" hidden={section !== "all" && section !== "health"}>
         <Info size={16} />
         <span>
           {t(
@@ -256,7 +325,9 @@ export function ProfileForm({
         </span>
       </div>
       <Button busy={busy} type="submit">
-        {t("Save & review target", "Guardar y revisar objetivo")}
+        {section === "all" || section === "health"
+          ? t("Save & review target", "Guardar y revisar objetivo")
+          : t("Save profile", "Guardar perfil")}
         <ArrowRight size={16} />
       </Button>
     </form>
@@ -374,8 +445,8 @@ export function TargetReview({
       </div>
       <p className="fine-print">
         {t(
-          "These are estimates, not medical advice. Current meals will not be resized automatically.",
-          "Son estimaciones, no consejos médicos. Las comidas actuales no cambiarán de tamaño automáticamente.",
+          "These are estimates. Before saving, you can review and adjust affected portions.",
+          "Son estimaciones. Antes de guardar podrás revisar y ajustar las raciones afectadas.",
         )}
       </p>
       <Button type="submit" busy={busy}>
@@ -684,8 +755,8 @@ export function BudgetForm({
     >
       <p className="form-intro">
         {t(
-          "Adjust meal budgets for this date without changing your personal defaults. Existing portions need manual review.",
-          "Ajusta los presupuestos de esta fecha sin modificar tus valores personales habituales. Revisa manualmente las porciones existentes.",
+          "Adjust meal budgets for this date without changing your personal defaults. Review any portion changes before saving.",
+          "Ajusta los presupuestos de esta fecha sin modificar tus valores habituales. Revisa los cambios de raciones antes de guardar.",
         )}
       </p>
       <label>

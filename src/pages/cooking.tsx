@@ -119,6 +119,10 @@ export function CookingPage(v: ViewProps) {
     }
   };
   const days = weekDays(anchor, v.s.household.week_start);
+  const nextSession = state?.batches
+    .filter((b) => b.status === "planned")
+    .map((b) => b.session_at)
+    .sort()[0];
   const storageLabel = (s: string) =>
     s === "frozen"
       ? t("Freezer", "Congelador")
@@ -441,8 +445,19 @@ export function CookingPage(v: ViewProps) {
               {state.batches
                 .filter((b) => b.status !== "discarded")
                 .map((b) => (
-                  <article key={b.id} className="panel cooking-batch">
-                    <h3>{name(b.name)}</h3>
+                  <details
+                    key={b.id}
+                    className="panel cooking-batch"
+                    open={
+                      b.status === "planned" && b.session_at === nextSession
+                    }
+                  >
+                    <summary>
+                      {name(b.name)} ·{" "}
+                      {b.status === "planned"
+                        ? stamp(b.session_at)
+                        : t("Cooked", "Cocinada")}
+                    </summary>
                     <p>
                       {b.status === "planned"
                         ? t("Planned for", "Prevista para")
@@ -679,7 +694,7 @@ export function CookingPage(v: ViewProps) {
                         ))}
                       </details>
                     )}
-                  </article>
+                  </details>
                 ))}
             </section>
           )}

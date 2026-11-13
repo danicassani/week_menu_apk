@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "../browser/helpers/actions";
 import { test, expect } from "@playwright/test";
 import { PreviewRepository } from "../../src/lib/preview-repository";
 test("veto uses one write without snapshot/catalogue reload and keeps all loaded cards", async ({
@@ -168,9 +169,7 @@ test("veto uses one write without snapshot/catalogue reload and keeps all loaded
     .poll(() => calls.filter((name) => name === "set_recipe_veto").length)
     .toBe(2);
   await page.keyboard.press("Escape");
-  await page
-    .getByRole("button", { name: "Ingredients & units", exact: true })
-    .click();
+  await clickDisclosedAction(page, "Ingredients & units");
   await expect(page.locator(".recipe-card")).toContainText("Ingredient row");
   releaseSecond();
   await expect(

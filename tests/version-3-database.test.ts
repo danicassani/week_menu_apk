@@ -1304,11 +1304,25 @@ it("new global recipes work in existing and new households and private edits sta
   const original = pack.recipes[0];
   const detail = (await rpc<any>("get_catalogue_item", ["recipe", original.id]))
     .item;
+  const editedName = { en: "Our private toast", es: "Nuestra tostada privada" };
   await rpc("save_household_content", [
     "recipe",
     {
       ...detail,
-      name: { en: "Our private toast", es: "Nuestra tostada privada" },
+      name: editedName,
+      ...(detail.recipe_model
+        ? {
+            recipe_model: {
+              ...detail.recipe_model,
+              legacy_name: editedName,
+              variants: detail.recipe_model.variants.map((v: any) =>
+                v.id === detail.recipe_model.default_variant_id
+                  ? { ...v, name: editedName }
+                  : v,
+              ),
+            },
+          }
+        : {}),
     },
     detail.revision,
     false,
@@ -2022,4 +2036,313 @@ it("V6 automatic use is recorded as System and changing modes leaves past manual
   await expect(
     send("assign", { container_id: manual, target_id: r.id, grams: 1 }),
   ).rejects.toThrow("cooking_expired");
+});
+
+it("stores canonical variants, combines cross-recipe preparations, rejects invented lines and preserves old snapshots", async () => {
+  await db.exec("reset role");
+  await db.query(
+    `insert into auth.users values($1,'models@example.com',now(),'{"provider":"google"}','{}')`,
+    ["d8dfe42b-1320-4b5d-a48a-000000000099"],
+  );
+  await actor("d8dfe42b-1320-4b5d-a48a-000000000099");
+  await call("create_household", ["Preparation model tests", "UTC"]);
+  home = (await call("get_household_access")).active;
+  const newcomer = (await snapshot()).members.find(
+    (m) => m.id === home.membership_id,
+  )!;
+  await rpc("save_my_profile", [profile, newcomer.revision]);
+  const proposal = await rpc<any>("get_my_target_proposal");
+  await rpc("accept_my_target", [
+    { breakfast: 400, lunch: 600, dinner: 650 },
+    proposal.context_revision,
+  ]);
+  const lib = await rpc<PlanningState>("get_planning_library");
+  const s = await snapshot();
+  const member = s.members.find((m) => m.id === home.membership_id)!;
+  const r = lib.recipes.find((r) => r.id === "m18")!;
+  expect(r.recipe_model?.version).toBe(2);
+  const d = addDays(day, 210);
+  const p = makePortion(
+    r,
+    member.id,
+    member.profile!,
+    600,
+    false,
+    lib.ingredients,
+    lib.substitutions,
+  );
+  const meal: MealPlan = {
+    day: d,
+    type: "lunch",
+    revision: 0,
+    shared_recipe_id: r.id,
+    portions: [p],
+  };
+  const forged = structuredClone(meal);
+  forged.portions[0].lines[0].ingredient_id = "banana";
+  await expect(
+    rpc("apply_meal_plans", [[forged], lib.revision, false]),
+  ).rejects.toThrow("invalid_recipe_model");
+  await rpc("apply_meal_plans", [[meal], lib.revision, false]);
+  const fresh = await rpc<PlanningState>("get_planning_library");
+  const saved = fresh.plans.find((m) => m.day === d && m.type === "lunch")!;
+  expect(saved.portions[0].variant_id).toBe(p.variant_id);
+  expect(saved.portions[0].name).toEqual(p.name);
+  const { preparationScope, savedVariant } =
+    await import("../src/domain/recipe-model");
+  const cooking = await rpc<any>("get_cooking_state");
+  const expected = savedVariant(saved.portions[0])!
+    .preparations.filter((p) => p.batchable && !p.optional)
+    .map(preparationScope);
+  expect(
+    cooking.requirements
+      .filter((q: any) => q.day === d)
+      .map((q: any) => q.scope)
+      .sort(),
+  ).toEqual(expected.sort());
+  const withoutModel = structuredClone(r);
+  delete withoutModel.recipe_model;
+  await expect(
+    rpc("save_household_content", ["recipe", withoutModel, r.revision, false]),
+  ).rejects.toThrow("recipe_update_required");
+  const oldSnapshot = JSON.stringify(saved);
+  const changed = structuredClone(r);
+  changed.recipe_model!.variants[0].preparations[0].instructions[0].en +=
+    " edited";
+  await expect(
+    rpc("save_household_content", ["recipe", changed, r.revision, false]),
+  ).rejects.toThrow("preparation_revision_conflict");
+  expect(
+    JSON.stringify(
+      (await rpc<PlanningState>("get_planning_library")).plans.find(
+        (m) => m.day === d && m.type === "lunch",
+      ),
+    ),
+  ).toBe(oldSnapshot);
+  const transfer = await rpc<any>("preview_meal_transfer", [
+    {
+      mode: "paste",
+      target: { day: addDays(d, 1), type: "lunch" },
+      choice: { recipe_id: r.id, revision: r.revision, desserts: {} },
+    },
+  ]);
+  expect(transfer.plans[0].portions.every((p: any) => p.variant_id)).toBe(true);
+});
+
+it("commits budget and portion changes atomically, binds retries and rejects changes to someone else", async () => {
+  await actor("d8dfe42b-1320-4b5d-a48a-000000000099");
+  let lib = await rpc<PlanningState>("get_planning_library");
+  const s = await snapshot(),
+    member = s.members.find((m) => m.id === home.membership_id)!;
+  const d = addDays(day, 220),
+    r = lib.recipes.find((r) => r.id === "m18")!;
+  const p = makePortion(
+    r,
+    member.id,
+    member.profile!,
+    600,
+    false,
+    lib.ingredients,
+    lib.substitutions,
+  );
+  await rpc("apply_meal_plans", [
+    [
+      {
+        day: d,
+        type: "lunch",
+        revision: 0,
+        shared_recipe_id: r.id,
+        portions: [p],
+      },
+    ],
+    lib.revision,
+    false,
+  ]);
+  lib = await rpc<PlanningState>("get_planning_library");
+  const fresh = await snapshot();
+  fresh.planning = lib;
+  const { budgetImpact } = await import("../src/domain/budget-impact");
+  const changes = { lunch: 510 },
+    draft = budgetImpact(fresh, d, changes),
+    op = crypto.randomUUID();
+  expect(draft.plans).toHaveLength(1);
+  const invalid = structuredClone(draft.plans);
+  invalid[0].portions[0].lines[0].quantity = 0;
+  await expect(
+    rpc("save_budgets_and_portions", [op, d, changes, invalid, draft.revision]),
+  ).rejects.toThrow();
+  expect((await snapshot()).budget_overrides.some((b) => b.day === d)).toBe(
+    false,
+  );
+  const args = [op, d, changes, draft.plans, draft.revision];
+  await rpc("save_budgets_and_portions", args);
+  lib = await rpc<PlanningState>("get_planning_library");
+  expect(lib.plans.find((m) => m.day === d)!.portions[0].budget).toBe(510);
+  expect(
+    (await snapshot()).budget_overrides.find(
+      (b) => b.day === d && b.meal_type === "lunch",
+    )?.kcal,
+  ).toBe(510);
+  await rpc("save_my_budget_override", [d, "lunch", 520]);
+  await rpc("save_budgets_and_portions", args);
+  expect(
+    (await snapshot()).budget_overrides.find(
+      (b) => b.day === d && b.meal_type === "lunch",
+    )?.kcal,
+  ).toBe(520);
+  await expect(
+    rpc("save_budgets_and_portions", [
+      op,
+      d,
+      { lunch: 511 },
+      draft.plans,
+      draft.revision,
+    ]),
+  ).rejects.toThrow("operation_mismatch");
+  await actor(b);
+  await expect(
+    rpc("save_budgets_and_portions", [
+      crypto.randomUUID(),
+      d,
+      changes,
+      [],
+      lib.revision,
+    ]),
+  ).rejects.toThrow();
+  await actor("d8dfe42b-1320-4b5d-a48a-000000000099");
+});
+
+it("accepts a target and future quantities once, preserves another member and rolls back an invalid portion after target insertion", async () => {
+  await db.exec("reset role");
+  const peer = "d8dfe42b-1320-4b5d-a48a-000000000098";
+  await db.query(
+    `insert into auth.users values($1,'model-peer@example.com',now(),'{"provider":"google"}','{}')`,
+    [peer],
+  );
+  await actor("d8dfe42b-1320-4b5d-a48a-000000000099");
+  await rpc("invite_member", ["model-peer@example.com"]);
+  await actor(peer);
+  const invitation = (await call<any>("get_household_access")).invitations[0]
+    .id;
+  await call("join_household", [invitation, "UTC"]);
+  const context = (await call<any>("get_household_access")).active;
+  let peerState = await call<HouseholdState>("get_household_snapshot", [
+    context.household_id,
+    context.membership_id,
+  ]);
+  await call("save_my_profile", [
+    context.household_id,
+    context.membership_id,
+    { ...profile, name: "Model peer", diet: "vegetarian" },
+    peerState.members.find((m) => m.id === context.membership_id)!.revision,
+  ]);
+  const peerProposal = await call<any>("get_my_target_proposal", [
+    context.household_id,
+    context.membership_id,
+  ]);
+  await call("accept_my_target", [
+    context.household_id,
+    context.membership_id,
+    { breakfast: 400, lunch: 450, dinner: 650 },
+    peerProposal.context_revision,
+  ]);
+  await actor("d8dfe42b-1320-4b5d-a48a-000000000099");
+  let lib = await rpc<PlanningState>("get_planning_library");
+  const state = await snapshot(),
+    d = addDays(day, 240),
+    r = lib.recipes.find((r) => r.id === "m18")!;
+  const portions = state.members
+    .filter((m) => m.status === "active" && m.onboarded)
+    .map((m) =>
+      makePortion(
+        r,
+        m.id,
+        m.profile!,
+        m.id === context.membership_id ? 450 : 600,
+        false,
+        lib.ingredients,
+        lib.substitutions,
+      ),
+    );
+  expect(portions).toHaveLength(2);
+  await rpc("apply_meal_plans", [
+    [{ day: d, type: "lunch", revision: 0, shared_recipe_id: r.id, portions }],
+    lib.revision,
+    false,
+  ]);
+  // A peer's later target must not rewrite their previously saved portion.
+  await actor(peer);
+  const nextPeerProposal = await call<any>("get_my_target_proposal", [
+    context.household_id,
+    context.membership_id,
+  ]);
+  await call("accept_my_target", [
+    context.household_id,
+    context.membership_id,
+    { breakfast: 400, lunch: 600, dinner: 650 },
+    nextPeerProposal.context_revision,
+  ]);
+  await actor("d8dfe42b-1320-4b5d-a48a-000000000099");
+  const fresh = await snapshot();
+  fresh.planning = await rpc<PlanningState>("get_planning_library");
+  const proposal = await rpc<any>("get_my_target_proposal"),
+    budgets = { breakfast: 400, lunch: 800, dinner: 650 };
+  const { targetBudgetImpact } = await import("../src/domain/budget-impact");
+  const draft = targetBudgetImpact(fresh, budgets, proposal),
+    op = crypto.randomUUID(),
+    targets = fresh.targets.length;
+  const foreign = structuredClone(draft.plans);
+  foreign
+    .find((p) => p.day === d)!
+    .portions.find((p) => p.member_id === context.membership_id)!.lines[0]
+    .quantity++;
+  await expect(
+    rpc("accept_target_and_portions", [
+      op,
+      budgets,
+      proposal.context_revision,
+      foreign,
+      draft.revision,
+    ]),
+  ).rejects.toThrow("access_denied");
+  const invalid = structuredClone(draft.plans);
+  invalid[0].portions.find(
+    (p) => p.member_id === home.membership_id,
+  )!.lines[0].quantity = 0;
+  await expect(
+    rpc("accept_target_and_portions", [
+      op,
+      budgets,
+      proposal.context_revision,
+      invalid,
+      draft.revision,
+    ]),
+  ).rejects.toThrow("invalid_quantity");
+  expect((await snapshot()).targets).toHaveLength(targets);
+  expect((await rpc<PlanningState>("get_planning_library")).plans).toEqual(
+    fresh.planning.plans,
+  );
+  const args = [
+    op,
+    budgets,
+    proposal.context_revision,
+    draft.plans,
+    draft.revision,
+  ];
+  await rpc("accept_target_and_portions", args);
+  lib = await rpc<PlanningState>("get_planning_library");
+  const saved = lib.plans.find((p) => p.day === d)!;
+  expect(
+    saved.portions.find((p) => p.member_id === home.membership_id)?.budget,
+  ).toBe(800);
+  expect(
+    saved.portions.find((p) => p.member_id === context.membership_id),
+  ).toEqual(
+    fresh.planning.plans
+      .find((p) => p.day === d)!
+      .portions.find((p) => p.member_id === context.membership_id),
+  );
+  expect((await snapshot()).targets).toHaveLength(targets + 1);
+  await rpc("accept_target_and_portions", args);
+  expect((await snapshot()).targets).toHaveLength(targets + 1);
 });

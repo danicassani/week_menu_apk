@@ -106,17 +106,20 @@ export function ShoppingPage(v: ViewProps) {
       <div className="shopping-scope button-row">
         <p>{t("All upcoming meals", "Todas las comidas próximas")}</p>
         {eggSetting && (
-          <Button
-            secondary
-            disabled={!queue.online}
-            onClick={() => {
-              setEggRevision(eggSetting.revision);
-              setEggGrams(String(eggSetting.grams_per_unit));
-              setEggEditor(true);
-            }}
-          >
-            {t("Egg size estimate", "Tamaño estimado del huevo")}
-          </Button>
+          <details>
+            <summary>{t("Purchasing options", "Opciones de compra")}</summary>
+            <Button
+              secondary
+              disabled={!queue.online}
+              onClick={() => {
+                setEggRevision(eggSetting.revision);
+                setEggGrams(String(eggSetting.grams_per_unit));
+                setEggEditor(true);
+              }}
+            >
+              {t("Egg size estimate", "Tamaño estimado del huevo")}
+            </Button>
+          </details>
         )}
       </div>
       {eggEditor && eggSetting && (
@@ -219,32 +222,35 @@ export function ShoppingPage(v: ViewProps) {
           )}
         </p>
       )}
-      <div className="sync-status" role="status">
-        {!queue.online ? (
-          <>
-            <WifiOff size={16} />
-            {t(
-              "Offline · checks are saved on this device",
-              "Sin conexión · las marcas se guardan en este dispositivo",
-            )}
-          </>
-        ) : queue.syncing ? (
-          t("Synchronizing…", "Sincronizando…")
-        ) : queue.data?.pending.length ? (
-          t("Changes waiting to sync", "Cambios pendientes de sincronizar")
-        ) : (
-          t("Connected", "Con conexión")
-        )}
-        {queue.online && (
-          <button
-            className="button secondary"
-            disabled={queue.syncing}
-            onClick={() => void queue.sync()}
-          >
-            {t("Sync now", "Sincronizar ahora")}
-          </button>
-        )}
-      </div>
+      <details className="shopping-sync-details">
+        <summary>{t("Synchronization", "Sincronización")}</summary>
+        <div className="sync-status" role="status">
+          {!queue.online ? (
+            <>
+              <WifiOff size={16} />
+              {t(
+                "Offline · checks are saved on this device",
+                "Sin conexión · las marcas se guardan en este dispositivo",
+              )}
+            </>
+          ) : queue.syncing ? (
+            t("Synchronizing…", "Sincronizando…")
+          ) : queue.data?.pending.length ? (
+            t("Changes waiting to sync", "Cambios pendientes de sincronizar")
+          ) : (
+            t("Connected", "Con conexión")
+          )}
+          {queue.online && (
+            <button
+              className="button secondary"
+              disabled={queue.syncing}
+              onClick={() => void queue.sync()}
+            >
+              {t("Sync now", "Sincronizar ahora")}
+            </button>
+          )}
+        </div>
+      </details>
       {(queue.error || message) && (
         <p className="note warning" role="alert">
           {message ||

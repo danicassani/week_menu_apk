@@ -39,6 +39,11 @@ export function PlanningHistoryAccess({
   const label = translator(language)("AT A GLANCE", "DE UN VISTAZO");
   return (
     <>
+      {active && (
+        <Button secondary onClick={() => setOpen(true)}>
+          {translator(language)("Change history", "Historial de cambios")}
+        </Button>
+      )}
       {active ? (
         <button
           type="button"

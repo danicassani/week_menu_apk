@@ -4248,3 +4248,108 @@ textarea:focus-visible {
   text-align: center;
   font-size: 0.875em;
 }
+
+/* Shared cooking view: totals first, personal serving detail on demand. */
+.household-meal h3 {
+  margin-top: 1.2rem;
+}
+.meal-preparation {
+  padding-block: 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+.meal-preparation h4 {
+  margin: 0.2rem 0 0.7rem;
+}
+.portion-distribution,
+.recipe-variant-tools {
+  margin-block: 1rem;
+}
+.portion-distribution summary,
+.meal-more summary,
+.shopping-group summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding-block: 0.7rem;
+}
+.meal-more {
+  position: relative;
+}
+.meal-more[open] {
+  flex-basis: 100%;
+}
+.meal-more[open] > button,
+.meal-more[open] > .icon-button {
+  margin: 0.25rem;
+}
+.recipe-line-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.recipe-line-editor select:first-child {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+.recipe-line-editor input {
+  width: 6rem;
+}
+.recipe-line-editor select:not(:first-child) {
+  width: 5rem;
+}
+fieldset[hidden] {
+  display: none;
+}
+.household-meal .ingredient-list li {
+  gap: 0.75rem;
+}
+@media (max-width: 600px) {
+  .day-card .meal-card {
+    padding: 0.85rem;
+  }
+  .day-card .meal-card h3 {
+    font-size: 1rem;
+    margin-block: 0.35rem;
+  }
+  .day-card .meal-card p {
+    margin-block: 0.4rem;
+  }
+}
+.today-meals {
+  margin-bottom: 1rem;
+}
+.cooking-batch > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding-block: 0.4rem;
+}
+.offline-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.2rem;
+}
+.offline-tabs .button {
+  min-width: 0;
+  padding-inline: 0.2rem;
+  flex-direction: column;
+  font-size: 0.75rem;
+}
+
+.member-selector-row {
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.member-select {
+  min-width: 0;
+  max-width: 100%;
+}
+.member-select select {
+  min-width: 0;
+  max-width: 100%;
+}
+.budget-impact-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.2rem;
+  padding: 0;
+  list-style: none;
+}

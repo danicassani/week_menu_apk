@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "./helpers/actions";
 import { test, expect } from "@playwright/test";
 test("saved portions automatically generate an upcoming list and retain manual checked items", async ({
   page,
@@ -24,6 +25,10 @@ test("saved portions automatically generate an upcoming list and retain manual c
     name: "Kitchen towels · 2 rolls",
   });
   await manual.click();
+  await page
+    .locator(".shopping-group > summary")
+    .filter({ hasText: "Purchased" })
+    .click();
   await expect(manual).toBeChecked();
   await expect(page.locator(".sync-status")).toContainText("Connected");
   await expect(page.getByLabel("From", { exact: true })).toHaveCount(0);
@@ -60,7 +65,7 @@ test("an empty week clears the generated shopping list and stays empty after rel
   await nav().getByRole("button", { name: "Shopping", exact: true }).click();
   await expect(page.getByRole("checkbox").first()).toBeEnabled();
   await nav().getByRole("button", { name: "Menu", exact: true }).click();
-  await page.getByRole("button", { name: "Delete week", exact: true }).click();
+  await clickDisclosedAction(page, "Delete week");
   await page
     .getByRole("button", { name: "Delete editable meals", exact: true })
     .click();

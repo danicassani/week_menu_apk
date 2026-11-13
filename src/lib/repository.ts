@@ -480,6 +480,46 @@ export class SupabaseRepository implements Repository {
       p_kcal: kcal,
     });
   }
+  acceptTargetAndPortions(
+    budgets: Budgets,
+    context: string,
+    operation: string,
+    plans: MealPlan[],
+    revision: number,
+  ) {
+    return this.rpc<void>(
+      "accept_target_and_portions",
+      {
+        p_budgets: budgets,
+        p_context: context,
+        p_operation: operation,
+        p_plans: plans,
+        p_revision: revision,
+      },
+      true,
+      true,
+    );
+  }
+  saveBudgetsAndPortions(
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+    operation: string,
+    plans: MealPlan[],
+    revision: number,
+  ) {
+    return this.rpc<void>(
+      "save_budgets_and_portions",
+      {
+        p_day: day,
+        p_changes: changes,
+        p_operation: operation,
+        p_plans: plans,
+        p_revision: revision,
+      },
+      true,
+      true,
+    );
+  }
   async saveBudgetOverrides(
     day: string,
     changes: Partial<Record<MealType, number | null>>,

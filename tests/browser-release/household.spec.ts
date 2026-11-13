@@ -1,3 +1,7 @@
+import {
+  clickDisclosedAction,
+  clickDisclosedCheckbox,
+} from "../browser/helpers/actions";
 import { test, expect } from "@playwright/test";
 for (const language of ["en", "es"] as const) {
   test(`${language}: complete mobile plan, shopping, offline recovery and personal food workflow`, async ({
@@ -87,7 +91,9 @@ for (const language of ["en", "es"] as const) {
       .getByRole("button", { name: t("Shopping", "Compra"), exact: true })
       .click();
     await expect(page.getByRole("dialog")).toHaveCount(0);
-    await expect(page.getByRole("checkbox").first()).toBeEnabled();
+    await expect(
+      page.getByRole("checkbox", { includeHidden: true }).first(),
+    ).toBeEnabled();
     await page.evaluate(async () => {
       await navigator.serviceWorker.ready;
     });
@@ -107,15 +113,25 @@ for (const language of ["en", "es"] as const) {
         name: t("Your household, offline", "Tu hogar, sin conexión"),
       }),
     ).toBeVisible();
-    const checkbox = page.getByRole("checkbox").first(),
+    const checkbox = page
+        .getByRole("checkbox", { includeHidden: true })
+        .first(),
       label = await checkbox.getAttribute("aria-label");
-    await checkbox.click();
+    await clickDisclosedCheckbox(page, label ?? undefined);
     await expect(
-      page.getByRole("checkbox", { name: label!, exact: true }),
+      page.getByRole("checkbox", {
+        includeHidden: true,
+        name: label!,
+        exact: true,
+      }),
     ).toBeChecked();
     await page.reload();
     await expect(
-      page.getByRole("checkbox", { name: label!, exact: true }),
+      page.getByRole("checkbox", {
+        includeHidden: true,
+        name: label!,
+        exact: true,
+      }),
     ).toBeChecked();
     await expect(page.locator(".shopping-progress")).toContainText(
       t("1 pending sync", "1 por sincronizar"),
@@ -123,7 +139,7 @@ for (const language of ["en", "es"] as const) {
     await context.setOffline(false);
     await expect(
       page.getByRole("heading", {
-        name: t("Good to see you, Alex.", "Qué bien verte, Alex."),
+        name: t("The shopping list", "La lista de la compra"),
       }),
     ).toBeVisible();
     await page
@@ -137,7 +153,11 @@ for (const language of ["en", "es"] as const) {
     );
     await expect(page.locator(".shopping-progress .pill")).toHaveCount(0);
     await expect(
-      page.getByRole("checkbox", { name: label!, exact: true }),
+      page.getByRole("checkbox", {
+        includeHidden: true,
+        name: label!,
+        exact: true,
+      }),
     ).toBeChecked();
     await page.screenshot({
       path: `test-results/release/${test.info().project.name}-${language}.png`,
@@ -237,7 +257,9 @@ test("another member is read-only, and offline sign-out clears that device’s s
     .getByLabel("Product", { exact: true })
     .fill("Release checklist item");
   await page.getByRole("button", { name: "Save item", exact: true }).click();
-  await expect(page.getByRole("checkbox")).toBeEnabled();
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeEnabled();
   await page.evaluate(async () => {
     await navigator.serviceWorker.ready;
   });
@@ -246,8 +268,10 @@ test("another member is read-only, and offline sign-out clears that device’s s
     .toBe(true);
   await context.setOffline(true);
   await page.reload();
-  await page.getByRole("checkbox").click();
-  await expect(page.getByRole("checkbox")).toBeChecked();
+  await clickDisclosedCheckbox(page);
+  await expect(
+    page.getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await page.getByRole("button", { name: "Sign out", exact: true }).click();
   await expect(page.getByRole("button", { name: "Sync first" })).toBeDisabled();
   await page

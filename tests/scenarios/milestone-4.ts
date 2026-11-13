@@ -45,7 +45,7 @@ export async function historicalScenario(
   await expect(check).toBeVisible();
   await expect(
     day.getByRole("button", {
-      name: t("Review meal", "Revisar comida"),
+      name: t("Change", "Cambiar"),
       exact: true,
     }),
   ).toHaveCount(0);

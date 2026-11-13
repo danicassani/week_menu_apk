@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { variantComponents } from "../domain/recipe-model";
 import { RecipeSourceDetails } from "./recipe-source";
 import { recipeSource } from "../domain/recipe-source";
 import {
@@ -53,12 +55,42 @@ export function RecipeContent({
   ingredients: Ingredient[];
   language: Language;
 }) {
-  recipe = recipePresentation(recipe);
+  const [selected, setSelected] = useState(
+    recipe.recipe_model?.default_variant_id ?? "",
+  );
+  const variant = recipe.recipe_model?.variants.find((v) => v.id === selected);
+  const model = recipe.recipe_model;
+  recipe = variant
+    ? {
+        ...recipe,
+        name: variant.name,
+        components: variantComponents(recipe, variant),
+        ingredient_preparation: [],
+      }
+    : recipePresentation(recipe);
   const t = translator(language),
     text = (n: { en: string; es: string }) => n[language] || n.en || n.es;
   const source = recipeSource(recipe.source_recipe);
   return (
     <>
+      {model && model.variants.length > 1 && (
+        <label>
+          {t("Variant", "Variante")}
+          <select
+            value={selected}
+            onChange={(e) => setSelected(e.target.value)}
+          >
+            {model.variants.map((v) => (
+              <option key={v.id} value={v.id}>
+                {text(v.name)}
+                {v.id === model.default_variant_id
+                  ? t(" · Original", " · Original")
+                  : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <p className="muted">
         {source?.reference_caption
           ? text(source.reference_caption)
@@ -85,7 +117,16 @@ export function RecipeContent({
         ingredients={ingredients}
         language={language}
       />
-      {recipe.components.map((c) => (
+      {(variant
+        ? variant.preparations.map((p) => ({
+            id: p.id,
+            name: p.name,
+            optional: p.optional,
+            ingredients: p.lines,
+            instructions: p.instructions,
+          }))
+        : recipe.components
+      ).map((c) => (
         <section className="recipe-component" key={c.id}>
           <h3>
             {text(c.name)}{" "}

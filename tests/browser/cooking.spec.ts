@@ -131,6 +131,7 @@ for (const language of ["en", "es"] as const)
     await expect(modal).toHaveCount(0);
     await expect(page.locator(".cooking-batch").first()).toContainText("1000");
     const firstBatch = page.locator(".cooking-batch").first();
+    await firstBatch.locator(":scope > summary").click();
     await firstBatch.locator(".cooking-stock > summary").click();
     await firstBatch
       .getByRole("button", {

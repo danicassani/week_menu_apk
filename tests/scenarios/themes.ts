@@ -30,7 +30,8 @@ export async function themesScenario(
   for (const family of THEME_FAMILIES) {
     await settings
       .getByRole("radio", { name: THEME_NAMES[family][language], exact: true })
-      .check();
+      .locator("..")
+      .click();
     await expect(page.locator("html")).toHaveAttribute("data-colour", family);
     for (const mode of ["light", "dark"] as const) {
       if ((await page.locator("html").getAttribute("data-theme")) !== mode)

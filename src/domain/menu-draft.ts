@@ -31,7 +31,11 @@ export function replan(
             source.portions.find((p) => p.recipe_id)?.recipe_id)
           : (old?.recipe_id ?? old?.underlying_recipe_id);
       const recipe = lib.recipes.find(
-        (r) => r.id === id && !r.archived && r.meal_types.includes(type),
+        (r) =>
+          r.id === id &&
+          !r.archived &&
+          !r.banned &&
+          r.meal_types.includes(type),
       );
       try {
         if (!recipe) throw Error("missing_recipe");
@@ -54,6 +58,7 @@ export function replan(
             old?.dessert ?? false,
             lib.ingredients,
             lib.substitutions,
+            old?.variant_id,
           ),
         ];
       } catch {

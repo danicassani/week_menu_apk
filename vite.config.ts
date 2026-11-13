@@ -9,6 +9,7 @@ export default defineConfig({
         codeSplitting: {
           groups: [
             { name: "nutrition-content", test: /content\/starter/ },
+            { name: "recipe-preparations", test: /content\/preparations/ },
             { name: "date-time", test: /@js-temporal|jsbi/ },
             { name: "supabase", test: /@supabase/ },
             { name: "react", test: /node_modules\/react/ },

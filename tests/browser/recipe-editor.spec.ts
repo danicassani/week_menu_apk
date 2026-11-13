@@ -14,87 +14,62 @@ const stored = (page: import("@playwright/test").Page) =>
   page.evaluate(() =>
     JSON.parse(sessionStorage.getItem("week-menu-demo-server")!),
   );
-test("editing a legacy dish groups its sides while preserving ingredient references and planned meals", async ({
+const references = (components: any[]) =>
+  components.flatMap((c) =>
+    c.ingredients.map((l: any) => ({
+      component: c.id,
+      id: l.ingredient_id,
+      quantity: l.quantity,
+      unit: l.unit,
+    })),
+  );
+test("editing a shared preparation preserves reference amounts and saved meals and creates a distinct method revision", async ({
   page,
 }) => {
-  const before = await stored(page);
-  const original = before.library.recipes.find((r: any) => r.id === "m26");
+  const before = await stored(page),
+    original = before.library.recipes.find((r: any) => r.id === "m26");
   await page
-    .getByRole("searchbox", { name: "Search collection" })
-    .fill("Turkey, spinach and quinoa bowl");
-  await page
-    .getByRole("button", { name: /Turkey, spinach and quinoa bowl/ })
-    .click();
+    .getByRole("searchbox", { name: "Search collection", exact: true })
+    .fill(original.name.en);
+  await page.locator(".recipe-card").click();
   await page.getByRole("button", { name: "Edit recipe", exact: true }).click();
-  const dish = page.getByRole("region", { name: "Dish", exact: true });
-  const dessert = page.getByRole("region", {
-    name: "Optional dessert",
-    exact: true,
-  });
   await expect(page.getByLabel("Component type", { exact: true })).toHaveCount(
     0,
   );
   await expect(page.getByLabel("Component name", { exact: true })).toHaveCount(
     0,
   );
-  await expect(dish.getByLabel("Ingredient", { exact: true })).toHaveCount(8);
-  await expect(
-    dish.getByLabel("Ingredient", { exact: true }).last(),
-  ).toHaveValue("quinoa");
-  await expect(dessert.getByLabel("Ingredient", { exact: true })).toHaveCount(
-    2,
-  );
-  expect(
-    await dish
-      .getByRole("textbox", { name: "Instructions", exact: true })
-      .inputValue(),
-  ).toContain("Cook the weighed dry grain");
-  await dish
-    .getByRole("textbox", { name: "Instructions", exact: true })
-    .fill("Cook the dish and its grain accompaniment together.");
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByLabel("Ingredient", { exact: true })).toHaveCount(10);
+  const common = page.getByRole("region", {
+    name: "Vegetables and seasoning",
+    exact: true,
+  });
+  await expect(common.getByLabel("Ingredient", { exact: true })).toHaveCount(6);
+  await common
+    .getByRole("textbox", { name: "Step 1", exact: true })
+    .fill(
+      "Cook the vegetables until tender, then season with the measured ingredients.",
+    );
+  await page.getByRole("button", { name: "Save recipe", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  const after = await stored(page);
-  const saved = after.library.recipes.find((r: any) => r.id === "m26");
-  expect(
-    saved.components.map((c: any) => ({
-      id: c.id,
-      ingredients: c.ingredients,
-    })),
-  ).toEqual(
-    original.components.map((c: any) => ({
-      id: c.id,
-      ingredients: c.ingredients,
-    })),
-  );
-  expect(
-    saved.components.find((c: any) => c.kind === "dessert").instructions,
-  ).toEqual(
-    original.components.find((c: any) => c.kind === "dessert").instructions,
-  );
-  expect(
-    saved.components
-      .filter((c: any) => c.kind !== "dessert")
-      .flatMap((c: any) => c.instructions)
-      .map((step: any) => step.es),
-  ).toEqual(
-    original.components
-      .filter((c: any) => c.kind !== "dessert")
-      .flatMap((c: any) => c.instructions)
-      .map((step: any) => step.es),
-  );
+  const after = await stored(page),
+    saved = after.library.recipes.find((r: any) => r.id === "m26");
+  expect(references(saved.components)).toEqual(references(original.components));
   expect(after.library.plans).toEqual(before.library.plans);
-  await page
-    .getByRole("button", { name: /Turkey, spinach and quinoa bowl/ })
-    .click();
+  const prep = saved.recipe_model.variants[0].preparations[0];
+  expect(prep.id).not.toBe(
+    original.recipe_model.variants[0].preparations[0].id,
+  );
+  expect(prep.batchable).toBe(false);
+  await page.locator(".recipe-card").click();
   await page.getByRole("button", { name: "Edit recipe", exact: true }).click();
   await expect(
-    page
-      .getByRole("region", { name: "Dish", exact: true })
-      .getByRole("textbox", { name: "Instructions", exact: true }),
-  ).toHaveValue(/^Cook the dish and its grain accompaniment together\.\n*$/);
+    page.getByRole("textbox", { name: "Step 1", exact: true }).first(),
+  ).toHaveValue(
+    "Cook the vegetables until tender, then season with the measured ingredients.",
+  );
 });
-test("a new recipe only asks for its name once and allows adding and removing an optional dessert", async ({
+test("a new recipe keeps one name, simple authoring and an optional removable dessert", async ({
   page,
 }) => {
   await page.getByRole("button", { name: "New recipe", exact: true }).click();
@@ -111,9 +86,6 @@ test("a new recipe only asks for its name once and allows adding and removing an
   await page
     .getByRole("button", { name: "Add optional dessert", exact: true })
     .click();
-  await expect(
-    page.getByRole("button", { name: "Add optional dessert", exact: true }),
-  ).toHaveCount(0);
   const dessert = page.getByRole("region", {
     name: "Optional dessert",
     exact: true,
@@ -132,30 +104,27 @@ test("a new recipe only asks for its name once and allows adding and removing an
     (r: any) => r.name.en === "Simple household dish",
   );
   expect(saved.components).toHaveLength(2);
-  expect(saved.components[0].name.en).toBe("Simple household dish");
-  expect(saved.components[1]).toMatchObject({
-    kind: "dessert",
-    optional: true,
-    default_included: false,
-  });
+  expect(saved.recipe_model.version).toBe(2);
   await page
-    .getByRole("searchbox", { name: "Search collection" })
+    .getByRole("searchbox", { name: "Search collection", exact: true })
     .fill("Simple household dish");
-  await page.getByRole("button", { name: /Simple household dish/ }).click();
+  await page.locator(".recipe-card").click();
   await page.getByRole("button", { name: "Edit recipe", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Remove dessert", exact: true })
+  await expect(page.getByLabel("Name", { exact: true })).toHaveCount(1);
+  const options = dessert.locator("details").filter({
+    has: page.locator("summary", { hasText: "Preparation options" }),
+  });
+  await options.locator(":scope > summary").click();
+  await dessert
+    .getByRole("button", { name: "Remove preparation", exact: true })
     .click();
-  await expect(
-    page.getByRole("region", { name: "Optional dessert", exact: true }),
-  ).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: "Add optional dessert", exact: true }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(dessert).toHaveCount(0);
+  await page.getByRole("button", { name: "Save recipe", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   const updated = (await stored(page)).library.recipes.find(
     (r: any) => r.id === saved.id,
   );
-  expect(updated.components).toEqual([saved.components[0]]);
+  expect(references(updated.components)).toEqual(
+    references([saved.components[0]]),
+  );
 });

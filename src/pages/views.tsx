@@ -288,6 +288,21 @@ export function Dashboard(v: ViewProps) {
           )}
         </div>
       )}
+      <section className="panel today-meals">
+        <SectionTitle
+          title={t("On the table today", "Hoy en la mesa")}
+          subtitle={t(
+            "Your portions, from morning to evening.",
+            "Tus porciones, de la mañana a la noche.",
+          )}
+          action={
+            <TextLink onClick={() => v.navigate("menu")}>
+              {t("View week", "Ver semana")}
+            </TextLink>
+          }
+        />
+        <MealCards v={v} day={v.day} />
+      </section>
       <div className="dashboard-top">
         <div className="daily-picture">
           <section className="target-card">
@@ -346,8 +361,8 @@ export function Dashboard(v: ViewProps) {
               className="progress"
               role="progressbar"
               aria-label={t(
-                "Known intake against target",
-                "Ingesta conocida respecto al objetivo",
+                "Estimated intake against target",
+                "Ingesta estimada respecto al objetivo",
               )}
               aria-valuemin={0}
               aria-valuemax={v.target ? Math.round(v.target.daily_kcal) : 1}
@@ -369,7 +384,10 @@ export function Dashboard(v: ViewProps) {
             <div className="target-footer">
               <span>
                 {summary ? Math.round(summary.intake) : 0} kcal{" "}
-                {t("known intake", "de ingesta conocida")}
+                {t(
+                  "estimated intake, including logs",
+                  "de ingesta estimada, incluidos registros",
+                )}
               </span>
               <span>
                 {summary?.complete
@@ -470,19 +488,6 @@ export function Dashboard(v: ViewProps) {
       </div>
       <div className="content-columns">
         <div>
-          <SectionTitle
-            title={t("On the table today", "Hoy en la mesa")}
-            subtitle={t(
-              "Your portions, from morning to evening.",
-              "Tus porciones, de la mañana a la noche.",
-            )}
-            action={
-              <TextLink onClick={() => v.navigate("menu")}>
-                {t("View week", "Ver semana")}
-              </TextLink>
-            }
-          />
-          <MealCards v={v} day={v.day} />
           {v.target &&
             exceedsDisplayedCalories(totalBudget, v.target.daily_kcal) && (
               <div className="note warning">

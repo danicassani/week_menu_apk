@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "./helpers/actions";
 import { test, expect } from "@playwright/test";
 import { allocationScenario } from "../scenarios/milestone-3";
 for (const lang of ["en", "es"] as const)
@@ -55,9 +56,7 @@ test("whole catalogue pages have a footer create action and a distinct centered 
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Recipes", exact: true })
     .click();
-  await page
-    .getByRole("button", { name: "Ingredients & units", exact: true })
-    .click();
+  await clickDisclosedAction(page, "Ingredients & units");
   await expect(page.locator(".recipe-card")).toHaveCount(50);
   const more = page.getByRole("button", {
     name: "Load 50 more ingredients",

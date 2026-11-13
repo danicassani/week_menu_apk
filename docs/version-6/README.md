@@ -1,5 +1,7 @@
 # Version 6 — shared batch cooking
 
+The original V6 delivery is described below. The current source adds [versioned preparations, explicit variants and simpler daily flows](../recipe-preparations/README.md), including visible history access and Purchased grouping. That document supersedes the original model limitations and rollout instructions where applicable.
+
 V6 begins after the V5 changes integrated through PR #49. It adds a shared **Kitchen / Cocina** destination in the fifth navigation position, replacing Profile. The header user emoji still opens the personal profile, settings, household administration and the hidden planning history gesture. The open V5 Purchased-list PR #46 is independent of this change.
 
 ## User flow

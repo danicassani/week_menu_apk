@@ -1,3 +1,9 @@
+import { TargetFlow } from "./components/target-flow";
+import {
+  readWorkspaceContext,
+  saveWorkspaceContext,
+} from "./lib/workspace-context";
+import { BudgetFlow } from "./components/budget-flow";
 import { CookingPage } from "./pages/cooking";
 import { PlanningHistoryAccess } from "./components/planning-history";
 import { useDeviceTheme } from "./lib/device-theme";
@@ -67,12 +73,7 @@ import {
 import type { PlannedRecipe as Recipe } from "./domain/planning";
 import { RecipeContent as RecipeDetail } from "./components/recipe-reader";
 import { Button, Modal } from "./components/ui";
-import {
-  BudgetForm,
-  LogForm,
-  ProfileForm,
-  TargetReview,
-} from "./components/forms";
+import { LogForm, ProfileForm, TargetReview } from "./components/forms";
 import { Dashboard, ProfileView, type ViewProps } from "./pages/views";
 
 type Dialog =
@@ -449,10 +450,16 @@ function Workspace({
 }) {
   const [s, setS] = useState<HouseholdState | null>(null),
     [clipboard, setClipboard] = useState<PlanningClipboard | null>(null),
-    [menuAnchor, setMenuAnchor] = useState<string>(),
+    [menuAnchor, setMenuAnchor] = useState<string | undefined>(
+      () => readWorkspaceContext(cacheIdentity(repo)).anchor,
+    ),
     [fatal, setFatal] = useState(""),
-    [tab, setTab] = useState<Tab>("dashboard"),
-    [selected, setSelected] = useState(""),
+    [tab, setTab] = useState<Tab>(
+      () => readWorkspaceContext(cacheIdentity(repo)).tab,
+    ),
+    [selected, setSelected] = useState(
+      () => readWorkspaceContext(cacheIdentity(repo)).member ?? "",
+    ),
     [busy, setBusy] = useState(false),
     [message, setMessage] = useState<{
       text: string;
@@ -474,6 +481,15 @@ function Workspace({
   const clipboardScope = useRef(""),
     anchorScope = useRef("");
   const remembered = useRef<string | null>(null);
+  useEffect(
+    () =>
+      saveWorkspaceContext(cacheIdentity(repo), {
+        tab,
+        anchor: menuAnchor,
+        member: selected,
+      }),
+    [tab, menuAnchor, selected, repo],
+  );
   useEffect(() => {
     setClipboard(null);
     setMenuAnchor(undefined);
@@ -1164,35 +1180,39 @@ function Workspace({
               repository={repo}
               language={language}
             />
-            <label className="member-select">
-              <Users size={16} />
-              <span className="sr-only">
-                {t("View household member", "Ver miembro del hogar")}
-              </span>
-              <select
-                value={member.id}
-                onChange={(e) => setSelected(e.target.value)}
-              >
-                {s.members.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.presentation?.avatar ? `${m.presentation.avatar} ` : ""}
-                    {m.name}
-                    {m.id === me.id ? t(" (you)", " (tú)") : ""}
-                    {m.status === "removed"
-                      ? t(" · former member", " · antiguo miembro")
-                      : ""}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown size={14} />
-            </label>
+            {["dashboard", "menu", "profile"].includes(tab) && (
+              <label className="member-select">
+                <Users size={16} />
+                <span className="sr-only">
+                  {t("View household member", "Ver miembro del hogar")}
+                </span>
+                <select
+                  value={member.id}
+                  onChange={(e) => setSelected(e.target.value)}
+                >
+                  {s.members.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.presentation?.avatar
+                        ? `${m.presentation.avatar} `
+                        : ""}
+                      {m.name}
+                      {m.id === me.id ? t(" (you)", " (tú)") : ""}
+                      {m.status === "removed"
+                        ? t(" · former member", " · antiguo miembro")
+                        : ""}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={14} />
+              </label>
+            )}
           </div>
           {cacheWarning && (
             <p className="note warning" role="status">
               {errorMessage(new Error(cacheWarning), language)}
             </p>
           )}
-          {!own && (
+          {!own && ["dashboard", "menu", "profile"].includes(tab) && (
             <div className="viewing-notice">
               <Users size={15} />
               {t(
@@ -1374,44 +1394,38 @@ function Workspace({
               today={dayAt(s.server_now, me.time_zone)}
               language={language}
               busy={busy}
-              onSave={async (p) => {
+              onSave={async (p, reviewTarget) => {
                 if (
                   await operate(
                     () => repo.saveProfile(p, me.revision),
-                    t(
-                      "Profile saved. Review your proposed target.",
-                      "Perfil guardado. Revisa tu objetivo propuesto.",
-                    ),
+                    t("Profile saved.", "Perfil guardado."),
                   )
                 ) {
                   setLanguage(p.language);
-                  await offerReview();
+                  if (reviewTarget) await offerReview();
+                  else setDialog(null);
                 }
               }}
             />
           )}
           {dialog.kind === "target" && (
-            <TargetReview
+            <TargetFlow
+              state={s}
+              member={me}
+              proposal={dialog.proposal}
               language={language}
               busy={busy}
-              proposal={dialog.proposal}
-              current={
-                targetOn(s, me.id, dayAt(s.server_now, me.time_zone))
-                  ?.budgets ?? null
-              }
-              onAccept={async (b) => {
-                if (
-                  await operate(
-                    () =>
-                      repo.acceptTarget(b, dialog.proposal.context_revision!),
-                    t(
-                      "Target accepted. Your three meal budgets are saved.",
-                      "Objetivo aceptado. Se han guardado los tres presupuestos.",
-                    ),
-                  )
+              repository={repo}
+              commit={(task) =>
+                operate(
+                  task,
+                  t(
+                    "Target and portions updated.",
+                    "Objetivo y raciones actualizados.",
+                  ),
                 )
-                  setDialog(null);
-              }}
+              }
+              onDone={() => setDialog(null)}
             />
           )}
           {dialog.kind === "log" && (
@@ -1440,13 +1454,18 @@ function Workspace({
                   )
                 ) {
                   setDialog(null);
-                  if (e.kind === "weight") await offerReview();
                 }
               }}
             />
           )}
           {dialog.kind === "budget" && (
-            <BudgetForm
+            <BudgetFlow
+              state={s}
+              member={me}
+              initialDay={dialog.day}
+              language={language}
+              busy={busy}
+              repository={repo}
               failureMessage={
                 message?.error && message.scope === "budget"
                   ? message.text
@@ -1457,25 +1476,16 @@ function Workspace({
                   ? refreshOnly
                   : undefined
               }
-              initialDay={dialog.day}
-              member={me}
-              state={s}
-              language={language}
-              busy={busy}
-              onSave={async (day, changes, operation) => {
-                if (
-                  await operate(
-                    async () => {
-                      await repo.saveBudgetOverrides(day, changes, operation);
-                    },
-                    t(
-                      "Meal budgets updated. Review existing portions manually.",
-                      "Presupuestos actualizados. Revisa las porciones existentes manualmente.",
-                    ),
-                  )
+              commit={(task) =>
+                operate(
+                  task,
+                  t(
+                    "Budgets and portions updated.",
+                    "Presupuestos y raciones actualizados.",
+                  ),
                 )
-                  setDialog(null);
-              }}
+              }
+              onDone={() => setDialog(null)}
             />
           )}
           {dialog.kind === "recipe" && (

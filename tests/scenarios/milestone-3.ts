@@ -49,37 +49,27 @@ export async function allocationScenario(
     .getByRole("button", { name: t("Paste meal", "Pegar comida"), exact: true })
     .click();
   await target.locator(".meal-recipe-link").click();
-  const chart = page.locator(".portion-allocation");
-  await expect(chart).toBeVisible();
-  expect(await chart.locator(".allocation-group").count()).toBe(1);
-  await expect(chart.locator(".allocation-bar")).toHaveCount(1);
-  await expect(chart.locator("svg")).toHaveCount(0);
-  for (const group of await chart.locator(".allocation-group").all()) {
-    const percentages = await group
-      .locator(".allocation-legend li > span:last-child b")
-      .allTextContents();
-    expect(percentages.reduce((n, p) => n + parseInt(p), 0)).toBe(100);
-  }
-  const noa = chart
-    .getByRole("button", {
-      name: t("Portion for Noa", "Porción de Noa"),
+  const meal = page.locator(".household-meal");
+  await expect(meal).toBeVisible();
+  await expect(
+    meal.getByRole("heading", {
+      name: t("In common", "En común"),
       exact: true,
-    })
-    .first();
-  const share = await noa
-    .locator("xpath=ancestor::li[1]")
-    .locator(":scope > span:last-child b")
-    .innerText();
-  await noa.click();
-  const details = page.getByRole("dialog", {
-    name: t("Portion for Noa", "Porción de Noa"),
-    exact: true,
-  });
-  await expect(details.getByText("Noa", { exact: true })).toBeVisible();
-  await expect(details).toContainText(share);
-  await page.keyboard.press("Escape");
-  await expect(noa).toBeFocused();
-  await chart.scrollIntoViewIfNeeded();
+    }),
+  ).toBeVisible();
+  await expect(
+    meal.getByRole("heading", {
+      name: t("Variants", "Variantes"),
+      exact: true,
+    }),
+  ).toBeVisible();
+  const portions = meal.locator(".portion-distribution");
+  await expect(portions).not.toHaveAttribute("open");
+  await portions.locator(":scope > summary").click();
+  await expect(portions).toContainText("Noa");
+  await expect(portions).toContainText("Alex");
+  await expect(portions).toContainText("tofu");
+  await meal.scrollIntoViewIfNeeded();
   await page.screenshot({ path: capture });
   expect(
     await page.evaluate(

@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "./helpers/actions";
 import { test, expect, type Page } from "@playwright/test";
 const nav = (page: Page) =>
   page.getByRole("navigation", { name: "Main navigation" });
@@ -80,9 +81,7 @@ test("saved breakfast swap across members is reviewed and atomic", async ({
   await save(page);
   const breakfast = day(page).locator(".meal-card").first();
   const alex = await breakfast.locator(".meal-recipe-link").innerText();
-  await breakfast
-    .getByRole("button", { name: "Swap breakfast", exact: true })
-    .click();
+  await clickDisclosedAction(breakfast, "Swap breakfast");
   await page.getByLabel("View household member").selectOption("noa");
   const noa = await breakfast.locator(".meal-recipe-link").innerText();
   await breakfast
@@ -103,9 +102,7 @@ test("clipboard survives tabs and weeks, pastes repeatedly, confirms replacement
   await save(page);
   const source = day(page).locator(".meal-card").first(),
     name = await source.locator(".meal-recipe-link").innerText();
-  await source
-    .getByRole("button", { name: "Copy breakfast for Alex", exact: true })
-    .click();
+  await clickDisclosedAction(source, "Copy breakfast for Alex");
   await nav(page).getByRole("button", { name: "Recipes", exact: true }).click();
   await menu(page);
   await expect(
@@ -113,28 +110,22 @@ test("clipboard survives tabs and weeks, pastes repeatedly, confirms replacement
   ).toBeVisible();
   await page.getByRole("button", { name: "Next week", exact: true }).click();
   const target = day(page, "Monday 9 November").locator(".meal-card").first();
-  await target
-    .getByRole("button", { name: "Paste breakfast for Alex", exact: true })
-    .click();
+  await clickDisclosedAction(target, "Paste breakfast for Alex");
   const review = page.getByRole("dialog", { name: "Review pasted meal" });
   await expect(
     review.getByRole("button", { name: "Paste meal", exact: true }),
   ).toBeVisible();
-  await review.getByRole("button", { name: "Paste meal", exact: true }).click();
+  await clickDisclosedAction(review, "Paste meal");
   await expect(target.locator(".meal-recipe-link")).toHaveText(name);
-  await target
-    .getByRole("button", { name: "Paste breakfast for Alex", exact: true })
-    .click();
+  await clickDisclosedAction(target, "Paste breakfast for Alex");
   await expect(
     review.getByRole("button", { name: "Replace and paste", exact: true }),
   ).toBeVisible();
   await review.getByRole("button", { name: "Cancel", exact: true }).click();
   await expect(target.locator(".meal-recipe-link")).toHaveText(name);
   const second = day(page, "Tuesday 10 November").locator(".meal-card").first();
-  await second
-    .getByRole("button", { name: "Paste breakfast for Alex", exact: true })
-    .click();
-  await review.getByRole("button", { name: "Paste meal", exact: true }).click();
+  await clickDisclosedAction(second, "Paste breakfast for Alex");
+  await clickDisclosedAction(review, "Paste meal");
   await expect(second.locator(".meal-recipe-link")).toHaveText(name);
   await page.reload();
   await menu(page);
@@ -223,9 +214,7 @@ test("moving the last draft portion into an empty slot removes the saved source 
   const source = day(page).locator(".meal-card").nth(1);
   await source.getByRole("button", { name: "Suggest", exact: true }).click();
   await save(page);
-  await source
-    .getByRole("button", { name: "Preview another recipe", exact: true })
-    .click();
+  await clickDisclosedAction(source, "Preview another recipe");
   const preview = page.locator(".preview-meal");
   await expect(preview).toHaveCount(1);
   const names = await preview
