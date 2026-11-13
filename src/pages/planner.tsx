@@ -613,68 +613,61 @@ export function Planner(v: ViewProps) {
             >
               {t("Suggest week", "Sugerir semana")}
             </Button>
-            <details className="week-more">
-              <summary>
-                {t("More menu options", "Más opciones del menú")}
-              </summary>
-              <div className="button-row">
-                <IconAction
-                  icon={Calculator}
-                  label={t("Recalculate quantities", "Recalcular cantidades")}
-                  disabled={
-                    v.busy ||
-                    !lib.plans.some(
-                      (p) =>
-                        days.includes(p.day) &&
-                        !closed(v, p.day) &&
-                        p.portions.some((part) => !part.eating_out),
-                    )
-                  }
-                  onClick={() =>
-                    v.operate(
-                      async () => {
-                        const fresh = await v.repository.load(deviceZone());
-                        const draft = recalculatePlannedPortions(fresh, days);
-                        if (!draft.changes.length) {
-                          setNotice(
-                            draft.roundingLimited
-                              ? t(
-                                  "Practical rounding prevents a closer fit. Existing quantities are kept.",
-                                  "El redondeo práctico impide un ajuste mejor. Se mantienen las cantidades existentes.",
-                                )
-                              : t(
-                                  "Planned quantities already match the current budgets.",
-                                  "Las cantidades planificadas ya coinciden con los presupuestos actuales.",
-                                ),
-                          );
-                          return;
-                        }
-                        setNotice("");
-                        setPortionReview(draft);
-                      },
-                      undefined,
-                      false,
-                    )
-                  }
-                />
-                <IconAction
-                  icon={Eraser}
-                  label={t("Delete week", "Borrar semana")}
-                  disabled={
-                    v.busy ||
-                    !lib.plans.some(
-                      (p) => days.includes(p.day) && !closed(v, p.day),
-                    )
-                  }
-                  onClick={() => setDeletingWeek(lib.revision)}
-                />
-                <IconAction
-                  icon={Import}
-                  label={t("Copy a week", "Copiar una semana")}
-                  onClick={() => setCopyOpen(true)}
-                />{" "}
-              </div>
-            </details>
+            <IconAction
+              icon={Calculator}
+              label={t("Recalculate quantities", "Recalcular cantidades")}
+              disabled={
+                v.busy ||
+                !lib.plans.some(
+                  (p) =>
+                    days.includes(p.day) &&
+                    !closed(v, p.day) &&
+                    p.portions.some((part) => !part.eating_out),
+                )
+              }
+              onClick={() =>
+                v.operate(
+                  async () => {
+                    const fresh = await v.repository.load(deviceZone());
+                    const draft = recalculatePlannedPortions(fresh, days);
+                    if (!draft.changes.length) {
+                      setNotice(
+                        draft.roundingLimited
+                          ? t(
+                              "Practical rounding prevents a closer fit. Existing quantities are kept.",
+                              "El redondeo práctico impide un ajuste mejor. Se mantienen las cantidades existentes.",
+                            )
+                          : t(
+                              "Planned quantities already match the current budgets.",
+                              "Las cantidades planificadas ya coinciden con los presupuestos actuales.",
+                            ),
+                      );
+                      return;
+                    }
+                    setNotice("");
+                    setPortionReview(draft);
+                  },
+                  undefined,
+                  false,
+                )
+              }
+            />
+            <IconAction
+              icon={Eraser}
+              label={t("Delete week", "Borrar semana")}
+              disabled={
+                v.busy ||
+                !lib.plans.some(
+                  (p) => days.includes(p.day) && !closed(v, p.day),
+                )
+              }
+              onClick={() => setDeletingWeek(lib.revision)}
+            />
+            <IconAction
+              icon={Import}
+              label={t("Copy a week", "Copiar una semana")}
+              onClick={() => setCopyOpen(true)}
+            />{" "}
           </div>
         </div>
         <label className="check-row">
@@ -809,103 +802,101 @@ export function Planner(v: ViewProps) {
                         >
                           {t("Change", "Cambiar")}
                         </Button>
-                        <details className="meal-more">
-                          <summary>{t("More", "Más")}</summary>
-                          {plan && (
-                            <button
-                              className="icon-button preview-action"
-                              aria-label={t(
-                                "Preview another recipe",
-                                "Probar otra receta",
-                              )}
-                              title={t(
-                                "Preview another recipe",
-                                "Probar otra receta",
-                              )}
-                              onClick={() => {
-                                const next = suggested(
-                                  v,
-                                  lib,
-                                  day,
-                                  type,
-                                  lib.plans.filter(
-                                    (p) => p.day !== day || p.type !== type,
-                                  ),
-                                  undefined,
-                                  plan,
-                                  v.s.viewer_id,
-                                );
-                                if (next) {
-                                  setPreviewNotice("");
-                                  setPreview({
-                                    id: crypto.randomUUID(),
-                                    plans: [next],
-                                    revision: lib.revision,
-                                    replace: true,
-                                    gaps: [],
-                                  });
-                                } else
-                                  setNotice(
-                                    t(
-                                      "No alternative fits everyone’s dietary preferences and exclusions for this meal. Review the household vetoes or add a compatible variant.",
-                                      "No hay otra alternativa compatible con las dietas y exclusiones de todos para esta comida. Revisa los vetos del hogar o añade una variante compatible.",
-                                    ),
-                                  );
-                              }}
-                            >
-                              <Dices size={19} aria-hidden="true" />
-                            </button>
-                          )}
 
-                          {transfer.actions(
-                            {
-                              day,
-                              type,
-                              ...(type === "breakfast"
-                                ? { member_id: v.member.id }
-                                : {}),
-                            },
-                            lib.plans,
-                            "saved",
-                            false,
-                            "copy",
-                          )}
-                          <IconAction
-                            icon={Eraser}
-                            label={t("Remove meal", "Eliminar comida")}
-                            disabled={v.busy}
-                            onClick={async () => {
-                              if (
-                                window.confirm(
+                        {plan && (
+                          <button
+                            className="icon-button preview-action"
+                            aria-label={t(
+                              "Preview another recipe",
+                              "Probar otra receta",
+                            )}
+                            title={t(
+                              "Preview another recipe",
+                              "Probar otra receta",
+                            )}
+                            onClick={() => {
+                              const next = suggested(
+                                v,
+                                lib,
+                                day,
+                                type,
+                                lib.plans.filter(
+                                  (p) => p.day !== day || p.type !== type,
+                                ),
+                                undefined,
+                                plan,
+                                v.s.viewer_id,
+                              );
+                              if (next) {
+                                setPreviewNotice("");
+                                setPreview({
+                                  id: crypto.randomUUID(),
+                                  plans: [next],
+                                  revision: lib.revision,
+                                  replace: true,
+                                  gaps: [],
+                                });
+                              } else
+                                setNotice(
                                   t(
-                                    "Remove this meal for everyone?",
-                                    "¿Eliminar esta comida para todos?",
-                                  ),
-                                )
-                              )
-                                await v.operate(() =>
-                                  v.repository.deleteMeal(
-                                    day,
-                                    type,
-                                    lib.revision,
+                                    "No alternative fits everyone’s dietary preferences and exclusions for this meal. Review the household vetoes or add a compatible variant.",
+                                    "No hay otra alternativa compatible con las dietas y exclusiones de todos para esta comida. Revisa los vetos del hogar o añade una variante compatible.",
                                   ),
                                 );
                             }}
-                          />
-                          {transfer.actions(
-                            {
-                              day,
-                              type,
-                              ...(type === "breakfast"
-                                ? { member_id: v.member.id }
-                                : {}),
-                            },
-                            lib.plans,
-                            "saved",
-                            false,
-                            "swap",
-                          )}
-                        </details>
+                          >
+                            <Dices size={19} aria-hidden="true" />
+                          </button>
+                        )}
+
+                        {transfer.actions(
+                          {
+                            day,
+                            type,
+                            ...(type === "breakfast"
+                              ? { member_id: v.member.id }
+                              : {}),
+                          },
+                          lib.plans,
+                          "saved",
+                          false,
+                          "copy",
+                        )}
+                        <IconAction
+                          icon={Eraser}
+                          label={t("Remove meal", "Eliminar comida")}
+                          disabled={v.busy}
+                          onClick={async () => {
+                            if (
+                              window.confirm(
+                                t(
+                                  "Remove this meal for everyone?",
+                                  "¿Eliminar esta comida para todos?",
+                                ),
+                              )
+                            )
+                              await v.operate(() =>
+                                v.repository.deleteMeal(
+                                  day,
+                                  type,
+                                  lib.revision,
+                                ),
+                              );
+                          }}
+                        />
+                        {transfer.actions(
+                          {
+                            day,
+                            type,
+                            ...(type === "breakfast"
+                              ? { member_id: v.member.id }
+                              : {}),
+                          },
+                          lib.plans,
+                          "saved",
+                          false,
+                          "swap",
+                        )}
                       </div>
                     )}
                   </article>

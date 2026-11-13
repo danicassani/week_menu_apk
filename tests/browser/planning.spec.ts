@@ -763,7 +763,6 @@ test("calorie warnings are explained on demand and return focus to the yellow nu
     .getByRole("navigation", { name: "Navegación móvil" })
     .getByRole("button", { name: "Menú", exact: true })
     .click();
-  await page.locator(".week-more > summary").click();
   const erase = page.getByRole("button", {
     name: "Borrar semana",
     exact: true,

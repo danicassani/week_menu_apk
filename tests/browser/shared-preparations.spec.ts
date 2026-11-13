@@ -82,7 +82,7 @@ for (const language of ["en", "es"] as const)
     const nav = page.getByRole("navigation", {
       name: t("Mobile navigation", "Navegación móvil"),
     });
-    await expect(page.locator(".meal-more[open]")).toHaveCount(0);
+    await expect(page.locator(".meal-bottom-actions details")).toHaveCount(0);
     await page.locator(".meal-recipe-link").first().click();
     const dialog = page.getByRole("dialog");
     await expect(
