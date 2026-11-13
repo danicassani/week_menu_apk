@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "../browser/helpers/actions";
 import { test, expect } from "@playwright/test";
 for (const language of ["en", "es"] as const) {
   test(`${language}: v2 avatars, large text, locks, personal swaps, ratings and week copies`, async ({
@@ -206,12 +207,7 @@ for (const language of ["en", "es"] as const) {
         exact: true,
       })
       .click();
-    await page
-      .getByRole("button", {
-        name: t("Copy a week", "Copiar una semana"),
-        exact: true,
-      })
-      .click();
+    await clickDisclosedAction(page, t("Copy a week", "Copiar una semana"));
     await page
       .getByLabel(t("Source week", "Semana de origen"), { exact: true })
       .fill("2026-11-02");
