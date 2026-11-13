@@ -41,6 +41,9 @@ export async function versionFourScenario(
     .click();
   await approve();
   const row = breakfast.locator(".meal-bottom-actions");
+  await expect(row.getByRole("button")).toHaveCount(1);
+  await expect(row.locator(".meal-more")).not.toHaveAttribute("open");
+  await row.locator(".meal-more > summary").click();
   await expect(row.getByRole("button")).toHaveCount(5);
   const boxes = await row.getByRole("button").evaluateAll((els) =>
     els.map((el) => {
@@ -56,7 +59,9 @@ export async function versionFourScenario(
   const labels = await row
     .getByRole("button")
     .evaluateAll((els) => els.map((e) => e.getAttribute("aria-label")));
-  expect(labels[0]).toBe(t("Review meal", "Revisar comida"));
+  await expect(
+    row.getByRole("button", { name: t("Change", "Cambiar"), exact: true }),
+  ).toBeVisible();
   expect(labels[1]).toBe(t("Preview another recipe", "Probar otra receta"));
   expect(labels[2]).toContain(t("Copy", "Copiar"));
   expect(labels[3]).toBe(t("Remove meal", "Eliminar comida"));
@@ -79,7 +84,10 @@ export async function versionFourScenario(
       exact: true,
     })
     .click();
-  await expect(page.locator(".allocation-bar")).toHaveCount(1);
+  await expect(page.locator(".household-meal")).toBeVisible();
+  await expect(page.locator(".portion-distribution")).not.toHaveAttribute(
+    "open",
+  );
   await expect(page.locator(".allocation-pie")).toHaveCount(0);
   await page.screenshot({
     path: outputPath(`shared-bar-${language}.png`),
@@ -105,6 +113,7 @@ export async function versionFourScenario(
   await nav
     .getByRole("button", { name: t("Shopping", "Compra"), exact: true })
     .click();
+  await page.locator(".shopping-sync-details > summary").click();
   await expect(
     page.getByRole("button", {
       name: t("Sync now", "Sincronizar ahora"),

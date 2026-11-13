@@ -51,9 +51,9 @@ export function ShoppingChecklist({
           </span>
         )}
       </div>
-      {(["generated", "manual"] as const).map((source) => {
+      {([false, true] as const).map((checked) => {
         const rows = visible
-          .filter((i) => i.source === source)
+          .filter((i) => i.checked === checked)
           .sort(
             (a, b) =>
               Number(a.checked) - Number(b.checked) ||
@@ -68,12 +68,17 @@ export function ShoppingChecklist({
           );
         if (!rows.length) return null;
         return (
-          <section key={source} className="shopping-group">
-            <h2>
-              {source === "generated"
-                ? t("From your menu", "Del menú")
-                : t("Added by the household", "Añadido por el hogar")}
-            </h2>
+          <details
+            key={String(checked)}
+            className="shopping-group"
+            open={checked ? undefined : true}
+          >
+            <summary>
+              {checked
+                ? t("Purchased", "Comprados")
+                : t("To buy", "Pendientes")}{" "}
+              ({rows.length})
+            </summary>
             <ul className="shopping-checklist">
               {rows.map((item) => {
                 const label =
@@ -126,7 +131,7 @@ export function ShoppingChecklist({
                         )}
                       </span>
                     </label>
-                    {source === "manual" && (onEdit || onDelete) && (
+                    {item.source === "manual" && (onEdit || onDelete) && (
                       <div className="entry-actions">
                         {onEdit && (
                           <button
@@ -155,7 +160,7 @@ export function ShoppingChecklist({
                 );
               })}
             </ul>
-          </section>
+          </details>
         );
       })}
     </>

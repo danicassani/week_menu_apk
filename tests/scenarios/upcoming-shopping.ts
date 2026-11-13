@@ -67,8 +67,10 @@ export async function upcomingShoppingScenario(
       .filter({ hasText: t("Eggs", "Huevos") });
   await expect(eggRow()).toHaveCount(1);
   const before = await eggRow().innerText();
-  await eggRow().getByRole("checkbox").click();
-  await expect(eggRow().getByRole("checkbox")).toBeChecked();
+  await eggRow().getByRole("checkbox", { includeHidden: true }).click();
+  await expect(
+    eggRow().getByRole("checkbox", { includeHidden: true }),
+  ).toBeChecked();
   await expect(page.locator(".sync-status")).toContainText(
     t("Connected", "Con conexión"),
   );
@@ -86,9 +88,14 @@ export async function upcomingShoppingScenario(
   await nav
     .getByRole("button", { name: t("Shopping", "Compra"), exact: true })
     .click();
-  await expect(eggRow().getByRole("checkbox")).not.toBeChecked();
+  await expect(
+    eggRow().getByRole("checkbox", { includeHidden: true }),
+  ).not.toBeChecked();
   expect(await eggRow().innerText()).not.toEqual(before);
   await expect(page.locator('input[type="date"]')).toHaveCount(0);
+  await page
+    .getByText(t("Purchasing options", "Opciones de compra"), { exact: true })
+    .click();
   await page
     .getByRole("button", {
       name: t("Egg size estimate", "Tamaño estimado del huevo"),
@@ -111,6 +118,9 @@ export async function upcomingShoppingScenario(
   await page.reload();
   await nav
     .getByRole("button", { name: t("Shopping", "Compra"), exact: true })
+    .click();
+  await page
+    .getByText(t("Purchasing options", "Opciones de compra"), { exact: true })
     .click();
   await page
     .getByRole("button", {

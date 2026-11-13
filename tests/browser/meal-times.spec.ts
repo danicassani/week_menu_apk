@@ -9,11 +9,13 @@ test("scheduled intake updates without reload and personal times survive reload"
     .getByRole("button", { name: "Explore the preview", exact: true })
     .click();
   await expect(
-    page.getByText("0 kcal known intake", { exact: true }),
+    page.getByText("0 kcal estimated intake, including logs", { exact: true }),
   ).toBeVisible();
   await page.clock.runFor(1100);
   await expect(
-    page.getByText("400 kcal known intake", { exact: true }),
+    page.getByText("400 kcal estimated intake, including logs", {
+      exact: true,
+    }),
   ).toBeVisible();
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await page
@@ -29,11 +31,15 @@ test("scheduled intake updates without reload and personal times survive reload"
   ).toBeVisible();
   await nav.getByRole("button", { name: "Overview", exact: true }).click();
   await expect(
-    page.getByText("1700 kcal known intake", { exact: true }),
+    page.getByText("1700 kcal estimated intake, including logs", {
+      exact: true,
+    }),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByText("1700 kcal known intake", { exact: true }),
+    page.getByText("1700 kcal estimated intake, including logs", {
+      exact: true,
+    }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Open my profile", exact: true })

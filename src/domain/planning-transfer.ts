@@ -12,6 +12,7 @@ import type { HouseholdState, MealType } from "./types";
 
 export type MealEndpoint = { day: string; type: MealType; member_id?: string };
 export type RecipeChoice = {
+  variants?: Record<string, string>;
   recipe_id: string;
   revision: number;
   desserts: Record<string, boolean>;
@@ -58,6 +59,15 @@ export function choiceFromMeal(
   return {
     ...choiceFromRecipe(recipe),
     desserts: Object.fromEntries(portions.map((p) => [p.member_id, p.dessert])),
+    ...(portions.some((p) => p.variant_id)
+      ? {
+          variants: Object.fromEntries(
+            portions
+              .filter((p) => p.variant_id)
+              .map((p) => [p.member_id, p.variant_id!]),
+          ),
+        }
+      : {}),
   };
 }
 export function endpointOccupied(plans: MealPlan[], ep: MealEndpoint) {
@@ -218,6 +228,7 @@ export function buildTransfer(
         dessert,
         lib.ingredients,
         lib.substitutions,
+        choice.variants?.[m.id],
       );
     });
     if (ep.type === "breakfast") {

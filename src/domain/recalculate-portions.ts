@@ -28,6 +28,7 @@ export interface PortionRecalculation {
 export function recalculatePlannedPortions(
   state: HouseholdState,
   days: readonly string[],
+  onlyMember?: string,
 ): PortionRecalculation {
   const lib = state.planning;
   if (!lib) throw new DomainError("planning_update_unavailable");
@@ -50,7 +51,11 @@ export function recalculatePlannedPortions(
       continue;
     const start = result.changes.length;
     const portions = plan.portions.map((original) => {
-      if (original.eating_out) return original;
+      if (
+        original.eating_out ||
+        (onlyMember && original.member_id !== onlyMember)
+      )
+        return original;
       const member = active.find(
         (m) => m.id === original.member_id && m.onboarded,
       );
@@ -117,7 +122,8 @@ export function recalculatePlannedPortions(
         ...next.warnings,
         ...original.warnings.filter((w) => w !== "over_budget"),
       ]);
-      if (original.substitutions.length) warnings.add("review_substitutions");
+      if (original.substitutions.length && !original.variant_id)
+        warnings.add("review_substitutions");
       next = { ...next, warnings: [...warnings] };
       if (Math.round(next.kcal) !== Math.round(budget))
         result.roundingLimited++;

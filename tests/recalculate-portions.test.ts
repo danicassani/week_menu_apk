@@ -78,7 +78,8 @@ it("resizes above and below budget, honoring personal overrides while keeping co
     );
   }
   expect(draft.plans[0].shared_recipe_id).toBe(original.shared_recipe_id);
-  expect(draft.changes[1].after.warnings).toContain("review_substitutions");
+  expect(draft.changes[1].after.variant_id).toBeTruthy();
+  expect(draft.changes[1].after.warnings).not.toContain("review_substitutions");
 });
 it("keeps closed days, dates outside the selected week and restaurant entries unchanged", async () => {
   const { s, lib, day, plan } = await fixture();

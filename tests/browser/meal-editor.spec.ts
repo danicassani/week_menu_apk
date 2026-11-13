@@ -28,6 +28,7 @@ for (const language of ["en", "es"] as const) {
       );
       saved.library.recipes.push({
         ...base,
+        recipe_model: undefined,
         id: "broken-recipe",
         name: {
           en: "Broken recipe fixture",
@@ -44,6 +45,7 @@ for (const language of ["en", "es"] as const) {
       });
       saved.library.recipes.push({
         ...base,
+        recipe_model: undefined,
         id: "incompatible-fixture",
         name: { en: "Turkey fixture", es: "Receta de pavo de prueba" },
         meal_types: ["lunch"],
@@ -84,7 +86,7 @@ for (const language of ["en", "es"] as const) {
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await page
       .getByRole("button", {
-        name: t("Review meal", "Revisar comida"),
+        name: t("Change", "Cambiar"),
         exact: true,
       })
       .first()
@@ -100,6 +102,10 @@ for (const language of ["en", "es"] as const) {
       await expect(selector.locator('option[value="m26"]')).toHaveCount(0);
     }
     await expect(dialog.getByRole("spinbutton")).toHaveCount(0);
+    await dialog
+      .getByText(t("Quantities", "Cantidades"), { exact: true })
+      .first()
+      .click();
     await expect(dialog.locator(".ingredient-list li").first()).toBeVisible();
     const first = dialog.locator(".portion-editor").first();
     await selectors.first().selectOption("broken-recipe");
@@ -122,7 +128,7 @@ for (const language of ["en", "es"] as const) {
     await expect(page.getByRole("dialog")).toHaveCount(0);
     await page
       .getByRole("button", {
-        name: t("Review meal", "Revisar comida"),
+        name: t("Change", "Cambiar"),
         exact: true,
       })
       .nth(1)
@@ -191,7 +197,7 @@ test("shared lunch displays simple named substitutions without editable amounts"
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page
-    .getByRole("button", { name: "Review meal", exact: true })
+    .getByRole("button", { name: "Change", exact: true })
     .nth(1)
     .click();
   const dialog = page.getByRole("dialog");

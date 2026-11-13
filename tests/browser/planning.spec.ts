@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "./helpers/actions";
 import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.clock.setFixedTime(new Date("2026-11-03T12:00:00Z"));
@@ -46,7 +47,7 @@ test("re-rolls an own breakfast in preview, automatically fills shopping and del
     .fill("Keep this manual item");
   await page.getByRole("button", { name: "Save item", exact: true }).click();
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
-  await page.getByRole("button", { name: "Delete week", exact: true }).click();
+  await clickDisclosedAction(page, "Delete week");
   await page
     .getByRole("button", { name: "Delete editable meals", exact: true })
     .click();
@@ -76,7 +77,7 @@ test("preview and commit a menu, replace one participant with eating out", async
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page
-    .getByRole("button", { name: "Review meal", exact: true })
+    .getByRole("button", { name: "Change", exact: true })
     .first()
     .click();
   const participant = page.locator(".portion-editor").first();
@@ -113,7 +114,7 @@ test("create ingredient and confirm a household piece conversion", async ({
     .getByRole("navigation", { name: "Main navigation" })
     .getByRole("button", { name: "Recipes", exact: true })
     .click();
-  await page.getByRole("button", { name: "Ingredients & units" }).click();
+  await clickDisclosedAction(page, "Ingredients & units");
   await page
     .getByRole("button", { name: "New ingredient", exact: true })
     .click();
@@ -246,10 +247,15 @@ test("create a recipe on a phone", async ({ page }) => {
     "Household porridge",
   );
   await expect(
-    page.getByRole("textbox", { name: "Instrucciones", exact: true }),
-  ).toHaveValue("Cook the oats.\nServe warm.");
+    page.getByRole("textbox", { name: "Paso 1", exact: true }),
+  ).toHaveValue("Cook the oats.");
+  await expect(
+    page.getByRole("textbox", { name: "Paso 2", exact: true }),
+  ).toHaveValue("Serve warm.");
   await page.getByLabel("Nombre", { exact: true }).fill("Gachas del hogar");
-  await page.getByRole("button", { name: "Guardar", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Guardar receta", exact: true })
+    .click();
   await page.getByRole("searchbox").fill("Gachas del hogar");
   await expect(
     page.getByRole("button", { name: /Gachas del hogar/ }),
@@ -263,7 +269,12 @@ test("create a recipe on a phone", async ({ page }) => {
   await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
     "Household porridge",
   );
-  await page.locator("details").first().locator("summary").click();
+  await page
+    .getByRole("dialog")
+    .locator("details")
+    .first()
+    .locator("summary")
+    .click();
   await expect(
     page.getByLabel("Spanish translation", { exact: true }).first(),
   ).toHaveValue("Gachas del hogar");
@@ -400,7 +411,7 @@ test("saved future recipes can be read and closed days hide portion prompts and 
     day.getByText("Review portions / substitutions", { exact: true }),
   ).toHaveCount(0);
   await expect(
-    day.getByRole("button", { name: "Review meal", exact: true }),
+    day.getByRole("button", { name: "Change", exact: true }),
   ).toHaveCount(0);
   await expect(
     day.getByRole("button", { name: "Preview another recipe", exact: true }),
@@ -482,7 +493,7 @@ test("locks preserve suggestions during regeneration, own breakfast swaps stay p
     .click();
   const sourceNames = await page.locator(".meal-recipe-link").allTextContents();
   await page.getByRole("button", { name: "Next week", exact: true }).click();
-  await page.getByRole("button", { name: "Copy a week", exact: true }).click();
+  await clickDisclosedAction(page, "Copy a week");
   await page.getByLabel("Source week", { exact: true }).fill("2026-11-02");
   await page
     .getByRole("button", { name: "Preview copied week", exact: true })
@@ -752,6 +763,7 @@ test("calorie warnings are explained on demand and return focus to the yellow nu
     .getByRole("navigation", { name: "Navegación móvil" })
     .getByRole("button", { name: "Menú", exact: true })
     .click();
+  await page.locator(".week-more > summary").click();
   const erase = page.getByRole("button", {
     name: "Borrar semana",
     exact: true,

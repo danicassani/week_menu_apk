@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "../browser/helpers/actions";
 import { expect, type Page } from "@playwright/test";
 export async function contentDisplayScenario(
   page: Page,
@@ -28,12 +29,10 @@ export async function contentDisplayScenario(
   const search = page.getByRole("searchbox", {
     name: t("Search collection", "Buscar en la colección"),
   });
-  await page
-    .getByRole("button", {
-      name: t("Ingredients & units", "Ingredientes y unidades"),
-      exact: true,
-    })
-    .click();
+  await clickDisclosedAction(
+    page,
+    t("Ingredients & units", "Ingredientes y unidades"),
+  );
   await search.fill(t("Eggs", "Huevos"));
   await expect(page.locator(".recipe-card")).toHaveCount(1);
   await page.locator(".recipe-card").click();
@@ -125,7 +124,10 @@ export async function contentDisplayScenario(
     .click();
   await page.getByLabel(t("Serves", "Personas"), { exact: true }).fill("4");
   await page
-    .getByRole("button", { name: t("Save", "Guardar"), exact: true })
+    .getByRole("button", {
+      name: t("Save recipe", "Guardar receta"),
+      exact: true,
+    })
     .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.locator(".recipe-card").click();

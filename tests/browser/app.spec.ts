@@ -21,7 +21,9 @@ test("dashboard, profile acceptance, logs, and member permissions", async ({
   await expect(
     page.getByText("Coffee at the bar", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("490 kcal known intake")).toBeVisible();
+  await expect(
+    page.getByText("490 kcal estimated intake, including logs"),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Activity", exact: true }).click();
   await page.getByLabel("Activity type").selectOption("walking");
   await page.getByLabel("Pace or intensity").selectOption("17190");
@@ -31,6 +33,10 @@ test("dashboard, profile acceptance, logs, and member permissions", async ({
   await page.getByRole("button", { name: "Weight", exact: true }).click();
   await page.getByLabel("New weight · kg").fill("79");
   await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Review target", exact: true })
+    .click();
   await expect(
     page.getByRole("dialog", { name: "Review your calorie target" }),
   ).toBeVisible();
@@ -64,6 +70,9 @@ test("dashboard, profile acceptance, logs, and member permissions", async ({
   );
   await page.getByLabel("View household member").selectOption("alex");
   await page.getByRole("button", { name: "Edit profile", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Health and goals", exact: true })
+    .click();
   await page.getByLabel("Target date", { exact: true }).fill("2028-11-03");
   await page.getByRole("button", { name: "Save & review target" }).click();
   await expect(
@@ -161,6 +170,10 @@ test("goal reached offers maintenance without automatically accepting it", async
   await page.getByRole("button", { name: "Weight", exact: true }).click();
   await page.getByLabel("New weight · kg").fill("75");
   await page.getByRole("button", { name: "Save entry", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page
+    .getByRole("button", { name: "Review target", exact: true })
+    .click();
   await expect(
     page.getByRole("dialog", { name: "You reached your goal" }),
   ).toBeVisible();
@@ -180,11 +193,11 @@ test("menu actions stay together and planner preferences live in the person's pr
 }) => {
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
-  expect(
-    await page
-      .getByRole("button", { name: "Suggest week", exact: true })
-      .evaluate((el) => el.nextElementSibling?.getAttribute("aria-label")),
-  ).toBe("Recalculate quantities");
+  await expect(page.locator(".week-more")).not.toHaveAttribute("open");
+  await page.locator(".week-more > summary").click();
+  await expect(
+    page.getByRole("button", { name: "Recalculate quantities", exact: true }),
+  ).toBeVisible();
   await expect(page.getByLabel("Week starts on")).toHaveCount(0);
   await expect(page.getByLabel("Variety window · days")).toHaveCount(0);
   await page
@@ -357,13 +370,22 @@ for (const language of ["en", "es"] as const) {
       name: t("Dinner kcal", "Cena kcal"),
       exact: true,
     });
-    const save = () =>
+    const confirm = () =>
       dialog
+        .getByRole("button", {
+          name: t("Save changes", "Guardar cambios"),
+          exact: true,
+        })
+        .click();
+    const save = async () => {
+      await dialog
         .getByRole("button", {
           name: t("Save overrides", "Guardar ajustes"),
           exact: true,
         })
         .click();
+      await confirm();
+    };
     await expect(dialog.getByRole("combobox")).toHaveCount(0);
     await expect(breakfast).toHaveValue("400");
     await expect(lunch).toHaveValue("650");
@@ -411,6 +433,7 @@ for (const language of ["en", "es"] as const) {
         exact: true,
       })
       .click();
+    await confirm();
     await expect(dialog).toHaveCount(0);
     await open();
     await expect(breakfast).toHaveValue("400");

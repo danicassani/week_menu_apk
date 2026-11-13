@@ -141,6 +141,20 @@ export interface EntryInput {
   activity_code?: string;
 }
 export interface Repository {
+  acceptTargetAndPortions(
+    budgets: Budgets,
+    context: string,
+    operation: string,
+    plans: MealPlan[],
+    revision: number,
+  ): Promise<void>;
+  saveBudgetsAndPortions(
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+    operation: string,
+    plans: MealPlan[],
+    revision: number,
+  ): Promise<void>;
   getCooking(): Promise<import("./cooking").CookingState>;
   cookingCommand(command: import("./cooking").CookingCommand): Promise<void>;
   readonly accountId: string;

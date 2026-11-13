@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "../browser/helpers/actions";
 import { test, expect } from "@playwright/test";
 import { PreviewRepository } from "../../src/lib/preview-repository";
 test("egg estimate conflicts require renewed review; a lost acknowledgement retries without duplicate writes", async ({
@@ -102,9 +103,7 @@ test("egg estimate conflicts require renewed review; a lost acknowledgement retr
     .last()
     .getByRole("button", { name: "Shopping", exact: true })
     .click();
-  await page
-    .getByRole("button", { name: "Egg size estimate", exact: true })
-    .click();
+  await clickDisclosedAction(page, "Egg size estimate");
   const input = page.getByLabel("Edible grams per egg", { exact: true }),
     save = page.getByRole("button", { name: "Save estimate", exact: true });
   await input.fill("60");

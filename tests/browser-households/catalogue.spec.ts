@@ -143,7 +143,10 @@ test("authenticated browsing requests 50 summaries and compact snapshots, withou
     .getByRole("button", { name: "Open my profile", exact: true })
     .click();
   const themeWrites = requests.filter((r) => !r.name.startsWith("get_")).length;
-  await page.getByRole("radio", { name: "Blue", exact: true }).check();
+  await page
+    .getByRole("radio", { name: "Blue", exact: true })
+    .locator("..")
+    .click();
   await expect(page.locator("html")).toHaveAttribute("data-colour", "blue");
   expect(requests.filter((r) => !r.name.startsWith("get_")).length).toBe(
     themeWrites,

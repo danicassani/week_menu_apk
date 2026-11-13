@@ -22,6 +22,8 @@ async function fixture() {
   const repository = new PreviewRepository("UTC"),
     s = await repository.load("UTC"),
     lib = await repository.getPlanningLibrary();
+  // Keep these tests as regression coverage for pre-migration saved snapshots.
+  for (const recipe of lib.recipes) delete recipe.recipe_model;
   const recipe = lib.recipes.find((r) => r.id === "m02")!;
   const plans = ["2026-11-11", "2026-11-13"].map((day) => ({
     day,

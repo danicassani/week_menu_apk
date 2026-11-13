@@ -1,3 +1,6 @@
+import { RecipeModelEditor } from "../components/recipe-model-editor";
+import { HouseholdMeal } from "../components/household-meal";
+import { simpleRecipeModel, compatibleVariant } from "../domain/recipe-model";
 import { DomainError } from "../domain/calories";
 import { batchRecipeScore, type CookingState } from "../domain/cooking";
 import { RecalculatePortionsReview } from "../components/recalculate-portions";
@@ -264,6 +267,21 @@ export function Planner(v: ViewProps) {
       null,
     );
   useEffect(() => setSaveError(null), [preview]);
+  useEffect(() => {
+    let active = true;
+    void v.repository
+      .getCooking()
+      .then((next) => {
+        if (active) {
+          setCooking(next);
+          setBatchMode(!!next.settings.prioritize_preparations);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [v.repository]);
   const closedCheck = useClosedDayCheck(anchor, v.language, setCorrectionDay);
   const transfer = useMealTransfers(
     v,
@@ -553,18 +571,26 @@ export function Planner(v: ViewProps) {
               disabled={v.busy}
               onChange={(e) => {
                 const enabled = e.target.checked;
-                if (!enabled) {
-                  setBatchMode(false);
-                  return;
-                }
                 void v.operate(
                   async () => {
                     const next = await v.repository.getCooking();
-                    await v.ensurePlanning(true);
-                    if (!next.settings.sessions.length)
+                    if (enabled && !next.settings.sessions.length)
                       throw new DomainError("cooking_schedule_required");
-                    setCooking(next);
-                    setBatchMode(true);
+                    await v.repository.cookingCommand({
+                      action: "settings",
+                      payload: {
+                        settings: {
+                          ...next.settings,
+                          prioritize_preparations: enabled,
+                        },
+                      },
+                      operation: crypto.randomUUID(),
+                      revision: next.revision,
+                    });
+                    const saved = await v.repository.getCooking();
+                    await v.ensurePlanning(true);
+                    setCooking(saved);
+                    setBatchMode(enabled);
                   },
                   undefined,
                   false,
@@ -587,61 +613,68 @@ export function Planner(v: ViewProps) {
             >
               {t("Suggest week", "Sugerir semana")}
             </Button>
-            <IconAction
-              icon={Calculator}
-              label={t("Recalculate quantities", "Recalcular cantidades")}
-              disabled={
-                v.busy ||
-                !lib.plans.some(
-                  (p) =>
-                    days.includes(p.day) &&
-                    !closed(v, p.day) &&
-                    p.portions.some((part) => !part.eating_out),
-                )
-              }
-              onClick={() =>
-                v.operate(
-                  async () => {
-                    const fresh = await v.repository.load(deviceZone());
-                    const draft = recalculatePlannedPortions(fresh, days);
-                    if (!draft.changes.length) {
-                      setNotice(
-                        draft.roundingLimited
-                          ? t(
-                              "Practical rounding prevents a closer fit. Existing quantities are kept.",
-                              "El redondeo práctico impide un ajuste mejor. Se mantienen las cantidades existentes.",
-                            )
-                          : t(
-                              "Planned quantities already match the current budgets.",
-                              "Las cantidades planificadas ya coinciden con los presupuestos actuales.",
-                            ),
-                      );
-                      return;
-                    }
-                    setNotice("");
-                    setPortionReview(draft);
-                  },
-                  undefined,
-                  false,
-                )
-              }
-            />
-            <IconAction
-              icon={Eraser}
-              label={t("Delete week", "Borrar semana")}
-              disabled={
-                v.busy ||
-                !lib.plans.some(
-                  (p) => days.includes(p.day) && !closed(v, p.day),
-                )
-              }
-              onClick={() => setDeletingWeek(lib.revision)}
-            />
-            <IconAction
-              icon={Import}
-              label={t("Copy a week", "Copiar una semana")}
-              onClick={() => setCopyOpen(true)}
-            />
+            <details className="week-more">
+              <summary>
+                {t("More menu options", "Más opciones del menú")}
+              </summary>
+              <div className="button-row">
+                <IconAction
+                  icon={Calculator}
+                  label={t("Recalculate quantities", "Recalcular cantidades")}
+                  disabled={
+                    v.busy ||
+                    !lib.plans.some(
+                      (p) =>
+                        days.includes(p.day) &&
+                        !closed(v, p.day) &&
+                        p.portions.some((part) => !part.eating_out),
+                    )
+                  }
+                  onClick={() =>
+                    v.operate(
+                      async () => {
+                        const fresh = await v.repository.load(deviceZone());
+                        const draft = recalculatePlannedPortions(fresh, days);
+                        if (!draft.changes.length) {
+                          setNotice(
+                            draft.roundingLimited
+                              ? t(
+                                  "Practical rounding prevents a closer fit. Existing quantities are kept.",
+                                  "El redondeo práctico impide un ajuste mejor. Se mantienen las cantidades existentes.",
+                                )
+                              : t(
+                                  "Planned quantities already match the current budgets.",
+                                  "Las cantidades planificadas ya coinciden con los presupuestos actuales.",
+                                ),
+                          );
+                          return;
+                        }
+                        setNotice("");
+                        setPortionReview(draft);
+                      },
+                      undefined,
+                      false,
+                    )
+                  }
+                />
+                <IconAction
+                  icon={Eraser}
+                  label={t("Delete week", "Borrar semana")}
+                  disabled={
+                    v.busy ||
+                    !lib.plans.some(
+                      (p) => days.includes(p.day) && !closed(v, p.day),
+                    )
+                  }
+                  onClick={() => setDeletingWeek(lib.revision)}
+                />
+                <IconAction
+                  icon={Import}
+                  label={t("Copy a week", "Copiar una semana")}
+                  onClick={() => setCopyOpen(true)}
+                />{" "}
+              </div>
+            </details>
           </div>
         </div>
         <label className="check-row">
@@ -738,7 +771,11 @@ export function Planner(v: ViewProps) {
                               : t("At home", "En casa")}
                         </p>
                         {!closed(v, day) &&
-                          (p.warnings.some((w) => w !== "over_budget") ||
+                          (p.warnings.some(
+                            (w) =>
+                              w !== "over_budget" &&
+                              !(p.variant_id && w === "review_substitutions"),
+                          ) ||
                             exceedsDisplayedCalories(p.kcal, p.budget)) && (
                             <span className="pill">
                               {t(
@@ -765,106 +802,110 @@ export function Planner(v: ViewProps) {
                     )}
                     {!closed(v, day) && plan && (
                       <div className="button-row meal-bottom-actions">
-                        <IconAction
-                          icon={Pencil}
-                          label={t("Review meal", "Revisar comida")}
+                        <Button
+                          secondary
                           disabled={v.busy}
                           onClick={() => setEditing(structuredClone(plan))}
-                        />
-                        {plan && (
-                          <button
-                            className="icon-button preview-action"
-                            aria-label={t(
-                              "Preview another recipe",
-                              "Probar otra receta",
-                            )}
-                            title={t(
-                              "Preview another recipe",
-                              "Probar otra receta",
-                            )}
-                            onClick={() => {
-                              const next = suggested(
-                                v,
-                                lib,
-                                day,
-                                type,
-                                lib.plans.filter(
-                                  (p) => p.day !== day || p.type !== type,
-                                ),
-                                undefined,
-                                plan,
-                                v.s.viewer_id,
-                              );
-                              if (next) {
-                                setPreviewNotice("");
-                                setPreview({
-                                  id: crypto.randomUUID(),
-                                  plans: [next],
-                                  revision: lib.revision,
-                                  replace: true,
-                                  gaps: [],
-                                });
-                              } else
-                                setNotice(
+                        >
+                          {t("Change", "Cambiar")}
+                        </Button>
+                        <details className="meal-more">
+                          <summary>{t("More", "Más")}</summary>
+                          {plan && (
+                            <button
+                              className="icon-button preview-action"
+                              aria-label={t(
+                                "Preview another recipe",
+                                "Probar otra receta",
+                              )}
+                              title={t(
+                                "Preview another recipe",
+                                "Probar otra receta",
+                              )}
+                              onClick={() => {
+                                const next = suggested(
+                                  v,
+                                  lib,
+                                  day,
+                                  type,
+                                  lib.plans.filter(
+                                    (p) => p.day !== day || p.type !== type,
+                                  ),
+                                  undefined,
+                                  plan,
+                                  v.s.viewer_id,
+                                );
+                                if (next) {
+                                  setPreviewNotice("");
+                                  setPreview({
+                                    id: crypto.randomUUID(),
+                                    plans: [next],
+                                    revision: lib.revision,
+                                    replace: true,
+                                    gaps: [],
+                                  });
+                                } else
+                                  setNotice(
+                                    t(
+                                      "No alternative fits everyone’s dietary preferences and exclusions for this meal. Review the household vetoes or add a compatible variant.",
+                                      "No hay otra alternativa compatible con las dietas y exclusiones de todos para esta comida. Revisa los vetos del hogar o añade una variante compatible.",
+                                    ),
+                                  );
+                              }}
+                            >
+                              <Dices size={19} aria-hidden="true" />
+                            </button>
+                          )}
+
+                          {transfer.actions(
+                            {
+                              day,
+                              type,
+                              ...(type === "breakfast"
+                                ? { member_id: v.member.id }
+                                : {}),
+                            },
+                            lib.plans,
+                            "saved",
+                            false,
+                            "copy",
+                          )}
+                          <IconAction
+                            icon={Eraser}
+                            label={t("Remove meal", "Eliminar comida")}
+                            disabled={v.busy}
+                            onClick={async () => {
+                              if (
+                                window.confirm(
                                   t(
-                                    "No suitable recipe. Add more recipes.",
-                                    "No hay receta adecuada. Añade más recetas.",
+                                    "Remove this meal for everyone?",
+                                    "¿Eliminar esta comida para todos?",
+                                  ),
+                                )
+                              )
+                                await v.operate(() =>
+                                  v.repository.deleteMeal(
+                                    day,
+                                    type,
+                                    lib.revision,
                                   ),
                                 );
                             }}
-                          >
-                            <Dices size={19} aria-hidden="true" />
-                          </button>
-                        )}
-
-                        {transfer.actions(
-                          {
-                            day,
-                            type,
-                            ...(type === "breakfast"
-                              ? { member_id: v.member.id }
-                              : {}),
-                          },
-                          lib.plans,
-                          "saved",
-                          false,
-                          "copy",
-                        )}
-                        <IconAction
-                          icon={Eraser}
-                          label={t("Remove meal", "Eliminar comida")}
-                          disabled={v.busy}
-                          onClick={async () => {
-                            if (
-                              window.confirm(
-                                t(
-                                  "Remove this meal for everyone?",
-                                  "¿Eliminar esta comida para todos?",
-                                ),
-                              )
-                            )
-                              await v.operate(() =>
-                                v.repository.deleteMeal(
-                                  day,
-                                  type,
-                                  lib.revision,
-                                ),
-                              );
-                          }}
-                        />
-                        {transfer.actions(
-                          {
-                            day,
-                            type,
-                            ...(type === "breakfast"
-                              ? { member_id: v.member.id }
-                              : {}),
-                          },
-                          lib.plans,
-                          "saved",
-                          false,
-                          "swap",
-                        )}
+                          />
+                          {transfer.actions(
+                            {
+                              day,
+                              type,
+                              ...(type === "breakfast"
+                                ? { member_id: v.member.id }
+                                : {}),
+                            },
+                            lib.plans,
+                            "saved",
+                            false,
+                            "swap",
+                          )}
+                        </details>
                       </div>
                     )}
                   </article>
@@ -1379,7 +1420,12 @@ function MealEditor({
         i === index ? { ...p, ...patch } : p,
       ),
     });
-  const choose = (index: number, id: string, dessert: boolean) => {
+  const choose = (
+    index: number,
+    id: string,
+    dessert: boolean,
+    variantId?: string,
+  ) => {
     try {
       const old = plan.portions[index],
         m = v.s.members.find((m) => m.id === old.member_id)!,
@@ -1397,6 +1443,7 @@ function MealEditor({
         dessert,
         lib.ingredients,
         lib.substitutions,
+        variantId ?? (old.recipe_id === id ? old.variant_id : undefined),
       );
       if (plan.type === "breakfast" || plan.shared_recipe_id === id)
         edit(index, portion);
@@ -1468,6 +1515,35 @@ function MealEditor({
             {v.s.members.find((m) => m.id === p.member_id)?.name} ·{" "}
             {Math.round(p.budget)} kcal
           </h3>
+          {!p.eating_out &&
+            (lib.recipes.find((r) => r.id === p.recipe_id)?.recipe_model
+              ?.variants.length ?? 0) > 1 && (
+              <label>
+                {t("Variant", "Variante")}
+                <select
+                  value={p.variant_id ?? "original"}
+                  onChange={(e) =>
+                    choose(index, p.recipe_id!, p.dessert, e.target.value)
+                  }
+                >
+                  {lib.recipes
+                    .find((r) => r.id === p.recipe_id)!
+                    .recipe_model!.variants.filter((variant) =>
+                      compatibleVariant(
+                        variant,
+                        v.s.members.find((m) => m.id === p.member_id)!.profile!,
+                        lib.ingredients,
+                        p.dessert,
+                      ),
+                    )
+                    .map((variant) => (
+                      <option key={variant.id} value={variant.id}>
+                        {name(variant.name, v.language)}
+                      </option>
+                    ))}
+                </select>
+              </label>
+            )}
           <label className="check-row">
             <input
               type="checkbox"
@@ -1608,30 +1684,33 @@ function MealEditor({
                   {substitutionText(s, lib.ingredients, v.language)}
                 </p>
               ))}
-              <ul className="ingredient-list">
-                {p.lines.map((l, i) => (
-                  <li key={l.component_id + l.ingredient_id + i}>
-                    <span>{ingredientText(l, v.language)}</span>
-                    <b>
-                      {l.quantity} {l.unit}
-                    </b>
-                  </li>
-                ))}
-              </ul>
-              <p>
-                <b>{Math.round(p.kcal)} kcal</b>
-                {exceedsDisplayedCalories(p.kcal, p.budget)
-                  ? ` · ${t("Above budget after rounding.", "Supera el presupuesto tras el redondeo.")}`
-                  : ""}
-              </p>
-              {(p.recipe_snapshot
-                ? recipePresentation(p.recipe_snapshot).ingredient_preparation
-                : undefined
-              )?.map((s) => (
-                <p className="note" key={s.ingredient_id}>
-                  {name(s.instructions, v.language)}
+              <details>
+                <summary>{t("Quantities", "Cantidades")}</summary>
+                <ul className="ingredient-list">
+                  {p.lines.map((l, i) => (
+                    <li key={l.component_id + l.ingredient_id + i}>
+                      <span>{ingredientText(l, v.language)}</span>
+                      <b>
+                        {l.quantity} {l.unit}
+                      </b>
+                    </li>
+                  ))}
+                </ul>
+                <p>
+                  <b>{Math.round(p.kcal)} kcal</b>
+                  {exceedsDisplayedCalories(p.kcal, p.budget)
+                    ? ` · ${t("Above budget after rounding.", "Supera el presupuesto tras el redondeo.")}`
+                    : ""}
                 </p>
-              ))}
+                {(p.recipe_snapshot
+                  ? recipePresentation(p.recipe_snapshot).ingredient_preparation
+                  : undefined
+                )?.map((s) => (
+                  <p className="note" key={s.ingredient_id}>
+                    {name(s.instructions, v.language)}
+                  </p>
+                ))}
+              </details>
             </>
           )}
         </section>
@@ -2025,17 +2104,34 @@ export function ContentManager(v: ViewProps) {
           </p>
         </div>
       </div>
-      <div className="button-row">
-        <Button secondary={tab !== "recipes"} onClick={() => setTab("recipes")}>
-          {t("Recipes", "Recetas")}
-        </Button>
-        <Button
-          secondary={tab !== "ingredients"}
-          onClick={() => setTab("ingredients")}
-        >
-          {t("Ingredients & units", "Ingredientes y unidades")}
-        </Button>
-      </div>
+      <details
+        className="catalogue-tools"
+        open={tab === "ingredients" ? true : undefined}
+      >
+        <summary>{t("Catalogue tools", "Herramientas del catálogo")}</summary>
+        <div className="button-row">
+          <Button
+            secondary={tab !== "recipes"}
+            onClick={() => setTab("recipes")}
+          >
+            {t("Recipes", "Recetas")}
+          </Button>
+          <Button
+            secondary={tab !== "ingredients"}
+            onClick={() => setTab("ingredients")}
+          >
+            {t("Ingredients & units", "Ingredientes y unidades")}
+          </Button>
+        </div>
+        <label className="check-row">
+          <input
+            type="checkbox"
+            checked={archived}
+            onChange={(e) => setArchived(e.target.checked)}
+          />
+          {t("Show archived", "Mostrar archivados")}
+        </label>
+      </details>
       {tab === "recipes" && (
         <div className="button-row recipe-actions">
           <Button secondary onClick={() => setReviewOpen(true)}>
@@ -2071,14 +2167,6 @@ export function ContentManager(v: ViewProps) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("Search…", "Buscar…")}
           />
-        </label>
-        <label className="check-row">
-          <input
-            type="checkbox"
-            checked={archived}
-            onChange={(e) => setArchived(e.target.checked)}
-          />
-          {t("Show archived", "Mostrar archivados")}
         </label>
       </div>
       <div className="recipe-grid">
@@ -2325,7 +2413,24 @@ export function ContentManager(v: ViewProps) {
     </>
   );
 }
-function ContentEditor({
+function ContentEditor(props: {
+  v: ViewProps;
+  lib: PlanningState;
+  kind: "ingredient" | "recipe";
+  initial: Ingredient | PlannedRecipe;
+  onClose: () => void;
+}) {
+  if (props.kind === "recipe" && (props.initial as PlannedRecipe).recipe_model)
+    return (
+      <RecipeModelEditor
+        v={props.v}
+        initial={props.initial as PlannedRecipe}
+        onClose={props.onClose}
+      />
+    );
+  return <LegacyContentEditor {...props} />;
+}
+function LegacyContentEditor({
   v,
   lib,
   kind,
@@ -2465,6 +2570,10 @@ function ContentEditor({
           provenance: { kind: "household_created_or_edited" },
         };
       }
+      if (kind === "recipe" && !archive)
+        (payload as PlannedRecipe).recipe_model = simpleRecipeModel(
+          payload as PlannedRecipe,
+        );
       if (
         await v.operate(
           () => v.repository.saveContent(kind, payload, revision, archive),
@@ -3047,80 +3156,31 @@ export function MealSnapshotView({
   onClose: () => void;
 }) {
   const t = translator(v.language);
+  const [stock, setStock] = useState<CookingState | null>(null);
+  useEffect(() => {
+    let active = true;
+    void v.repository
+      .getCooking()
+      .then((value) => {
+        if (active) setStock(value);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [v.repository]);
   return (
     <Modal
       title={`${plan.day} · ${mealLabel(plan.type, v.language)}`}
       wide
       onClose={onClose}
     >
-      <PortionAllocation
+      <HouseholdMeal
         plan={plan}
         members={v.s.members}
-        memberColors={v.allocationColors}
         language={v.language}
+        stock={stock}
       />
-      {plan.portions.map((p) => (
-        <section key={p.member_id} className="portion-editor">
-          <h3>
-            <span aria-hidden="true">
-              {
-                v.s.members.find((m) => m.id === p.member_id)?.presentation
-                  ?.avatar
-              }{" "}
-            </span>
-            {v.s.members.find((m) => m.id === p.member_id)?.name} ·{" "}
-            {name(p.name, v.language)} · {Math.round(p.kcal)} kcal
-          </h3>
-          {p.eating_out ? (
-            <p>{p.description}</p>
-          ) : (
-            <>
-              <ul className="ingredient-list">
-                {p.lines.map((l, i) => (
-                  <li key={i}>
-                    <span>{ingredientText(l, v.language)}</span>
-                    <b>
-                      {l.quantity} {l.unit}
-                    </b>
-                  </li>
-                ))}
-              </ul>
-              {p.substitutions.map((s, i) => (
-                <p className="note" key={i}>
-                  {substitutionText(
-                    s,
-                    v.s.planning?.ingredients ?? [],
-                    v.language,
-                  )}
-                </p>
-              ))}
-              {(p.recipe_snapshot
-                ? recipePresentation(p.recipe_snapshot).ingredient_preparation
-                : undefined
-              )?.map((s) => (
-                <p className="note" key={s.ingredient_id}>
-                  {name(s.instructions, v.language)}
-                </p>
-              ))}
-              {(p.recipe_snapshot
-                ? recipePresentation(p.recipe_snapshot).components
-                : undefined
-              )
-                ?.filter((c) => p.lines.some((l) => l.component_id === c.id))
-                .map((c) => (
-                  <div key={c.id}>
-                    <h3>{name(c.name, v.language)}</h3>
-                    <ol className="instructions">
-                      {c.instructions.map((s, i) => (
-                        <li key={i}>{name(s, v.language)}</li>
-                      ))}
-                    </ol>
-                  </div>
-                ))}
-            </>
-          )}
-        </section>
-      ))}
     </Modal>
   );
 }

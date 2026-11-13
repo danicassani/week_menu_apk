@@ -90,7 +90,7 @@ async function signedIn(
       });
       return;
     }
-    if (budget && rpc === "save_my_meal_budgets") {
+    if (budget && rpc === "save_budgets_and_portions") {
       if (budget.reject) {
         await route.fulfill({
           status: 400,
@@ -221,6 +221,15 @@ async function signedIn(
           ]
         : [];
     }
+    if (rpc === "get_planning_library")
+      data = {
+        ingredients: [],
+        recipes: [],
+        substitutions: [],
+        plans: [],
+        revision: 0,
+        complete: true,
+      };
     if (rpc === "get_shopping_state") data = emptyShopping();
     await route.fulfill({ json: data });
   });
@@ -347,6 +356,7 @@ test("a committed budget survives a failed refresh and Refresh does not repeat t
   await page
     .getByRole("button", { name: "Save overrides", exact: true })
     .click();
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
     page.getByText(
@@ -368,7 +378,7 @@ test("a committed budget survives a failed refresh and Refresh does not repeat t
     .getByRole("button", { name: "Refresh saved changes", exact: true })
     .click();
   expect(
-    requests.filter((r) => r.name === "save_my_meal_budgets"),
+    requests.filter((r) => r.name === "save_budgets_and_portions"),
   ).toHaveLength(1);
   await page
     .getByRole("button", { name: "Adjust meal budgets", exact: true })
@@ -452,6 +462,10 @@ test("offline startup never displays another account's previously active shoppin
     });
   });
   const requests = await signedIn(page, false, true);
+  await page
+    .getByRole("navigation", { name: "Offline navigation" })
+    .getByRole("button", { name: "Shopping", exact: true })
+    .click();
   await expect(
     page.getByRole("heading", { name: "No shopping list saved yet" }),
   ).toBeVisible();
@@ -483,15 +497,15 @@ test("a rejected budget keeps the draft, while a lost acknowledgement retries th
     exact: true,
   });
   await breakfast.fill("410");
-  const save = page.getByRole("button", {
-    name: "Save overrides",
-    exact: true,
-  });
+  await page
+    .getByRole("button", { name: "Save overrides", exact: true })
+    .click();
+  const save = page.getByRole("button", { name: "Save changes", exact: true });
   await save.click();
   await expect(page.getByRole("alert")).toContainText(
     "positive calorie budget",
   );
-  await expect(breakfast).toHaveValue("410");
+  await expect(page.getByRole("dialog")).toContainText("410 kcal");
   expect(scenario.committed).toBe(false);
   scenario.reject = false;
   scenario.loseAck = true;
@@ -499,14 +513,14 @@ test("a rejected budget keeps the draft, while a lost acknowledgement retries th
   await expect(page.getByRole("alert")).toContainText(
     "could not confirm whether",
   );
-  await expect(breakfast).toHaveValue("410");
+  await expect(page.getByRole("dialog")).toContainText("410 kcal");
   expect(scenario.committed).toBe(true);
   await page
     .getByRole("button", { name: "Check latest data", exact: true })
     .click();
   await save.click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  const writes = requests.filter((r) => r.name === "save_my_meal_budgets");
+  const writes = requests.filter((r) => r.name === "save_budgets_and_portions");
   expect(writes).toHaveLength(3);
   expect(new Set(writes.map((r) => r.args.p_operation)).size).toBe(1);
 });

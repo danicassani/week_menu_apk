@@ -1,3 +1,4 @@
+import { clickDisclosedAction } from "./helpers/actions";
 import { test, expect } from "@playwright/test";
 test("recalculates the viewed week's planned meals after budgets change and updates shopping", async ({
   page,
@@ -32,11 +33,21 @@ test("recalculates the viewed week's planned meals after budgets change and upda
   await page
     .getByRole("button", { name: "Save overrides", exact: true })
     .click();
+  await page
+    .getByRole("heading", { name: "Review the change", exact: true })
+    .waitFor();
+  const adjust = page.getByRole("checkbox", {
+    name: "Adjust saved portions to these budgets",
+    exact: true,
+  });
+  if (await adjust.count()) await adjust.uncheck();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "Save changes", exact: true })
+    .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
-  await page
-    .getByRole("button", { name: "Recalculate quantities", exact: true })
-    .click();
+  await clickDisclosedAction(page, "Recalculate quantities");
   const review = page.getByRole("dialog", {
     name: "Recalculate quantities",
     exact: true,

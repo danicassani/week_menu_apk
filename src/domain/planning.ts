@@ -1,3 +1,4 @@
+import { selectVariant, variantComponents } from "./recipe-model";
 import { PortionError, type PortionFailureReason } from "./portion-error";
 import Decimal from "decimal.js";
 import {
@@ -46,6 +47,7 @@ export interface RecipeComponent {
   reference_energy_kcal?: number;
 }
 export interface PlannedRecipe {
+  recipe_model?: import("./recipe-model").RecipeModel;
   banned?: boolean;
   veto_revision?: number;
   household_revision?: number;
@@ -87,6 +89,7 @@ export interface PortionLine {
   variety_key?: string;
 }
 export interface PlannedPortion {
+  variant_id?: string;
   underlying_recipe_id?: string | null;
   member_id: string;
   recipe_id: string | null;
@@ -155,7 +158,50 @@ export function makePortion(
   dessert: boolean,
   ingredients: Ingredient[],
   rules: Substitution[],
+  preferredVariant?: string,
 ): PlannedPortion {
+  if (recipe.recipe_model) {
+    const variant = selectVariant(
+      recipe,
+      profile,
+      ingredients,
+      dessert,
+      preferredVariant,
+    );
+    if (variant) {
+      const { recipe_model: _model, ...legacy } = recipe;
+      const portion = makePortion(
+        {
+          ...legacy,
+          name: variant.name,
+          components: variantComponents(recipe, variant),
+        },
+        member_id,
+        profile,
+        budget,
+        dessert,
+        ingredients,
+        [],
+      );
+      return {
+        ...portion,
+        variant_id: variant.id,
+        substitutions: structuredClone(variant.substitutions),
+        recipe_snapshot: {
+          ...structuredClone(recipe),
+          recipe_model: {
+            version: 2,
+            default_variant_id: variant.id,
+            variants: [structuredClone(variant)],
+          },
+        },
+      };
+    }
+    // Preserve the detailed ingredient/member failure context of the current engine.
+    const { recipe_model: _model, ...legacy } = recipe;
+    makePortion(legacy, member_id, profile, budget, dessert, ingredients, []);
+    throw new DomainError("no_compatible_variant");
+  }
   if (recipe.archived || !Number.isFinite(budget) || budget <= 0)
     throw new DomainError("invalid_recipe");
   const failure = (

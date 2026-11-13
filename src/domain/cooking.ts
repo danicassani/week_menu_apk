@@ -1,3 +1,4 @@
+import { batchPreparations, preparationScope } from "./recipe-model";
 import { weekDays } from "./dates";
 import Decimal from "decimal.js";
 import { Temporal } from "@js-temporal/polyfill";
@@ -10,6 +11,7 @@ export interface CookingSettings {
   sessions: { weekday: number; time: string }[];
   usage_mode: "manual" | "automatic";
   prefer_whole: boolean;
+  prioritize_preparations?: boolean;
   mode_since?: string;
 }
 export interface CookingRequirement {
@@ -128,6 +130,8 @@ export function validCookingSettings(settings: CookingSettings): boolean {
   return (
     ["manual", "automatic"].includes(settings.usage_mode) &&
     typeof settings.prefer_whole === "boolean" &&
+    (settings.prioritize_preparations === undefined ||
+      typeof settings.prioritize_preparations === "boolean") &&
     Array.isArray(settings.sessions) &&
     settings.sessions.length <= 14 &&
     new Set(settings.sessions.map((s) => `${s.weekday}/${s.time}`)).size ===
@@ -245,33 +249,49 @@ export function cookingRequirements(
         continue;
       const recipe = p.recipe_snapshot ?? live,
         rule = recipeCookingRule(recipe);
-      if (!rule) continue;
+      if (!rule && !p.variant_id) continue;
       const eligible = p.lines.filter((l) =>
         recipe.components.some(
           (c) => c.id === l.component_id && c.kind !== "dessert",
         ),
       );
-      const bases = rule.bases.filter((b) =>
+      const bases = (rule?.bases ?? []).filter((b) =>
         eligible.some(
           (l) =>
             l.component_id === b.component_id &&
             l.ingredient_id === b.ingredient_id,
         ),
       );
-      const whole = rule.whole && !p.substitutions.length;
+      const whole = !!rule?.whole && !p.substitutions.length;
       const selections: {
         scope: string;
         lines: PortionLine[];
         name: Names;
         soak: boolean;
         kind: "base" | "recipe";
+        instructions?: Names[];
       }[] = [];
-      if (whole && (settings.prefer_whole || !bases.length))
+      if (p.variant_id && recipe.recipe_model) {
+        for (const { preparation, lines } of batchPreparations(
+          p,
+          settings.prefer_whole,
+        )) {
+          if (preparation.optional || !preparation.batchable) continue;
+          selections.push({
+            scope: preparationScope(preparation),
+            lines,
+            name: preparation.name,
+            soak: preparation.soak,
+            kind: preparation.lines.length === 1 ? "base" : "recipe",
+            instructions: preparation.instructions,
+          });
+        }
+      } else if (whole && (settings.prefer_whole || !bases.length))
         selections.push({
           scope: "whole",
           lines: eligible,
           name: p.name,
-          soak: rule.bases.some((b) => b.soak),
+          soak: rule!.bases.some((b) => b.soak),
           kind: "recipe",
         });
       else
@@ -327,7 +347,8 @@ export function cookingRequirements(
             .toInstant()
             .toString(),
           instructions:
-            selection.kind === "recipe"
+            selection.instructions ??
+            (selection.kind === "recipe"
               ? recipe.components
                   .filter((c) => c.kind !== "dessert")
                   .flatMap((c) => c.instructions)
@@ -336,7 +357,7 @@ export function cookingRequirements(
                     en: "Weigh the dry ingredient; cook separately according to the packet. Cool promptly and divide before storing.",
                     es: "Pesa el ingrediente seco; cuécelo aparte según el envase. Enfría pronto y reparte antes de guardar.",
                   },
-                ],
+                ]),
         });
       }
     }

@@ -1,3 +1,5 @@
+import { quantityPlanSignature } from "../domain/budget-impact";
+import { withRecipeModel, validateRecipeModel } from "../domain/recipe-model";
 import {
   defaultCookingSettings,
   cookingRequirements,
@@ -335,10 +337,12 @@ export class PreviewRepository implements Repository {
       ...ingredientSeed.ingredients,
       ...expansion.ingredients,
     ]) as unknown as Ingredient[],
-    recipes: structuredClone([
-      ...recipes.recipes,
-      ...expansion.recipes,
-    ]) as unknown as PlannedRecipe[],
+    recipes: (
+      structuredClone([
+        ...recipes.recipes,
+        ...expansion.recipes,
+      ]) as unknown as PlannedRecipe[]
+    ).map(withRecipeModel),
     substitutions: structuredClone(substitutionSeed.rules),
     plans: [],
     revision: 0,
@@ -544,8 +548,10 @@ export class PreviewRepository implements Repository {
       saveContent: "catalogue",
       saveProfile: "profile",
       acceptTarget: "target",
+      acceptTargetAndPortions: "target",
       saveBudgetOverride: "budget",
       saveBudgetOverrides: "budget",
+      saveBudgetsAndPortions: "budget",
       setRecipeVeto: "veto",
       reviewRecipe: "veto",
       savePlannerSettings: "week_start",
@@ -776,6 +782,7 @@ export class PreviewRepository implements Repository {
     await this.applyShopping(await this.previewShopping(start, end));
   }
   async getPlanningLibrary() {
+    this.library.recipes = this.library.recipes.map(withRecipeModel);
     this.me();
     this.autoShopping();
     return structuredClone({
@@ -1122,6 +1129,21 @@ export class PreviewRepository implements Repository {
     archive: boolean,
   ) {
     this.me();
+    if (kind === "recipe") {
+      const oldRecipe = this.library.recipes.find((r) => r.id === data.id);
+      if (oldRecipe?.recipe_model && !(data as PlannedRecipe).recipe_model)
+        throw new DomainError("recipe_update_required");
+      validateRecipeModel(data as PlannedRecipe);
+      const recipe = data as PlannedRecipe;
+      if (
+        recipe.recipe_model &&
+        (JSON.stringify(recipe.recipe_model.legacy_components) !==
+          JSON.stringify(recipe.components) ||
+          JSON.stringify(recipe.recipe_model.legacy_name) !==
+            JSON.stringify(recipe.name))
+      )
+        throw new DomainError("recipe_update_required");
+    }
     const collection =
       kind === "ingredient" ? this.library.ingredients : this.library.recipes;
     const old = collection.find((x) => x.id === data.id);
@@ -1181,6 +1203,11 @@ export class PreviewRepository implements Repository {
       const old = originals.find((x) => x.day === m.day && x.type === m.type);
       if (old && !replace) throw new DomainError("existing_meal");
       for (const p of m.portions) {
+        if (
+          !p.eating_out &&
+          p.lines.some((l) => !Number.isFinite(l.quantity) || l.quantity <= 0)
+        )
+          throw new DomainError("invalid_quantity");
         const member = this.s.members.find(
           (x) => x.id === p.member_id && x.status === "active" && x.onboarded,
         );
@@ -1445,6 +1472,121 @@ export class PreviewRepository implements Repository {
         meal_type: meal,
         kcal,
       });
+  }
+  private combinedBudgetReceipts = new Map<string, string>();
+  async acceptTargetAndPortions(
+    budgets: Budgets,
+    context: string,
+    operation: string,
+    plans: MealPlan[],
+    revision: number,
+  ) {
+    this.me();
+    const request = JSON.stringify({
+        action: "target",
+        budgets,
+        context,
+        plans,
+        revision,
+      }),
+      key = this.me().id + "/" + operation;
+    if (this.combinedBudgetReceipts.has(key)) {
+      if (this.combinedBudgetReceipts.get(key) !== request)
+        throw new DomainError("operation_mismatch");
+      return;
+    }
+    if (revision !== this.serial) throw new DomainError("stale_plan");
+    for (const plan of plans) {
+      this.unlocked(plan.day);
+      const old = this.library.plans.find(
+        (p) => p.day === plan.day && p.type === plan.type,
+      );
+      if (!old || plan.day < this.today())
+        throw new DomainError("invalid_recipe");
+      if (quantityPlanSignature(old) !== quantityPlanSignature(plan))
+        throw new DomainError("invalid_history_action");
+      for (const p of plan.portions)
+        if (
+          p.member_id !== this.me().id &&
+          JSON.stringify(
+            old.portions.find((x) => x.member_id === p.member_id),
+          ) !== JSON.stringify(p)
+        )
+          throw new DomainError("access_denied");
+    }
+    const before = structuredClone({
+      state: this.s,
+      library: this.library,
+      shopping: this.shopping,
+      serial: this.serial,
+    });
+    try {
+      await this.acceptTarget(budgets, context);
+      if (plans.length) await this.applyPlans(plans, this.serial, true);
+      this.combinedBudgetReceipts.set(key, request);
+    } catch (e) {
+      this.s = before.state;
+      this.library = before.library;
+      this.shopping = before.shopping;
+      this.serial = before.serial;
+      this.persistDemo();
+      throw e;
+    }
+  }
+  async saveBudgetsAndPortions(
+    day: string,
+    changes: Partial<Record<MealType, number | null>>,
+    operation: string,
+    plans: MealPlan[],
+    revision: number,
+  ) {
+    this.me();
+    const request = JSON.stringify({ day, changes, plans, revision });
+    const key = this.me().id + "/" + operation;
+    if (this.combinedBudgetReceipts.has(key)) {
+      if (this.combinedBudgetReceipts.get(key) !== request)
+        throw new DomainError("operation_mismatch");
+      return;
+    }
+    if (revision !== this.serial) throw new DomainError("stale_plan");
+    const before = structuredClone({
+      state: this.s,
+      library: this.library,
+      serial: this.serial,
+      shopping: this.shopping,
+    });
+    const receipts = new Map(this.budgetCommits);
+    try {
+      for (const plan of plans) {
+        if (plan.day !== day || !Object.hasOwn(changes, plan.type))
+          throw new DomainError("invalid_budgets");
+        const old = this.library.plans.find(
+          (p) => p.day === plan.day && p.type === plan.type,
+        );
+        if (!old) throw new DomainError("invalid_recipe");
+        if (quantityPlanSignature(old) !== quantityPlanSignature(plan))
+          throw new DomainError("invalid_history_action");
+        for (const p of plan.portions)
+          if (
+            p.member_id !== this.me().id &&
+            JSON.stringify(
+              old.portions.find((x) => x.member_id === p.member_id),
+            ) !== JSON.stringify(p)
+          )
+            throw new DomainError("access_denied");
+      }
+      await this.saveBudgetOverrides(day, changes, operation);
+      if (plans.length) await this.applyPlans(plans, this.serial, true);
+      this.combinedBudgetReceipts.set(key, request);
+    } catch (e) {
+      this.s = before.state;
+      this.library = before.library;
+      this.serial = before.serial;
+      this.budgetCommits = receipts;
+      this.shopping = before.shopping;
+      this.persistDemo();
+      throw e;
+    }
   }
   async saveBudgetOverrides(
     day: string,

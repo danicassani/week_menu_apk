@@ -1,3 +1,8 @@
+import {
+  readWorkspaceContext,
+  saveWorkspaceContext,
+} from "../lib/workspace-context";
+import { HouseholdMeal } from "../components/household-meal";
 import { RecipeContent } from "../components/recipe-reader";
 import {
   substitutionText,
@@ -19,8 +24,10 @@ import {
   WifiOff,
   LogOut,
   Info,
+  LayoutDashboard,
+  CookingPot,
 } from "lucide-react";
-import type { Language, Repository } from "../domain/types";
+import type { Language, Repository, Tab } from "../domain/types";
 import { weekDays, localDay, addDays, formatDay } from "../domain/dates";
 import type { PlannedRecipe, MealPlan } from "../domain/planning";
 import { translator, mealLabel, errorMessage } from "../lib/i18n";
@@ -47,9 +54,13 @@ export function OfflineShell({
   onTryOnline: () => void;
 }) {
   const { data, error } = useOfflineAccount(accountId),
-    [tab, setTab] = useState<"menu" | "recipes" | "shopping">("shopping"),
-    [anchor, setAnchor] = useState(localDay()),
-    [member, setMember] = useState(""),
+    [tab, setTab] = useState<Tab>(() => readWorkspaceContext(accountId).tab),
+    [anchor, setAnchor] = useState(
+      () => readWorkspaceContext(accountId).anchor ?? localDay(),
+    ),
+    [member, setMember] = useState(
+      () => readWorkspaceContext(accountId).member ?? "",
+    ),
     [collection, setCollection] = useState<"recipes" | "ingredients">(
       "recipes",
     ),
@@ -59,6 +70,10 @@ export function OfflineShell({
     [query, setQuery] = useState(""),
     [notice, setNotice] = useState(""),
     [exit, setExit] = useState(false);
+  useEffect(
+    () => saveWorkspaceContext(accountId, { tab, anchor, member }),
+    [accountId, tab, anchor, member],
+  );
   useEffect(() => {
     document.documentElement.dataset.textSize =
       data?.presentation?.text_size ?? "standard";
@@ -129,14 +144,21 @@ export function OfflineShell({
         >
           {(
             [
+              {
+                id: "dashboard",
+                en: "Overview",
+                es: "Inicio",
+                icon: LayoutDashboard,
+              },
               { id: "menu", en: "Menu", es: "Menú", icon: CalendarDays },
-              { id: "recipes", en: "Recipes", es: "Recetas", icon: BookOpen },
               {
                 id: "shopping",
                 en: "Shopping",
                 es: "Compra",
                 icon: ShoppingBasket,
               },
+              { id: "recipes", en: "Recipes", es: "Recetas", icon: BookOpen },
+              { id: "cooking", en: "Kitchen", es: "Cocina", icon: CookingPot },
             ] as const
           ).map((n) => (
             <Button
@@ -165,6 +187,43 @@ export function OfflineShell({
                   : (data.shopping_saved_at ?? data.saved_at),
             ).toLocaleString(lang === "es" ? "es-ES" : "en-GB")}
           </p>
+        )}
+        {tab === "dashboard" && (
+          <section className="panel">
+            <h2>{t("Today’s meals", "Comidas de hoy")}</h2>
+            {data?.menu?.plans
+              .filter((p) => p.day === localDay())
+              .map((p) => (
+                <Button secondary key={p.type} onClick={() => setMeal(p)}>
+                  {mealLabel(p.type, lang)} ·{" "}
+                  {p.portions
+                    .filter((p) => !member || p.member_id === member)
+                    .map((p) => name(p.name))
+                    .join(" / ")}
+                </Button>
+              ))}
+            <p className="muted">
+              {t(
+                "Saved menu. Reconnect to see current health figures.",
+                "Menú guardado. Conéctate para ver las cifras de salud actuales.",
+              )}
+            </p>
+          </section>
+        )}
+        {(tab === "cooking" || tab === "profile") && (
+          <section className="panel">
+            <h2>
+              {tab === "cooking"
+                ? t("Kitchen", "Cocina")
+                : t("Profile", "Perfil")}
+            </h2>
+            <p>
+              {t(
+                "Reconnect to see current shared data and save changes.",
+                "Reconecta para ver los datos compartidos actuales y guardar cambios.",
+              )}
+            </p>
+          </section>
         )}
         {tab === "shopping" &&
           (shopping ? (
@@ -504,62 +563,11 @@ export function OfflineShell({
           wide
           onClose={() => setMeal(null)}
         >
-          {meal.portions.map((p) => (
-            <section className="portion-editor" key={p.member_id}>
-              <h3>
-                {data?.menu?.members.find((m) => m.id === p.member_id)?.name} ·{" "}
-                {name(p.name)} · {Math.round(p.kcal)} kcal
-              </h3>
-              {p.eating_out ? (
-                <p>{p.description}</p>
-              ) : (
-                <>
-                  <ul className="ingredient-list">
-                    {p.lines.map((l, i) => (
-                      <li key={i}>
-                        <span>{ingredientText(l, lang)}</span>
-                        <b>
-                          {l.quantity} {l.unit}
-                        </b>
-                      </li>
-                    ))}
-                  </ul>
-                  {p.substitutions.map((s, i) => (
-                    <p className="note" key={i}>
-                      {substitutionText(
-                        s,
-                        data?.recipes?.ingredients ?? [],
-                        lang,
-                      )}
-                    </p>
-                  ))}
-                  {(p.recipe_snapshot
-                    ? recipePresentation(p.recipe_snapshot)
-                        .ingredient_preparation
-                    : undefined
-                  )?.map((s) => (
-                    <p className="note" key={s.ingredient_id}>
-                      {name(s.instructions)}
-                    </p>
-                  ))}
-                  {(p.recipe_snapshot
-                    ? recipePresentation(p.recipe_snapshot).components
-                    : undefined
-                  )
-                    ?.filter((c) =>
-                      p.lines.some((l) => l.component_id === c.id),
-                    )
-                    .map((c) => (
-                      <ol className="instructions" key={c.id}>
-                        {c.instructions.map((s, i) => (
-                          <li key={i}>{name(s)}</li>
-                        ))}
-                      </ol>
-                    ))}
-                </>
-              )}
-            </section>
-          ))}
+          <HouseholdMeal
+            plan={meal}
+            members={data?.menu?.members ?? []}
+            language={lang}
+          />
         </Modal>
       )}
       {exit && (
