@@ -3576,7 +3576,7 @@ html[data-text-size="large"] {
   overflow-wrap: anywhere;
 }
 .week-actions {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 .week-actions .button {
   min-width: 0;
@@ -4265,21 +4265,10 @@ textarea:focus-visible {
   margin-block: 1rem;
 }
 .portion-distribution summary,
-.meal-more summary,
 .shopping-group summary {
   cursor: pointer;
   font-weight: 600;
   padding-block: 0.7rem;
-}
-.meal-more {
-  position: relative;
-}
-.meal-more[open] {
-  flex-basis: 100%;
-}
-.meal-more[open] > button,
-.meal-more[open] > .icon-button {
-  margin: 0.25rem;
 }
 .recipe-line-editor {
   display: flex;

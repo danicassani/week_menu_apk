@@ -41,9 +41,6 @@ export async function versionFourScenario(
     .click();
   await approve();
   const row = breakfast.locator(".meal-bottom-actions");
-  await expect(row.getByRole("button")).toHaveCount(1);
-  await expect(row.locator(".meal-more")).not.toHaveAttribute("open");
-  await row.locator(".meal-more > summary").click();
   await expect(row.getByRole("button")).toHaveCount(5);
   const boxes = await row.getByRole("button").evaluateAll((els) =>
     els.map((el) => {

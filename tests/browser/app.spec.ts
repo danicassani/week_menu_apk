@@ -193,8 +193,9 @@ test("menu actions stay together and planner preferences live in the person's pr
 }) => {
   const nav = page.getByRole("navigation", { name: "Main navigation" });
   await nav.getByRole("button", { name: "Menu", exact: true }).click();
-  await expect(page.locator(".week-more")).not.toHaveAttribute("open");
-  await page.locator(".week-more > summary").click();
+  await expect(page.locator(".week-actions > details")).toHaveCount(0);
+  for (const name of ["Recalculate quantities", "Delete week", "Copy a week"])
+    await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Recalculate quantities", exact: true }),
   ).toBeVisible();

@@ -25,7 +25,7 @@ Shopping continues aggregating personal menu lines, never adding cooking require
 ## Connected daily flows
 
 - Home prioritizes today's meals; scheduled intake is labelled estimated, including actual food logs.
-- Menu uses Change as the primary saved-meal action and puts secondary meal tools under More.
+- Menu keeps weekly and saved-meal action buttons visible, without a More disclosure. Actions wrap on narrow screens.
 - Profile editing separates personal details, health/goals and food preferences. Changes to name/language/diet do not force calorie-target review. Weight logging saves directly; an available target review remains explicit.
 - Both date budget editing and accepting new default budgets load a fresh revision and preview affected personal portions. Default-budget review respects date overrides and later effective targets. One confirmation atomically saves budgets, optional reviewed portion changes and shopping reconciliation. Other members' complete saved portions and cooked compositions remain unchanged.
 - Planning history has an ordinary visible entry; the previous gesture is retained as a compatibility shortcut.
